@@ -1,16 +1,18 @@
 {
-  "name": "@repo/models",
-  "version": "0.0.0",
-  "private": true,
-  "exports": {
-    "./*": "./src/*.ts"
-  },
-  "scripts": {
-    "check-types": "tsc --noEmit"
+  "dependencies": {
+    "@shaclmate/runtime": "2.0.15"
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
   },
-  "dependencies": {}
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "name": "@prosopa/models",
+  "private": true,
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "version": "0.0.0"
 }
