@@ -3,6 +3,7 @@
     "@biomejs/biome": "1.9.4",
     "@tsconfig/next": "^2.0.3",
     "@tsconfig/strictest": "^2.0.5",
+    "syncpack": "^13.0.2",
     "turbo": "^2.4.4",
     "typescript": "5.8.2"
   },
@@ -14,17 +15,11 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "check": "biome check",
-    "check:write": "biome check --write",
-    "check:write:unsafe": "biome check --write --unsafe",
+    "biome:check": "biome check",
+    "biome:check:write": "biome check --write",
+    "biome:check:write:unsafe": "biome check --write --unsafe",
     "check-types": "turbo run check-types",
-    "dev": "turbo run dev",
-    "format": "biome format",
-    "format:write": "biome format --write",
-    "format:write:unsafe": "biome format --write --unsafe",
-    "lint": "biome lint",
-    "lint:write": "biome lint --write",
-    "lint:write:unsafe": "biome lint --write --unsafe"
+    "syncpack:fix-mismatches": "syncpack fix-mismatches"
   },
   "workspaces": ["apps/*", "packages/*"]
 }
