@@ -1,0 +1,30 @@
+{
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@tsconfig/next": "^2.0.3",
+    "@tsconfig/strictest": "^2.0.5",
+    "turbo": "^2.4.4",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "name": "prosopa",
+  "packageManager": "npm@10.9.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "check": "biome check",
+    "check:write": "biome check --write",
+    "check:write:unsafe": "biome check --write --unsafe",
+    "check-types": "turbo run check-types",
+    "dev": "turbo run dev",
+    "format": "biome format",
+    "format:write": "biome format --write",
+    "format:write:unsafe": "biome format --write --unsafe",
+    "lint": "biome lint",
+    "lint:write": "biome lint --write",
+    "lint:write:unsafe": "biome lint --write --unsafe"
+  },
+  "workspaces": ["apps/*", "packages/*"]
+}

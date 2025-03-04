@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.env.development.local
+.env.local
+.env.production.local
+.env.test.local
+.next/
+.turbo
+build
+coverage
+dist
+node_modules
+npm-debug.log*
+out/

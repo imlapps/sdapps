@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "ignore": [".next/**", "out/**"],
+    "maxSize": 2097152
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "complexity": {
+        "noForEach": "off",
+        "useLiteralKeys": "off"
+      },
+      "correctness": {
+        "noUnusedPrivateClassMembers": "error",
+        "useHookAtTopLevel": "error",
+        "useImportExtensions": "off"
+      },
+      "nursery": {
+        "noDuplicateElseIf": "error"
+      },
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "off",
+        "useBlockStatements": "error",
+        "useImportType": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "organizeImports": {
+    "enabled": true
+  }
+}

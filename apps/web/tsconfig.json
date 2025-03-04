@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "exactOptionalPropertyTypes": false,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "noUncheckedIndexedAccess": false,
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "target": "ES2022"
+  },
+  "extends": [
+    "@tsconfig/next/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json"
+  ],
+  "exclude": ["node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "lib/translations/*.d.ts"
+  ]
+}
