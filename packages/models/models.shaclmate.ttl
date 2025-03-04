@@ -1,0 +1,28 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prosopa: <http://purl.archive.org/purl/prosopa/ontology#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix shaclmate: <http://minorg.github.io/shaclmate/ns#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+schema:Person
+    shaclmate:name "Person" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing .
+
+schema:Thing
+    shaclmate:name "Thing" ;
+    a owl:Class, sh:NodeShape ;
+    sh:property schema:Thing-name .
+
+schema:Thing-name
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 0 ;
+    sh:name "name" ;
+    sh:path schema:name .
+
