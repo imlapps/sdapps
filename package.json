@@ -5,7 +5,8 @@
     "@tsconfig/strictest": "^2.0.5",
     "syncpack": "^13.0.2",
     "turbo": "^2.4.4",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "vitest": "^3.0.7"
   },
   "engines": {
     "node": ">=18"
@@ -18,8 +19,9 @@
     "biome:check": "biome check",
     "biome:check:write": "biome check --write",
     "biome:check:write:unsafe": "biome check --write --unsafe",
-    "check-types": "turbo run check-types",
-    "syncpack:fix-mismatches": "syncpack fix-mismatches"
+    "tsc:noEmit": "turbo run tsc:noEmit",
+    "syncpack:fix-mismatches": "syncpack fix-mismatches",
+    "test": "turbo run test"
   },
   "workspaces": ["apps/*", "packages/*"]
 }

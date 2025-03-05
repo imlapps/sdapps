@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@prosopa/models": "*",
-    "@prosopa/ui": "*",
+    "@prosopa/models": "0.0.0",
+    "@prosopa/ui": "0.0.0",
     "next": "^15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -19,7 +19,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "check-types": "tsc --noEmit",
+    "tsc:noEmit": "tsc --noEmit",
     "dev": "next dev --turbopack --port 3000",
     "lint": "next lint --max-warnings 0",
     "start": "next start"

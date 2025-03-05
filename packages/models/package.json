@@ -1,6 +1,11 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "2.0.15"
+    "n3": "^1.24.0",
+    "@rdfjs/types": "^1.1.0",
+    "@shaclmate/runtime": "2.0.16",
+    "@types/n3": "^1.21.1",
+    "purify-ts": "^2.1.0",
+    "rdfjs-resource": "1.0.16"
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
@@ -12,7 +17,9 @@
   "name": "@prosopa/models",
   "private": true,
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "test": "vitest run",
+    "tsc:noEmit": "tsc --noEmit",
+    "tsc:noEmit:watch": "tsc --noEmit --watch"
   },
   "version": "0.0.0"
 }

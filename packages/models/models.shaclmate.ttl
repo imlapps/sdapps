@@ -8,6 +8,10 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+<http://schema.org/>
+    shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
+    a owl:Ontology .
+
 schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
