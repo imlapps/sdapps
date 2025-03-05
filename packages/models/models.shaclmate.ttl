@@ -12,21 +12,147 @@
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
     a owl:Ontology .
 
+schema:CreativeWork
+    shaclmate:name "CreativeWork" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing .
+
+schema:ImageObject
+    shaclmate:name "ImageObject" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:MediaObject .
+
+schema:Intangible
+    shaclmate:name "Intangible" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing .
+
+schema:MediaObject
+    shaclmate:name "MediaObject" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MediaObject-contentUrl, schema:MediaObject-encodingFormat, schema:MediaObject-height, schema:MediaObject-width .
+
+schema:MediaObject-contentUrl
+    a sh:PropertyShape ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "contentUrl" ;
+    sh:path schema:contentUrl .
+
+schema:MediaObject-encodingFormat
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "encodingFormat" ;
+    sh:path schema:encodingFormat .
+
+schema:MediaObject-height
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "height" ;
+    sh:node schema:QuantitativeValue ;
+    sh:path schema:height .
+
+schema:MediaObject-width
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "width" ;
+    sh:node schema:QuantitativeValue ;
+    sh:path schema:width .
+
+schema:Occupation
+    shaclmate:name "Occupation" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible .
+
 schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:Thing .
+    rdfs:subClassOf schema:Thing ;
+    sh:property schema:Person-familyName, schema:Person-givenName, schema:Person-hasOccupation .
+
+schema:Person-familyName
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "familyName" ;
+    sh:path schema:familyName .
+
+schema:Person-givenName
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "givenName" ;
+    sh:path schema:givenName .
+
+schema:Person-hasOccupation
+    a sh:PropertyShape ;
+    sh:name "hasOccupation" ;
+    sh:node schema:Occupation ;
+    sh:path schema:hasOccupation .
+
+schema:QuantitativeValue
+    shaclmate:name "QuantitiveValue" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:StructuredValue ;
+    sh:property schema:QuantitativeValue-value .
+
+schema:QuantitativeValue-maxValue
+    a sh:PropertyShape ;
+    sh:datatype xsd:decimal ;
+    sh:maxCount 1 ;
+    sh:name "maxValue" ;
+    sh:path schema:maxValue .
+
+schema:QuantitativeValue-minValue
+    a sh:PropertyShape ;
+    sh:datatype xsd:decimal ;
+    sh:maxCount 1 ;
+    sh:name "minValue" ;
+    sh:path schema:minValue .
+
+schema:QuantitativeValue-value
+    a sh:PropertyShape ;
+    sh:datatype xsd:decimal ;
+    sh:maxCount 1 ;
+    sh:name "value" ;
+    sh:path schema:value .
+
+schema:StructuredValue
+    shaclmate:name "StructuredValue" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible .
 
 schema:Thing
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-name .
+    sh:property schema:Thing-description, schema:Thing-images, schema:Thing-name, schema:Thing-url .
+
+schema:Thing-description
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "description" ;
+    sh:path schema:description .
+
+schema:Thing-images
+    a sh:PropertyShape ;
+    sh:name "images" ;
+    sh:node schema:Image ;
+    sh:path schema:image .
 
 schema:Thing-name
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:minCount 0 ;
     sh:name "name" ;
     sh:path schema:name .
+
+schema:Thing-url
+    a sh:PropertyShape ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "url" ;
+    sh:path schema:url .
 

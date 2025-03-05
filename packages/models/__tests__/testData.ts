@@ -14,6 +14,8 @@ import { Person } from "../src";
 const people = [...new Array(3).keys()].map(
   (_, index) =>
     new Person({
+      givenName: "Person",
+      familyName: index.toString(),
       name: `Person ${index}`,
     }),
 );
