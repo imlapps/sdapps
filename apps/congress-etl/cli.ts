@@ -3,14 +3,17 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { command, flag, run } from "cmd-ts";
+import N3 from "n3";
 import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
+import { MutableResourceSet } from "rdfjs-resource";
 import yaml from "yaml";
 import { z } from "zod";
 
 const thisDirectoryPath = path.resolve(
   path.join(path.dirname(fileURLToPath(import.meta.url))),
 );
-const cacheDirectoryPath = path.join(thisDirectoryPath, ".cache");
+const dataDirectoryPath = path.resolve(thisDirectoryPath, "..", "..", "data", "congress");
+const cacheDirectoryPath = path.join(dataDirectoryPath, ".cache");
 
 const congressLegislatorsBaseUrl =
   "https://unitedstates.github.io/congress-legislators/";
@@ -118,6 +121,8 @@ const cmd = command({
           `${congressLegislatorsBaseUrl}legislators-social-media.yaml`,
         ),
       );
+
+    const resourceSet = new MutableResourceSet({dataset: });
   },
 });
 

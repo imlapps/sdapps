@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@prosopa/models": "0.0.0",
-    "@prosopa/ui": "0.0.0",
+    "@prosopa/models": "*",
+    "@prosopa/ui": "*",
     "next": "^15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
