@@ -1,7 +1,6 @@
 import type * as rdfjs from "@rdfjs/types";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
-import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
@@ -615,9 +614,7 @@ export class Thing {
 }
 
 export namespace Thing {
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       description: purify.Maybe<string>;
@@ -1380,9 +1377,7 @@ export class Person extends Thing {
 }
 
 export namespace Person {
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       familyName: purify.Maybe<string>;
@@ -1796,20 +1791,18 @@ export class QuantitiveValue extends StructuredValue {
   }
 
   override equals(other: QuantitiveValue): EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
-          this.value,
-          other.value,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "value",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => maybeEquals(left, right, strictEquals))(
+        this.value,
+        other.value,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "value",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -1869,9 +1862,7 @@ export class QuantitiveValue extends StructuredValue {
 }
 
 export namespace QuantitiveValue {
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2409,9 +2400,7 @@ export class MediaObject extends CreativeWork {
 }
 
 export namespace MediaObject {
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       contentUrl: purify.Maybe<string>;

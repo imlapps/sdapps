@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "n3": "^1.24.0",
     "@rdfjs/types": "^1.1.0",
     "@shaclmate/runtime": "2.0.16",
     "@types/n3": "^1.21.1",
+    "n3": "^1.24.0",
     "purify-ts": "^2.1.0",
     "rdfjs-resource": "1.0.16"
   },
@@ -13,14 +13,18 @@
     "typescript": "5.8.2"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./*": {
+      "default": "./dist/*.js",
+      "types": "./src/*.ts"
+    }
   },
   "name": "@prosopa/models",
   "private": true,
   "scripts": {
-    "test": "vitest run",
-    "tsc:noEmit": "tsc --noEmit",
-    "tsc:noEmit:watch": "tsc --noEmit --watch"
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "test": "vitest run"
   },
   "version": "0.0.0"
 }

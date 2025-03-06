@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "outDir": "dist"
+  },
   "extends": ["@prosopa/tsconfig/lib.json"],
   "include": ["src/*.ts"]
 }

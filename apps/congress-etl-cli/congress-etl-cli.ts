@@ -2,7 +2,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { Person } from "@prosopa/models";
 import Serializer from "@rdfjs/serializer-turtle";
+import { schema } from "@tpluscode/rdf-ns-builders";
 import { command, flag, run } from "cmd-ts";
 import N3 from "n3";
 import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
@@ -119,6 +121,7 @@ const cmd = command({
       await fs.promises.rm(cacheDirectoryPath, { recursive: true });
     }
 
+    // Extract
     const congressLegislators = await congressLegislatorsSchema.parseAsync(
       await fetchYaml(`${congressLegislatorsBaseUrl}legislators-current.yaml`),
     );
@@ -134,6 +137,21 @@ const cmd = command({
       dataFactory: N3.DataFactory,
       dataset,
     });
+
+    // Transform
+    for (const congressLegislator of congressLegislator) {
+      const person = new Person({});
+    }
+
+    // Load
+    await fs.promises.writeFile(
+      path.join(dataDirectoryPath, "congress.ttl"),
+      await new Serializer({
+        prefixes: {
+          schema: schema[""],
+        },
+      }).transform([...dataset]),
+    );
   },
 });
 

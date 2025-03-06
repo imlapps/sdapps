@@ -1,9 +1,9 @@
 {
-  "name": "@prosopa/tsconfig",
-  "version": "0.0.0",
-  "private": true,
   "dependencies": {
     "@tsconfig/next": "^2.0.3",
     "@tsconfig/strictest": "^2.0.5"
-  }
+  },
+  "name": "@prosopa/tsconfig",
+  "private": true,
+  "version": "0.0.0"
 }
