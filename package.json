@@ -1,8 +1,6 @@
 {
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@tsconfig/next": "^2.0.3",
-    "@tsconfig/strictest": "^2.0.5",
     "syncpack": "^13.0.2",
     "turbo": "^2.4.4",
     "typescript": "5.8.2",

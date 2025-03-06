@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": false
+  },
+  "extends": ["@tsconfig/strictest/tsconfig.json"],
+  "exclude": ["node_modules"]
+}

@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import Serializer from "@rdfjs/serializer-turtle";
 import { command, flag, run } from "cmd-ts";
 import N3 from "n3";
 import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
@@ -12,7 +13,13 @@ import { z } from "zod";
 const thisDirectoryPath = path.resolve(
   path.join(path.dirname(fileURLToPath(import.meta.url))),
 );
-const dataDirectoryPath = path.resolve(thisDirectoryPath, "..", "..", "data", "congress");
+const dataDirectoryPath = path.resolve(
+  thisDirectoryPath,
+  "..",
+  "..",
+  "data",
+  "congress",
+);
 const cacheDirectoryPath = path.join(dataDirectoryPath, ".cache");
 
 const congressLegislatorsBaseUrl =
@@ -122,7 +129,11 @@ const cmd = command({
         ),
       );
 
-    const resourceSet = new MutableResourceSet({dataset: });
+    const dataset = new N3.Store();
+    const resourceSet = new MutableResourceSet({
+      dataFactory: N3.DataFactory,
+      dataset,
+    });
   },
 });
 

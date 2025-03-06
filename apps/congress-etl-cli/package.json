@@ -10,7 +10,7 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "congress-etl",
+  "name": "congress-etl-cli",
   "packageManager": "npm@10.9.0",
   "private": true
 }
