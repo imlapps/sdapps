@@ -13,11 +13,14 @@
     "typescript": "5.8.2"
   },
   "exports": {
-    "./*": {
-      "default": "./dist/*.js",
-      "types": "./src/*.ts"
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "name": "@prosopa/models",
   "private": true,
   "scripts": {
@@ -26,5 +29,7 @@
     "dev": "tsc --watch",
     "test": "vitest run"
   },
+  "type": "module",
+  "types": "./dist/index.d.ts",
   "version": "0.0.0"
 }
