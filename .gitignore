@@ -8,6 +8,7 @@
 .turbo
 build
 coverage
+data/congress/.cache
 dist
 node_modules
 npm-debug.log*

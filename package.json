@@ -3,10 +3,14 @@
     "@biomejs/biome": "1.9.4",
     "@tsconfig/next": "^2.0.3",
     "@tsconfig/strictest": "^2.0.5",
+    "cmd-ts": "^0.13.0",
+    "node-fetch-cache": "^5.0.2",
     "syncpack": "^13.0.2",
+    "tsx": "^4.19.3",
     "turbo": "^2.4.4",
     "typescript": "5.8.2",
-    "vitest": "^3.0.7"
+    "vitest": "^3.0.7",
+    "yaml": "^2.7.0"
   },
   "engines": {
     "node": ">=18"
