@@ -4,5 +4,6 @@
       "@/*": ["./*"]
     }
   },
-  "extends": ["@prosopa/tsconfig/next.json"]
+  "extends": ["@prosopa/tsconfig/next.json"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }

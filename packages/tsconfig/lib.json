@@ -15,12 +15,5 @@
     "sourceMap": true,
     "target": "ES2022"
   },
-  "exclude": [
-    "node_modules",
-    "**/*.d.ts",
-    "**/*.d.ts.map",
-    "**/*.js",
-    "**/*.js.map"
-  ],
   "extends": ["./base.json"]
 }

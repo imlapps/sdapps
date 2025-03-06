@@ -6,7 +6,8 @@
     "./*": "./src/*.tsx"
   },
   "scripts": {
-    "tsc:noEmit": "tsc --noEmit"
+    "tsc:noEmit": "tsc --noEmit",
+    "tsc:noEmit:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@prosopa/tsconfig": "*",
