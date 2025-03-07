@@ -14,8 +14,8 @@
   },
   "exports": {
     "./*": {
-      "default": "./dist/*.js",
-      "types": "./src/*.tsx"
+      "types": "./src/*.tsx",
+      "default": "./dist/*.js"
     }
   },
   "name": "@prosopa/ui",

@@ -32,11 +32,14 @@ export class RdfjsDatasetModelSet implements ModelSet {
     modelFromRdf,
     rdfType,
   }: {
-    modelFromRdf: (parameters: { resource: Resource }) => Either<Error, ModelT>;
+    modelFromRdf: (parameters: { resource: Resource<NamedNode> }) => Either<
+      Error,
+      ModelT
+    >;
     rdfType: NamedNode;
   }): Either<Error, readonly ModelT[]> {
     const models: ModelT[] = [];
-    for (const resource of this.resourceSet.instancesOf(rdfType)) {
+    for (const resource of this.resourceSet.namedInstancesOf(rdfType)) {
       const modelEither = modelFromRdf({ resource });
       if (modelEither.isLeft()) {
         return modelEither;

@@ -7,10 +7,11 @@ import {
   Organization,
   Person,
   QuantitiveValue,
+  Role,
 } from "@prosopa/models";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap";
 import Serializer from "@rdfjs/serializer-turtle";
-import { NamedNode } from "@rdfjs/types";
+import type { NamedNode } from "@rdfjs/types";
 import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { command, flag, run } from "cmd-ts";
 import N3 from "n3";
@@ -159,33 +160,33 @@ const cmd = command({
       const legislatorSocialMedia: legislatorSocialMedia["social"] =
         legislatorsSocialMediaByBioguideId[legislator.id.bioguide] ?? {};
 
+      const currentTerm = legislator.terms[legislator.terms.length - 1];
+
       let party: Organization | undefined;
-      for (const term of legislator.terms) {
-        party = partiesByName[term.party];
-        if (!party) {
-          let partyIdentifier: NamedNode | undefined;
-          switch (term.party) {
-            case "Democrat":
-              partyIdentifier = dataFactory.namedNode(
-                "https://www.wikidata.org/wiki/Q29552",
-              );
-              break;
-            case "Independent":
-              break;
-            case "Republican":
-              partyIdentifier = dataFactory.namedNode(
-                "https://www.wikidata.org/wiki/Q29468",
-              );
-              break;
-            default:
-              throw new RangeError(term.party);
-          }
-          if (partyIdentifier) {
-            partiesByName[term.party] = party = new Organization({
-              identifier: partyIdentifier,
-              name: term.party,
-            });
-          }
+      party = partiesByName[currentTerm.party];
+      if (!party) {
+        let partyIdentifier: NamedNode | undefined;
+        switch (currentTerm.party) {
+          case "Democrat":
+            partyIdentifier = dataFactory.namedNode(
+              "https://www.wikidata.org/wiki/Q29552",
+            );
+            break;
+          case "Independent":
+            break;
+          case "Republican":
+            partyIdentifier = dataFactory.namedNode(
+              "https://www.wikidata.org/wiki/Q29468",
+            );
+            break;
+          default:
+            throw new RangeError(currentTerm.party);
+        }
+        if (partyIdentifier) {
+          partiesByName[currentTerm.party] = party = new Organization({
+            identifier: partyIdentifier,
+            name: currentTerm.party,
+          });
         }
       }
 
@@ -251,7 +252,6 @@ const cmd = command({
         const contentUrl = `https://unitedstates.github.io/images/congress/${size === "original" ? "original" : `${size.width}x${size.height}`}/${legislator.id.bioguide}.jpg`;
         return new ImageObject({
           contentUrl: contentUrl,
-          identifier: contentUrl,
           height:
             size !== "original"
               ? new QuantitiveValue({
@@ -259,6 +259,7 @@ const cmd = command({
                   value: size.height,
                 })
               : undefined,
+          identifier: contentUrl,
           isBasedOn: isBasedOn ? [isBasedOn] : undefined,
           width:
             size !== "original"
@@ -299,6 +300,21 @@ const cmd = command({
         familyName: legislator.name.last,
         gender: legislator.bio.gender === "F" ? schema.Female : schema.Male,
         givenName: legislator.name.first,
+        hasOccupation: legislator.terms.map(
+          (term) =>
+            new Role({
+              endDate: new Date(term.end),
+              name:
+                term.type === "rep"
+                  ? "United States representative"
+                  : "United States senator",
+              roleName:
+                term.type === "rep"
+                  ? "https://www.wikidata.org/wiki/Q13218630"
+                  : "https://www.wikidata.org/wiki/Q4416090",
+              startDate: new Date(term.start),
+            }),
+        ),
         identifier: dataFactory.namedNode(
           `https://bioguide.congress.gov/search/bio/${legislator.id.bioguide}`,
         ),

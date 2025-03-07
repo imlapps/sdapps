@@ -152,8 +152,14 @@ schema:Person-givenName
 schema:Person-hasOccupation
     a sh:PropertyShape ;
     sh:name "hasOccupation" ;
-    sh:node schema:Occupation ;
-    sh:path schema:hasOccupation .
+    sh:path schema:hasOccupation ;
+    sh:xone ([
+            sh:node schema:Occupation
+        ]
+        [
+            sh:node schema:Role
+        ]
+    ) .
 
 schema:QuantitativeValue
     shaclmate:name "QuantitiveValue" ;
@@ -181,6 +187,35 @@ schema:QuantitativeValue-value
     sh:maxCount 1 ;
     sh:name "value" ;
     sh:path schema:value .
+
+schema:Role
+    shaclmate:mintingStrategy shaclmate:_MintingStrategy_SHA256 ;
+    shaclmate:name "Role" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:nodeKind sh:IRI ;
+    sh:property schema:Role-endDate, schema:Role-roleName, schema:Role-startDate .
+
+schema:Role-endDate
+    a sh:PropertyShape ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "endDate" ;
+    sh:path schema:endDate .
+
+schema:Role-roleName
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "roleName" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:roleName .
+
+schema:Role-startDate
+    a sh:PropertyShape ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "startDate" ;
+    sh:path schema:startDate .
 
 schema:StructuredValue
     shaclmate:abstract true ;
