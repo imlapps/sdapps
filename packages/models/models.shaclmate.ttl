@@ -16,20 +16,13 @@ schema:CreativeWork
     shaclmate:abstract true ;
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-isBasedOn .
+    rdfs:subClassOf schema:Thing .
 
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
     sh:name "isBasedOn" ;
     sh:node schema:CreativeWorkStub ;
     sh:path schema:isBasedOn .
-
-schema:CreativeWorkStub
-    shaclmate:fromRdfType schema:CreativeWork ;
-    shaclmate:name "CreativeWorkStub" ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:ThingStub .
 
 schema:Enumeration
     shaclmate:abstract true ;
@@ -52,13 +45,8 @@ schema:GenderType
 schema:ImageObject
     shaclmate:name "ImageObject" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:MediaObject .
-
-schema:ImageObjectStub
-    shaclmate:fromRdfType schema:ImageObject ;
-    shaclmate:name "ImageObjectStub" ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:MediaObjectStub .
+    rdfs:subClassOf schema:MediaObject ;
+    sh:property schema:CreativeWork-isBasedOn .
 
 schema:Intangible
     shaclmate:abstract true ;
@@ -105,12 +93,6 @@ schema:MediaObject-width
     sh:node schema:QuantitativeValue ;
     sh:path schema:width .
 
-schema:MediaObjectStub
-    shaclmate:fromRdfType schema:MediaObject ;
-    shaclmate:name "MediaObjectStub" ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:CreativeWorkStub .
-
 schema:Occupation
     shaclmate:name "Occupation" ;
     a owl:Class, sh:NodeShape ;
@@ -120,7 +102,7 @@ schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Thing-images .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -199,7 +181,7 @@ schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-description, schema:Thing-images, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
+    sh:property schema:Thing-description, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -211,7 +193,7 @@ schema:Thing-description
 schema:Thing-images
     a sh:PropertyShape ;
     sh:name "images" ;
-    sh:node schema:ImageObjectStub ;
+    sh:node schema:ImageObject ;
     sh:path schema:image .
 
 schema:Thing-name
@@ -233,10 +215,4 @@ schema:Thing-url
     sh:name "url" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:url .
-
-schema:ThingStub
-    shaclmate:abstract true ;
-    shaclmate:fromRdfType schema:Thing ;
-    shaclmate:name "ThingStub" ;
-    a owl:Class, sh:NodeShape .
 
