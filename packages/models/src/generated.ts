@@ -1,6 +1,7 @@
 import type * as rdfjs from "@rdfjs/types";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
+import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
@@ -1297,36 +1298,41 @@ export namespace StructuredValue {
   }
 }
 export class Person extends Thing {
-  readonly birthDate: readonly rdfjs.Literal[];
+  readonly birthDate: purify.Maybe<Date>;
   readonly familyName: purify.Maybe<string>;
-  readonly gender: readonly (
-    | rdfjs.BlankNode
-    | rdfjs.NamedNode
-    | rdfjs.Literal
-  )[];
+  readonly gender: purify.Maybe<
+    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+  >;
   readonly givenName: purify.Maybe<string>;
   readonly hasOccupation: readonly Occupation[];
   override readonly type = "Person";
 
   constructor(
     parameters: {
-      readonly birthDate?: readonly rdfjs.Literal[];
+      readonly birthDate?: Date | purify.Maybe<Date>;
       readonly familyName?: purify.Maybe<string> | string;
-      readonly gender?: readonly (
-        | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal
-      )[];
+      readonly gender?:
+        | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+        | Date
+        | boolean
+        | number
+        | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+        | string;
       readonly givenName?: purify.Maybe<string> | string;
       readonly hasOccupation?: readonly Occupation[];
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
-    if (typeof parameters.birthDate === "undefined") {
-      this.birthDate = [];
-    } else if (Array.isArray(parameters.birthDate)) {
+    if (purify.Maybe.isMaybe(parameters.birthDate)) {
       this.birthDate = parameters.birthDate;
+    } else if (
+      typeof parameters.birthDate === "object" &&
+      parameters.birthDate instanceof Date
+    ) {
+      this.birthDate = purify.Maybe.of(parameters.birthDate);
+    } else if (typeof parameters.birthDate === "undefined") {
+      this.birthDate = purify.Maybe.empty();
     } else {
       this.birthDate = parameters.birthDate as never;
     }
@@ -1341,10 +1347,29 @@ export class Person extends Thing {
       this.familyName = parameters.familyName as never;
     }
 
-    if (typeof parameters.gender === "undefined") {
-      this.gender = [];
-    } else if (Array.isArray(parameters.gender)) {
+    if (purify.Maybe.isMaybe(parameters.gender)) {
       this.gender = parameters.gender;
+    } else if (typeof parameters.gender === "boolean") {
+      this.gender = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.gender, { dataFactory }),
+      );
+    } else if (
+      typeof parameters.gender === "object" &&
+      parameters.gender instanceof Date
+    ) {
+      this.gender = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.gender, { dataFactory }),
+      );
+    } else if (typeof parameters.gender === "number") {
+      this.gender = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.gender, { dataFactory }),
+      );
+    } else if (typeof parameters.gender === "string") {
+      this.gender = purify.Maybe.of(dataFactory.literal(parameters.gender));
+    } else if (typeof parameters.gender === "object") {
+      this.gender = purify.Maybe.of(parameters.gender);
+    } else if (typeof parameters.gender === "undefined") {
+      this.gender = purify.Maybe.empty();
     } else {
       this.gender = parameters.gender as never;
     }
@@ -1369,17 +1394,16 @@ export class Person extends Thing {
   }
 
   override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
+    return typeof this._identifier !== "undefined"
+      ? this._identifier
+      : dataFactory.blankNode();
   }
 
   override equals(other: Person): EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, booleanEquals))(
+        ((left, right) => maybeEquals(left, right, dateEquals))(
           this.birthDate,
           other.birthDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1403,7 +1427,7 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, booleanEquals))(
+        ((left, right) => maybeEquals(left, right, booleanEquals))(
           this.gender,
           other.gender,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1447,21 +1471,16 @@ export class Person extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.hash(_hasher);
-    for (const _item0 of this.birthDate) {
-      _hasher.update(_item0.datatype.value);
-      _hasher.update(_item0.language);
-      _hasher.update(_item0.termType);
-      _hasher.update(_item0.value);
-    }
-
+    this.birthDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
     this.familyName.ifJust((_value0) => {
       _hasher.update(_value0);
     });
-    for (const _item0 of this.gender) {
-      _hasher.update(_item0.termType);
-      _hasher.update(_item0.value);
-    }
-
+    this.gender.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
     this.givenName.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -1474,53 +1493,51 @@ export class Person extends Thing {
   }
 
   override toJson(): {
-    readonly birthDate: readonly {
-      readonly "@language": string | undefined;
-      readonly "@type": string | undefined;
-      readonly "@value": string;
-    }[];
+    readonly birthDate: string | undefined;
     readonly familyName: string | undefined;
-    readonly gender: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
+    readonly gender:
+      | (
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
+            }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
     readonly givenName: string | undefined;
     readonly hasOccupation: readonly ReturnType<Occupation["toJson"]>[];
   } & ReturnType<Thing["toJson"]> {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
-        birthDate: this.birthDate.map((_item) => ({
-          "@language": _item.language.length > 0 ? _item.language : undefined,
-          "@type":
-            _item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
-              ? _item.datatype.value
-              : undefined,
-          "@value": _item.value,
-        })),
+        birthDate: this.birthDate
+          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .extract(),
         familyName: this.familyName.map((_item) => _item).extract(),
-        gender: this.gender.map((_item) =>
-          _item.termType === "Literal"
-            ? {
-                "@language":
-                  _item.language.length > 0 ? _item.language : undefined,
-                "@type":
-                  _item.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? _item.datatype.value
-                    : undefined,
-                "@value": _item.value,
-                termType: "Literal" as const,
-              }
-            : _item.termType === "NamedNode"
-              ? { "@id": _item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
-        ),
+        gender: this.gender
+          .map((_item) =>
+            _item.termType === "Literal"
+              ? {
+                  "@language":
+                    _item.language.length > 0 ? _item.language : undefined,
+                  "@type":
+                    _item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? _item.datatype.value
+                      : undefined,
+                  "@value": _item.value,
+                  termType: "Literal" as const,
+                }
+              : _item.termType === "NamedNode"
+                ? { "@id": _item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
+          )
+          .extract(),
         givenName: this.givenName.map((_item) => _item).extract(),
         hasOccupation: this.hasOccupation.map((_item) => _item.toJson()),
       } satisfies ReturnType<Person["toJson"]>),
@@ -1552,7 +1569,14 @@ export class Person extends Thing {
 
     _resource.add(
       dataFactory.namedNode("http://schema.org/birthDate"),
-      this.birthDate.map((_item) => _item),
+      this.birthDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#date",
+          ),
+        }),
+      ),
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/familyName"),
@@ -1560,7 +1584,7 @@ export class Person extends Thing {
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/gender"),
-      this.gender.map((_item) => _item),
+      this.gender,
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/givenName"),
@@ -1586,9 +1610,9 @@ export namespace Person {
   ): purify.Either<
     zod.ZodError,
     {
-      birthDate: readonly rdfjs.Literal[];
+      birthDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
-      gender: readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+      gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
       hasOccupation: readonly Occupation[];
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1606,30 +1630,24 @@ export namespace Person {
     }
 
     const _super0 = _super0Either.unsafeCoerce();
-    const birthDate = _jsonObject["birthDate"].map((_item) =>
-      dataFactory.literal(
-        _item["@value"],
-        typeof _item["@language"] !== "undefined"
-          ? _item["@language"]
-          : typeof _item["@type"] !== "undefined"
-            ? dataFactory.namedNode(_item["@type"])
-            : undefined,
-      ),
+    const birthDate = purify.Maybe.fromNullable(_jsonObject["birthDate"]).map(
+      (_item) => new Date(_item),
     );
     const familyName = purify.Maybe.fromNullable(_jsonObject["familyName"]);
-    const gender = _jsonObject["gender"].map((_item) =>
-      _item.termType === "Literal"
-        ? dataFactory.literal(
-            _item["@value"],
-            typeof _item["@language"] !== "undefined"
-              ? _item["@language"]
-              : typeof _item["@type"] !== "undefined"
-                ? dataFactory.namedNode(_item["@type"])
-                : undefined,
-          )
-        : _item.termType === "NamedNode"
-          ? dataFactory.namedNode(_item["@id"])
-          : dataFactory.blankNode(_item["@id"].substring(2)),
+    const gender = purify.Maybe.fromNullable(_jsonObject["gender"]).map(
+      (_item) =>
+        _item.termType === "Literal"
+          ? dataFactory.literal(
+              _item["@value"],
+              typeof _item["@language"] !== "undefined"
+                ? _item["@language"]
+                : typeof _item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(_item["@type"])
+                  : undefined,
+            )
+          : _item.termType === "NamedNode"
+            ? dataFactory.namedNode(_item["@id"])
+            : dataFactory.blankNode(_item["@id"].substring(2)),
     );
     const givenName = purify.Maybe.fromNullable(_jsonObject["givenName"]);
     const hasOccupation = _jsonObject["hasOccupation"].map((_item) =>
@@ -1669,9 +1687,9 @@ export namespace Person {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      birthDate: readonly rdfjs.Literal[];
+      birthDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
-      gender: readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+      gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
       hasOccupation: readonly Occupation[];
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1703,34 +1721,16 @@ export namespace Person {
 
     const _birthDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly rdfjs.Literal[]
-    > = purify.Either.of([
-      ..._resource
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
         .values(dataFactory.namedNode("http://schema.org/birthDate"), {
           unique: true,
         })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .filter((_value) => {
-              const _languageInOrDefault = _languageIn ?? [];
-              if (_languageInOrDefault.length === 0) {
-                return true;
-              }
-              const _valueLiteral = _value.toLiteral().toMaybe().extract();
-              if (typeof _valueLiteral === "undefined") {
-                return false;
-              }
-              return _languageInOrDefault.some(
-                (_languageIn) => _languageIn === _valueLiteral.language,
-              );
-            })
-            .head()
-            .chain((_value) => _value.toLiteral())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
     if (_birthDateEither.isLeft()) {
       return _birthDateEither;
     }
@@ -1755,21 +1755,16 @@ export namespace Person {
     const familyName = _familyNameEither.unsafeCoerce();
     const _genderEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
-    > = purify.Either.of([
-      ..._resource
+      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+    > = purify.Either.of(
+      _resource
         .values(dataFactory.namedNode("http://schema.org/gender"), {
           unique: true,
         })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => purify.Either.of(_value.toTerm()))
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+        .head()
+        .chain((_value) => purify.Either.of(_value.toTerm()))
+        .toMaybe(),
+    );
     if (_genderEither.isLeft()) {
       return _genderEither;
     }
@@ -1871,13 +1866,7 @@ export namespace Person {
   export function personJsonZodSchema() {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
-        birthDate: zod
-          .object({
-            "@language": zod.string().optional(),
-            "@type": zod.string().optional(),
-            "@value": zod.string(),
-          })
-          .array(),
+        birthDate: zod.string().date().optional(),
         familyName: zod.string().optional(),
         gender: zod
           .discriminatedUnion("termType", [
@@ -1896,7 +1885,7 @@ export namespace Person {
               termType: zod.literal("Literal"),
             }),
           ])
-          .array(),
+          .optional(),
         givenName: zod.string().optional(),
         hasOccupation: Occupation.occupationJsonZodSchema().array(),
         "@id": zod.string().min(1),

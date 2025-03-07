@@ -3,9 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Person } from "@prosopa/models";
+import PrefixMap from "@rdfjs/prefix-map/PrefixMap";
 import Serializer from "@rdfjs/serializer-turtle";
 import { NamedNode } from "@rdfjs/types";
-import { schema } from "@tpluscode/rdf-ns-builders";
+import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { command, flag, run } from "cmd-ts";
 import N3 from "n3";
 import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
@@ -210,7 +211,12 @@ const cmd = command({
       }
 
       const person = new Person({
+        birthDate: congressLegislator.bio.birthday
+          ? new Date(congressLegislator.bio.birthday)
+          : undefined,
         familyName: congressLegislator.name.last,
+        gender:
+          congressLegislator.bio.gender === "F" ? schema.Female : schema.Male,
         givenName: congressLegislator.name.first,
         identifier: N3.DataFactory.namedNode(
           `https://bioguide.congress.gov/search/bio/${congressLegislator.id.bioguide}`,
@@ -225,10 +231,17 @@ const cmd = command({
     // Load
     await fs.promises.writeFile(
       path.join(dataDirectoryPath, "congress.ttl"),
-      await new Serializer({
-        prefixes: {
-          schema: schema[""],
-        },
+      new Serializer({
+        prefixes: new PrefixMap(
+          [
+            ["schema", schema[""]],
+            ["rdf", rdf[""]],
+            ["xsd", xsd[""]],
+          ],
+          {
+            factory: N3.DataFactory,
+          },
+        ),
       }).transform([...dataset]),
     );
   },
