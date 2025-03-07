@@ -2,7 +2,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { Person } from "@prosopa/models";
+import {
+  CreativeWorkStub,
+  ImageObject,
+  Person,
+  QuantitiveValue,
+  stubify,
+} from "@prosopa/models";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap";
 import Serializer from "@rdfjs/serializer-turtle";
 import { NamedNode } from "@rdfjs/types";
@@ -26,9 +32,9 @@ const dataDirectoryPath = path.resolve(
 );
 const cacheDirectoryPath = path.join(dataDirectoryPath, ".cache");
 
-const congressLegislatorsBaseUrl =
+const legislatorsBaseUrl =
   "https://unitedstates.github.io/congress-legislators/";
-const congressLegislatorSchema = z.object({
+const legislatorSchema = z.object({
   bio: z.object({
     birthday: z.string().date().optional(),
     gender: z.enum(["F", "M"]),
@@ -80,10 +86,9 @@ const congressLegislatorSchema = z.object({
     }),
   ),
 });
-type CongressLegislator = z.infer<typeof congressLegislatorSchema>;
-const congressLegislatorsSchema = z.array(congressLegislatorSchema);
+const legislatorsSchema = z.array(legislatorSchema);
 
-const congressLegislatorSocialMediaSchema = z.object({
+const legislatorSocialMediaSchema = z.object({
   id: z.object({
     bioguide: z.string(),
   }),
@@ -96,12 +101,8 @@ const congressLegislatorSocialMediaSchema = z.object({
     youtube_id: z.string().optional(),
   }),
 });
-type CongressLegislatorSocialMedia = z.infer<
-  typeof congressLegislatorSocialMediaSchema
->;
-const congressLegislatorsSocialMediaSchema = z.array(
-  congressLegislatorSocialMediaSchema,
-);
+type legislatorSocialMedia = z.infer<typeof legislatorSocialMediaSchema>;
+const legislatorsSocialMediaSchema = z.array(legislatorSocialMediaSchema);
 
 const fetch = NodeFetchCache.create({
   cache: new FileSystemCache({
@@ -129,21 +130,19 @@ const cmd = command({
     }
 
     // Extract
-    const congressLegislators = await congressLegislatorsSchema.parseAsync(
-      await fetchYaml(`${congressLegislatorsBaseUrl}legislators-current.yaml`),
+    const legislators = await legislatorsSchema.parseAsync(
+      await fetchYaml(`${legislatorsBaseUrl}legislators-current.yaml`),
     );
-    const congressLegislatorsSocialMediaByBioguideId = (
-      await congressLegislatorsSocialMediaSchema.parseAsync(
-        await fetchYaml(
-          `${congressLegislatorsBaseUrl}legislators-social-media.yaml`,
-        ),
+    const legislatorsSocialMediaByBioguideId = (
+      await legislatorsSocialMediaSchema.parseAsync(
+        await fetchYaml(`${legislatorsBaseUrl}legislators-social-media.yaml`),
       )
     ).reduce(
       (map, element) => {
         map[element.id.bioguide] = element.social;
         return map;
       },
-      {} as Record<number, CongressLegislatorSocialMedia["social"]>,
+      {} as Record<number, legislatorSocialMedia["social"]>,
     );
 
     const dataset = new N3.Store();
@@ -153,24 +152,22 @@ const cmd = command({
     });
 
     // Transform
-    for (const congressLegislator of congressLegislators) {
-      const socialMedia: CongressLegislatorSocialMedia["social"] =
-        congressLegislatorsSocialMediaByBioguideId[
-          congressLegislator.id.bioguide
-        ] ?? {};
+    for (const legislator of legislators) {
+      const socialMedia: legislatorSocialMedia["social"] =
+        legislatorsSocialMediaByBioguideId[legislator.id.bioguide] ?? {};
 
       const personSameAs: NamedNode[] = [];
-      if (congressLegislator.id.wikidata) {
+      if (legislator.id.wikidata) {
         personSameAs.push(
           N3.DataFactory.namedNode(
-            `http://www.wikidata.org/entity/${congressLegislator.id.wikidata}`,
+            `http://www.wikidata.org/entity/${legislator.id.wikidata}`,
           ),
         );
       }
-      if (congressLegislator.id.wikipedia) {
+      if (legislator.id.wikipedia) {
         personSameAs.push(
           N3.DataFactory.namedNode(
-            `https://en.wikipedia.org/wiki/${congressLegislator.id.wikipedia.replaceAll(" ", "_")}`,
+            `https://en.wikipedia.org/wiki/${legislator.id.wikipedia.replaceAll(" ", "_")}`,
           ),
         );
       }
@@ -210,18 +207,67 @@ const cmd = command({
         );
       }
 
+      // https://github.com/unitedstates/images
+      const imageObject = ({
+        isBasedOn,
+        size,
+      }: {
+        isBasedOn?: ImageObject;
+        size: "original" | { height: number; width: number };
+      }): ImageObject => {
+        const contentUrl = `https://unitedstates.github.io/images/congress/${size === "original" ? "original" : `${size.width}x${size.height}`}/${legislator.id.bioguide}.jpg`;
+        return new ImageObject({
+          contentUrl: contentUrl,
+          identifier: contentUrl,
+          height:
+            size !== "original"
+              ? new QuantitiveValue({
+                  value: size.height,
+                })
+              : undefined,
+          isBasedOn: isBasedOn
+            ? [new CreativeWorkStub({ identifier: isBasedOn.identifier })]
+            : undefined,
+          width:
+            size !== "original"
+              ? new QuantitiveValue({
+                  value: size.width,
+                })
+              : undefined,
+        });
+      };
+      const originalImageObject = imageObject({ size: "original" });
+      const imageObjects = [
+        originalImageObject,
+        imageObject({
+          isBasedOn: originalImageObject,
+          size: {
+            height: 550,
+            width: 450,
+          },
+        }),
+        imageObject({
+          isBasedOn: originalImageObject,
+          size: {
+            height: 225,
+            width: 275,
+          },
+        }),
+      ];
+      imageObjects.forEach((imageObject) => imageObject.toRdf({ resourceSet }));
+
       const person = new Person({
-        birthDate: congressLegislator.bio.birthday
-          ? new Date(congressLegislator.bio.birthday)
+        birthDate: legislator.bio.birthday
+          ? new Date(legislator.bio.birthday)
           : undefined,
-        familyName: congressLegislator.name.last,
-        gender:
-          congressLegislator.bio.gender === "F" ? schema.Female : schema.Male,
-        givenName: congressLegislator.name.first,
+        familyName: legislator.name.last,
+        gender: legislator.bio.gender === "F" ? schema.Female : schema.Male,
+        givenName: legislator.name.first,
         identifier: N3.DataFactory.namedNode(
-          `https://bioguide.congress.gov/search/bio/${congressLegislator.id.bioguide}`,
+          `https://bioguide.congress.gov/search/bio/${legislator.id.bioguide}`,
         ),
-        name: congressLegislator.name.official_full,
+        images: imageObjects.map(stubify),
+        name: legislator.name.official_full,
         sameAs: personSameAs,
       });
 
