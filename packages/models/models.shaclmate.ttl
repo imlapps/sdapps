@@ -16,12 +16,13 @@ schema:CreativeWork
     shaclmate:abstract true ;
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:Thing .
+    rdfs:subClassOf schema:Thing ;
+    sh:property schema:CreativeWork-isBasedOn .
 
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
     sh:name "isBasedOn" ;
-    sh:node schema:CreativeWorkStub ;
+    sh:nodeKind sh:IRI ;
     sh:path schema:isBasedOn .
 
 schema:Enumeration
@@ -45,8 +46,7 @@ schema:GenderType
 schema:ImageObject
     shaclmate:name "ImageObject" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:MediaObject ;
-    sh:property schema:CreativeWork-isBasedOn .
+    rdfs:subClassOf schema:MediaObject .
 
 schema:Intangible
     shaclmate:abstract true ;
@@ -98,11 +98,22 @@ schema:Occupation
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
 
+schema:Organization
+    shaclmate:name "Organization" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing .
+
 schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Thing-images .
+    sh:property schema:Person-affiliations, schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Thing-images .
+
+schema:Person-affiliations
+    a sh:PropertyShape ;
+    sh:name "affiliations" ;
+    sh:node schema:Organization ;
+    sh:path schema:affiliation .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -181,6 +192,7 @@ schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
     sh:property schema:Thing-description, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
 
 schema:Thing-description

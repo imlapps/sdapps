@@ -3,11 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  CreativeWorkStub,
   ImageObject,
+  Organization,
   Person,
   QuantitiveValue,
-  stubify,
 } from "@prosopa/models";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap";
 import Serializer from "@rdfjs/serializer-turtle";
@@ -19,6 +18,8 @@ import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
 import { MutableResourceSet } from "rdfjs-resource";
 import yaml from "yaml";
 import { z } from "zod";
+
+const dataFactory = N3.DataFactory;
 
 const thisDirectoryPath = path.resolve(
   path.join(path.dirname(fileURLToPath(import.meta.url))),
@@ -147,72 +148,104 @@ const cmd = command({
 
     const dataset = new N3.Store();
     const resourceSet = new MutableResourceSet({
-      dataFactory: N3.DataFactory,
+      dataFactory,
       dataset,
     });
 
+    const partiesByName: Record<string, Organization> = {};
+
     // Transform
     for (const legislator of legislators) {
-      const socialMedia: legislatorSocialMedia["social"] =
+      const legislatorSocialMedia: legislatorSocialMedia["social"] =
         legislatorsSocialMediaByBioguideId[legislator.id.bioguide] ?? {};
+
+      let party: Organization | undefined;
+      for (const term of legislator.terms) {
+        party = partiesByName[term.party];
+        if (!party) {
+          let partyIdentifier: NamedNode | undefined;
+          switch (term.party) {
+            case "Democrat":
+              partyIdentifier = dataFactory.namedNode(
+                "https://www.wikidata.org/wiki/Q29552",
+              );
+              break;
+            case "Independent":
+              break;
+            case "Republican":
+              partyIdentifier = dataFactory.namedNode(
+                "https://www.wikidata.org/wiki/Q29468",
+              );
+              break;
+            default:
+              throw new RangeError(term.party);
+          }
+          if (partyIdentifier) {
+            partiesByName[term.party] = party = new Organization({
+              identifier: partyIdentifier,
+              name: term.party,
+            });
+          }
+        }
+      }
 
       const personSameAs: NamedNode[] = [];
       if (legislator.id.wikidata) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
+          dataFactory.namedNode(
             `http://www.wikidata.org/entity/${legislator.id.wikidata}`,
           ),
         );
       }
       if (legislator.id.wikipedia) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
+          dataFactory.namedNode(
             `https://en.wikipedia.org/wiki/${legislator.id.wikipedia.replaceAll(" ", "_")}`,
           ),
         );
       }
-      if (socialMedia.facebook) {
+      if (legislatorSocialMedia.facebook) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
-            `https://facebook.com/${socialMedia.facebook}`,
+          dataFactory.namedNode(
+            `https://facebook.com/${legislatorSocialMedia.facebook}`,
           ),
         );
       }
-      if (socialMedia.instagram) {
+      if (legislatorSocialMedia.instagram) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
-            `https://instagram.com/${socialMedia.instagram}`,
+          dataFactory.namedNode(
+            `https://instagram.com/${legislatorSocialMedia.instagram}`,
           ),
         );
       }
-      if (socialMedia.twitter) {
+      if (legislatorSocialMedia.twitter) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
-            `https://twitter.com/${socialMedia.twitter}`,
+          dataFactory.namedNode(
+            `https://twitter.com/${legislatorSocialMedia.twitter}`,
           ),
         );
       }
-      if (socialMedia.youtube) {
+      if (legislatorSocialMedia.youtube) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
-            `https://youtube.com/user/${socialMedia.youtube}`,
+          dataFactory.namedNode(
+            `https://youtube.com/user/${legislatorSocialMedia.youtube}`,
           ),
         );
       }
-      if (socialMedia.youtube_id) {
+      if (legislatorSocialMedia.youtube_id) {
         personSameAs.push(
-          N3.DataFactory.namedNode(
-            `https://youtube.com/channel/${socialMedia.youtube_id}`,
+          dataFactory.namedNode(
+            `https://youtube.com/channel/${legislatorSocialMedia.youtube_id}`,
           ),
         );
       }
 
       // https://github.com/unitedstates/images
-      const imageObject = ({
+      const personImageObject = ({
         isBasedOn,
         size,
       }: {
-        isBasedOn?: ImageObject;
+        isBasedOn?: NamedNode;
         size: "original" | { height: number; width: number };
       }): ImageObject => {
         const contentUrl = `https://unitedstates.github.io/images/congress/${size === "original" ? "original" : `${size.width}x${size.height}`}/${legislator.id.bioguide}.jpg`;
@@ -222,51 +255,54 @@ const cmd = command({
           height:
             size !== "original"
               ? new QuantitiveValue({
+                  identifier: dataFactory.namedNode(`${contentUrl}#height`),
                   value: size.height,
                 })
               : undefined,
-          isBasedOn: isBasedOn
-            ? [new CreativeWorkStub({ identifier: isBasedOn.identifier })]
-            : undefined,
+          isBasedOn: isBasedOn ? [isBasedOn] : undefined,
           width:
             size !== "original"
               ? new QuantitiveValue({
+                  identifier: dataFactory.namedNode(`${contentUrl}#width`),
                   value: size.width,
                 })
               : undefined,
         });
       };
-      const originalImageObject = imageObject({ size: "original" });
-      const imageObjects = [
-        originalImageObject,
-        imageObject({
-          isBasedOn: originalImageObject,
+      const personOriginalImageObject = personImageObject({ size: "original" });
+      const personImageObjects = [
+        personOriginalImageObject,
+        personImageObject({
+          isBasedOn: personOriginalImageObject.identifier,
           size: {
             height: 550,
             width: 450,
           },
         }),
-        imageObject({
-          isBasedOn: originalImageObject,
+        personImageObject({
+          isBasedOn: personOriginalImageObject.identifier,
           size: {
             height: 225,
             width: 275,
           },
         }),
       ];
-      imageObjects.forEach((imageObject) => imageObject.toRdf({ resourceSet }));
+      personImageObjects.forEach((imageObject) =>
+        imageObject.toRdf({ resourceSet }),
+      );
 
       const person = new Person({
+        affiliations: party ? [party] : undefined,
         birthDate: legislator.bio.birthday
           ? new Date(legislator.bio.birthday)
           : undefined,
         familyName: legislator.name.last,
         gender: legislator.bio.gender === "F" ? schema.Female : schema.Male,
         givenName: legislator.name.first,
-        identifier: N3.DataFactory.namedNode(
+        identifier: dataFactory.namedNode(
           `https://bioguide.congress.gov/search/bio/${legislator.id.bioguide}`,
         ),
-        images: imageObjects.map(stubify),
+        images: personImageObjects,
         name: legislator.name.official_full,
         sameAs: personSameAs,
       });
@@ -285,7 +321,7 @@ const cmd = command({
             ["xsd", xsd[""]],
           ],
           {
-            factory: N3.DataFactory,
+            factory: dataFactory,
           },
         ),
       }).transform([...dataset]),
