@@ -17,6 +17,23 @@ schema:CreativeWork
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
 
+schema:Enumeration
+    shaclmate:name "Enumeration" ;
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible .
+
+schema:Female
+    a schema:GenderType ;
+    rdfs:label "Female" .
+
+schema:GenderType
+    shaclmate:name "GenderType" ;
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Enumeration ;
+    sh:in (schema:Female
+        schema:Male
+    ) .
+
 schema:ImageObject
     shaclmate:name "ImageObject" ;
     a owl:Class, sh:NodeShape ;
@@ -27,6 +44,10 @@ schema:Intangible
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
 
+schema:Male
+    a schema:GenderType ;
+    rdfs:label "Male" .
+
 schema:MediaObject
     shaclmate:name "MediaObject" ;
     a owl:Class, sh:NodeShape ;
@@ -35,9 +56,9 @@ schema:MediaObject
 
 schema:MediaObject-contentUrl
     a sh:PropertyShape ;
-    sh:datatype xsd:anyURI ;
     sh:maxCount 1 ;
     sh:name "contentUrl" ;
+    sh:nodeKind sh:IRI ;
     sh:path schema:contentUrl .
 
 schema:MediaObject-encodingFormat
@@ -70,7 +91,13 @@ schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-familyName, schema:Person-givenName, schema:Person-hasOccupation .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation .
+
+schema:Person-birthDate
+    a sh:PropertyShape ;
+    sh:datatype xsd:date ;
+    sh:name "birthDate" ;
+    sh:path schema:birthDate .
 
 schema:Person-familyName
     a sh:PropertyShape ;
@@ -78,6 +105,18 @@ schema:Person-familyName
     sh:maxCount 1 ;
     sh:name "familyName" ;
     sh:path schema:familyName .
+
+schema:Person-gender
+    a sh:PropertyShape ;
+    sh:name "gender" ;
+    sh:or ([
+            sh:node schema:GenderType
+        ]
+        [
+            sh:datatype xsd:string
+        ]
+    ) ;
+    sh:path schema:gender .
 
 schema:Person-givenName
     a sh:PropertyShape ;
@@ -127,7 +166,7 @@ schema:StructuredValue
 schema:Thing
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-description, schema:Thing-images, schema:Thing-name, schema:Thing-url .
+    sh:property schema:Thing-description, schema:Thing-images, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -149,10 +188,16 @@ schema:Thing-name
     sh:name "name" ;
     sh:path schema:name .
 
+schema:Thing-sameAs
+    a sh:PropertyShape ;
+    sh:name "sameAs" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:sameAs .
+
 schema:Thing-url
     a sh:PropertyShape ;
-    sh:datatype xsd:anyURI ;
     sh:maxCount 1 ;
     sh:name "url" ;
+    sh:nodeKind sh:IRI ;
     sh:path schema:url .
 

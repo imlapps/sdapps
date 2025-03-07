@@ -16,6 +16,7 @@
         "useLiteralKeys": "off"
       },
       "correctness": {
+        "noUnusedImports": "error",
         "noUnusedPrivateClassMembers": "error",
         "useHookAtTopLevel": "error",
         "useImportExtensions": "off"
