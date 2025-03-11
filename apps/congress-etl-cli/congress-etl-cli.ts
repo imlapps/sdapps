@@ -2,16 +2,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import PrefixMap from "@rdfjs/prefix-map/PrefixMap";
+import Serializer from "@rdfjs/serializer-turtle";
+import type { NamedNode } from "@rdfjs/types";
 import {
   ImageObject,
   Organization,
   Person,
   QuantitiveValue,
   Role,
-} from "@prosopa/models";
-import PrefixMap from "@rdfjs/prefix-map/PrefixMap";
-import Serializer from "@rdfjs/serializer-turtle";
-import type { NamedNode } from "@rdfjs/types";
+} from "@sdapps/models";
 import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { command, flag, run } from "cmd-ts";
 import N3 from "n3";
