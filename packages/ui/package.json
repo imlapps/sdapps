@@ -22,6 +22,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "clean": "rimraf dist",
     "check-types": "tsc --noEmit",
     "dev": "tsc --watch"
   },
