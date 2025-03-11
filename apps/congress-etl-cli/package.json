@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@prosopa/models": "*",
+    "@sdapps/models": "*",
     "@rdfjs/prefix-map": "0.1.2",
     "@rdfjs/serializer-turtle": "^1.1.3",
     "@tpluscode/rdf-ns-builders": "^4.3.0",

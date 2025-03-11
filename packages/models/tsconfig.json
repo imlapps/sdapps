@@ -2,6 +2,6 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "extends": ["@prosopa/tsconfig/lib.json"],
+  "extends": ["@sdapps/tsconfig/lib.json"],
   "include": ["src/*.ts"]
 }

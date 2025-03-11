@@ -3,6 +3,6 @@
     "jsx": "react-jsx",
     "lib": ["es2022", "DOM", "DOM.Iterable"]
   },
-  "extends": ["@prosopa/tsconfig/lib.json"],
+  "extends": ["@sdapps/tsconfig/lib.json"],
   "include": ["src/*.tsx"]
 }
