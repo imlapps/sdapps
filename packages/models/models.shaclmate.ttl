@@ -101,19 +101,35 @@ schema:Occupation
 schema:Organization
     shaclmate:name "Organization" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:Thing .
+    rdfs:subClassOf schema:Thing ;
+    sh:property schema:Organization-members, schema:Organization-parentOrganizations, schema:Organization-subOrganizations .
+
+schema:Organization-members
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "members" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:member .
+
+schema:Organization-parentOrganizations
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "parentOrganizations" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:parentOrganization .
+
+schema:Organization-subOrganizations
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "subOrganizations" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:subOrganization .
 
 schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-affiliations, schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Thing-images .
-
-schema:Person-affiliations
-    a sh:PropertyShape ;
-    sh:name "affiliations" ;
-    sh:node schema:Organization ;
-    sh:path schema:affiliation .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-memberOf, schema:Thing-images .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -161,6 +177,13 @@ schema:Person-hasOccupation
         ]
     ) .
 
+schema:Person-memberOf
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "memberOf" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:memberOf .
+
 schema:QuantitativeValue
     shaclmate:name "QuantitiveValue" ;
     a owl:Class, sh:NodeShape ;
@@ -189,7 +212,7 @@ schema:QuantitativeValue-value
     sh:path schema:value .
 
 schema:Role
-    shaclmate:mintingStrategy shaclmate:_MintingStrategy_SHA256 ;
+    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     shaclmate:name "Role" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible ;
@@ -228,7 +251,7 @@ schema:Thing
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:IRI ;
-    sh:property schema:Thing-description, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
+    sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -236,6 +259,12 @@ schema:Thing-description
     sh:maxCount 1 ;
     sh:name "description" ;
     sh:path schema:description .
+
+schema:Thing-identifiers
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "identifiers" ;
+    sh:path schema:identifier .
 
 schema:Thing-images
     a sh:PropertyShape ;

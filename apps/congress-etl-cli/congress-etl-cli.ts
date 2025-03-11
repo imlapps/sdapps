@@ -34,8 +34,46 @@ const dataDirectoryPath = path.resolve(
 );
 const cacheDirectoryPath = path.join(dataDirectoryPath, ".cache");
 
-const legislatorsBaseUrl =
-  "https://unitedstates.github.io/congress-legislators/";
+const baseUrl = "https://unitedstates.github.io/congress-legislators/";
+
+const committeeSchema = z.object({
+  address: z.string().optional(),
+  house_committee_id: z.string().length(2).optional(),
+  jurisdiction: z.string().optional(),
+  jurisdiction_source: z.string().optional(),
+  minority_rss_url: z.string().url().optional(),
+  name: z.string(),
+  phone: z.string().optional(),
+  rss_url: z.string().url().optional(),
+  senate_committee_id: z.string().length(4).optional(),
+  subcommittees: z
+    .array(
+      z.object({
+        name: z.string(),
+        thomas_id: z.string().length(2),
+      }),
+    )
+    .optional(),
+  thomas_id: z.string().length(4),
+  type: z.enum(["house", "joint", "senate"]),
+  url: z.string().url().optional(),
+  youtube_id: z.string().optional(),
+});
+const committeesSchema = z.array(committeeSchema);
+
+const committeeMembershipSchema = z.object({
+  bioguide: z.string(),
+  chamber: z.enum(["house", "senate"]).optional(),
+  name: z.string(),
+  party: z.enum(["majority", "minority"]),
+  rank: z.number(),
+  title: z.string().optional(),
+});
+const committeeMembershipsSchema = z.record(
+  z.string(),
+  z.array(committeeMembershipSchema),
+);
+
 const legislatorSchema = z.object({
   bio: z.object({
     birthday: z.string().date().optional(),
@@ -132,12 +170,33 @@ const cmd = command({
     }
 
     // Extract
+    const committees = await committeesSchema.parseAsync(
+      await fetchYaml(`${baseUrl}committees-current.yaml`),
+    );
+    // Bioguide ID -> committee id -> committee membership
+    const committeeMembershipsByIds: Record<
+      string,
+      Record<string, z.infer<typeof committeeMembershipSchema>>
+    > = {};
+    for (const [committeeId, committeeMemberships] of Object.entries(
+      await committeeMembershipsSchema.parseAsync(
+        await fetchYaml(`${baseUrl}committee-membership-current.yaml`),
+      ),
+    )) {
+      for (const committeeMembership of committeeMemberships) {
+        if (!committeeMembershipsByIds[committeeMembership.bioguide]) {
+          committeeMembershipsByIds[committeeMembership.bioguide] = {};
+        }
+        committeeMembershipsByIds[committeeMembership.bioguide][committeeId] =
+          committeeMembership;
+      }
+    }
     const legislators = await legislatorsSchema.parseAsync(
-      await fetchYaml(`${legislatorsBaseUrl}legislators-current.yaml`),
+      await fetchYaml(`${baseUrl}legislators-current.yaml`),
     );
     const legislatorsSocialMediaByBioguideId = (
       await legislatorsSocialMediaSchema.parseAsync(
-        await fetchYaml(`${legislatorsBaseUrl}legislators-social-media.yaml`),
+        await fetchYaml(`${baseUrl}legislators-social-media.yaml`),
       )
     ).reduce(
       (map, element) => {
@@ -147,94 +206,153 @@ const cmd = command({
       {} as Record<number, legislatorSocialMedia["social"]>,
     );
 
+    // Transform
     const dataset = new N3.Store();
     const resourceSet = new MutableResourceSet({
       dataFactory,
       dataset,
     });
 
-    const partiesByName: Record<string, Organization> = {};
+    const houseOrganization = new Organization({
+      identifier: "urn:congress:chamber:house",
+      name: "United States House of Representatives",
+      sameAs: [dataFactory.namedNode("http://www.wikidata.org/entity/Q11701")],
+      url: "https://www.house.gov/",
+    });
 
-    // Transform
+    const senateOrganization = new Organization({
+      identifier: "urn:congress:chamber:senate",
+      name: "United States Senate",
+      sameAs: [dataFactory.namedNode("http://www.wikidata.org/entity/Q66096")],
+      url: "https://www.senate.gov/",
+    });
+
+    const committeeOrganizationsById: Record<string, Organization> = {};
+    for (const committee of committees) {
+      const committeeSameAs: NamedNode[] = [];
+      if (committee.url) {
+        committeeSameAs.push(dataFactory.namedNode(committee.url));
+      }
+      if (committee.youtube_id) {
+        committeeSameAs.push(
+          dataFactory.namedNode(
+            `https://youtube.com/channel/${committee.youtube_id}`,
+          ),
+        );
+      }
+      const committeeOrganization = new Organization({
+        description: committee.jurisdiction,
+        identifier: `urn:congress:committee:${committee.thomas_id}`,
+        identifiers: [committee.thomas_id],
+        name: committee.name,
+        sameAs: committeeSameAs,
+      });
+      committeeOrganizationsById[committee.thomas_id] = committeeOrganization;
+
+      for (const subcommittee of committee.subcommittees ?? []) {
+        const subcommitteeOrganization = new Organization({
+          identifier: `urn:congress:committee:${committee.thomas_id}:subcommittee:${subcommittee.thomas_id}`,
+          name: `${committee.name}: Subcommittees: ${subcommittee.name}`,
+          parentOrganizations: [committeeOrganization.identifier],
+        });
+        committeeOrganization.subOrganizations.push(
+          subcommitteeOrganization.identifier,
+        );
+        committeeOrganizationsById[
+          `${committee.thomas_id}${subcommittee.thomas_id}`
+        ] = subcommitteeOrganization;
+      }
+
+      switch (committee.type) {
+        case "house":
+          committeeOrganization.parentOrganizations.push(
+            houseOrganization.identifier,
+          );
+          houseOrganization.subOrganizations.push(
+            committeeOrganization.identifier,
+          );
+          break;
+        case "joint":
+          committeeOrganization.parentOrganizations.push(
+            houseOrganization.identifier,
+          );
+          committeeOrganization.parentOrganizations.push(
+            senateOrganization.identifier,
+          );
+          houseOrganization.subOrganizations.push(
+            committeeOrganization.identifier,
+          );
+          senateOrganization.subOrganizations.push(
+            committeeOrganization.identifier,
+          );
+          break;
+        case "senate":
+          committeeOrganization.parentOrganizations.push(
+            senateOrganization.identifier,
+          );
+          senateOrganization.subOrganizations.push(
+            committeeOrganization.identifier,
+          );
+          break;
+      }
+    }
+
+    const partyOrganizationsByName: Record<string, Organization> = {};
     for (const legislator of legislators) {
       const legislatorSocialMedia: legislatorSocialMedia["social"] =
         legislatorsSocialMediaByBioguideId[legislator.id.bioguide] ?? {};
 
       const currentTerm = legislator.terms[legislator.terms.length - 1];
 
-      let party: Organization | undefined;
-      party = partiesByName[currentTerm.party];
-      if (!party) {
-        let partyIdentifier: NamedNode | undefined;
-        switch (currentTerm.party) {
-          case "Democrat":
-            partyIdentifier = dataFactory.namedNode(
-              "https://www.wikidata.org/wiki/Q29552",
-            );
-            break;
-          case "Independent":
-            break;
-          case "Republican":
-            partyIdentifier = dataFactory.namedNode(
-              "https://www.wikidata.org/wiki/Q29468",
-            );
-            break;
-          default:
-            throw new RangeError(currentTerm.party);
-        }
-        if (partyIdentifier) {
-          partiesByName[currentTerm.party] = party = new Organization({
-            identifier: partyIdentifier,
-            name: currentTerm.party,
-          });
-        }
-      }
-
-      const personSameAs: NamedNode[] = [];
+      const legislatorSameAs: NamedNode[] = [
+        dataFactory.namedNode(
+          `https://bioguide.congress.gov/search/bio/${legislator.id.bioguide}`,
+        ),
+      ];
       if (legislator.id.wikidata) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `http://www.wikidata.org/entity/${legislator.id.wikidata}`,
           ),
         );
       }
       if (legislator.id.wikipedia) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `https://en.wikipedia.org/wiki/${legislator.id.wikipedia.replaceAll(" ", "_")}`,
           ),
         );
       }
       if (legislatorSocialMedia.facebook) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `https://facebook.com/${legislatorSocialMedia.facebook}`,
           ),
         );
       }
       if (legislatorSocialMedia.instagram) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `https://instagram.com/${legislatorSocialMedia.instagram}`,
           ),
         );
       }
       if (legislatorSocialMedia.twitter) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `https://twitter.com/${legislatorSocialMedia.twitter}`,
           ),
         );
       }
       if (legislatorSocialMedia.youtube) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `https://youtube.com/user/${legislatorSocialMedia.youtube}`,
           ),
         );
       }
       if (legislatorSocialMedia.youtube_id) {
-        personSameAs.push(
+        legislatorSameAs.push(
           dataFactory.namedNode(
             `https://youtube.com/channel/${legislatorSocialMedia.youtube_id}`,
           ),
@@ -242,7 +360,7 @@ const cmd = command({
       }
 
       // https://github.com/unitedstates/images
-      const personImageObject = ({
+      const legislatorImageObject = ({
         isBasedOn,
         size,
       }: {
@@ -270,30 +388,31 @@ const cmd = command({
               : undefined,
         });
       };
-      const personOriginalImageObject = personImageObject({ size: "original" });
-      const personImageObjects = [
-        personOriginalImageObject,
-        personImageObject({
-          isBasedOn: personOriginalImageObject.identifier,
+      const legislatorOriginalImageObject = legislatorImageObject({
+        size: "original",
+      });
+      const legislatorImageObjects = [
+        legislatorOriginalImageObject,
+        legislatorImageObject({
+          isBasedOn: legislatorOriginalImageObject.identifier,
           size: {
             height: 550,
             width: 450,
           },
         }),
-        personImageObject({
-          isBasedOn: personOriginalImageObject.identifier,
+        legislatorImageObject({
+          isBasedOn: legislatorOriginalImageObject.identifier,
           size: {
             height: 225,
             width: 275,
           },
         }),
       ];
-      personImageObjects.forEach((imageObject) =>
+      legislatorImageObjects.forEach((imageObject) =>
         imageObject.toRdf({ resourceSet }),
       );
 
-      const person = new Person({
-        affiliations: party ? [party] : undefined,
+      const legislatorPerson = new Person({
         birthDate: legislator.bio.birthday
           ? new Date(legislator.bio.birthday)
           : undefined,
@@ -316,14 +435,64 @@ const cmd = command({
             }),
         ),
         identifier: dataFactory.namedNode(
-          `https://bioguide.congress.gov/search/bio/${legislator.id.bioguide}`,
+          `urn:congress:legislator:${legislator.id.bioguide}`,
         ),
-        images: personImageObjects,
+        images: legislatorImageObjects,
         name: legislator.name.official_full,
-        sameAs: personSameAs,
+        sameAs: legislatorSameAs,
       });
 
-      person.toRdf({ resourceSet });
+      for (const [committeeId, _committeeMembership] of Object.entries(
+        committeeMembershipsByIds[legislator.id.bioguide] ?? {},
+      )) {
+        const committeeOrganization = committeeOrganizationsById[committeeId];
+        committeeOrganization.members.push(legislatorPerson.identifier);
+        legislatorPerson.memberOf.push(committeeOrganization.identifier);
+      }
+
+      let partyOrganization: Organization | undefined;
+      partyOrganization = partyOrganizationsByName[currentTerm.party];
+      if (!partyOrganization) {
+        let partySameAs: NamedNode | undefined;
+        switch (currentTerm.party) {
+          case "Democrat":
+            partySameAs = dataFactory.namedNode(
+              "https://www.wikidata.org/wiki/Q29552",
+            );
+            break;
+          case "Independent":
+            break;
+          case "Republican":
+            partySameAs = dataFactory.namedNode(
+              "https://www.wikidata.org/wiki/Q29468",
+            );
+            break;
+          default:
+            throw new RangeError(currentTerm.party);
+        }
+        partyOrganizationsByName[currentTerm.party] = partyOrganization =
+          new Organization({
+            identifier: `urn:congress:party:${encodeURIComponent(currentTerm.party)}`,
+            name: currentTerm.party,
+            sameAs: partySameAs ? [partySameAs] : undefined,
+          });
+      }
+      if (partyOrganization) {
+        legislatorPerson.memberOf.push(partyOrganization.identifier);
+        partyOrganization.members.push(legislatorPerson.identifier);
+      }
+
+      legislatorPerson.toRdf({ resourceSet });
+    }
+
+    // Serialize organizations after all members have been added
+    houseOrganization.toRdf({ resourceSet });
+    senateOrganization.toRdf({ resourceSet });
+    for (const committee of Object.values(committeeOrganizationsById)) {
+      committee.toRdf({ resourceSet });
+    }
+    for (const party of Object.values(partyOrganizationsByName)) {
+      party.toRdf({ resourceSet });
     }
 
     // Load

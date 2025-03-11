@@ -206,6 +206,7 @@ export function dateEquals(left: Date, right: Date): EqualsResult {
 export abstract class Thing {
   readonly description: purify.Maybe<string>;
   abstract readonly identifier: rdfjs.NamedNode;
+  readonly identifiers: readonly string[];
   readonly name: purify.Maybe<string>;
   readonly sameAs: readonly rdfjs.NamedNode[];
   abstract readonly type:
@@ -220,6 +221,7 @@ export abstract class Thing {
 
   constructor(parameters: {
     readonly description?: purify.Maybe<string> | string;
+    readonly identifiers?: readonly string[];
     readonly name?: purify.Maybe<string> | string;
     readonly sameAs?: readonly rdfjs.NamedNode[];
     readonly url?: rdfjs.NamedNode | purify.Maybe<rdfjs.NamedNode> | string;
@@ -232,6 +234,14 @@ export abstract class Thing {
       this.description = purify.Maybe.empty();
     } else {
       this.description = parameters.description as never;
+    }
+
+    if (typeof parameters.identifiers === "undefined") {
+      this.identifiers = [];
+    } else if (Array.isArray(parameters.identifiers)) {
+      this.identifiers = parameters.identifiers;
+    } else {
+      this.identifiers = parameters.identifiers as never;
     }
 
     if (purify.Maybe.isMaybe(parameters.name)) {
@@ -287,6 +297,18 @@ export abstract class Thing {
             type: "Property" as const,
           }),
         ),
+      )
+      .chain(() =>
+        ((left, right) => arrayEquals(left, right, strictEquals))(
+          this.identifiers,
+          other.identifiers,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "identifiers",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       )
       .chain(() =>
         ((left, right) => maybeEquals(left, right, strictEquals))(
@@ -345,6 +367,10 @@ export abstract class Thing {
     this.description.ifJust((_value0) => {
       _hasher.update(_value0);
     });
+    for (const _item0 of this.identifiers) {
+      _hasher.update(_item0);
+    }
+
     this.name.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -363,6 +389,7 @@ export abstract class Thing {
   toJson(): {
     readonly description: string | undefined;
     readonly "@id": string;
+    readonly identifiers: readonly string[];
     readonly name: string | undefined;
     readonly sameAs: readonly { readonly "@id": string }[];
     readonly type:
@@ -379,6 +406,7 @@ export abstract class Thing {
       JSON.stringify({
         description: this.description.map((_item) => _item).extract(),
         "@id": this.identifier.value,
+        identifiers: this.identifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
         type: this.type,
@@ -402,6 +430,10 @@ export abstract class Thing {
       dataFactory.namedNode("http://schema.org/description"),
       this.description,
     );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/identifier"),
+      this.identifiers.map((_item) => _item),
+    );
     _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
     _resource.add(
       dataFactory.namedNode("http://schema.org/sameAs"),
@@ -424,6 +456,7 @@ export namespace Thing {
     {
       description: purify.Maybe<string>;
       identifier: rdfjs.NamedNode;
+      identifiers: readonly string[];
       name: purify.Maybe<string>;
       sameAs: readonly rdfjs.NamedNode[];
       url: purify.Maybe<rdfjs.NamedNode>;
@@ -437,6 +470,7 @@ export namespace Thing {
     const _jsonObject = _jsonSafeParseResult.data;
     const description = purify.Maybe.fromNullable(_jsonObject["description"]);
     const identifier = dataFactory.namedNode(_jsonObject["@id"]);
+    const identifiers = _jsonObject["identifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
     const sameAs = _jsonObject["sameAs"].map((_item) =>
       dataFactory.namedNode(_item["@id"]),
@@ -444,7 +478,14 @@ export namespace Thing {
     const url = purify.Maybe.fromNullable(_jsonObject["url"]).map((_item) =>
       dataFactory.namedNode(_item["@id"]),
     );
-    return purify.Either.of({ description, identifier, name, sameAs, url });
+    return purify.Either.of({
+      description,
+      identifier,
+      identifiers,
+      name,
+      sameAs,
+      url,
+    });
   }
 
   export function propertiesFromRdf({
@@ -463,6 +504,7 @@ export namespace Thing {
     {
       description: purify.Maybe<string>;
       identifier: rdfjs.NamedNode;
+      identifiers: readonly string[];
       name: purify.Maybe<string>;
       sameAs: readonly rdfjs.NamedNode[];
       url: purify.Maybe<rdfjs.NamedNode>;
@@ -486,6 +528,28 @@ export namespace Thing {
 
     const description = _descriptionEither.unsafeCoerce();
     const identifier = _resource.identifier;
+    const _identifiersEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly string[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/identifier"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toString())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_identifiersEither.isLeft()) {
+      return _identifiersEither;
+    }
+
+    const identifiers = _identifiersEither.unsafeCoerce();
     const _nameEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -542,7 +606,14 @@ export namespace Thing {
     }
 
     const url = _urlEither.unsafeCoerce();
-    return purify.Either.of({ description, identifier, name, sameAs, url });
+    return purify.Either.of({
+      description,
+      identifier,
+      identifiers,
+      name,
+      sameAs,
+      url,
+    });
   }
 
   export function jsonSchema() {
@@ -559,6 +630,7 @@ export namespace Thing {
           scope: `${scopePrefix}/properties/@id`,
           type: "Control",
         },
+        { scope: `${scopePrefix}/properties/identifiers`, type: "Control" },
         { scope: `${scopePrefix}/properties/name`, type: "Control" },
         { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
         {
@@ -583,6 +655,7 @@ export namespace Thing {
     return zod.object({
       description: zod.string().optional(),
       "@id": zod.string().min(1),
+      identifiers: zod.string().array(),
       name: zod.string().optional(),
       sameAs: zod.object({ "@id": zod.string().min(1) }).array(),
       type: zod.enum([
@@ -1237,7 +1310,6 @@ export namespace Role {
   }
 }
 export class Person extends Thing {
-  readonly affiliations: readonly Organization[];
   readonly birthDate: purify.Maybe<Date>;
   readonly familyName: purify.Maybe<string>;
   readonly gender: purify.Maybe<
@@ -1247,11 +1319,11 @@ export class Person extends Thing {
   readonly hasOccupation: readonly (Occupation | Role)[];
   readonly identifier: rdfjs.NamedNode;
   readonly images: readonly ImageObject[];
+  memberOf: rdfjs.NamedNode[];
   override readonly type = "Person";
 
   constructor(
     parameters: {
-      readonly affiliations?: readonly Organization[];
       readonly birthDate?: Date | purify.Maybe<Date>;
       readonly familyName?: purify.Maybe<string> | string;
       readonly gender?:
@@ -1265,17 +1337,10 @@ export class Person extends Thing {
       readonly hasOccupation?: readonly (Occupation | Role)[];
       readonly identifier: rdfjs.NamedNode | string;
       readonly images?: readonly ImageObject[];
+      readonly memberOf?: readonly rdfjs.NamedNode[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
-    if (typeof parameters.affiliations === "undefined") {
-      this.affiliations = [];
-    } else if (Array.isArray(parameters.affiliations)) {
-      this.affiliations = parameters.affiliations;
-    } else {
-      this.affiliations = parameters.affiliations as never;
-    }
-
     if (purify.Maybe.isMaybe(parameters.birthDate)) {
       this.birthDate = parameters.birthDate;
     } else if (
@@ -1359,24 +1424,19 @@ export class Person extends Thing {
     } else {
       this.images = parameters.images as never;
     }
+
+    if (typeof parameters.memberOf === "undefined") {
+      this.memberOf = [];
+    } else if (Array.isArray(parameters.memberOf)) {
+      this.memberOf = parameters.memberOf;
+    } else {
+      this.memberOf = parameters.memberOf as never;
+    }
   }
 
   override equals(other: Person): EqualsResult {
     return super
       .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.affiliations,
-          other.affiliations,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "affiliations",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
       .chain(() =>
         ((left, right) => maybeEquals(left, right, dateEquals))(
           this.birthDate,
@@ -1472,6 +1532,18 @@ export class Person extends Thing {
           propertyValuesUnequal,
           type: "Property" as const,
         })),
+      )
+      .chain(() =>
+        ((left, right) => arrayEquals(left, right, booleanEquals))(
+          this.memberOf,
+          other.memberOf,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "memberOf",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
@@ -1481,10 +1553,6 @@ export class Person extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.hash(_hasher);
-    for (const _item0 of this.affiliations) {
-      _item0.hash(_hasher);
-    }
-
     this.birthDate.ifJust((_value0) => {
       _hasher.update(_value0.toISOString());
     });
@@ -1516,11 +1584,15 @@ export class Person extends Thing {
       _item0.hash(_hasher);
     }
 
+    for (const _item0 of this.memberOf) {
+      _hasher.update(_item0.termType);
+      _hasher.update(_item0.value);
+    }
+
     return _hasher;
   }
 
   override toJson(): {
-    readonly affiliations: readonly ReturnType<Organization["toJson"]>[];
     readonly birthDate: string | undefined;
     readonly familyName: string | undefined;
     readonly gender:
@@ -1543,11 +1615,11 @@ export class Person extends Thing {
       | ReturnType<Role["toJson"]>
     )[];
     readonly images: readonly ReturnType<ImageObject["toJson"]>[];
+    readonly memberOf: readonly { readonly "@id": string }[];
   } & ReturnType<Thing["toJson"]> {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
-        affiliations: this.affiliations.map((_item) => _item.toJson()),
         birthDate: this.birthDate
           .map((_item) => _item.toISOString().replace(/T.*$/, ""))
           .extract(),
@@ -1576,6 +1648,7 @@ export class Person extends Thing {
           _item.type === "Role" ? _item.toJson() : _item.toJson(),
         ),
         images: this.images.map((_item) => _item.toJson()),
+        memberOf: this.memberOf.map((_item) => ({ "@id": _item.value })),
       } satisfies ReturnType<Person["toJson"]>),
     );
   }
@@ -1603,12 +1676,6 @@ export class Person extends Thing {
       );
     }
 
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/affiliation"),
-      this.affiliations.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
     _resource.add(
       dataFactory.namedNode("http://schema.org/birthDate"),
       this.birthDate.map((_value) =>
@@ -1646,6 +1713,10 @@ export class Person extends Thing {
         _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/memberOf"),
+      this.memberOf.map((_item) => _item),
+    );
     return _resource;
   }
 
@@ -1660,7 +1731,6 @@ export namespace Person {
   ): purify.Either<
     zod.ZodError,
     {
-      affiliations: readonly Organization[];
       birthDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
@@ -1668,6 +1738,7 @@ export namespace Person {
       hasOccupation: readonly (Occupation | Role)[];
       identifier: rdfjs.NamedNode;
       images: readonly ImageObject[];
+      memberOf: rdfjs.NamedNode[];
     } & UnwrapR<ReturnType<typeof Thing.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = personJsonZodSchema().safeParse(_json);
@@ -1682,9 +1753,6 @@ export namespace Person {
     }
 
     const _super0 = _super0Either.unsafeCoerce();
-    const affiliations = _jsonObject["affiliations"].map((_item) =>
-      Organization.fromJson(_item).unsafeCoerce(),
-    );
     const birthDate = purify.Maybe.fromNullable(_jsonObject["birthDate"]).map(
       (_item) => new Date(_item),
     );
@@ -1714,9 +1782,11 @@ export namespace Person {
     const images = _jsonObject["images"].map((_item) =>
       ImageObject.fromJson(_item).unsafeCoerce(),
     );
+    const memberOf = _jsonObject["memberOf"].map((_item) =>
+      dataFactory.namedNode(_item["@id"]),
+    );
     return purify.Either.of({
       ..._super0,
-      affiliations,
       birthDate,
       familyName,
       gender,
@@ -1724,6 +1794,7 @@ export namespace Person {
       hasOccupation,
       identifier,
       images,
+      memberOf,
     });
   }
 
@@ -1747,7 +1818,6 @@ export namespace Person {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      affiliations: readonly Organization[];
       birthDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
@@ -1755,6 +1825,7 @@ export namespace Person {
       hasOccupation: readonly (Occupation | Role)[];
       identifier: rdfjs.NamedNode;
       images: readonly ImageObject[];
+      memberOf: rdfjs.NamedNode[];
     } & UnwrapR<ReturnType<typeof Thing.propertiesFromRdf>>
   > {
     const _super0Either = Thing.propertiesFromRdf({
@@ -1781,36 +1852,6 @@ export namespace Person {
       );
     }
 
-    const _affiliationsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly Organization[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/affiliation"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toNamedResource())
-            .chain((_resource) =>
-              Organization.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_affiliationsEither.isLeft()) {
-      return _affiliationsEither;
-    }
-
-    const affiliations = _affiliationsEither.unsafeCoerce();
     const _birthDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -1963,9 +2004,30 @@ export namespace Person {
     }
 
     const images = _imagesEither.unsafeCoerce();
+    const _memberOfEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      rdfjs.NamedNode[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/memberOf"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toIri())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_memberOfEither.isLeft()) {
+      return _memberOfEither;
+    }
+
+    const memberOf = _memberOfEither.unsafeCoerce();
     return purify.Either.of({
       ..._super0,
-      affiliations,
       birthDate,
       familyName,
       gender,
@@ -1973,6 +2035,7 @@ export namespace Person {
       hasOccupation,
       identifier,
       images,
+      memberOf,
     });
   }
 
@@ -1997,9 +2060,6 @@ export namespace Person {
     return {
       elements: [
         Thing.thingJsonUiSchema({ scopePrefix }),
-        Organization.organizationJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/affiliations`,
-        }),
         { scope: `${scopePrefix}/properties/birthDate`, type: "Control" },
         { scope: `${scopePrefix}/properties/familyName`, type: "Control" },
         { scope: `${scopePrefix}/properties/gender`, type: "Control" },
@@ -2008,6 +2068,7 @@ export namespace Person {
         ImageObject.imageObjectJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/images`,
         }),
+        { scope: `${scopePrefix}/properties/memberOf`, type: "Control" },
       ],
       label: "Person",
       type: "Group",
@@ -2017,7 +2078,6 @@ export namespace Person {
   export function personJsonZodSchema() {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
-        affiliations: Organization.organizationJsonZodSchema().array(),
         birthDate: zod.string().date().optional(),
         familyName: zod.string().optional(),
         gender: zod
@@ -2047,6 +2107,7 @@ export namespace Person {
           .array(),
         "@id": zod.string().min(1),
         images: ImageObject.imageObjectJsonZodSchema().array(),
+        memberOf: zod.object({ "@id": zod.string().min(1) }).array(),
         type: zod.literal("Person"),
       }),
     );
@@ -2054,11 +2115,17 @@ export namespace Person {
 }
 export class Organization extends Thing {
   readonly identifier: rdfjs.NamedNode;
+  members: rdfjs.NamedNode[];
+  parentOrganizations: rdfjs.NamedNode[];
+  subOrganizations: rdfjs.NamedNode[];
   override readonly type = "Organization";
 
   constructor(
     parameters: {
       readonly identifier: rdfjs.NamedNode | string;
+      readonly members?: readonly rdfjs.NamedNode[];
+      readonly parentOrganizations?: readonly rdfjs.NamedNode[];
+      readonly subOrganizations?: readonly rdfjs.NamedNode[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
@@ -2069,6 +2136,71 @@ export class Organization extends Thing {
     } else {
       this.identifier = parameters.identifier as never;
     }
+
+    if (typeof parameters.members === "undefined") {
+      this.members = [];
+    } else if (Array.isArray(parameters.members)) {
+      this.members = parameters.members;
+    } else {
+      this.members = parameters.members as never;
+    }
+
+    if (typeof parameters.parentOrganizations === "undefined") {
+      this.parentOrganizations = [];
+    } else if (Array.isArray(parameters.parentOrganizations)) {
+      this.parentOrganizations = parameters.parentOrganizations;
+    } else {
+      this.parentOrganizations = parameters.parentOrganizations as never;
+    }
+
+    if (typeof parameters.subOrganizations === "undefined") {
+      this.subOrganizations = [];
+    } else if (Array.isArray(parameters.subOrganizations)) {
+      this.subOrganizations = parameters.subOrganizations;
+    } else {
+      this.subOrganizations = parameters.subOrganizations as never;
+    }
+  }
+
+  override equals(other: Organization): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => arrayEquals(left, right, booleanEquals))(
+          this.members,
+          other.members,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "members",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => arrayEquals(left, right, booleanEquals))(
+          this.parentOrganizations,
+          other.parentOrganizations,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "parentOrganizations",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => arrayEquals(left, right, booleanEquals))(
+          this.subOrganizations,
+          other.subOrganizations,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "subOrganizations",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -2078,7 +2210,41 @@ export class Organization extends Thing {
   >(_hasher: HasherT): HasherT {
     super.hash(_hasher);
     _hasher.update(this.identifier.value);
+    for (const _item0 of this.members) {
+      _hasher.update(_item0.termType);
+      _hasher.update(_item0.value);
+    }
+
+    for (const _item0 of this.parentOrganizations) {
+      _hasher.update(_item0.termType);
+      _hasher.update(_item0.value);
+    }
+
+    for (const _item0 of this.subOrganizations) {
+      _hasher.update(_item0.termType);
+      _hasher.update(_item0.value);
+    }
+
     return _hasher;
+  }
+
+  override toJson(): {
+    readonly members: readonly { readonly "@id": string }[];
+    readonly parentOrganizations: readonly { readonly "@id": string }[];
+    readonly subOrganizations: readonly { readonly "@id": string }[];
+  } & ReturnType<Thing["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        members: this.members.map((_item) => ({ "@id": _item.value })),
+        parentOrganizations: this.parentOrganizations.map((_item) => ({
+          "@id": _item.value,
+        })),
+        subOrganizations: this.subOrganizations.map((_item) => ({
+          "@id": _item.value,
+        })),
+      } satisfies ReturnType<Organization["toJson"]>),
+    );
   }
 
   override toRdf({
@@ -2104,6 +2270,18 @@ export class Organization extends Thing {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/member"),
+      this.members.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/parentOrganization"),
+      this.parentOrganizations.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/subOrganization"),
+      this.subOrganizations.map((_item) => _item),
+    );
     return _resource;
   }
 
@@ -2117,9 +2295,12 @@ export namespace Organization {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing.propertiesFromJson>
-    >
+    {
+      identifier: rdfjs.NamedNode;
+      members: rdfjs.NamedNode[];
+      parentOrganizations: rdfjs.NamedNode[];
+      subOrganizations: rdfjs.NamedNode[];
+    } & UnwrapR<ReturnType<typeof Thing.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = organizationJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -2134,7 +2315,22 @@ export namespace Organization {
 
     const _super0 = _super0Either.unsafeCoerce();
     const identifier = dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
+    const members = _jsonObject["members"].map((_item) =>
+      dataFactory.namedNode(_item["@id"]),
+    );
+    const parentOrganizations = _jsonObject["parentOrganizations"].map(
+      (_item) => dataFactory.namedNode(_item["@id"]),
+    );
+    const subOrganizations = _jsonObject["subOrganizations"].map((_item) =>
+      dataFactory.namedNode(_item["@id"]),
+    );
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      members,
+      parentOrganizations,
+      subOrganizations,
+    });
   }
 
   export function fromJson(
@@ -2158,9 +2354,12 @@ export namespace Organization {
     resource: rdfjsResource.Resource<rdfjs.NamedNode>;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing.propertiesFromRdf>
-    >
+    {
+      identifier: rdfjs.NamedNode;
+      members: rdfjs.NamedNode[];
+      parentOrganizations: rdfjs.NamedNode[];
+      subOrganizations: rdfjs.NamedNode[];
+    } & UnwrapR<ReturnType<typeof Thing.propertiesFromRdf>>
   > {
     const _super0Either = Thing.propertiesFromRdf({
       ..._context,
@@ -2189,7 +2388,79 @@ export namespace Organization {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
+    const _membersEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      rdfjs.NamedNode[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/member"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toIri())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_membersEither.isLeft()) {
+      return _membersEither;
+    }
+
+    const members = _membersEither.unsafeCoerce();
+    const _parentOrganizationsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      rdfjs.NamedNode[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/parentOrganization"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toIri())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_parentOrganizationsEither.isLeft()) {
+      return _parentOrganizationsEither;
+    }
+
+    const parentOrganizations = _parentOrganizationsEither.unsafeCoerce();
+    const _subOrganizationsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      rdfjs.NamedNode[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/subOrganization"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toIri())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_subOrganizationsEither.isLeft()) {
+      return _subOrganizationsEither;
+    }
+
+    const subOrganizations = _subOrganizationsEither.unsafeCoerce();
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      members,
+      parentOrganizations,
+      subOrganizations,
+    });
   }
 
   export function fromRdf(
@@ -2213,7 +2484,18 @@ export namespace Organization {
   }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [Thing.thingJsonUiSchema({ scopePrefix })],
+      elements: [
+        Thing.thingJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/members`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/parentOrganizations`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/subOrganizations`,
+          type: "Control",
+        },
+      ],
       label: "Organization",
       type: "Group",
     };
@@ -2223,6 +2505,9 @@ export namespace Organization {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
+        members: zod.object({ "@id": zod.string().min(1) }).array(),
+        parentOrganizations: zod.object({ "@id": zod.string().min(1) }).array(),
+        subOrganizations: zod.object({ "@id": zod.string().min(1) }).array(),
         type: zod.literal("Organization"),
       }),
     );
