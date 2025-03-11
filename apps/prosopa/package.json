@@ -16,7 +16,7 @@
     "postcss-simple-vars": "^7.0.1",
     "typescript": "5.8.2"
   },
-  "name": "web",
+  "name": "@sdapps/prosopa",
   "private": true,
   "scripts": {
     "build": "next build",
