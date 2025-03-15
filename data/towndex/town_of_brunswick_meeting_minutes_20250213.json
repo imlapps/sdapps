@@ -105,94 +105,86 @@
         "name": "Kevin Mainello"
       },
       "description": "Report on building code enforcement activities and fee collection.",
-      "about": {
-        "@type": "Action",
-        "name": "Code Enforcement Actions",
-        "agent": {
-          "@type": "Person",
-          "name": "Kevin Mainello"
+      "about": [
+        {
+          "@type": "MonetaryAmount",
+          "name": "Total Building Permits and Zoning and Planning Board Fees collected",
+          "value": 13261.50,
+          "currency": "USD"
         },
-        "result": [
-          {
-            "@type": "MonetaryAmount",
-            "name": "Total Building Permits and Zoning and Planning Board Fees collected",
-            "value": 13261.50,
-            "currency": "USD"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Building permits issued or renewed",
-              "value": 13,
-              "unitText": "monthly building permits"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Building/Property inspections performed",
-              "value": 67,
-              "unitText": "monthly building/property inspections"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Building code call outs",
-              "value": 0,
-              "unitText": "monthly code call outs"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Building code complaints",
-              "value": 4,
-              "unitText": "monthly code complaints"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Building code complaint inspections",
-              "value": 4,
-              "unitText": "monthly code complaint inspections"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Follow-up building code complaint inspections",
-              "value": 19,
-              "unitText": "monthly follow-up building code complaint inspections"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Fire inspections",
-              "value": 1,
-              "unitText": "monthly fire inspections"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Vacant/Abandoned properties identification",
-              "value": 0,
-              "unitText": "monthly vacant/abandoned properties identifications"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Planning Board projects",
-              "value": 5,
-              "unitText": "open projects"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Zoning Board projects",
-              "value": 7,
-              "unitText": "open projects"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Number of FOIL requests received",
-              "value": 6,
-              "unitText": "requests"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Number of zoning inquiries received",
-              "value": 6,
-              "unitText": "inquiries"
-          }
-        ]
-      }
+        {
+            "@type": "QuantitativeValue",
+            "name": "Building permits issued or renewed",
+            "value": 13,
+            "unitText": "monthly building permits"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Building/Property inspections performed",
+            "value": 67,
+            "unitText": "monthly building/property inspections"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Building code call outs",
+            "value": 0,
+            "unitText": "monthly code call outs"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Building code complaints",
+            "value": 4,
+            "unitText": "monthly code complaints"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Building code complaint inspections",
+            "value": 4,
+            "unitText": "monthly code complaint inspections"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Follow-up building code complaint inspections",
+            "value": 19,
+            "unitText": "monthly follow-up building code complaint inspections"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Fire inspections",
+            "value": 1,
+            "unitText": "monthly fire inspections"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Vacant/Abandoned properties identification",
+            "value": 0,
+            "unitText": "monthly vacant/abandoned properties identifications"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Planning Board projects",
+            "value": 5,
+            "unitText": "open projects"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Zoning Board projects",
+            "value": 7,
+            "unitText": "open projects"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Number of FOIL requests received",
+            "value": 6,
+            "unitText": "requests"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Number of zoning inquiries received",
+            "value": 6,
+            "unitText": "inquiries"
+        }
+      ]
     },
     {
       "@type": "Report",
@@ -202,65 +194,56 @@
         "name": "Sara Hopkins"
       },
       "description": "Report on the community library for the month of January.",
-      "about": {
-          "@type": "Action",
-          "name": "Community Library Report",
-          "agent": {
-            "@type": "GovernmentOffice",
-            "name": "Community Library"
-          },
-          "result": [
-            {
-              "@type": "QuantitativeValue",
-              "name": "Physical checkouts",
-              "value": 3480,
-              "unitText": "checkouts"
-            },
-            {
-              "@type": "QuantitativeValue",
-              "name": "Walk-in visitors",
-              "value": 2337,
-              "unitText": "visitors"
-            },
-            {
-                "@type": "QuantitativeValue",
-                "name": "Digital checkouts",
-                "value": 3347,
-                "unitText": "checkouts"
-            },
-            {
-                "@type": "QuantitativeValue",
-                "name": "Wi-Fi users",
-                "value": 150,
-                "unitText": "users"
-            },
-            {
-                "@type": "QuantitativeValue",
-                "name": "Technical usage assistances",
-                "value": 117,
-                "unitText": "assists"
-            },
-            {
-                "@type": "QuantitativeValue",
-                "name": "Reference questions addressed",
-                "value": 353,
-                "unitText": "questions"
-            },
-            {
-                "@type": "QuantitativeValue",
-                "name": "Participants of programs",
-                "value": 575,
-                "unitText": "people"
-            },
-            {
-                "@type": "QuantitativeValue",
-                "name": "Passports processed",
-                "value": 14,
-                "unitText": "passports"
-            }              
-          ]
-        }
-    },
+      "about": [
+        {
+          "@type": "QuantitativeValue",
+          "name": "Physical checkouts",
+          "value": 3480,
+          "unitText": "checkouts"
+        },
+        {
+          "@type": "QuantitativeValue",
+          "name": "Walk-in visitors",
+          "value": 2337,
+          "unitText": "visitors"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Digital checkouts",
+            "value": 3347,
+            "unitText": "checkouts"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Wi-Fi users",
+            "value": 150,
+            "unitText": "users"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Technical usage assistances",
+            "value": 117,
+            "unitText": "assists"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Reference questions addressed",
+            "value": 353,
+            "unitText": "questions"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Participants of programs",
+            "value": 575,
+            "unitText": "people"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Passports processed",
+            "value": 14,
+            "unitText": "passports"
+        }              
+      ]},
     {
       "@type": "Report",
       "name": "Highway Superintendent Report",
@@ -269,76 +252,68 @@
         "name": "Michael Bayly"
       },
       "description": "Report on the Highway department's work for the month of January.",
-      "about": {
-          "@type": "Action",
-          "name": "Monthly highway work",
-          "agent":{
-            "@type": "GovernmentOffice",
-            "name": "Highway Department"
-          },
-          "result": [
-            {
-              "@type": "GovernmentService",
-              "name": "Patching"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Recycle Pulls"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Shop work"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Roadside mowing"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Working on street signs"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Cleaning trucks after snow storms"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Cutting brush at the beach"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Ice Patrol"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Hauling sand"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Christmas tree pickup"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Carpenter work"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Pipe work on Old State Route 142"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Plowing snow"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Water main break"
-            },
-            {
-              "@type": "GovernmentService",
-              "name": "Chaining truck tires for winter storm"
-            }
-          ]
+      "about": [
+        {
+          "@type": "GovernmentService",
+          "name": "Patching"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Recycle Pulls"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Shop work"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Roadside mowing"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Working on street signs"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Cleaning trucks after snow storms"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Cutting brush at the beach"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Ice Patrol"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Hauling sand"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Christmas tree pickup"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Carpenter work"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Pipe work on Old State Route 142"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Plowing snow"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Water main break"
+        },
+        {
+          "@type": "GovernmentService",
+          "name": "Chaining truck tires for winter storm"
         }
+      ]
   },
   {
     "@type": "Report",
@@ -348,34 +323,26 @@
       "name": "Thomas Engster"
     },
     "description": "Report on recycling revenue and expenses for January.",
-    "about": {
-      "@type": "Action",
-      "name": "Recycling actions",
-      "agent": {
-        "@type": "GovernmentOffice",
-        "name": "Recycling Office"
+    "about": [
+      {
+        "@type": "MonetaryAmount",
+        "name": "Total Revenue",
+        "value": 4142.20,
+        "currency": "USD"
       },
-      "result": [
-        {
-          "@type": "MonetaryAmount",
-          "name": "Total Revenue",
-          "value": 4142.20,
-          "currency": "USD"
-        },
-        {
-          "@type": "MonetaryAmount",
-          "name": "Total Expenses",
-          "value": 2796.11,
-          "currency": "USD"
-        },
-        {
-            "@type": "QuantitativeValue",
-            "name": "Amount of materials recycled and landfilled",
-            "value": 42.06,
-            "unitText": "tons"
-        }
-      ]
-    }
+      {
+        "@type": "MonetaryAmount",
+        "name": "Total Expenses",
+        "value": 2796.11,
+        "currency": "USD"
+      },
+      {
+          "@type": "QuantitativeValue",
+          "name": "Amount of materials recycled and landfilled",
+          "value": 42.06,
+          "unitText": "tons"
+      }
+    ]
   },
     {
       "@type": "Report",
@@ -385,57 +352,49 @@
         "name": "Rebecca Del Gaizo"
       },
       "description": "Financial report for the month including detailed revenue sources.",
-      "about": {
-        "@type": "Action",
-        "name": "Monthly Financial Reporting",
-        "agent":{
-          "@type": "GovernmentOrganization",
-          "name": "Town Clerk's Office"
+      "about":[
+        {
+          "@type": "MonetaryAmount",
+          "name": "Total Revenue",
+          "value": 7450.17,
+          "currency": "USD"
         },
-        "result": [
-          {
+        {
+          "@type": "MonetaryAmount",
+          "name": "Recycling Fees",
+          "value": 4250.00,
+          "currency": "USD"
+        },
+        {
+          "@type": "MonetaryAmount",
+          "name": "Community Center Fees",
+          "value": 4250.00,
+          "currency": "USD"
+        },
+        {
+          "@type": "MonetaryAmount",
+          "name": "Dog License Fees",
+          "value": 416.00,
+          "currency": "USD"
+        },
+        {
+          "@type": "MonetaryAmount",
+          "name": "Miscellaneous Fees",
+          "value": 1071.97,
+          "currency": "USD"
+        },
+        {
+            "@type": "QuantitativeValue",
+            "name": "Community Center Reservations",
+            "value": 22
+        },
+        {
             "@type": "MonetaryAmount",
-            "name": "Total Revenue",
-            "value": 7450.17,
+            "name": "DEC sales",
+            "value": 22.19,
             "currency": "USD"
-          },
-          {
-            "@type": "MonetaryAmount",
-            "name": "Recycling Fees",
-            "value": 4250.00,
-            "currency": "USD"
-          },
-          {
-            "@type": "MonetaryAmount",
-            "name": "Community Center Fees",
-            "value": 4250.00,
-            "currency": "USD"
-          },
-          {
-            "@type": "MonetaryAmount",
-            "name": "Dog License Fees",
-            "value": 416.00,
-            "currency": "USD"
-          },
-          {
-            "@type": "MonetaryAmount",
-            "name": "Miscellaneous Fees",
-            "value": 1071.97,
-            "currency": "USD"
-          },
-          {
-              "@type": "QuantitativeValue",
-              "name": "Community Center Reservations",
-              "value": 22
-          },
-          {
-              "@type": "MonetaryAmount",
-              "name": "DEC sales",
-              "value": 22.19,
-              "currency": "USD"
-          }
-        ]
-      }
+        }
+      ]
     },
     {
       "@type": "Report",
@@ -445,34 +404,26 @@
         "name": "Bill Bradley"
       },
       "description": "Report on water usage and maintenance for January.",
-      "about": {
-        "@type": "Action",
-        "name": "Water Usage and Maintenance",
-        "agent": {
-          "@type": "GovernmentOffice",
-          "name": "Water Department"
+      "about": [
+        {
+          "@type": "QuantitativeValue",
+          "name": "Water Sold",
+          "value": 110000000,
+          "unitText": "gallons"
         },
-        "result": [
-          {
-            "@type": "QuantitativeValue",
-            "name": "Water Sold",
-            "value": 110000000,
-            "unitText": "gallons"
-          },
-          {
-            "@type": "QuantitativeValue",
-            "name": "Water Purchased",
-            "value": 147000000,
-            "unitText": "gallons"
-          },
-          {
-            "@type": "QuantitativeValue",
-            "name": "Water Loss Due to Break",
-            "value": 200000,
-            "unitText": "gallons per day"
-          }
-        ]
-      }
+        {
+          "@type": "QuantitativeValue",
+          "name": "Water Purchased",
+          "value": 147000000,
+          "unitText": "gallons"
+        },
+        {
+          "@type": "QuantitativeValue",
+          "name": "Water Loss Due to Break",
+          "value": 200000,
+          "unitText": "gallons per day"
+        }
+      ]
     },
     {
       "@type": "VoteAction",
