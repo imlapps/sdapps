@@ -1,0 +1,753 @@
+{
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Event",
+        "name": "Adjournment of Meeting",
+        "startDate": "2025-02-13T19:59",
+        "location": {
+          "@type": "Place",
+          "name": "Town of Brunswick Town Hall"
+        },
+        "description": "The meeting was adjourned in honor of Jennifer Mann, a resident deeply committed to the community.",
+        "organizer": {
+          "@type": "GovernmentOrganization",
+          "name": "Town of Brunswick"
+        },
+        "performers": [
+          {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          {
+            "@type": "Person",
+            "name": "Herrington"
+          }
+        ],
+        "about": {
+          "@type": "Person",
+          "name": "Jennifer Mann",
+          "description": "A town resident who was deeply committed to the community."
+        }
+      },
+      {
+        "@type": "Event",
+        "name": "Town of Brunswick Regular Town Board Meeting",
+        "startDate": "2025-02-13T19:00",
+        "location": {
+          "@type": "Place",
+          "name": "Town Hall",
+          "address": "Town of Brunswick"
+        },
+        "organizer": {
+          "@type": "GovernmentOrganization",
+          "name": "Town of Brunswick"
+        },
+        "attendees": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Dave Gruenberg", "jobTitle": "Town Attorney"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Rebecca Del Gaizo", "jobTitle": "Town Clerk"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+        ]
+      },
+      {
+        "@type": "Event",
+        "name": "Public Comments Session",
+        "startDate": "2025-02-13",
+        "location": {
+          "@type": "Place",
+          "name": "Town of Brunswick Town Hall"
+        },
+        "description": "Session for visitors to address the Town Board.",
+        "attendees": [
+          {
+            "@type": "Person",
+            "name": "Chris Fanning",
+            "address": "White Church Road",
+            "affiliation": "Brunswick Soccer Club",
+            "description": "Provided an update on obtaining a field lighting system, including budget and grant opportunities."
+          },
+          {
+            "@type": "Person",
+            "name": "Luis Hutter",
+            "address": "White Church Road",
+            "description": "Expressed concerns about activities in the cemetery behind Brunswick Church, and the church's compliance with the site plan."
+          },
+          {
+            "@type": "Person",
+            "name": "Patricia Rivera",
+            "address": "Cole Lane",
+            "description": "Raised issues with a neighbor regarding stream grading and requested town assistance."
+          }
+        ]
+      },
+      {
+        "@type": "Message",
+        "about": {
+          "@type": "Person",
+          "name": "Jennifer Mann",
+          "description": "A well-known community advocate and friend."
+        },
+        "sender": {
+          "@type": "Person",
+          "name": "Mary Beth Bruno"
+        },
+        "dateSent": "2025-02-13",
+        "description": "Email honoring the late Jennifer Mann."
+      },
+      {
+        "@type": "Report",
+        "name": "Code Enforcement Report",
+        "author": {
+          "@type": "Person",
+          "name": "Kevin Mainello"
+        },
+        "description": "Report on building code enforcement activities and fee collection.",
+        "about": {
+          "@type": "Action",
+          "name": "Code Enforcement Actions",
+          "agent": {
+            "@type": "Person",
+            "name": "Kevin Mainello"
+          },
+          "result": [
+            {
+              "@type": "MonetaryAmount",
+              "name": "Total Building Permits and Zoning and Planning Board Fees collected",
+              "value": 13261.50,
+              "currency": "USD"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Building permits issued or renewed",
+                "value": 13,
+                "unitText": "monthly building permits"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Building/Property inspections performed",
+                "value": 67,
+                "unitText": "monthly building/property inspections"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Building code call outs",
+                "value": 0,
+                "unitText": "monthly code call outs"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Building code complaints",
+                "value": 4,
+                "unitText": "monthly code complaints"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Building code complaint inspections",
+                "value": 4,
+                "unitText": "monthly code complaint inspections"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Follow-up building code complaint inspections",
+                "value": 19,
+                "unitText": "monthly follow-up building code complaint inspections"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Fire inspections",
+                "value": 1,
+                "unitText": "monthly fire inspections"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Vacant/Abandoned properties identification",
+                "value": 0,
+                "unitText": "monthly vacant/abandoned properties identifications"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Planning Board projects",
+                "value": 5,
+                "unitText": "open projects"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Zoning Board projects",
+                "value": 7,
+                "unitText": "open projects"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Number of FOIL requests received",
+                "value": 6,
+                "unitText": "requests"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Number of zoning inquiries received",
+                "value": 6,
+                "unitText": "inquiries"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "Report",
+        "name": "Community Library Report",
+        "author": {
+          "@type": "Person",
+          "name": "Sara Hopkins"
+        },
+        "description": "Report on the community library for the month of January.",
+        "about": {
+            "@type": "Action",
+            "name": "Community Library Report",
+            "agent": {
+              "@type": "GovernmentOffice",
+              "name": "Community Library"
+            },
+            "result": [
+              {
+                "@type": "QuantitativeValue",
+                "name": "Physical checkouts",
+                "value": 3480,
+                "unitText": "checkouts"
+              },
+              {
+                "@type": "QuantitativeValue",
+                "name": "Walk-in visitors",
+                "value": 2337,
+                "unitText": "visitors"
+              },
+              {
+                  "@type": "QuantitativeValue",
+                  "name": "Digital checkouts",
+                  "value": 3347,
+                  "unitText": "checkouts"
+              },
+              {
+                  "@type": "QuantitativeValue",
+                  "name": "Wi-Fi users",
+                  "value": 150,
+                  "unitText": "users"
+              },
+              {
+                  "@type": "QuantitativeValue",
+                  "name": "Technical usage assistances",
+                  "value": 117,
+                  "unitText": "assists"
+              },
+              {
+                  "@type": "QuantitativeValue",
+                  "name": "Reference questions addressed",
+                  "value": 353,
+                  "unitText": "questions"
+              },
+              {
+                  "@type": "QuantitativeValue",
+                  "name": "Participants of programs",
+                  "value": 575,
+                  "unitText": "people"
+              },
+              {
+                  "@type": "QuantitativeValue",
+                  "name": "Passports processed",
+                  "value": 14,
+                  "unitText": "passports"
+              }              
+            ]
+          }
+      },
+      {
+        "@type": "Report",
+        "name": "Highway Superintendent Report",
+        "author": {
+          "@type": "Person",
+          "name": "Michael Bayly"
+        },
+        "description": "Report on the Highway department's work for the month of January.",
+        "about": {
+            "@type": "Action",
+            "name": "Monthly highway work",
+            "agent":{
+              "@type": "GovernmentOffice",
+              "name": "Highway Department"
+            },
+            "result": [
+              {
+                "@type": "GovernmentService",
+                "name": "Patching"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Recycle Pulls"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Shop work"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Roadside mowing"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Working on street signs"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Cleaning trucks after snow storms"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Cutting brush at the beach"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Ice Patrol"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Hauling sand"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Christmas tree pickup"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Carpenter work"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Pipe work on Old State Route 142"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Plowing snow"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Water main break"
+              },
+              {
+                "@type": "GovernmentService",
+                "name": "Chaining truck tires for winter storm"
+              }
+            ]
+          }
+    },
+    {
+      "@type": "Report",
+      "name": "Recycling Coordinator Report",
+      "author": {
+        "@type": "Person",
+        "name": "Thomas Engster"
+      },
+      "description": "Report on recycling revenue and expenses for January.",
+      "about": {
+        "@type": "Action",
+        "name": "Recycling actions",
+        "agent": {
+          "@type": "GovernmentOffice",
+          "name": "Recycling Office"
+        },
+        "result": [
+          {
+            "@type": "MonetaryAmount",
+            "name": "Total Revenue",
+            "value": 4142.20,
+            "currency": "USD"
+          },
+          {
+            "@type": "MonetaryAmount",
+            "name": "Total Expenses",
+            "value": 2796.11,
+            "currency": "USD"
+          },
+          {
+              "@type": "QuantitativeValue",
+              "name": "Amount of materials recycled and landfilled",
+              "value": 42.06,
+              "unitText": "tons"
+          }
+        ]
+      }
+    },
+      {
+        "@type": "Report",
+        "name": "Town Clerk Report",
+        "author": {
+          "@type": "Person",
+          "name": "Rebecca Del Gaizo"
+        },
+        "description": "Financial report for the month including detailed revenue sources.",
+        "about": {
+          "@type": "Action",
+          "name": "Monthly Financial Reporting",
+          "agent":{
+            "@type": "GovernmentOrganization",
+            "name": "Town Clerk's Office"
+          },
+          "result": [
+            {
+              "@type": "MonetaryAmount",
+              "name": "Total Revenue",
+              "value": 7450.17,
+              "currency": "USD"
+            },
+            {
+              "@type": "MonetaryAmount",
+              "name": "Recycling Fees",
+              "value": 4250.00,
+              "currency": "USD"
+            },
+            {
+              "@type": "MonetaryAmount",
+              "name": "Community Center Fees",
+              "value": 4250.00,
+              "currency": "USD"
+            },
+            {
+              "@type": "MonetaryAmount",
+              "name": "Dog License Fees",
+              "value": 416.00,
+              "currency": "USD"
+            },
+            {
+              "@type": "MonetaryAmount",
+              "name": "Miscellaneous Fees",
+              "value": 1071.97,
+              "currency": "USD"
+            },
+            {
+                "@type": "QuantitativeValue",
+                "name": "Community Center Reservations",
+                "value": 22
+            },
+            {
+                "@type": "MonetaryAmount",
+                "name": "DEC sales",
+                "value": 22.19,
+                "currency": "USD"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "Report",
+        "name": "Water & Sewer Report",
+        "author": {
+          "@type": "Person",
+          "name": "Bill Bradley"
+        },
+        "description": "Report on water usage and maintenance for January.",
+        "about": {
+          "@type": "Action",
+          "name": "Water Usage and Maintenance",
+          "agent": {
+            "@type": "GovernmentOffice",
+            "name": "Water Department"
+          },
+          "result": [
+            {
+              "@type": "QuantitativeValue",
+              "name": "Water Sold",
+              "value": 110000000,
+              "unitText": "gallons"
+            },
+            {
+              "@type": "QuantitativeValue",
+              "name": "Water Purchased",
+              "value": 147000000,
+              "unitText": "gallons"
+            },
+            {
+              "@type": "QuantitativeValue",
+              "name": "Water Loss Due to Break",
+              "value": 200000,
+              "unitText": "gallons per day"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Approval of Previous Meeting Minutes",
+        "participant": [{"@type": "Person", "name": "Balistreri"}, 
+                        {"@type": "Person", "name": "Sullivan"}],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Code Enforcement Report",
+        "description": "Motion to accept the report on building code enforcement activities and fee collection.",
+        "agent": {"@type": "Person", "name": "Balistreri"},
+        "participant": [
+                {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+                {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+                {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+                {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Community Library Report",
+        "description": "Motion to accept the report on the community library for the month of January.",
+        "agent": {"@type": "Person", "name": "Sullivan"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Highway Superintendent Report",
+        "description": "Motion to accept the report on the highway department's work for the month of January.",
+        "agent": {"@type": "Person", "name": "Christian"},
+        "participant": [
+                    {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+                    {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+                    {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+                    {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },    
+      {
+        "@type": "VoteAction",
+        "name": "Recycling Coordinator Report",
+        "description": "Motion to accept the report on recycling revenue and expenses for January.",
+        "agent": {"@type": "Person", "name": "Christian"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Resolution No. 25 of 2025",
+        "description": "RESOLUTION OF THE TOWN OF BRUNSWICK DECLARING NEED AND AUTHORIZING THE APPLICATION FOR A MUNICIPAL OPERATING CERTIFICATE FROM THE NEW YORK STATE BUREAU OF EMERGENCY MEDICAL SERVICES.",
+        "agent": {"@type": "Person", "name": "Balistreri"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Resolution No. 26 of 2025",
+        "description": "RESOLUTION AUTHORIZING THE SUPERVISOR TO PURCHASE ROCK SALT FOR ROAD MAINTENANCE ON AN EMERGENCY BASIS, WITHOUT COMPETITIVE BIDDING, PURSUANT TO THE PROVISIONS OF GENERAL MUNICIPAL LAW SECTION 103(4).",
+        "agent": {"@type": "Person", "name": "Christian"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Resolution No. 27 of 2025",
+        "description": "RESOLUTION AUTHORIZING THE SUPERVISOR TO ENTER INTO A CONTRACT WITH SPECTRUM ENTERPRISE FOR INTERNET SERVICE IN THE BRUNSWICK TOWN HALL AND THREE TOWN BUILDING LOCATIONS.",
+        "agent": {"@type": "Person", "name": "Christian"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+              ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Resolution No. 28 of 2025",
+        "description": "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE BRUNSWICK FIRE COMPANY NO. 1, INC. (“FIRE COMPANY”) WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.",
+        "agent": {"@type": "Person", "name": "Sullivan"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+        ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Resolution No. 29 of 2025",
+        "description": "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE VOLUNTEER FIRE COMPANY OF CENTER BRUNSWICK, INC. (“FIRE COMPANY”) WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.",
+        "agent": {"@type": "Person", "name": "Balistreri"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Resolution No. 30 of 2025",
+        "description": "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE MOUNTAIN VIEW VOLUNTEER FIRE COMPANY, INC. (“FIRE COMPANY”) WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.",
+        "agent": {"@type": "Person", "name": "Sullivan"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Town Clerk Report",
+        "description": "Motion to accept the financial report for the month.",
+        "agent": {"@type": "Person", "name": "Sullivan"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+         ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Warrants Approval",
+        "description": "Motion to approve warrants.",
+        "agent": {"@type": "Person", "name": "Christian"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@type": "VoteAction",
+        "name": "Water & Sewer Report",
+        "description": "Motion to accept the report on water usage and maintenance for January.",
+        "agent": {"@type": "Person", "name": "Christian"},
+        "participant": [
+          {"@type": "Person", "name": "Balistreri", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+          {"@type": "Person", "name": "Herrington", "jobTitle": "Supervisor"},
+          {"@type": "Person", "name": "Sullivan", "jobTitle": "Councilman"}
+          ],
+        "actionStatus": "CompletedActionStatus"
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BusinessEvent",
+        "name": "New Business Discussion",
+        "startDate": "2025-02-13",
+        "location": {
+          "@type": "Place",
+          "name": "Town of Brunswick Town Hall"
+        },
+        "description": "Discussion about the sign on the Town Clerk’s office door for Authorized Personnel Only.",
+        "organizer": {
+          "@type": "GovernmentOrganization",
+          "name": "Town Board"
+        },
+        "attendees": [
+            {"@type": "Person", "name": "Christian", "jobTitle": "Councilman"},
+            {"@type": "Person", "name": "Dave Gruenberg", "jobTitle": "Town Attorney"},
+            {"@type": "Person", "name": "Rebecca Del Gaizo", "jobTitle": "Town Clerk"}
+        ]
+      },
+      {
+        "@type": "Invoice",
+        "name": "Approval of Warrants",
+        "paymentDueDate": "2025-02-13",
+        "provider": {
+          "@type": "GovernmentOrganization",
+          "name": "Town of Brunswick"
+        },
+        "totalPaymentDue": {
+          "@type": "MonetaryAmount",
+          "currency": "USD",
+          "value": 356520.92
+        },
+        "description": "Approval of warrants for various funds.",
+        "category": "Government Expenses",
+        "referencesOrder": [
+          {
+            "@type": "Order",
+            "name": "General Fund",
+            "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                    "@type": "MonetaryAmount",
+                    "currency": "USD",
+                    "value": 252274.75
+                }
+            }
+          },
+          {
+            "@type": "Order",
+            "name": "Highway Fund",
+            "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 74402.62
+                }
+              }
+          },
+          {
+            "@type": "Order",
+            "name": "Water Fund",
+            "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 27623.01
+                }
+              }
+          },
+          {
+            "@type": "Order",
+            "name": "Special Sewer District #6",
+            "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 680.50
+                }
+              }
+          },
+          {
+            "@type": "Order",
+            "name": "Sewer Fund",
+            "partOfInvoice":{
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 1540.04
+                }
+              }
+    
+          }          
+        ]
+      }
+    ]
+  }
