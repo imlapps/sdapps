@@ -6,4 +6,4 @@ cd "$(dirname "$0")/.."
 
 
 poetry run isort etl
-poetry run black etl
+poetry run ruff format etl
