@@ -1,4 +1,4 @@
-name: CI for mmkg-etl
+name: CI for towndex-etl
 on: [push]
 permissions:
   contents: write
@@ -25,16 +25,16 @@ jobs:
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}-v2
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: apps/mmkg-etl/script/bootstrap.sh
+        run: apps/towndex-etl/script/bootstrap.sh
       - name: Run tests
-        run: apps/mmkg-etl/script/test.sh
+        run: apps/towndex-etl/script/test.sh
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: apps/mmkg-etl/test-results/*.xml
+          files: apps/towndex-etl/test-results/*.xml
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
-            junitxml-path: apps/mmkg-etl/test-results/junit.xml
-            pytest-coverage-path: apps/mmkg-etl/test-results/coverage.txt
+            junitxml-path: apps/towndex-etl/test-results/junit.xml
+            pytest-coverage-path: apps/towndex-etl/test-results/coverage.txt
