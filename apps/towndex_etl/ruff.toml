@@ -3,8 +3,6 @@ target-version = "py312"
 
 [lint]
 ignore = [
-    "ANN101", # missing-type-self
-    "ANN102", # missing-type-cls,
     "ANN204", # Missing return type annotation for __init__
     "COM812", # Trailing comma missing
     "D",      # Missing docstrings
