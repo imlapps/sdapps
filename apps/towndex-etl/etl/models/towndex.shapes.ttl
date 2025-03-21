@@ -1,0 +1,770 @@
+# baseURI: http://datashapes.org/schema
+# imports: http://datashapes.org/dash
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://datashapes.org/schema>
+  a owl:Ontology ;
+  rdfs:comment "<p>This is an RDF/SHACL version of schema.org, generated based on the official Turtle file https://schema.org/version/latest/schemaorg-all-http.ttl. Alignments with common RDF practices have been made, e.g. using rdfs:Class instead of schema:Class.</p><p>Contact: <a href=\"mailto:holger@topquadrant.com\">Holger Knublauch</a></p>"^^rdf:HTML ;
+  rdfs:label "Schema.org SHACL shapes" ;
+  owl:imports <http://datashapes.org/dash> ;
+  owl:versionInfo "2021-04-21T09:18:09.748+10:00"^^xsd:dateTime ;
+.
+schema:BusinessEvent
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "Event type: Business event."^^rdf:HTML ;
+  rdfs:label "Business event" ;
+  rdfs:subClassOf schema:Event ;
+.
+schema:CompletedActionStatus
+  a schema:ActionStatusType ;
+  rdfs:comment "An action that has already taken place." ;
+  rdfs:label "Completed action status" ;
+.
+schema:Event
+  a rdfs:Class, sh:NodeShape ;
+  owl:equivalentClass <http://purl.org/dc/dcmitype/Event> ;
+  rdfs:comment "An event happening at a certain time and location, such as a concert, lecture, or festival. Ticketing information may be added via the [[offers]] property. Repeated events may be structured as separate Event objects."^^rdf:HTML ;
+  rdfs:label "Event" ;
+  rdfs:subClassOf schema:Thing ;
+  sh:property schema:Event-about ;
+  sh:property schema:Event-attendee ;
+  sh:property schema:Event-attendees ;
+  sh:property schema:Event-location ;
+  sh:property schema:Event-organizer ;
+  sh:property schema:Event-performer ;
+  sh:property schema:Event-performers ;
+  sh:property schema:Event-startDate ;
+  sh:property schema:Event-subEvent ;
+  sh:property schema:Event-subEvents ;
+  sh:property schema:Event-superEvent ;
+  sh:property schema:Event-workFeatured ;
+  sh:property schema:Event-workPerformed ;
+.
+schema:Event-about
+  a sh:PropertyShape ;
+  sh:description "The subject matter of the content."^^rdf:HTML ;
+  sh:name "about" ;
+  sh:or (
+    [
+      sh:datatype xsd:string ;
+    ]
+    [
+      sh:class schema:GovernmentOrganization ;
+    ]
+    [
+      sh:class schema:Invoice ;
+    ]
+    [
+      sh:class schema:Message ;
+    ]
+    [
+      sh:class schema:Report ;
+    ]
+    [
+      sh:class schema:Person ;
+    ]
+    [
+      sh:class schema:Thing ;
+    ]
+    [
+      sh:class schema:VoteAction ;
+    ]
+  ) ;
+  sh:path schema:about ;
+.
+schema:Event-attendee
+  a sh:PropertyShape ;
+  sh:description "A person or organization attending the event."^^rdf:HTML ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:name "attendee" ;
+  sh:path schema:attendee ;
+.
+schema:Event-attendees
+  a sh:PropertyShape ;
+  sh:description "A person attending the event."^^rdf:HTML ;
+  sh:path schema:attendees ;
+  sh:name "attendees" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+.
+schema:Event-location
+  a sh:PropertyShape ;
+  sh:description "The location of, for example, where an event is happening, where an organization is located, or where an action takes place."^^rdf:HTML ;
+  sh:name "location" ;
+  sh:or (
+      [
+        sh:class schema:Place ;
+      ]
+      [
+        sh:class schema:PostalAddress ;
+      ]
+      [
+        sh:class schema:VirtualLocation ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:location ;
+.
+schema:Event-organizer
+  a sh:PropertyShape ;
+  sh:description "An organizer of an Event."^^rdf:HTML ;
+  sh:name "organizer" ;
+  sh:or (
+      [
+        sh:class schema:GovernmentOrganization ;
+      ]
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:path schema:organizer ;
+.
+schema:Event-performer
+  a sh:PropertyShape ;
+  sh:description "A performer at the event&#x2014;for example, a presenter, musician, musical group or actor."^^rdf:HTML ;
+  sh:name "performer" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:path schema:performer ;
+.
+schema:Event-performers
+  a sh:PropertyShape ;
+  sh:description "The main performer or performers of the event&#x2014;for example, a presenter, musician, or actor."^^rdf:HTML ;
+  sh:name "performers" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;  
+  sh:path schema:performers ;
+.
+schema:Event-startDate
+  a sh:PropertyShape ;
+  sh:description "The start date and time of the item (in [ISO 8601 date format](http://en.wikipedia.org/wiki/ISO_8601))."^^rdf:HTML ;
+  sh:name "startDate" ;
+  sh:or (
+      [
+        sh:datatype xsd:date ;
+      ]
+      [
+        sh:datatype xsd:dateTime ;
+      ]
+    ) ;
+  sh:path schema:startDate ;
+.
+schema:Event-subEvent
+  a sh:PropertyShape ;
+  sh:class schema:Event ;
+  sh:description "An Event that is part of this event. For example, a conference event includes many presentations, each of which is a subEvent of the conference."^^rdf:HTML ;
+  sh:name "subEvent" ;
+  sh:path schema:subEvent ;
+.
+schema:Event-subEvents
+  a sh:PropertyShape ;
+  sh:description "Events that are a part of this event. For example, a conference event includes many presentations, each subEvents of the conference."^^rdf:HTML ;
+  sh:name "subEvents" ;
+  sh:path schema:subEvents ;
+.
+schema:Event-superEvent
+  a sh:PropertyShape ;
+  sh:class schema:Event ;
+  sh:description "An event that this event is a part of. For example, a collection of individual music performances might each have a music festival as their superEvent."^^rdf:HTML ;
+  sh:name "superEvent" ;
+  sh:path schema:superEvent ;
+.
+schema:Event-workFeatured
+  a sh:PropertyShape ;
+  sh:class schema:CreativeWork ;
+  sh:description """A work featured in some event, e.g. exhibited in an ExhibitionEvent.
+       Specific subproperties are available for workPerformed (e.g. a play), or a workPresented (a Movie at a ScreeningEvent)."""^^rdf:HTML ;
+  sh:name "workFeatured" ;
+  sh:path schema:workFeatured ;
+.
+schema:Event-workPerformed
+  a sh:PropertyShape ;
+  sh:class schema:CreativeWork ;
+  sh:description "A work performed in some event, for example a play performed in a TheaterEvent."^^rdf:HTML ;
+  sh:name "workPerformed" ;
+  sh:path schema:workPerformed ;
+.
+schema:GovernmentOrganization
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "A governmental organization or agency."^^rdf:HTML ;
+  rdfs:label "Government organization" ;
+  rdfs:subClassOf schema:Organization ;
+.
+schema:GovernmentService
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "A service provided by a government organization, e.g. food stamps, veterans benefits, etc."^^rdf:HTML ;
+  rdfs:label "Government service" ;
+  rdfs:subClassOf schema:Service ;
+.
+schema:Invoice
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "A statement of the money due for goods or services; a bill."^^rdf:HTML ;
+  rdfs:label "Invoice" ;
+  rdfs:subClassOf schema:Intangible ;
+  sh:property schema:Invoice-category ;
+  sh:property schema:Invoice-paymentDue ;
+  sh:property schema:Invoice-paymentDueDate ;
+  sh:property schema:Invoice-provider ;
+  sh:property schema:Invoice-referencesOrder ;
+  sh:property schema:Invoice-totalPaymentDue ;
+.
+schema:Invoice-category
+  a sh:PropertyShape ;
+  sh:description "A category for the item. Greater signs or slashes can be used to informally indicate a category hierarchy."^^rdf:HTML ;
+  sh:name "category" ;
+  sh:or (
+      [
+        sh:class schema:PhysicalActivityCategory ;
+      ]
+      [
+        sh:class schema:Thing ;
+      ]
+      [
+        sh:nodeKind sh:IRI ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:category ;
+.
+schema:Invoice-paymentDue
+  a sh:PropertyShape ;
+  sh:datatype xsd:dateTime ;
+  sh:description "The date that payment is due."^^rdf:HTML ;
+  sh:name "paymentDue" ;
+  sh:path schema:paymentDue ;
+.
+schema:Invoice-paymentDueDate
+  a sh:PropertyShape ;
+  sh:description "The date that payment is due."^^rdf:HTML ;
+  sh:name "paymentDueDate" ;
+  sh:or (
+      [
+        sh:datatype xsd:date ;
+      ]
+      [
+        sh:datatype xsd:dateTime ;
+      ]
+    ) ;
+  sh:path schema:paymentDueDate ;
+.
+schema:Invoice-provider
+  a sh:PropertyShape ;
+  sh:description "The service provider, service operator, or service performer; the goods producer. Another party (a seller) may offer those services or goods on behalf of the provider. A provider may also serve as the seller."^^rdf:HTML ;
+  sh:name "provider" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:GovernmentOrganization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:path schema:provider ;
+.
+schema:Invoice-referencesOrder
+  a sh:PropertyShape ;
+  sh:class schema:Order ;
+  sh:description "The Order(s) related to this Invoice. One or more Orders may be combined into a single Invoice."^^rdf:HTML ;
+  sh:name "referencesOrder" ;
+  sh:path schema:referencesOrder ;
+.
+schema:Invoice-totalPaymentDue
+  a sh:PropertyShape ;
+  sh:description "The total amount due."^^rdf:HTML ;
+  sh:name "totalPaymentDue" ;
+  sh:or (
+      [
+        sh:class schema:MonetaryAmount ;
+      ]
+      [
+        sh:class schema:PriceSpecification ;
+      ]
+    ) ;
+  sh:path schema:totalPaymentDue ;
+.
+schema:Message
+  a rdfs:Class ;
+  a sh:NodeShape ;
+  rdfs:comment "A single message from a sender to one or more organizations or people."^^rdf:HTML ;
+  rdfs:label "Message" ;
+  rdfs:subClassOf schema:CreativeWork ;
+  sh:property schema:Message-about ;
+  sh:property schema:Message-dateSent ;
+  sh:property schema:Message-messageAttachment ;
+  sh:property schema:Message-sender ;
+.
+schema:Message-about
+  a sh:PropertyShape ;
+  sh:description "The subject matter of the content."^^rdf:HTML ;
+  sh:name "about" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:path schema:about ;
+.
+schema:Message-messageAttachment
+  a sh:PropertyShape ;
+  sh:class schema:CreativeWork ;
+  sh:description "A CreativeWork attached to the message."^^rdf:HTML ;
+  sh:name "messageAttachment" ;
+  sh:path schema:messageAttachment ;
+.
+schema:Message-dateSent
+  a sh:PropertyShape ;
+  sh:description "The date/time at which the message was sent."^^rdf:HTML ;
+  sh:name "dateSent" ;
+  sh:or (
+      [
+        sh:datatype xsd:date ;
+      ]
+      [
+        sh:datatype xsd:dateTime ;
+      ]
+    ) ;
+  sh:path schema:dateSent ;
+.
+schema:Message-sender
+  a sh:PropertyShape ;
+  sh:description "A sub property of participant. The participant who is at the sending end of the action."^^rdf:HTML ;
+  sh:minCount 1;
+  sh:name "sender" ;
+  sh:or (
+      [
+        sh:class schema:Audience ;
+      ]
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:path schema:sender ;
+.
+schema:MonetaryAmount
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "A monetary value or range. This type can be used to describe an amount of money such as $50 USD, or a range as in describing a bank account being suitable for a balance between £1,000 and £1,000,000 GBP, or the value of a salary, etc. It is recommended to use [[PriceSpecification]] Types to describe the price of an Offer, Invoice, etc."^^rdf:HTML ;
+  rdfs:label "Monetary amount" ;
+  rdfs:subClassOf schema:StructuredValue ;
+  schema:source <http://www.w3.org/wiki/WebSchemas/SchemaDotOrgSources#FIBO> ;
+  sh:property schema:MonetaryAmount-currency ;
+  sh:property schema:MonetaryAmount-value ;
+.
+schema:MonetaryAmount-currency
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description "The currency in which the monetary amount is expressed.\\n\\nUse standard formats: [ISO 4217 currency format](http://en.wikipedia.org/wiki/ISO_4217) e.g. \"USD\"; [Ticker symbol](https://en.wikipedia.org/wiki/List_of_cryptocurrencies) for cryptocurrencies e.g. \"BTC\"; well known names for [Local Exchange Tradings Systems](https://en.wikipedia.org/wiki/Local_exchange_trading_system) (LETS) and other currency types e.g. \"Ithaca HOUR\"."^^rdf:HTML ;
+  sh:name "currency" ;
+  sh:path schema:currency ;
+.
+schema:MonetaryAmount-value
+  a sh:PropertyShape ;
+  sh:description "The value of the quantitative value or property value node.\\n\\n* For [[QuantitativeValue]] and [[MonetaryAmount]], the recommended type for values is 'Number'.\\n* For [[PropertyValue]], it can be 'Text;', 'Number', 'Boolean', or 'StructuredValue'.\\n* Use values from 0123456789 (Unicode 'DIGIT ZERO' (U+0030) to 'DIGIT NINE' (U+0039)) rather than superficially similiar Unicode symbols.\\n* Use '.' (Unicode 'FULL STOP' (U+002E)) rather than ',' to indicate a decimal point. Avoid using these symbols as a readability separator."^^rdf:HTML ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+  sh:name "value" ;
+  sh:or (
+      [
+        sh:class schema:StructuredValue ;
+      ]
+      [
+        sh:datatype xsd:boolean ;
+      ]
+      [
+        sh:datatype xsd:double ;
+      ]
+      [
+        sh:datatype xsd:float ;
+      ]
+      [
+        sh:datatype xsd:integer ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:value ;
+.
+schema:Order
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "An order is a confirmation of a transaction (a receipt), which can contain multiple line items, each represented by an Offer that has been accepted by the customer."^^rdf:HTML ;
+  rdfs:label "Order" ;
+  rdfs:subClassOf schema:Intangible ;
+  sh:property schema:Order-partOfInvoice ;
+.
+schema:Order-partOfInvoice
+  a sh:PropertyShape ;
+  sh:class schema:Invoice ;
+  sh:description "The order is being paid as part of the referenced Invoice."^^rdf:HTML ;
+  sh:name "partOfInvoice" ;
+  sh:path schema:partOfInvoice ;
+.
+schema:Person
+  a rdfs:Class, sh:NodeShape ;
+  owl:equivalentClass <http://xmlns.com/foaf/0.1/Person> ;
+  rdfs:comment "A person (alive, dead, undead, or fictional)."^^rdf:HTML ;
+  rdfs:label "Person" ;
+  rdfs:subClassOf schema:Thing ;
+  schema:source <http://www.w3.org/wiki/WebSchemas/SchemaDotOrgSources#source_rNews> ;
+  sh:property schema:Person-address ;
+  sh:property schema:Person-affiliation ;
+.
+schema:Person-address
+  a sh:PropertyShape ;
+  sh:description "Physical address of the item."^^rdf:HTML ;
+  sh:name "address" ;
+  sh:or (
+      [
+        sh:class schema:PostalAddress ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:address ;
+.
+schema:Person-affiliation
+  a sh:PropertyShape ;
+  sh:class schema:Organization ;
+  sh:description "An organization that this person is affiliated with. For example, a school/university, a club, or a team."^^rdf:HTML ;
+  sh:name "affiliation" ;
+  sh:path schema:affiliation ;
+.
+schema:Person-jobTitle
+  a sh:PropertyShape ;
+  sh:description "The job title of the person (for example, Financial Manager)."^^rdf:HTML ;
+  sh:name "jobTitle" ;
+  sh:or (
+      [
+        sh:class schema:DefinedTerm ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:jobTitle ;
+.
+schema:Place
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "Entities that have a somewhat fixed, physical extension."^^rdf:HTML ;
+  rdfs:label "Place" ;
+  rdfs:subClassOf schema:Thing ;
+.
+schema:Report
+  a rdfs:Class ;
+  a sh:NodeShape ;
+  rdfs:comment "A Report generated by governmental or non-governmental organization."^^rdf:HTML ;
+  rdfs:label "Report" ;
+  rdfs:subClassOf schema:Article ;
+  sh:property schema:Report-about ; 
+  sh:property schema:Report-reportNumber ;
+.
+schema:Report-about
+  a sh:PropertyShape ;
+  sh:description "The subject matter of the content."^^rdf:HTML ;
+  sh:name "about" ;
+  sh:or (
+      [
+        sh:class schema:GovernmentService ;
+      ]
+      [
+        sh:class schema:MonetaryAmount ;
+      ]
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+      [
+        sh:class schema:QuantitativeValue ;
+      ]
+    ) ;
+  sh:path schema:about ;
+.
+schema:Report-reportNumber
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description "The number or other unique designator assigned to a Report by the publishing organization."^^rdf:HTML ;
+  sh:name "reportNumber" ;
+  sh:path schema:reportNumber ;
+.
+schema:Thing
+  a rdfs:Class ;
+  a sh:NodeShape ;
+  rdfs:comment "The most generic type of item."^^rdf:HTML ;
+  rdfs:label "Thing" ;
+  rdfs:subClassOf owl:Thing ;
+  sh:property schema:Thing-additionalType ;
+  sh:property schema:Thing-alternateName ;
+  sh:property schema:Thing-description ;
+  sh:property schema:Thing-disambiguatingDescription ;
+  sh:property schema:Thing-identifier ;
+  sh:property schema:Thing-image ;
+  sh:property schema:Thing-mainEntityOfPage ;
+  sh:property schema:Thing-name ;
+  sh:property schema:Thing-potentialAction ;
+  sh:property schema:Thing-sameAs ;
+  sh:property schema:Thing-subjectOf ;
+  sh:property schema:Thing-url ;
+.
+schema:Thing-additionalType
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description "An alias for the item."^^rdf:HTML ;
+  sh:name "alternateName" ;
+  sh:path schema:additionalType ;
+.
+schema:Thing-alternateName
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description "An alias for the item."^^rdf:HTML ;
+  sh:name "alternateName" ;
+  sh:path schema:alternateName ;
+.
+schema:Thing-description
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description "A description of the item."^^rdf:HTML ;
+  sh:minLength 1;
+  sh:minCount 1;
+  sh:maxCount 1;
+  sh:name "description" ;
+  sh:path schema:description ;
+.
+schema:Thing-disambiguatingDescription
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description "A sub property of description. A short description of the item used to disambiguate from other, similar items. Information from other properties (in particular, name) may be necessary for the description to be useful for disambiguation."^^rdf:HTML ;
+  sh:name "disambiguatingDescription" ;
+  sh:path schema:disambiguatingDescription ;
+.
+schema:Thing-identifier
+  a sh:PropertyShape ;
+  sh:description """The identifier property represents any kind of identifier for any kind of [[Thing]], such as ISBNs, GTIN codes, UUIDs etc. Schema.org provides dedicated properties for representing many of these, either as textual strings or as URL (URI) links. See [background notes](/docs/datamodel.html#identifierBg) for more details.
+        """^^rdf:HTML ;
+  sh:name "identifier" ;
+  sh:or (
+      [
+        sh:class schema:PropertyValue ;
+      ]
+      [
+        sh:nodeKind sh:IRI ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:identifier ;
+.
+schema:Thing-image
+  a sh:PropertyShape ;
+  sh:description "An image of the item. This can be a [[URL]] or a fully described [[ImageObject]]."^^rdf:HTML ;
+  sh:name "image" ;
+  sh:or (
+      [
+        sh:class schema:ImageObject ;
+      ]
+      [
+        sh:nodeKind sh:IRI ;
+      ]
+    ) ;
+  sh:path schema:image ;
+.
+schema:Thing-mainEntityOfPage
+  a sh:PropertyShape ;
+  sh:description "Indicates a page (or other CreativeWork) for which this thing is the main entity being described. See [background notes](/docs/datamodel.html#mainEntityBackground) for details."^^rdf:HTML ;
+  sh:name "mainEntityOfPage" ;
+  sh:or (
+      [
+        sh:class schema:CreativeWork ;
+      ]
+      [
+        sh:nodeKind sh:IRI ;
+      ]
+    ) ;
+  sh:path schema:mainEntityOfPage ;
+.
+schema:Thing-name
+  a sh:PropertyShape ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+  sh:name "name" ;
+  sh:datatype xsd:string ;
+  sh:description "The name of the item."^^rdf:HTML ;
+  sh:path schema:name ;
+.
+schema:Thing-potentialAction
+  a sh:PropertyShape ;
+  sh:class schema:Action ;
+  sh:description "Indicates a potential Action, which describes an idealized action in which this thing would play an 'object' role."^^rdf:HTML ;
+  sh:name "potentialAction" ;
+  sh:path schema:potentialAction ;
+.
+schema:Thing-sameAs
+  a sh:PropertyShape ;
+  sh:description "URL of a reference Web page that unambiguously indicates the item's identity. E.g. the URL of the item's Wikipedia page, Wikidata entry, or official website."^^rdf:HTML ;
+  sh:name "sameAs" ;
+  sh:nodeKind sh:IRI ;
+  sh:path schema:sameAs ;
+.
+schema:Thing-subjectOf
+  a sh:PropertyShape ;
+  sh:description "A CreativeWork or Event about this Thing."^^rdf:HTML ;
+  sh:name "subjectOf" ;
+  sh:or (
+      [
+        sh:class schema:CreativeWork ;
+      ]
+      [
+        sh:class schema:Event ;
+      ]
+    ) ;
+  sh:path schema:subjectOf ;
+.
+schema:VoteAction
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment "The act of expressing a preference from a fixed/finite/structured set of choices/options."^^rdf:HTML ;
+  rdfs:label "Vote action" ;
+  rdfs:subClassOf schema:ChooseAction ;
+  sh:property schema:VoteAction-agent ;
+  sh:property schema:VoteAction-participant ;
+  sh:property schema:VoteAction-participants ;
+.
+schema:VoteAction-agent
+  a sh:PropertyShape ;
+  sh:class schema:Person ;
+  sh:description "The direct performer or driver of the action (animate or inanimate). E.g. John wrote a book."^^rdf:HTML ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+  sh:name "agent" ;
+  sh:path schema:agent ;
+.
+schema:VoteAction-participant
+  a sh:PropertyShape ;
+  sh:description "Other co-agents that participated in the action indirectly. E.g. John wrote a book with Steve."^^rdf:HTML ;
+  sh:name "participant" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;
+  sh:path schema:participant ;
+.
+schema:VoteAction-participants
+  a sh:PropertyShape ;
+  sh:description "Other co-agents that participated in the action indirectly. E.g. John wrote a book with Steve."^^rdf:HTML ;
+  sh:name "participants" ;
+  sh:or (
+      [
+        sh:class schema:Organization ;
+      ]
+      [
+        sh:class schema:Person ;
+      ]
+    ) ;  
+  sh:path schema:participants ;
+.
+schema:Thing-url
+  a sh:PropertyShape ;
+  sh:description "URL of the item."^^rdf:HTML ;
+  sh:name "url" ;
+  sh:nodeKind sh:IRI ;
+  sh:path schema:url ;
+.
+schema:QuantitativeValue
+  a rdfs:Class, sh:NodeShape ;
+  rdfs:comment " A point value or interval for product characteristics and other purposes."^^rdf:HTML ;
+  rdfs:label "Quantitative value" ;
+  rdfs:subClassOf schema:StructuredValue ;
+  schema:source <http://www.w3.org/wiki/WebSchemas/SchemaDotOrgSources#source_GoodRelationsClass> ;
+  sh:property schema:QuantitativeValue-unitText ;
+  sh:property schema:QuantitativeValue-value ;
+.
+schema:QuantitativeValue-unitText
+  a sh:PropertyShape ;
+  sh:datatype xsd:string ;
+  sh:description """A string or text indicating the unit of measurement. Useful if you cannot provide a standard unit code for
+<a href='unitCode'>unitCode</a>."""^^rdf:HTML ;
+  sh:name "unitText" ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+  sh:path schema:unitText ;
+.
+schema:QuantitativeValue-value
+  a sh:PropertyShape ;
+  sh:description "The value of the quantitative value or property value node.\\n\\n* For [[QuantitativeValue]] and [[MonetaryAmount]], the recommended type for values is 'Number'.\\n* For [[PropertyValue]], it can be 'Text;', 'Number', 'Boolean', or 'StructuredValue'.\\n* Use values from 0123456789 (Unicode 'DIGIT ZERO' (U+0030) to 'DIGIT NINE' (U+0039)) rather than superficially similiar Unicode symbols.\\n* Use '.' (Unicode 'FULL STOP' (U+002E)) rather than ',' to indicate a decimal point. Avoid using these symbols as a readability separator."^^rdf:HTML ;
+  sh:maxCount 1 ;
+  sh:minCount 1 ;
+  sh:name "value" ;
+  sh:or (
+      [
+        sh:class schema:StructuredValue ;
+      ]
+      [
+        sh:datatype xsd:boolean ;
+      ]
+      [
+        sh:datatype xsd:double ;
+      ]
+      [
+        sh:datatype xsd:float ;
+      ]
+      [
+        sh:datatype xsd:integer ;
+      ]
+      [
+        sh:datatype xsd:string ;
+      ]
+    ) ;
+  sh:path schema:value ;
+.
