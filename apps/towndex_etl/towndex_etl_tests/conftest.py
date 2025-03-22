@@ -3,6 +3,7 @@ import pytest
 from pathlib import Path
 from towndex_etl.meeting_minutes_reader import MeetingMinutesReader
 from towndex_etl.models import MeetingMinutes
+from towndex_etl.models.types import NonBlankString as ModelPrompt
 
 
 @pytest.fixture(scope="session")
@@ -43,6 +44,27 @@ def meeting_minutes_reader(
     return MeetingMinutesReader(
         meeting_minutes_directory_path=meeting_minutes_directory_path
     )
+
+
+@pytest.fixture(scope="session")
+def openai_model_prompt(openai_model_prompt_file_path: Path) -> ModelPrompt:
+    """Return an OpenAI's model's prompt."""
+
+    return openai_model_prompt_file_path.read_text().strip()
+
+
+@pytest.fixture(scope="session")
+def openai_model_prompt_file_path(test_directory_path: Path) -> Path:
+    """Return the path for an OpenAI model's prompt."""
+
+    openai_model_prompt_file_path = (
+        test_directory_path / "openai_meeting_minutes_jsonld_prompt.txt"
+    )
+
+    if openai_model_prompt_file_path.exists():
+        return openai_model_prompt_file_path
+
+    pytest.skip(reason="the path containing the OpenAI model's prompt does not exist.")
 
 
 @pytest.fixture(scope="session")
