@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pypdf import PdfReader
 
-from models import MeetingMinutes
+from towndex_etl.models import MeetingMinutes
 
 
 def read_meeting_minutes(

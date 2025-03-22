@@ -1,9 +1,7 @@
 from pathlib import Path
 
-from pydantic import SecretStr, Field, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from typing import Annotated
 
 CONFIG_DIRECTORY_PATH = Path(__file__).parent.parent.parent.absolute()
 DATA_DIRECTORY_PATH = Path(__file__).parent.parent.parent.absolute() / "data"

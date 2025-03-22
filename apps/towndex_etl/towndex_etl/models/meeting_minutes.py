@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from models.types import NonBlankString
+from towndex_etl.models.types import NonBlankString
 
 
 class MeetingMinutes(BaseModel):

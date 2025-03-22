@@ -7,10 +7,10 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
-from models.meeting_minutes import MeetingMinutes
-from models.types import NonBlankString as ModelPrompt
-from models.types import NonBlankString as ModelResponse
-from read_openai_model_prompt import read_openai_model_prompt
+from towndex_etl.models.meeting_minutes import MeetingMinutes
+from towndex_etl.models.types import NonBlankString as ModelPrompt
+from towndex_etl.models.types import NonBlankString as ModelResponse
+from towndex_etl.read_openai_model_prompt import read_openai_model_prompt
 
 
 class TowndexKgBuilder:
