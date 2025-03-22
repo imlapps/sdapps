@@ -1,7 +1,8 @@
-from pypdf import PdfReader
-import pytest
 from pathlib import Path
-from towndex_etl.meeting_minutes_reader import MeetingMinutesReader
+
+import pytest
+from pypdf import PdfReader
+
 from towndex_etl.models import MeetingMinutes
 from towndex_etl.models.types import NonBlankString as ModelPrompt
 
@@ -33,17 +34,6 @@ def meeting_minutes_directory_path(test_directory_path: Path) -> Path:
         return meeting_minutes_directory_path
 
     pytest.skip(reason="directory path for test minutes files does not exist.")
-
-
-@pytest.fixture(scope="session")
-def meeting_minutes_reader(
-    meeting_minutes_directory_path: Path,
-) -> MeetingMinutesReader:
-    """Return a MeetingMinutesReader."""
-
-    return MeetingMinutesReader(
-        meeting_minutes_directory_path=meeting_minutes_directory_path
-    )
 
 
 @pytest.fixture(scope="session")

@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from towndex_etl.models.types import NonBlankString as ModelResponse
 from towndex_etl.read_openai_model_prompt import read_openai_model_prompt
 

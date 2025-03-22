@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from towndex_etl.models.types import NonBlankString
 
 
