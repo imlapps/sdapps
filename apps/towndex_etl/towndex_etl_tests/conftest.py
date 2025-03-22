@@ -1,6 +1,8 @@
 import json
-from pathlib import Path
 
+import os 
+
+from pathlib import Path
 import pytest
 from pypdf import PdfReader
 
@@ -38,6 +40,10 @@ def meeting_minutes_directory_path(test_directory_path: Path) -> Path:
 
     pytest.skip(reason="directory path for test minutes files does not exist.")
 
+@pytest.fixture(scope="session")
+def openai_api_key() -> None:
+    if "OPENAI_API_KEY" not in os.environ:
+        pytest.skip(reason="don't have OpenAI API key.")
 
 @pytest.fixture(scope="session")
 def openai_model_prompt(openai_model_prompt_file_path: Path) -> ModelPrompt:

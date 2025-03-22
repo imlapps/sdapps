@@ -1,7 +1,9 @@
 from pathlib import Path
 
-from pydantic import SecretStr
+from pydantic import SecretStr, Field 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from typing import Annotated 
 
 CONFIG_DIRECTORY_PATH = Path(__file__).parent.parent.parent.absolute()
 DATA_DIRECTORY_PATH = Path(__file__).parent.parent.parent.absolute() / "data"
@@ -26,7 +28,8 @@ class Settings(BaseSettings):
     shacl_shapes_graph_path: Path = (
         Path(__file__).parent.absolute() / "towndex.etl.shapes.ttl"
     )
-
+    meeting_minutes_start_index: Annotated[int, Field(default=0)]
+    
     @property
     def meeting_minutes_path(self) -> Path:
         """The Path of the directory that contains Brunswick Town Board's meeting minutes."""
