@@ -28,10 +28,10 @@ class Settings(BaseSettings):
     )
 
     @property
-    def brunswick_town_board_minutes_path(self) -> Path:
+    def meeting_minutes_path(self) -> Path:
         """The Path of the directory that contains Brunswick Town Board's meeting minutes."""
 
-        return self.input_directory_path / "brunswick_town_board_minutes"
+        return self.input_directory_path / "meeting_minutes_path"
 
     @property
     def openai_prompts_path(self) -> Path:

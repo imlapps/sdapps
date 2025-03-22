@@ -59,7 +59,9 @@ def openai_model_response(openai_model_response_file_path: Path) -> ModelRespons
 def openai_model_response_file_path(test_directory_path: Path) -> Path:
     """Return the path for an OpenAI model's response."""
 
-    openai_model_response_file_path = test_directory_path / "openai_jsonld_output.json"
+    openai_model_response_file_path = (
+        test_directory_path / "TBMeetingMinutes20250213.json"
+    )
 
     if openai_model_response_file_path.exists():
         return openai_model_response_file_path
@@ -81,6 +83,18 @@ def openai_model_prompt_file_path(test_directory_path: Path) -> Path:
         return openai_model_prompt_file_path
 
     pytest.skip(reason="the path containing the OpenAI model's prompt does not exist.")
+
+
+@pytest.fixture(scope="session")
+def shacl_shapes() -> Path:
+    """Return the file path for SHACL shapes."""
+
+    return (
+        Path(__file__).parent.parent.absolute()
+        / "towndex_etl"
+        / "models"
+        / "towndex.etl.shapes.ttl"
+    )
 
 
 @pytest.fixture(scope="session")
