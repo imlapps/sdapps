@@ -12,8 +12,6 @@ class Settings(BaseSettings):
 
     cache_directory_path: Path = DATA_DIRECTORY_PATH / "cache"
     input_directory_path: Path = DATA_DIRECTORY_PATH / "input"
-    openai_api_key: SecretStr | None = None
-    output_directory_path: Path = DATA_DIRECTORY_PATH / "output"
     model_config = SettingsConfigDict(
         env_file=(
             CONFIG_DIRECTORY_PATH / ".env.local",
@@ -22,6 +20,11 @@ class Settings(BaseSettings):
         extra="ignore",
         env_file_encoding="utf-8",
         validate_default=False,
+    )
+    openai_api_key: SecretStr | None = None
+    output_directory_path: Path = DATA_DIRECTORY_PATH / "output"
+    shacl_shapes_graph_path: Path = (
+        Path(__file__).parent.absolute() / "towndex.etl.shapes.ttl"
     )
 
     @property
@@ -37,10 +40,10 @@ class Settings(BaseSettings):
         return self.input_directory_path / "openai_prompts"
 
     @property
-    def openai_graph_builder_cache_directory_path(self) -> Path:
-        """The Path of the directory that contains cached OpenAI schema.org JSON-LD responses."""
+    def towndex_kg_builder_cache_directory_path(self) -> Path:
+        """The Path of the directory that contains cached schema.org JSON-LD responses."""
 
-        return self.cache_directory_path / "openai_graph_builder"
+        return self.cache_directory_path / "towndex_kg_builder"
 
     @property
     def shacl_validator_cache_directory_path(self) -> Path:
