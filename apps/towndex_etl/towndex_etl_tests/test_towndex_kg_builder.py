@@ -10,7 +10,7 @@ from towndex_etl.towndex_kg_builder import TowndexKgBuilder
 
 def test_build_graph(
     meeting_minutes: MeetingMinutes,
-    openai_api_key: None,
+    openai_api_key: None,  # noqa: ARG001
     openai_model_response: ModelResponse,
     session_mocker: MockFixture,
     towndex_kg_builder: TowndexKgBuilder,
