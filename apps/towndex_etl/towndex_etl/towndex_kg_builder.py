@@ -7,17 +7,17 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
-from towndex_etl.models.meeting_minutes import MeetingMinutes
-from towndex_etl.models.types import NonBlankString as ModelPrompt
-from towndex_etl.models.types import NonBlankString as ModelResponse
-from towndex_etl.read_openai_model_prompt import read_openai_model_prompt
+from models.meeting_minutes import MeetingMinutes
+from models.types import NonBlankString as ModelPrompt
+from models.types import NonBlankString as ModelResponse
+from read_openai_model_prompt import read_openai_model_prompt
 
 
 class TowndexKgBuilder:
     def __init__(
         self,
         *,
-        towndex_kg_builder_cache_directory_path: Path,
+        towndex_kg_builder_output_directory_path: Path,
         openai_model_prompt_file_path: Path,
     ) -> None:
         self.__openai_model_prompt = read_openai_model_prompt(
@@ -26,8 +26,8 @@ class TowndexKgBuilder:
         self.__template = """\
                 Question: {question}
                 """
-        self.__towndex_kg_builder_cache_directory_path = (
-            towndex_kg_builder_cache_directory_path
+        self.__towndex_kg_builder_output_directory_path = (
+            towndex_kg_builder_output_directory_path
         )
 
     def __add_meeting_minutes_to_prompt(
@@ -74,12 +74,12 @@ class TowndexKgBuilder:
             model_response[model_response.find("{") : model_response.rfind("}") + 1]
         )
 
-        self.__towndex_kg_builder_cache_directory_path.mkdir(
+        self.__towndex_kg_builder_output_directory_path.mkdir(
             parents=True, exist_ok=True
         )
 
         meeting_minutes_json_ld_file_path = (
-            self.__towndex_kg_builder_cache_directory_path
+            self.__towndex_kg_builder_output_directory_path
             / Path(meeting_minutes.id + ".json")
         )
 
