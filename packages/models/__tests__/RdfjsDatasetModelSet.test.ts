@@ -1,7 +1,9 @@
 import { describe } from "vitest";
-import { behavesLikeModelSet } from "./behavesLikeModelSet";
-import { testData } from "./testData";
+import { behavesLikeTowndexModelSet } from "./behavesLikeTowndexModelSet";
+import { towndexData } from "./towndexData";
 
 describe("RdfjsDatasetModelSet", () => {
-  behavesLikeModelSet(testData.rdfjsDatasetModelSet);
+  // behavesLikeTestModelSet(testData.rdfjsDatasetModelSet);
+
+  behavesLikeTowndexModelSet(towndexData.rdfjsDatasetModelSet);
 });
