@@ -1,2 +1,13 @@
-*.env 
+.DS_Store
+.env
+.env.*
+.next/
+.turbo
 *.pyc
+build
+coverage
+data/congress/.cache
+dist/
+node_modules
+npmdebug.log*
+out/
