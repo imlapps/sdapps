@@ -1,7 +1,7 @@
 "use client";
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Burger, Group } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { IconHomeDown } from "@tabler/icons-react";
 import classes from "./Header.module.css";
 
 export function Header({
@@ -16,7 +16,7 @@ export function Header({
       <div className={classes["inner"]}>
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
-          <IconSearch size={28} stroke={1.5} />
+          <IconHomeDown size={28} stroke={1.5} />
         </Group>
 
         <Group>

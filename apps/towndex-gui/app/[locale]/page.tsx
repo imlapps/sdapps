@@ -1,8 +1,12 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { dataset } from "@/lib/dataset";
+import { getHrefs } from "@/lib/getHrefs";
+import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
+import { Table, TableTbody, TableTd, TableTr } from "@mantine/core";
 import { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 interface LocalePageParams {
   locale: Locale;
@@ -14,7 +18,29 @@ export default async function LocalePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return <div>Test</div>;
+  const hrefs = await getHrefs();
+  const translations = await getTranslations("LocalePage");
+
+  return (
+    <Table>
+      <TableTbody>
+        <TableTr>
+          <TableTd>
+            <a href={hrefs.people}>{translations("Dataset")}</a>
+          </TableTd>
+          <TableTd>
+            {dataset.size} {translations("quads")}
+          </TableTd>
+        </TableTr>
+        <TableTr>
+          <TableTd>
+            <a href={hrefs.people}>{translations("People")}</a>
+          </TableTd>
+          <TableTd>{(await modelSet.people()).unsafeCoerce().length}</TableTd>
+        </TableTr>
+      </TableTbody>
+    </Table>
+  );
 }
 
 export async function generateMetadata({
