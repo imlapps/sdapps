@@ -1,14 +1,5 @@
 import "@mantine/core/styles.css";
-import {
-  ColorSchemeScript,
-  MantineProvider,
-  mantineHtmlProps,
-} from "@mantine/core";
-import { theme } from "../theme";
-
-export const metadata = {
-  title: "Towndex",
-};
+import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 
 export default function RootLayout({ children }: { children: any }) {
   return (
@@ -21,9 +12,7 @@ export default function RootLayout({ children }: { children: any }) {
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
         />
       </head>
-      <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

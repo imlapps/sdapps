@@ -9,7 +9,7 @@ import {
 } from "@kos-kit/next-utils/server";
 import { DatasetCore } from "@rdfjs/types";
 import * as N3 from "n3";
-import { configuration } from "./configuration";
+import { serverConfiguration } from "./serverConfiguration";
 
 async function loadDataset(dataPaths: readonly string[]): Promise<DatasetCore> {
   logger.info("loading dataset from data paths: %s", dataPaths.join(":"));
@@ -64,6 +64,6 @@ async function loadDataset(dataPaths: readonly string[]): Promise<DatasetCore> {
 const datasetGlobalRef = new GlobalRef<DatasetCore>("dataset");
 
 if (!datasetGlobalRef.value) {
-  datasetGlobalRef.value = await loadDataset(configuration.dataPaths);
+  datasetGlobalRef.value = await loadDataset(serverConfiguration.dataPaths);
 }
 export const dataset: DatasetCore = datasetGlobalRef.value;

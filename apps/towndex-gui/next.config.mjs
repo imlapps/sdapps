@@ -1,4 +1,7 @@
-const { createVanillaExtractPlugin } = require("@vanilla-extract/next-plugin");
+import createNextIntlPlugin from "next-intl/plugin";
+const withNextIntl = createNextIntlPlugin("./i18n.ts");
+
+import { createVanillaExtractPlugin } from "@vanilla-extract/next-plugin";
 const withVanillaExtract = createVanillaExtractPlugin();
 
 /** @type {import('next').NextConfig} */
@@ -9,4 +12,4 @@ const nextConfig = {
   },
 };
 
-export default withVanillaExtract(nextConfig);
+export default withNextIntl(withVanillaExtract(nextConfig));

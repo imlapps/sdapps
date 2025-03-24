@@ -1,19 +1,25 @@
-import { configuration } from "@/lib/configuration";
+import { Locale } from "@/lib/models/Locale";
 import { encodeFileName } from "@kos-kit/next-utils";
-import { Person } from "@sdapps/models";
-import { Resource } from "rdfjs-resource";
+import { Identifier, Person } from "@sdapps/models";
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class Hrefs {
-  static get root() {
-    return `${configuration.nextBasePath}`;
+  private readonly basePath: string;
+  private readonly _locale: string;
+
+  constructor({ basePath, locale }: { basePath: string; locale: Locale }) {
+    this.basePath = basePath;
+    this._locale = locale;
   }
 
-  static get people() {
-    return `${Hrefs.root}people`;
+  get locale() {
+    return `${this.basePath}/${this._locale}`;
   }
 
-  static person(person: { identifier: Person["identifier"] }) {
-    return `${Hrefs.people}/${encodeFileName(Resource.Identifier.toString(person.identifier))}`;
+  get people() {
+    return `${this.locale}/people`;
+  }
+
+  person(person: { identifier: Person["identifier"] }) {
+    return `${this.people}/${encodeFileName(Identifier.toString(person.identifier))}`;
   }
 }
