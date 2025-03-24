@@ -85,6 +85,15 @@ export namespace EqualsResult {
       };
 }
 /**
+ * Compare two objects with equals(other: T): boolean methods and return an EqualsResult.
+ */
+export function booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): EqualsResult {
+  return EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+}
+/**
  * Compare two values for strict equality (===), returning an EqualsResult rather than a boolean.
  */
 export function strictEquals<T extends bigint | boolean | number | string>(
@@ -120,15 +129,6 @@ export function maybeEquals<T>(
   }
 
   return EqualsResult.Equal;
-}
-/**
- * Compare two objects with equals(other: T): boolean methods and return an EqualsResult.
- */
-export function booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
 export function arrayEquals<T>(
   leftArray: readonly T[],
@@ -204,11 +204,7 @@ export function dateEquals(left: Date, right: Date): EqualsResult {
   );
 }
 export abstract class Thing {
-  readonly description: purify.Maybe<string>;
   abstract readonly identifier: rdfjs.NamedNode;
-  readonly identifiers: readonly string[];
-  readonly name: purify.Maybe<string>;
-  readonly sameAs: readonly rdfjs.NamedNode[];
   abstract readonly type:
     | "GenderType"
     | "ImageObject"
@@ -217,6 +213,10 @@ export abstract class Thing {
     | "Person"
     | "QuantitiveValue"
     | "Role";
+  readonly description: purify.Maybe<string>;
+  readonly identifiers: readonly string[];
+  readonly name: purify.Maybe<string>;
+  readonly sameAs: readonly rdfjs.NamedNode[];
   readonly url: purify.Maybe<rdfjs.NamedNode>;
 
   constructor(parameters: {
@@ -276,27 +276,36 @@ export abstract class Thing {
   }
 
   equals(other: Thing): EqualsResult {
-    return ((left, right) => maybeEquals(left, right, strictEquals))(
-      this.description,
-      other.description,
-    )
+    return booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
-        propertyName: "description",
+        propertyName: "identifier",
         propertyValuesUnequal,
         type: "Property" as const,
       }))
       .chain(() =>
-        booleanEquals(this.identifier, other.identifier).mapLeft(
+        strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "identifier",
+            propertyName: "type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
         ),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.description,
+          other.description,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "description",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       )
       .chain(() =>
         ((left, right) => arrayEquals(left, right, strictEquals))(
@@ -335,17 +344,6 @@ export abstract class Thing {
         })),
       )
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => maybeEquals(left, right, booleanEquals))(
           this.url,
           other.url,
@@ -360,6 +358,17 @@ export abstract class Thing {
   }
 
   hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.identifier.value);
+    _hasher.update(this.type);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -387,11 +396,7 @@ export abstract class Thing {
   }
 
   toJson(): {
-    readonly description: string | undefined;
     readonly "@id": string;
-    readonly identifiers: readonly string[];
-    readonly name: string | undefined;
-    readonly sameAs: readonly { readonly "@id": string }[];
     readonly type:
       | "GenderType"
       | "ImageObject"
@@ -400,16 +405,20 @@ export abstract class Thing {
       | "Person"
       | "QuantitiveValue"
       | "Role";
+    readonly description: string | undefined;
+    readonly identifiers: readonly string[];
+    readonly name: string | undefined;
+    readonly sameAs: readonly { readonly "@id": string }[];
     readonly url: { readonly "@id": string } | undefined;
   } {
     return JSON.parse(
       JSON.stringify({
-        description: this.description.map((_item) => _item).extract(),
         "@id": this.identifier.value,
+        type: this.type,
+        description: this.description.map((_item) => _item).extract(),
         identifiers: this.identifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
-        type: this.type,
         url: this.url.map((_item) => ({ "@id": _item.value })).extract(),
       } satisfies ReturnType<Thing["toJson"]>),
     );
@@ -449,13 +458,13 @@ export abstract class Thing {
 }
 
 export namespace Thing {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
-      description: purify.Maybe<string>;
       identifier: rdfjs.NamedNode;
+      description: purify.Maybe<string>;
       identifiers: readonly string[];
       name: purify.Maybe<string>;
       sameAs: readonly rdfjs.NamedNode[];
@@ -468,8 +477,8 @@ export namespace Thing {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const description = purify.Maybe.fromNullable(_jsonObject["description"]);
     const identifier = dataFactory.namedNode(_jsonObject["@id"]);
+    const description = purify.Maybe.fromNullable(_jsonObject["description"]);
     const identifiers = _jsonObject["identifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
     const sameAs = _jsonObject["sameAs"].map((_item) =>
@@ -479,8 +488,8 @@ export namespace Thing {
       dataFactory.namedNode(_item["@id"]),
     );
     return purify.Either.of({
-      description,
       identifier,
+      description,
       identifiers,
       name,
       sameAs,
@@ -488,7 +497,7 @@ export namespace Thing {
     });
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -502,14 +511,15 @@ export namespace Thing {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      description: purify.Maybe<string>;
       identifier: rdfjs.NamedNode;
+      description: purify.Maybe<string>;
       identifiers: readonly string[];
       name: purify.Maybe<string>;
       sameAs: readonly rdfjs.NamedNode[];
       url: purify.Maybe<rdfjs.NamedNode>;
     }
   > {
+    const identifier = _resource.identifier;
     const _descriptionEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -527,7 +537,6 @@ export namespace Thing {
     }
 
     const description = _descriptionEither.unsafeCoerce();
-    const identifier = _resource.identifier;
     const _identifiersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly string[]
@@ -607,8 +616,8 @@ export namespace Thing {
 
     const url = _urlEither.unsafeCoerce();
     return purify.Either.of({
-      description,
       identifier,
+      description,
       identifiers,
       name,
       sameAs,
@@ -624,15 +633,11 @@ export namespace Thing {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        { scope: `${scopePrefix}/properties/description`, type: "Control" },
         {
           label: "Identifier",
           scope: `${scopePrefix}/properties/@id`,
           type: "Control",
         },
-        { scope: `${scopePrefix}/properties/identifiers`, type: "Control" },
-        { scope: `${scopePrefix}/properties/name`, type: "Control" },
-        { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
         {
           rule: {
             condition: {
@@ -644,6 +649,10 @@ export namespace Thing {
           scope: `${scopePrefix}/properties/type`,
           type: "Control",
         },
+        { scope: `${scopePrefix}/properties/description`, type: "Control" },
+        { scope: `${scopePrefix}/properties/identifiers`, type: "Control" },
+        { scope: `${scopePrefix}/properties/name`, type: "Control" },
+        { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
         { scope: `${scopePrefix}/properties/url`, type: "Control" },
       ],
       label: "Thing",
@@ -653,11 +662,7 @@ export namespace Thing {
 
   export function thingJsonZodSchema() {
     return zod.object({
-      description: zod.string().optional(),
       "@id": zod.string().min(1),
-      identifiers: zod.string().array(),
-      name: zod.string().optional(),
-      sameAs: zod.object({ "@id": zod.string().min(1) }).array(),
       type: zod.enum([
         "GenderType",
         "ImageObject",
@@ -667,6 +672,10 @@ export namespace Thing {
         "QuantitiveValue",
         "Role",
       ]),
+      description: zod.string().optional(),
+      identifiers: zod.string().array(),
+      name: zod.string().optional(),
+      sameAs: zod.object({ "@id": zod.string().min(1) }).array(),
       url: zod.object({ "@id": zod.string().min(1) }).optional(),
     });
   }
@@ -706,12 +715,12 @@ export abstract class Intangible extends Thing {
 }
 
 export namespace Intangible {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing.propertiesFromJson>
+      ReturnType<typeof Thing._propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult = intangibleJsonZodSchema().safeParse(_json);
@@ -720,7 +729,7 @@ export namespace Intangible {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing.propertiesFromJson(_jsonObject);
+    const _super0Either = Thing._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -730,7 +739,7 @@ export namespace Intangible {
     return purify.Either.of({ ..._super0, identifier });
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -744,10 +753,10 @@ export namespace Intangible {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing.propertiesFromRdf>
+      ReturnType<typeof Thing._propertiesFromRdf>
     >
   > {
-    const _super0Either = Thing.propertiesFromRdf({
+    const _super0Either = Thing._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -817,12 +826,12 @@ export abstract class StructuredValue extends Intangible {
 }
 
 export namespace StructuredValue {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible.propertiesFromJson>
+      ReturnType<typeof Intangible._propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult =
@@ -832,7 +841,7 @@ export namespace StructuredValue {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible.propertiesFromJson(_jsonObject);
+    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -842,7 +851,7 @@ export namespace StructuredValue {
     return purify.Either.of({ ..._super0, identifier });
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -856,10 +865,10 @@ export namespace StructuredValue {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible.propertiesFromRdf>
+      ReturnType<typeof Intangible._propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible.propertiesFromRdf({
+    const _super0Either = Intangible._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -899,16 +908,18 @@ export namespace StructuredValue {
   }
 }
 export class Role extends Intangible {
-  readonly endDate: purify.Maybe<Date>;
   private _identifier: rdfjs.NamedNode | undefined;
+  protected readonly _identifierPrefix?: string;
+  override readonly type = "Role";
+  readonly endDate: purify.Maybe<Date>;
   readonly roleName: purify.Maybe<rdfjs.NamedNode>;
   readonly startDate: purify.Maybe<Date>;
-  override readonly type = "Role";
 
   constructor(
     parameters: {
-      readonly endDate?: Date | purify.Maybe<Date>;
       readonly identifier?: rdfjs.NamedNode | string;
+      readonly identifierPrefix?: string;
+      readonly endDate?: Date | purify.Maybe<Date>;
       readonly roleName?:
         | rdfjs.NamedNode
         | purify.Maybe<rdfjs.NamedNode>
@@ -917,6 +928,16 @@ export class Role extends Intangible {
     } & ConstructorParameters<typeof Intangible>[0],
   ) {
     super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    this._identifierPrefix = parameters.identifierPrefix;
     if (purify.Maybe.isMaybe(parameters.endDate)) {
       this.endDate = parameters.endDate;
     } else if (
@@ -928,15 +949,6 @@ export class Role extends Intangible {
       this.endDate = purify.Maybe.empty();
     } else {
       this.endDate = parameters.endDate as never;
-    }
-
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier as never;
     }
 
     if (purify.Maybe.isMaybe(parameters.roleName)) {
@@ -971,8 +983,14 @@ export class Role extends Intangible {
     return typeof this._identifier !== "undefined"
       ? this._identifier
       : dataFactory.namedNode(
-          `urn:shaclmate:object:${this.type}:${this.hash(sha256.create())}`,
+          `${this.identifierPrefix}${this.hashShaclProperties(sha256.create())}`,
         );
+  }
+
+  protected get identifierPrefix(): string {
+    return typeof this._identifierPrefix !== "undefined"
+      ? this._identifierPrefix
+      : `urn:shaclmate:${this.type}:`;
   }
 
   override equals(other: Role): EqualsResult {
@@ -1021,7 +1039,16 @@ export class Role extends Intangible {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     this.endDate.ifJust((_value0) => {
       _hasher.update(_value0.toISOString());
     });
@@ -1114,16 +1141,16 @@ export class Role extends Intangible {
 }
 
 export namespace Role {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
-      endDate: purify.Maybe<Date>;
       identifier: rdfjs.NamedNode;
+      endDate: purify.Maybe<Date>;
       roleName: purify.Maybe<rdfjs.NamedNode>;
       startDate: purify.Maybe<Date>;
-    } & UnwrapR<ReturnType<typeof Intangible.propertiesFromJson>>
+    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = roleJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -1131,16 +1158,16 @@ export namespace Role {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible.propertiesFromJson(_jsonObject);
+    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
 
     const _super0 = _super0Either.unsafeCoerce();
+    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
     const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
       (_item) => new Date(_item),
     );
-    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
     const roleName = purify.Maybe.fromNullable(_jsonObject["roleName"]).map(
       (_item) => dataFactory.namedNode(_item["@id"]),
     );
@@ -1149,20 +1176,20 @@ export namespace Role {
     );
     return purify.Either.of({
       ..._super0,
-      endDate,
       identifier,
+      endDate,
       roleName,
       startDate,
     });
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Role> {
-    return Role.propertiesFromJson(json).map(
+    return Role._propertiesFromJson(json).map(
       (properties) => new Role(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1176,13 +1203,13 @@ export namespace Role {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      endDate: purify.Maybe<Date>;
       identifier: rdfjs.NamedNode;
+      endDate: purify.Maybe<Date>;
       roleName: purify.Maybe<rdfjs.NamedNode>;
       startDate: purify.Maybe<Date>;
-    } & UnwrapR<ReturnType<typeof Intangible.propertiesFromRdf>>
+    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromRdf>>
   > {
-    const _super0Either = Intangible.propertiesFromRdf({
+    const _super0Either = Intangible._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -1206,6 +1233,7 @@ export namespace Role {
       );
     }
 
+    const identifier = _resource.identifier;
     const _endDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -1223,7 +1251,6 @@ export namespace Role {
     }
 
     const endDate = _endDateEither.unsafeCoerce();
-    const identifier = _resource.identifier;
     const _roleNameEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<rdfjs.NamedNode>
@@ -1260,17 +1287,17 @@ export namespace Role {
     const startDate = _startDateEither.unsafeCoerce();
     return purify.Either.of({
       ..._super0,
-      endDate,
       identifier,
+      endDate,
       roleName,
       startDate,
     });
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Role.propertiesFromRdf>[0],
+    parameters: Parameters<typeof Role._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Role> {
-    return Role.propertiesFromRdf(parameters).map(
+    return Role._propertiesFromRdf(parameters).map(
       (properties) => new Role(properties),
     );
   }
@@ -1300,16 +1327,18 @@ export namespace Role {
   export function roleJsonZodSchema() {
     return Intangible.intangibleJsonZodSchema().merge(
       zod.object({
-        endDate: zod.string().date().optional(),
         "@id": zod.string().min(1),
+        type: zod.literal("Role"),
+        endDate: zod.string().date().optional(),
         roleName: zod.object({ "@id": zod.string().min(1) }).optional(),
         startDate: zod.string().date().optional(),
-        type: zod.literal("Role"),
       }),
     );
   }
 }
 export class Person extends Thing {
+  readonly identifier: rdfjs.NamedNode;
+  override readonly type = "Person";
   readonly birthDate: purify.Maybe<Date>;
   readonly familyName: purify.Maybe<string>;
   readonly gender: purify.Maybe<
@@ -1317,13 +1346,12 @@ export class Person extends Thing {
   >;
   readonly givenName: purify.Maybe<string>;
   readonly hasOccupation: readonly (Occupation | Role)[];
-  readonly identifier: rdfjs.NamedNode;
   readonly images: readonly ImageObject[];
   memberOf: rdfjs.NamedNode[];
-  override readonly type = "Person";
 
   constructor(
     parameters: {
+      readonly identifier: rdfjs.NamedNode | string;
       readonly birthDate?: Date | purify.Maybe<Date>;
       readonly familyName?: purify.Maybe<string> | string;
       readonly gender?:
@@ -1335,12 +1363,19 @@ export class Person extends Thing {
         | string;
       readonly givenName?: purify.Maybe<string> | string;
       readonly hasOccupation?: readonly (Occupation | Role)[];
-      readonly identifier: rdfjs.NamedNode | string;
       readonly images?: readonly ImageObject[];
       readonly memberOf?: readonly rdfjs.NamedNode[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this.identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this.identifier = dataFactory.namedNode(parameters.identifier);
+    } else {
+      this.identifier = parameters.identifier as never;
+    }
+
     if (purify.Maybe.isMaybe(parameters.birthDate)) {
       this.birthDate = parameters.birthDate;
     } else if (
@@ -1407,14 +1442,6 @@ export class Person extends Thing {
       this.hasOccupation = parameters.hasOccupation;
     } else {
       this.hasOccupation = parameters.hasOccupation as never;
-    }
-
-    if (typeof parameters.identifier === "object") {
-      this.identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this.identifier = dataFactory.namedNode(parameters.identifier);
-    } else {
-      this.identifier = parameters.identifier as never;
     }
 
     if (typeof parameters.images === "undefined") {
@@ -1552,7 +1579,16 @@ export class Person extends Thing {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     this.birthDate.ifJust((_value0) => {
       _hasher.update(_value0.toISOString());
     });
@@ -1579,7 +1615,6 @@ export class Person extends Thing {
       }
     }
 
-    _hasher.update(this.identifier.value);
     for (const _item0 of this.images) {
       _item0.hash(_hasher);
     }
@@ -1726,20 +1761,20 @@ export class Person extends Thing {
 }
 
 export namespace Person {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
+      identifier: rdfjs.NamedNode;
       birthDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
       hasOccupation: readonly (Occupation | Role)[];
-      identifier: rdfjs.NamedNode;
       images: readonly ImageObject[];
       memberOf: rdfjs.NamedNode[];
-    } & UnwrapR<ReturnType<typeof Thing.propertiesFromJson>>
+    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = personJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -1747,12 +1782,13 @@ export namespace Person {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing.propertiesFromJson(_jsonObject);
+    const _super0Either = Thing._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
 
     const _super0 = _super0Either.unsafeCoerce();
+    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
     const birthDate = purify.Maybe.fromNullable(_jsonObject["birthDate"]).map(
       (_item) => new Date(_item),
     );
@@ -1778,7 +1814,6 @@ export namespace Person {
         ? Role.fromJson(_item).unsafeCoerce()
         : Occupation.fromJson(_item).unsafeCoerce(),
     );
-    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
     const images = _jsonObject["images"].map((_item) =>
       ImageObject.fromJson(_item).unsafeCoerce(),
     );
@@ -1787,24 +1822,24 @@ export namespace Person {
     );
     return purify.Either.of({
       ..._super0,
+      identifier,
       birthDate,
       familyName,
       gender,
       givenName,
       hasOccupation,
-      identifier,
       images,
       memberOf,
     });
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Person> {
-    return Person.propertiesFromJson(json).map(
+    return Person._propertiesFromJson(json).map(
       (properties) => new Person(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1818,17 +1853,17 @@ export namespace Person {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
+      identifier: rdfjs.NamedNode;
       birthDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
       hasOccupation: readonly (Occupation | Role)[];
-      identifier: rdfjs.NamedNode;
       images: readonly ImageObject[];
       memberOf: rdfjs.NamedNode[];
-    } & UnwrapR<ReturnType<typeof Thing.propertiesFromRdf>>
+    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
-    const _super0Either = Thing.propertiesFromRdf({
+    const _super0Either = Thing._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -1852,6 +1887,7 @@ export namespace Person {
       );
     }
 
+    const identifier = _resource.identifier;
     const _birthDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -1973,7 +2009,6 @@ export namespace Person {
     }
 
     const hasOccupation = _hasOccupationEither.unsafeCoerce();
-    const identifier = _resource.identifier;
     const _imagesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly ImageObject[]
@@ -2028,21 +2063,21 @@ export namespace Person {
     const memberOf = _memberOfEither.unsafeCoerce();
     return purify.Either.of({
       ..._super0,
+      identifier,
       birthDate,
       familyName,
       gender,
       givenName,
       hasOccupation,
-      identifier,
       images,
       memberOf,
     });
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Person.propertiesFromRdf>[0],
+    parameters: Parameters<typeof Person._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Person> {
-    return Person.propertiesFromRdf(parameters).map(
+    return Person._propertiesFromRdf(parameters).map(
       (properties) => new Person(properties),
     );
   }
@@ -2078,6 +2113,8 @@ export namespace Person {
   export function personJsonZodSchema() {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Person"),
         birthDate: zod.string().date().optional(),
         familyName: zod.string().optional(),
         gender: zod
@@ -2105,20 +2142,18 @@ export namespace Person {
             Role.roleJsonZodSchema(),
           ])
           .array(),
-        "@id": zod.string().min(1),
         images: ImageObject.imageObjectJsonZodSchema().array(),
         memberOf: zod.object({ "@id": zod.string().min(1) }).array(),
-        type: zod.literal("Person"),
       }),
     );
   }
 }
 export class Organization extends Thing {
   readonly identifier: rdfjs.NamedNode;
+  override readonly type = "Organization";
   members: rdfjs.NamedNode[];
   parentOrganizations: rdfjs.NamedNode[];
   subOrganizations: rdfjs.NamedNode[];
-  override readonly type = "Organization";
 
   constructor(
     parameters: {
@@ -2208,8 +2243,16 @@ export class Organization extends Thing {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
-    _hasher.update(this.identifier.value);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     for (const _item0 of this.members) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
@@ -2291,7 +2334,7 @@ export class Organization extends Thing {
 }
 
 export namespace Organization {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -2300,7 +2343,7 @@ export namespace Organization {
       members: rdfjs.NamedNode[];
       parentOrganizations: rdfjs.NamedNode[];
       subOrganizations: rdfjs.NamedNode[];
-    } & UnwrapR<ReturnType<typeof Thing.propertiesFromJson>>
+    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = organizationJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -2308,7 +2351,7 @@ export namespace Organization {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing.propertiesFromJson(_jsonObject);
+    const _super0Either = Thing._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2336,12 +2379,12 @@ export namespace Organization {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Organization> {
-    return Organization.propertiesFromJson(json).map(
+    return Organization._propertiesFromJson(json).map(
       (properties) => new Organization(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2359,9 +2402,9 @@ export namespace Organization {
       members: rdfjs.NamedNode[];
       parentOrganizations: rdfjs.NamedNode[];
       subOrganizations: rdfjs.NamedNode[];
-    } & UnwrapR<ReturnType<typeof Thing.propertiesFromRdf>>
+    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
-    const _super0Either = Thing.propertiesFromRdf({
+    const _super0Either = Thing._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2464,9 +2507,9 @@ export namespace Organization {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Organization.propertiesFromRdf>[0],
+    parameters: Parameters<typeof Organization._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Organization> {
-    return Organization.propertiesFromRdf(parameters).map(
+    return Organization._propertiesFromRdf(parameters).map(
       (properties) => new Organization(properties),
     );
   }
@@ -2505,10 +2548,10 @@ export namespace Organization {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
+        type: zod.literal("Organization"),
         members: zod.object({ "@id": zod.string().min(1) }).array(),
         parentOrganizations: zod.object({ "@id": zod.string().min(1) }).array(),
         subOrganizations: zod.object({ "@id": zod.string().min(1) }).array(),
-        type: zod.literal("Organization"),
       }),
     );
   }
@@ -2530,16 +2573,6 @@ export class Occupation extends Intangible {
     } else {
       this.identifier = parameters.identifier as never;
     }
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
-    _hasher.update(this.identifier.value);
-    return _hasher;
   }
 
   override toRdf({
@@ -2574,12 +2607,12 @@ export class Occupation extends Intangible {
 }
 
 export namespace Occupation {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible.propertiesFromJson>
+      ReturnType<typeof Intangible._propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult = occupationJsonZodSchema().safeParse(_json);
@@ -2588,7 +2621,7 @@ export namespace Occupation {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible.propertiesFromJson(_jsonObject);
+    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2601,12 +2634,12 @@ export namespace Occupation {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Occupation> {
-    return Occupation.propertiesFromJson(json).map(
+    return Occupation._propertiesFromJson(json).map(
       (properties) => new Occupation(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2620,10 +2653,10 @@ export namespace Occupation {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible.propertiesFromRdf>
+      ReturnType<typeof Intangible._propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible.propertiesFromRdf({
+    const _super0Either = Intangible._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2654,9 +2687,9 @@ export namespace Occupation {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Occupation.propertiesFromRdf>[0],
+    parameters: Parameters<typeof Occupation._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Occupation> {
-    return Occupation.propertiesFromRdf(parameters).map(
+    return Occupation._propertiesFromRdf(parameters).map(
       (properties) => new Occupation(properties),
     );
   }
@@ -2742,8 +2775,16 @@ export class QuantitiveValue extends StructuredValue {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
-    _hasher.update(this.identifier.value);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     this.value.ifJust((_value0) => {
       _hasher.update(_value0.toString());
     });
@@ -2794,12 +2835,12 @@ export class QuantitiveValue extends StructuredValue {
 }
 
 export namespace QuantitiveValue {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.NamedNode; value: purify.Maybe<number> } & UnwrapR<
-      ReturnType<typeof StructuredValue.propertiesFromJson>
+      ReturnType<typeof StructuredValue._propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult =
@@ -2809,7 +2850,7 @@ export namespace QuantitiveValue {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = StructuredValue.propertiesFromJson(_jsonObject);
+    const _super0Either = StructuredValue._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2823,12 +2864,12 @@ export namespace QuantitiveValue {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, QuantitiveValue> {
-    return QuantitiveValue.propertiesFromJson(json).map(
+    return QuantitiveValue._propertiesFromJson(json).map(
       (properties) => new QuantitiveValue(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2842,10 +2883,10 @@ export namespace QuantitiveValue {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.NamedNode; value: purify.Maybe<number> } & UnwrapR<
-      ReturnType<typeof StructuredValue.propertiesFromRdf>
+      ReturnType<typeof StructuredValue._propertiesFromRdf>
     >
   > {
-    const _super0Either = StructuredValue.propertiesFromRdf({
+    const _super0Either = StructuredValue._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2895,9 +2936,9 @@ export namespace QuantitiveValue {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof QuantitiveValue.propertiesFromRdf>[0],
+    parameters: Parameters<typeof QuantitiveValue._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, QuantitiveValue> {
-    return QuantitiveValue.propertiesFromRdf(parameters).map(
+    return QuantitiveValue._propertiesFromRdf(parameters).map(
       (properties) => new QuantitiveValue(properties),
     );
   }
@@ -2936,8 +2977,8 @@ export namespace QuantitiveValue {
 }
 export abstract class CreativeWork extends Thing {
   abstract override readonly identifier: rdfjs.NamedNode;
-  readonly isBasedOn: readonly rdfjs.NamedNode[];
   abstract override readonly type: "ImageObject";
+  readonly isBasedOn: readonly rdfjs.NamedNode[];
 
   constructor(
     parameters: {
@@ -2976,7 +3017,16 @@ export abstract class CreativeWork extends Thing {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     for (const _item0 of this.isBasedOn) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
@@ -3022,14 +3072,14 @@ export abstract class CreativeWork extends Thing {
 }
 
 export namespace CreativeWork {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode;
       isBasedOn: readonly rdfjs.NamedNode[];
-    } & UnwrapR<ReturnType<typeof Thing.propertiesFromJson>>
+    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = creativeWorkJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -3037,7 +3087,7 @@ export namespace CreativeWork {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing.propertiesFromJson(_jsonObject);
+    const _super0Either = Thing._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3050,7 +3100,7 @@ export namespace CreativeWork {
     return purify.Either.of({ ..._super0, identifier, isBasedOn });
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3066,9 +3116,9 @@ export namespace CreativeWork {
     {
       identifier: rdfjs.NamedNode;
       isBasedOn: readonly rdfjs.NamedNode[];
-    } & UnwrapR<ReturnType<typeof Thing.propertiesFromRdf>>
+    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
-    const _super0Either = Thing.propertiesFromRdf({
+    const _super0Either = Thing._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3127,18 +3177,18 @@ export namespace CreativeWork {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        isBasedOn: zod.object({ "@id": zod.string().min(1) }).array(),
         type: zod.literal("ImageObject"),
+        isBasedOn: zod.object({ "@id": zod.string().min(1) }).array(),
       }),
     );
   }
 }
 export abstract class MediaObject extends CreativeWork {
+  abstract override readonly identifier: rdfjs.NamedNode;
+  abstract override readonly type: "ImageObject";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
   readonly height: purify.Maybe<QuantitiveValue>;
-  abstract override readonly identifier: rdfjs.NamedNode;
-  abstract override readonly type: "ImageObject";
   readonly width: purify.Maybe<QuantitiveValue>;
 
   constructor(
@@ -3264,7 +3314,16 @@ export abstract class MediaObject extends CreativeWork {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     this.contentUrl.ifJust((_value0) => {
       _hasher.update(_value0.termType);
       _hasher.update(_value0.value);
@@ -3342,17 +3401,17 @@ export abstract class MediaObject extends CreativeWork {
 }
 
 export namespace MediaObject {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
+      identifier: rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
       height: purify.Maybe<QuantitiveValue>;
-      identifier: rdfjs.NamedNode;
       width: purify.Maybe<QuantitiveValue>;
-    } & UnwrapR<ReturnType<typeof CreativeWork.propertiesFromJson>>
+    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = mediaObjectJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -3360,12 +3419,13 @@ export namespace MediaObject {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWork.propertiesFromJson(_jsonObject);
+    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
 
     const _super0 = _super0Either.unsafeCoerce();
+    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
     const contentUrl = purify.Maybe.fromNullable(_jsonObject["contentUrl"]).map(
       (_item) => dataFactory.namedNode(_item["@id"]),
     );
@@ -3375,21 +3435,20 @@ export namespace MediaObject {
     const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
       (_item) => QuantitiveValue.fromJson(_item).unsafeCoerce(),
     );
-    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
     const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
       QuantitiveValue.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
+      identifier,
       contentUrl,
       encodingFormat,
       height,
-      identifier,
       width,
     });
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3403,14 +3462,14 @@ export namespace MediaObject {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
+      identifier: rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
       height: purify.Maybe<QuantitiveValue>;
-      identifier: rdfjs.NamedNode;
       width: purify.Maybe<QuantitiveValue>;
-    } & UnwrapR<ReturnType<typeof CreativeWork.propertiesFromRdf>>
+    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromRdf>>
   > {
-    const _super0Either = CreativeWork.propertiesFromRdf({
+    const _super0Either = CreativeWork._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3421,6 +3480,7 @@ export namespace MediaObject {
     }
 
     const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _resource.identifier;
     const _contentUrlEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<rdfjs.NamedNode>
@@ -3480,7 +3540,6 @@ export namespace MediaObject {
     }
 
     const height = _heightEither.unsafeCoerce();
-    const identifier = _resource.identifier;
     const _widthEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<QuantitiveValue>
@@ -3508,10 +3567,10 @@ export namespace MediaObject {
     const width = _widthEither.unsafeCoerce();
     return purify.Either.of({
       ..._super0,
+      identifier,
       contentUrl,
       encodingFormat,
       height,
-      identifier,
       width,
     });
   }
@@ -3544,11 +3603,11 @@ export namespace MediaObject {
   export function mediaObjectJsonZodSchema() {
     return CreativeWork.creativeWorkJsonZodSchema().merge(
       zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ImageObject"),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
         height: QuantitiveValue.quantitiveValueJsonZodSchema().optional(),
-        "@id": zod.string().min(1),
-        type: zod.literal("ImageObject"),
         width: QuantitiveValue.quantitiveValueJsonZodSchema().optional(),
       }),
     );
@@ -3571,16 +3630,6 @@ export class ImageObject extends MediaObject {
     } else {
       this.identifier = parameters.identifier as never;
     }
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
-    _hasher.update(this.identifier.value);
-    return _hasher;
   }
 
   override toRdf({
@@ -3615,12 +3664,12 @@ export class ImageObject extends MediaObject {
 }
 
 export namespace ImageObject {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObject.propertiesFromJson>
+      ReturnType<typeof MediaObject._propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult = imageObjectJsonZodSchema().safeParse(_json);
@@ -3629,7 +3678,7 @@ export namespace ImageObject {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = MediaObject.propertiesFromJson(_jsonObject);
+    const _super0Either = MediaObject._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3642,12 +3691,12 @@ export namespace ImageObject {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ImageObject> {
-    return ImageObject.propertiesFromJson(json).map(
+    return ImageObject._propertiesFromJson(json).map(
       (properties) => new ImageObject(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3661,10 +3710,10 @@ export namespace ImageObject {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObject.propertiesFromRdf>
+      ReturnType<typeof MediaObject._propertiesFromRdf>
     >
   > {
-    const _super0Either = MediaObject.propertiesFromRdf({
+    const _super0Either = MediaObject._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3695,9 +3744,9 @@ export namespace ImageObject {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ImageObject.propertiesFromRdf>[0],
+    parameters: Parameters<typeof ImageObject._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ImageObject> {
-    return ImageObject.propertiesFromRdf(parameters).map(
+    return ImageObject._propertiesFromRdf(parameters).map(
       (properties) => new ImageObject(properties),
     );
   }
@@ -3761,12 +3810,12 @@ export abstract class Enumeration extends Intangible {
 }
 
 export namespace Enumeration {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible.propertiesFromJson>
+      ReturnType<typeof Intangible._propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult = enumerationJsonZodSchema().safeParse(_json);
@@ -3775,7 +3824,7 @@ export namespace Enumeration {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible.propertiesFromJson(_jsonObject);
+    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3785,7 +3834,7 @@ export namespace Enumeration {
     return purify.Either.of({ ..._super0, identifier });
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3799,10 +3848,10 @@ export namespace Enumeration {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible.propertiesFromRdf>
+      ReturnType<typeof Intangible._propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible.propertiesFromRdf({
+    const _super0Either = Intangible._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3867,16 +3916,6 @@ export class GenderType extends Enumeration {
     }
   }
 
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hash(_hasher);
-    _hasher.update(this.identifier.value);
-    return _hasher;
-  }
-
   override toRdf({
     ignoreRdfType,
     mutateGraph,
@@ -3909,7 +3948,7 @@ export class GenderType extends Enumeration {
 }
 
 export namespace GenderType {
-  export function propertiesFromJson(
+  export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -3917,7 +3956,7 @@ export namespace GenderType {
       identifier: rdfjs.NamedNode<
         "http://schema.org/Female" | "http://schema.org/Male"
       >;
-    } & UnwrapR<ReturnType<typeof Enumeration.propertiesFromJson>>
+    } & UnwrapR<ReturnType<typeof Enumeration._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = genderTypeJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -3925,7 +3964,7 @@ export namespace GenderType {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Enumeration.propertiesFromJson(_jsonObject);
+    const _super0Either = Enumeration._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3938,12 +3977,12 @@ export namespace GenderType {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, GenderType> {
-    return GenderType.propertiesFromJson(json).map(
+    return GenderType._propertiesFromJson(json).map(
       (properties) => new GenderType(properties),
     );
   }
 
-  export function propertiesFromRdf({
+  export function _propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3960,9 +3999,9 @@ export namespace GenderType {
       identifier: rdfjs.NamedNode<
         "http://schema.org/Female" | "http://schema.org/Male"
       >;
-    } & UnwrapR<ReturnType<typeof Enumeration.propertiesFromRdf>>
+    } & UnwrapR<ReturnType<typeof Enumeration._propertiesFromRdf>>
   > {
-    const _super0Either = Enumeration.propertiesFromRdf({
+    const _super0Either = Enumeration._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -4016,9 +4055,9 @@ export namespace GenderType {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof GenderType.propertiesFromRdf>[0],
+    parameters: Parameters<typeof GenderType._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, GenderType> {
-    return GenderType.propertiesFromRdf(parameters).map(
+    return GenderType._propertiesFromRdf(parameters).map(
       (properties) => new GenderType(properties),
     );
   }

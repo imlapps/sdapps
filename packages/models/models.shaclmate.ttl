@@ -4,7 +4,7 @@
 @prefix prosopa: <http://purl.archive.org/purl/prosopa/ontology#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix schema: <http://schema.org/> .
-@prefix shaclmate: <http://minorg.github.io/shaclmate/ns#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
