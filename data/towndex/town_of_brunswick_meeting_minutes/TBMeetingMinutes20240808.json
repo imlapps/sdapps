@@ -1,0 +1,598 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20240808.pdf",
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "Regular Town Board Meeting held on August 8, 2024.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "startDate": "2024-08-08T19:00:00-04:00",
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Approval of the minutes from the previous meeting.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Minutes",
+          "description": "Motion to approve the minutes of the Town Board Meeting on July 11th, 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "description": "Reports from various town departments.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Report for the month of July. Financial transactions and events.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "value": 7155.93,
+              "currency": "USD"
+            }
+          ]
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Town Clerk Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael Bayly"
+          },
+          "description": "Report for the month of July. Details on roadworks and maintenance."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Highway Superintendent Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "July 2024 report on water and sewer activities and compliance projects."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Water & Sewer Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Cipperly"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Charles Golden"
+          },
+          "description": "Report for July on building permits and inspections."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Code Enforcement Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Town Attorney Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Cioffi"
+          },
+          "description": "Monthly report on legal engagements and consultations."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Town Attorney Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "July report on recycling activities and revenues."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Recycling Coordinator Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "July report on library activities and user statistics."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Community Library Report",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "Resolutions discussed and voted upon by the town board.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 54 of 2024",
+          "description": "Amending adopted 2024 annual budget (Highway Fund).",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 55 of 2024",
+          "description": "Conditionally awarding contract for replacement of water mains at Vanderheyden Dam.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 56 of 2024",
+          "description": "Extending conditional approval of Brunswick Acres Planned Development District.",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 57 of 2024",
+          "description": "Retaining appraisal expert for defense of real property tax law article 7 litigation.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Discussion and approval of current town warrants.",
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 400539.81
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 194162.78
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 175966.16
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 29089.71
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 665.83
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 655.33
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Councilman Christian"
+        },
+        {
+          "@type": "Person",
+          "name": "Supervisor Herrington"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "description": "Public comments from residents.",
+      "about": [
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Kim Jensen"
+          },
+          "description": "Overview from the most recent Hoosick Road traffic committee meeting."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Jim Tkacik"
+          },
+          "description": "Review of commercial solar moratorium and its progress."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Mary Ellen Adams"
+          },
+          "description": "Appreciation for using the community center and questions about traffic and solar decommissioning."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Louis Hutter"
+          },
+          "description": "Concerns about sign enforcement at Park East."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Councilman Sullivan"
+        },
+        {
+          "@type": "Person",
+          "name": "Councilman Balistreri"
+        }
+      ],
+      "about": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      }
+    }
+  ]
+}

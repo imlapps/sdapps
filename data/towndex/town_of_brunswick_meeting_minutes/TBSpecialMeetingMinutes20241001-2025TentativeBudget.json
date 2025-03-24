@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Special Meeting",
+  "url": "https://townofbrunswick.org/files/TBSpecialMeetingMinutes20241001-2025TentativeBudget.pdf",
+  "startDate": "2024-10-01T18:00:00-04:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "description": "Special meeting for the presentation of the Supervisor\u2019s 2025 Tentative Budget.",
+  "about": {
+    "@type": "CreativeWork",
+    "name": "Supervisor\u2019s 2025 Tentative Budget",
+    "description": "Presentation of the Supervisor\u2019s 2025 Tentative Budget to the Town Board Members."
+  },
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": "Conclusion of the town board special meeting with a motion to adjourn."
+    }
+  ]
+}

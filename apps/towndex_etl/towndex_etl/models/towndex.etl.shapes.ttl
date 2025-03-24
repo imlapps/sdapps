@@ -55,6 +55,9 @@ schema:Event-about
       sh:datatype xsd:string ;
     ]
     [
+      sh:class schema:CreativeWork ;
+    ]
+    [
       sh:class schema:GovernmentOrganization ;
     ]
     [

@@ -1,0 +1,538 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20240111.pdf",
+  "startDate": "2024-02-08T19:00:00-05:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "Regular meeting of the Town of Brunswick Board.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "about": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Balistreri",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Resolution adopting Town of Brunswick Local Law No. 1 of the Year 2024.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 24 of 2024",
+          "description": "RESOLUTION ADOPTING TOWN OF BRUNSWICK LOCAL LAW NO. 1 OF THE YEAR 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian",
+            "jobTitle": "Councilman"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Public comments and concerns regarding traffic and development issues in the town.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "about": [
+        {
+          "@type": "Person",
+          "name": "Greg Beijian",
+          "description": "Concerned about traffic from Chick-Fil-A."
+        },
+        {
+          "@type": "Person",
+          "name": "Jean McCouin",
+          "description": "Concerned about traffic light bottleneck."
+        },
+        {
+          "@type": "Person",
+          "name": "Christie Fronhofer",
+          "description": "Concerned about neighborhood traffic."
+        },
+        {
+          "@type": "Person",
+          "name": "Sharon Roy",
+          "description": "Prefers to shop elsewhere due to traffic."
+        },
+        {
+          "@type": "Person",
+          "name": "Jamie Morris Ash",
+          "description": "Concerned about corporate influence and water issues."
+        },
+        {
+          "@type": "Person",
+          "name": "Mary Ellen Adams",
+          "description": "Requested a moratorium on development until traffic issues are resolved."
+        },
+        {
+          "@type": "Person",
+          "name": "John Raup",
+          "description": "Questioned influence over business types."
+        },
+        {
+          "@type": "Person",
+          "name": "Dick Ellis",
+          "description": "Concerned about increased traffic on Route 2."
+        },
+        {
+          "@type": "Person",
+          "name": "Ed Golden",
+          "description": "Waiting for speed limit signs."
+        },
+        {
+          "@type": "Person",
+          "name": "Jennifer Mann",
+          "description": "Requested moratorium and public comment on development."
+        },
+        {
+          "@type": "Person",
+          "name": "Jim Tkacik",
+          "description": "Concerned about traffic planning and DOT partnership."
+        },
+        {
+          "@type": "Person",
+          "name": "Betty Fucci",
+          "description": "Concerned about variance approvals."
+        },
+        {
+          "@type": "Person",
+          "name": "Joe Durkin",
+          "description": "Concerned about commercial density."
+        },
+        {
+          "@type": "Person",
+          "name": "Vanessa Bongiorno",
+          "description": "Desires more transparency and community engagement."
+        },
+        {
+          "@type": "Person",
+          "name": "Margaret Ferguson",
+          "description": "Concerned about crime and safety."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Approval of minutes from previous meetings.",
+      "about": {
+        "@type": "VoteAction",
+        "name": "Approval of Minutes",
+        "description": "Approval of minutes from previous meetings.",
+        "agent": {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Herrington",
+            "jobTitle": "Supervisor"
+          },
+          {
+            "@type": "Person",
+            "name": "Christian",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Cipperly",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Balistreri",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Sullivan",
+            "jobTitle": "Councilman"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Reports from various departments within the town.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Monthly report for December with financial details.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "name": "Remitted to Supervisor",
+              "value": 5471.31,
+              "currency": "USD"
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "Report on water and sewer for December, including compliance and rate changes."
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Charles Golden"
+          },
+          "description": "December report on building permits and zoning activities."
+        },
+        {
+          "@type": "Report",
+          "name": "Town Attorney Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Cioffi"
+          },
+          "description": "Legal activities and meetings participated in December."
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "Recycling operations and financials for December."
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "Library activities and statistics for December."
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Rebecca Del Gaizo"
+        },
+        {
+          "@type": "Person",
+          "name": "Bill Bradley"
+        },
+        {
+          "@type": "Person",
+          "name": "Charles Golden"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Cioffi"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Engster"
+        },
+        {
+          "@type": "Person",
+          "name": "Sara Hopkins"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Correspondence",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Reading and acknowledgment of correspondence received.",
+      "about": [
+        {
+          "@type": "Message",
+          "name": "Compliment from Jerry Carafello",
+          "description": "Compliment to Receiver of Taxes Jayne Tarbox.",
+          "sender": {
+            "@type": "Person",
+            "name": "Jerry Carafello"
+          }
+        },
+        {
+          "@type": "Message",
+          "name": "Thanks from Scott McFee",
+          "description": "Thanking Highway Department for assistance.",
+          "sender": {
+            "@type": "Person",
+            "name": "Scott McFee"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Approval of warrants for various funds.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town Board"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 367815.47
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 150788.97
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 166351.6
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 45413.86
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 2644.5
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 2616.54
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Meeting adjourned by Councilman Christian and seconded by Councilman Sullivan.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ]
+    }
+  ]
+}

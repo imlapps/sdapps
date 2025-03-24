@@ -1,0 +1,631 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20241212.pdf",
+  "startDate": "2024-12-12T19:00:00-05:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "description": "Regular Town Board Meeting held on December 12, 2024",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Supervisor Herrington"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Christian"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Cipperly"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Balistreri"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Sullivan"
+    }
+  ],
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Update for the National Grid Outdoor Lighting LED Conversion Program.",
+      "about": {
+        "@type": "Message",
+        "sender": {
+          "@type": "Person",
+          "name": "Chuck Golden"
+        }
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Minutes of the Previous Meeting",
+      "description": "Approval of the minutes from previous meetings held on November 14, 2024.",
+      "about": {
+        "@type": "VoteAction",
+        "name": "Approval of Minutes",
+        "description": "Minutes approved for Public Hearing and Town Board Meeting on November 14, 2024.",
+        "agent": {
+          "@type": "Person",
+          "name": "Councilman Sullivan"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Cipperly"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "description": "Monthly reports from various departments.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Financial report for November with several fees and DEC sales."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Town Clerk Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael Bayly"
+          },
+          "description": "Report on road maintenance and repairs, plowing, and other activities."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Highway Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "Updates on meter readings and Vanderheyden Dam project."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Water & Sewer Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael McDonald"
+          },
+          "description": "Collection of fees, permits, inspections, and code enforcement activities."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Code Enforcement Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Town Attorney Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Cioffi"
+          },
+          "description": "Legal activities and meetings attended in November."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Attorney Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Town Historian Report",
+          "author": {
+            "@type": "Person",
+            "name": "Tracy Broderick"
+          },
+          "description": "History of the Troy Riding Club and local historical events."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Historian Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "Report on recycling revenues, expenses, and materials processed."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Recycling Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "Library usage statistics, including checkouts, visitors, and upcoming programs."
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Library Report Approval",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "Various resolutions were discussed and voted upon.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 80 of 2024",
+          "description": "Resolution accepting bid and awarding contract for brush and wood removal.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 81 of 2024",
+          "description": "Resolution approving service agreement with Johnson Controls.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Cipperly"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri",
+              "description": "Abstained"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 82 of 2024",
+          "description": "Resolution conditionally accepting bid and awarding contract for Vanderheyden Dam improvements.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 83 of 2024",
+          "description": "Resolution granting variance from subdivision law standard.",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly",
+              "description": "Voted Nay"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 84 of 2024",
+          "description": "Resolution declaring item to be surplus property.",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "description": "Discussion and approval of warrants.",
+      "about": {
+        "@type": "Invoice",
+        "name": "Approval of Warrants",
+        "provider": {
+          "@type": "GovernmentOrganization",
+          "name": "Town of Brunswick"
+        },
+        "totalPaymentDue": {
+          "@type": "MonetaryAmount",
+          "currency": "USD",
+          "value": 317240.96
+        },
+        "referencesOrder": [
+          {
+            "@type": "Order",
+            "name": "General Fund",
+            "partOfInvoice": {
+              "@type": "Invoice",
+              "totalPaymentDue": {
+                "@type": "MonetaryAmount",
+                "currency": "USD",
+                "value": 100091.83
+              }
+            }
+          },
+          {
+            "@type": "Order",
+            "name": "Highway Fund",
+            "partOfInvoice": {
+              "@type": "Invoice",
+              "totalPaymentDue": {
+                "@type": "MonetaryAmount",
+                "currency": "USD",
+                "value": 32176.92
+              }
+            }
+          },
+          {
+            "@type": "Order",
+            "name": "Water Fund",
+            "partOfInvoice": {
+              "@type": "Invoice",
+              "totalPaymentDue": {
+                "@type": "MonetaryAmount",
+                "currency": "USD",
+                "value": 183933.72
+              }
+            }
+          },
+          {
+            "@type": "Order",
+            "name": "Sewer Fund",
+            "partOfInvoice": {
+              "@type": "Invoice",
+              "totalPaymentDue": {
+                "@type": "MonetaryAmount",
+                "currency": "USD",
+                "value": 584.35
+              }
+            }
+          },
+          {
+            "@type": "Order",
+            "name": "Special Sewer District #6",
+            "partOfInvoice": {
+              "@type": "Invoice",
+              "totalPaymentDue": {
+                "@type": "MonetaryAmount",
+                "currency": "USD",
+                "value": 454.14
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Comments",
+      "description": "Jim Tkacik shared historical insights and raised questions about AIT Computers.",
+      "about": {
+        "@type": "Message",
+        "sender": {
+          "@type": "Person",
+          "name": "Jim Tkacik"
+        }
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "description": "The meeting was adjourned.",
+      "about": {
+        "@type": "Person",
+        "name": "Rebecca Del Gaizo",
+        "description": "Town Clerk who submitted the minutes."
+      }
+    }
+  ]
+}

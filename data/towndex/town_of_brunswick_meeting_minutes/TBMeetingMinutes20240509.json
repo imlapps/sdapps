@@ -1,0 +1,470 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20240509.pdf",
+  "startDate": "2024-05-09T19:00:00-04:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "description": "Regular meeting of the Town Board of Brunswick held on May 9, 2024.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Balistreri",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "about": "Various topics discussed in the meeting including reports, resolutions, and public concerns.",
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Opening of the regular town board meeting.",
+      "about": "Initiation of the meeting with attendance and salute to the flag."
+    },
+    {
+      "@type": "Event",
+      "name": "Minutes of the Previous Meeting",
+      "description": "Approval of the minutes from previous meetings.",
+      "about": "Approval of the minutes of the Special Meeting on May 6th, 2024, Regular Board Meeting on April 11th, 2024, and Public Hearing April 11th, 2024."
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "description": "Reports from town officials for the month of April.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Monthly financial report and summary of activities.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "value": "31937.23",
+              "currency": "USD"
+            },
+            {
+              "@type": "QuantitativeValue",
+              "name": "Recycling fees",
+              "value": 3657,
+              "unitText": "USD"
+            },
+            {
+              "@type": "QuantitativeValue",
+              "name": "Community Center fees",
+              "value": 1400,
+              "unitText": "USD"
+            }
+          ]
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Acceptance of Town Clerk Report",
+          "description": "Motion to approve the Town Clerk report.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael Bayly"
+          },
+          "description": "Monthly report detailing maintenance and operations activities.",
+          "about": [
+            {
+              "@type": "QuantitativeValue",
+              "name": "Brush pickup",
+              "value": 1,
+              "unitText": "operation"
+            }
+          ]
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Acceptance of Highway Superintendent Report",
+          "description": "Motion to approve the Highway Superintendent report.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Charles Golden"
+          },
+          "description": "Report on building permits, inspections, and zoning activities.",
+          "about": [
+            {
+              "@type": "QuantitativeValue",
+              "name": "Building permits issued",
+              "value": 35,
+              "unitText": "permits"
+            },
+            {
+              "@type": "QuantitativeValue",
+              "name": "Inspections performed",
+              "value": 60,
+              "unitText": "inspections"
+            }
+          ]
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Acceptance of Code Enforcement Report",
+          "description": "Motion to approve the Code Enforcement report.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "Discussion and voting on resolutions.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 46 of 2024",
+          "description": "Resolution of approval to advertise for public bidding Vanderheyden Dam Water Main Replacement.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 47 of 2024",
+          "description": "Resolution acknowledging receipt of Hoosick Road Corridor Study final report and proposing initial actions to commence implementation.",
+          "agent": {
+            "@type": "Person",
+            "name": "Cipperly"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "description": "Discussion and approval of warrants.",
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 170046.65
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 88954.37
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 70062.57
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 10935.69
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 660.24
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 433.78
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "description": "Public comments from visitors.",
+      "about": [
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Jennifer Mann"
+          },
+          "description": "Comments on Earth Day cleanup and concerns about Chick-Fil-A project."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Mary Beth Bruno"
+          },
+          "description": "Comments on traffic simulation and commercial development concerns."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Andrea Wedler"
+          },
+          "description": "Concerns about ambulance service coverage in the town."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Jim Tkacik"
+          },
+          "description": "Comments on Hoosick Road commercial corridor situation and town planning."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Debbie Lajeunesse"
+          },
+          "description": "Comments on Chick-Fil-A traffic simulation."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Sue Vitolins"
+          },
+          "description": "Inquiries about public updates on CRTC recommendations."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "description": "Meeting adjourned.",
+      "about": "Conclusion of the town board meeting with a motion to adjourn."
+    }
+  ]
+}

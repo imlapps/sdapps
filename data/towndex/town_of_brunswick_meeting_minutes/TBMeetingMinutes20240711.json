@@ -1,0 +1,345 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20240711.pdf",
+  "startDate": "2024-07-11T19:00:00-04:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "description": "Regular Town Board Meeting held in Brunswick Town Hall.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "about": "Town of Brunswick governance and community issues.",
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Discussion on various town matters.",
+      "about": "Business operations of the Town of Brunswick."
+    },
+    {
+      "@type": "Event",
+      "name": "Minutes of the Previous Meeting",
+      "description": "Approval of minutes from the previous meeting.",
+      "about": "Approval of meeting records."
+    },
+    {
+      "@type": "Event",
+      "name": "Reporting",
+      "description": "Reporting session from members of the Town Board.",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Report for the month of June with financial details and community updates.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "value": "13643.14",
+              "currency": "USD"
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "Monthly report with updates on meter readings and water projects."
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Charles Golden"
+          },
+          "description": "Report on building permits and inspections with financial details.",
+          "about": [
+            {
+              "@type": "QuantitativeValue",
+              "name": "Number of building permits issued",
+              "value": 13,
+              "unitText": "permits"
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "Monthly report on recycling operations with financial data."
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "Library usage statistics and program updates.",
+          "about": [
+            {
+              "@type": "QuantitativeValue",
+              "name": "Number of physical checkouts",
+              "value": 3598,
+              "unitText": "checkouts"
+            }
+          ]
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Rebecca Del Gaizo"
+        },
+        {
+          "@type": "Person",
+          "name": "Bill Bradley"
+        },
+        {
+          "@type": "Person",
+          "name": "Charles Golden"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Engster"
+        },
+        {
+          "@type": "Person",
+          "name": "Sara Hopkins"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "Vote actions on resolutions by the town board.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 52 of 2024",
+          "description": "Establishing Planned Development District Nonrefundable Sketch Plan Fee.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 53 of 2024",
+          "description": "Authorizing Purchase of Snow Blower for Highway Department.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Correspondence",
+      "description": "Reading of correspondence from residents.",
+      "about": [
+        {
+          "@type": "Message",
+          "name": "Thank You Card",
+          "description": "Card from Carol De Lucia thanking Bill Bradley and the Water Department.",
+          "sender": {
+            "@type": "Person",
+            "name": "Carol De Lucia"
+          }
+        },
+        {
+          "@type": "Message",
+          "name": "Email of Appreciation",
+          "description": "Email from Patti Sbrega thanking the town board and staff.",
+          "sender": {
+            "@type": "Person",
+            "name": "Patti Sbrega"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Old Business",
+      "description": "Discussion on previously addressed issues.",
+      "about": "No new updates on old business items."
+    },
+    {
+      "@type": "Event",
+      "name": "New Business",
+      "description": "Discussion on new proposals and requests.",
+      "about": "Brunswick Acres PDD extension request."
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Discussion and approval of town warrants.",
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "General Fund",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 117740.93
+          },
+          "description": "Approval of general fund expenses."
+        },
+        {
+          "@type": "Invoice",
+          "name": "Highway Fund",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 283147.12
+          },
+          "description": "Approval of highway fund expenses."
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "description": "Open floor for residents to share their concerns and comments.",
+      "about": "Community feedback and discussions on various issues."
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "The meeting was adjourned by the Town Board.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Cipperly"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian"
+        }
+      ],
+      "about": "Conclusion of the town board meeting."
+    }
+  ]
+}

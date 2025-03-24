@@ -1,0 +1,500 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20240912.pdf",
+  "startDate": "2024-09-12T19:00:00-04:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "Regular meeting of the Town of Brunswick Board.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Supervisor Herrington"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Christian"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Cipperly"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Balistreri"
+    },
+    {
+      "@type": "Person",
+      "name": "Councilman Sullivan"
+    }
+  ],
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Opening of the business meeting with salute to the flag.",
+      "about": "Business Meeting proceedings."
+    },
+    {
+      "@type": "Event",
+      "name": "Minutes of the Previous Meeting",
+      "description": "Approval of minutes from August 8th, 2024, and August 20th, 2024.",
+      "about": {
+        "@type": "VoteAction",
+        "name": "Approval of Meeting Minutes",
+        "description": "Vote to approve minutes of the previous meetings.",
+        "agent": {
+          "@type": "Person",
+          "name": "Councilman Balistreri"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Cipperly"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          },
+          {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "description": "Presentation of monthly reports by various departments.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Report for August 2024 with financial details and community updates.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "value": 7537.07,
+              "currency": "USD"
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael Bayly"
+          },
+          "description": "Activities for August including road maintenance and repairs."
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "Monthly water and sewer updates, and compliance issues."
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "description": "Details on building permits, inspections, and code enforcement activities."
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "Recycling revenue and expenses for August 2024."
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "Library usage statistics and upcoming events."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "Various resolutions proposed and adopted by the board.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 58 of 2024",
+          "description": "Resolution adopting Town of Brunswick Local Law No. 3 of 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 59 of 2024",
+          "description": "Resolution adopting Town of Brunswick Local Law No. 4 of 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 60 of 2024",
+          "description": "Resolution approving and authorizing dam access and water line easements.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 61 of 2024",
+          "description": "Request to install new street light and authorize National Grid account update.",
+          "agent": {
+            "@type": "Person",
+            "name": "Supervisor Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 62 of 2024",
+          "description": "Acceptance of water and sewer maintenance roll for January to June 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 63 of 2024",
+          "description": "Acceptance of amended water and sewer maintenance roll for July to December 2023.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Correspondence",
+      "description": "Review of submitted correspondence from Capital Agway and Dr. Sabita Smail.",
+      "about": [
+        {
+          "@type": "Message",
+          "name": "Capital Agway Notice",
+          "description": "Notice of intent declining renewal of contract for sheltering stray dogs.",
+          "sender": {
+            "@type": "Organization",
+            "name": "Capital Agway"
+          }
+        },
+        {
+          "@type": "Message",
+          "name": "Pet Waste Station Request",
+          "description": "Request for installation of pet waste stations by North Forty neighborhood.",
+          "sender": {
+            "@type": "Person",
+            "name": "Dr. Sabita Smail"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "description": "Approval of warrants for various funds.",
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 327527.55
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 152023.74
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 134505.03
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 29483.49
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 629.7
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 257.35
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Fire Districts",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 10628.24
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "description": "Discussion with visitors on various community issues.",
+      "about": [
+        {
+          "@type": "Person",
+          "name": "Kenneth Hines",
+          "description": "Inquired about streetlight upgrades and HOA roadway request."
+        },
+        {
+          "@type": "Person",
+          "name": "Michael Mullahey",
+          "description": "Expressed concerns about EMS response times."
+        },
+        {
+          "@type": "Person",
+          "name": "Sue Vitolins",
+          "description": "Discussed catch basin repairs."
+        },
+        {
+          "@type": "Person",
+          "name": "Mary Ellen Adams",
+          "description": "Discussed traffic signal synchronization and comprehensive plan."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "description": "The meeting was adjourned.",
+      "about": "Conclusion of the meeting proceedings."
+    }
+  ]
+}
