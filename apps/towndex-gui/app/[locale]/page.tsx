@@ -9,36 +9,18 @@ interface LocalePageParams {
 }
 
 export default async function LocalePage({
-  params: { locale },
-}: {
-  params: LocalePageParams;
-}) {
+  params,
+}: { params: Promise<LocalePageParams> }) {
+  const { locale } = await params;
   setRequestLocale(locale);
 
-  const kos = await kosFactory({
-    locale,
-  });
-  const conceptSchemeIdentifiers = await kos.conceptSchemeIdentifiers({
-    limit: null,
-    offset: 0,
-    query: { type: "All" },
-  });
-  if (conceptSchemeIdentifiers.length === 1) {
-    const conceptScheme = (
-      await kos.conceptScheme(conceptSchemeIdentifiers[0])
-    ).unsafeCoerce();
-    return <ConceptSchemePage conceptScheme={conceptScheme} kos={kos} />;
-  }
-  throw new RangeError(
-    `TODO: generate concept scheme links for ${conceptSchemeIdentifiers.length} concept schemes`,
-  );
+  return <div>Test</div>;
 }
 
 export async function generateMetadata({
-  params: { locale },
-}: {
-  params: LocalePageParams;
-}): Promise<Metadata> {
+  params,
+}: { params: Promise<LocalePageParams> }): Promise<Metadata> {
+  const { locale } = await params;
   return (await PageMetadata.get({ locale })).locale;
 }
 

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@kos-kit/next-utils": "2.0.114",
+    "@kos-kit/next-utils": "2.0.115",
     "@sdapps/models": "*",
     "@sdapps/ui": "*",
     "@tabler/icons-react": "^3.31.0",
