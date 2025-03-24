@@ -1,0 +1,532 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20241010.pdf",
+  "startDate": "2024-10-10T19:00:00-04:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "Regular Town Board Meeting held on October 10, 2024.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Balistreri",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "about": "Town of Brunswick governance and community issues.",
+  "subEvents": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Approval of minutes from previous meetings.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Approval of Meeting Minutes",
+          "description": "Approval of minutes from Public Hearings and meetings in September and October 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "description": "Monthly reports from various departments.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Financial and operational report for September 2024, including fees and early voting schedule."
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael Bayly"
+          },
+          "description": "Maintenance and operational activities for September 2024."
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "Monthly water and sewer operations report, including financials and project updates."
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "description": "Summary of building permits, inspections, and code enforcement activities."
+        },
+        {
+          "@type": "Report",
+          "name": "Town Attorney Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Cioffi"
+          },
+          "description": "Legal activities and consultations for the month."
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "Recycling operations and financials for September 2024."
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "Library usage and activities for September 2024."
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Rebecca Del Gaizo"
+        },
+        {
+          "@type": "Person",
+          "name": "Michael Bayly"
+        },
+        {
+          "@type": "Person",
+          "name": "Bill Bradley"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Cioffi"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Engster"
+        },
+        {
+          "@type": "Person",
+          "name": "Sara Hopkins"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "Town board resolutions passed during the meeting.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 64 of 2024",
+          "description": "Resolution authorizing purchase of truck for Highway Department.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 65 of 2024",
+          "description": "Resolution approving service agreement with Johnson Controls, Inc.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 66A of 2024",
+          "description": "Resolution approving 2025 preliminary budget with amendments.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 67 of 2024",
+          "description": "Resolution appointing member to Board of Assessment Review.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 68 of 2024",
+          "description": "Resolution authorizing participation in National Grid\u2019s LED Conversion Program.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "description": "Approval of town warrants.",
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 665217.77
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 104259.0
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 55580.95
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 505245.96
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 122.93
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 8.93
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment",
+      "description": "The meeting was adjourned in honor of Jay Paul Gagnon and David Plew.",
+      "about": {
+        "@type": "Person",
+        "name": "Jay Paul Gagnon and David Plew",
+        "description": "Longtime members of the Speigletown Fire Department and Brunswick Company 1 Fire Department\u2019s Assistant Chief."
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Balistreri"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan"
+        }
+      ]
+    }
+  ]
+}

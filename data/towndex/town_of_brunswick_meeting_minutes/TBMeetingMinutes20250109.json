@@ -1,0 +1,368 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Regular Town Board Meeting",
+  "url": "https://townofbrunswick.org/files/TBMeetingMinutes20250109.pdf",
+  "startDate": "2025-01-09T19:00:00-05:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "Regular town board meeting held on January 9, 2025.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Balistreri",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "about": {
+    "@type": "AdministrativeArea",
+    "name": "Town of Brunswick"
+  },
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Approval of minutes from previous meetings."
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "description": "Reporting session from members of the Town Board.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "Report for the month of December with various fees and reservations.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "name": "Total amount remitted",
+              "value": 7441.77,
+              "currency": "USD"
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael Bayly"
+          },
+          "description": "Report on highway work activities for December."
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Michael McDonald"
+          },
+          "description": "Details on building permits and inspections."
+        },
+        {
+          "@type": "Report",
+          "name": "Town Historian Report",
+          "author": {
+            "@type": "Person",
+            "name": "Tracy Broderick"
+          },
+          "description": "Work on historic property tax records project."
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "Recycling revenues and expenses for December."
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "Library activities and statistics for December."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "description": "A set of vote actions made by the town board.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 23 of 2025",
+          "description": "Authorization for Supervisor to enter into an agreement for professional services.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 24 of 2025",
+          "description": "Appointment and compensation of town employee.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Correspondence",
+      "description": "Letter from Eagle Scout Candidate Michael Shaw.",
+      "about": {
+        "@type": "Message",
+        "sender": {
+          "@type": "Person",
+          "name": "Michael Shaw"
+        },
+        "description": "Thanks to Highway Department for assistance with Eagle Scout Service Project."
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Old Business",
+      "description": "Updates on transportation project and public safety committee."
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "description": "Discussion about current town warrants.",
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 521235.72
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 233557.24
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 234359.48
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 49468.01
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 2387.99
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 1463.0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "description": "Public comments from visitors.",
+      "about": [
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Chris Fanning"
+          },
+          "description": "Request for funding permanent lights at soccer fields."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Kim Jensen"
+          },
+          "description": "Congratulations and questions about Planning Board selection process."
+        },
+        {
+          "@type": "Message",
+          "sender": {
+            "@type": "Person",
+            "name": "Jim Tzacik"
+          },
+          "description": "Welcome back to Planning Board member and questions about town website overhaul."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "description": "The meeting was adjourned in honor of Tom Walsh and Bob Duncan.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri"
+        }
+      ],
+      "about": [
+        {
+          "@type": "Person",
+          "name": "Tom Walsh",
+          "description": "Former Town Supervisor."
+        },
+        {
+          "@type": "Person",
+          "name": "Bob Duncan",
+          "description": "Longtime highway department employee."
+        }
+      ]
+    }
+  ]
+}

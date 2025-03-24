@@ -1,0 +1,468 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Regular Town Board Meeting",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "description": "Regular Town Board Meeting held at the Town of Brunswick on February 8, 2024.",
+  "about": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "url": "https://townofbrunswick.org/files/TB 02-08-24 Minutes.pdf",
+  "startDate": "2024-02-08T19:00:00-05:00",
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Adoption of resolutions by the town board.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 25 of 2024",
+          "description": "Resolution with environmental impact review by Ronald LaBerge.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 26 of 2024",
+          "description": "Resolution approving rezone of Tax Map Parcel No. 80.00-2-2.12.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Visitors Who Wish to Speak",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Citizens voiced concerns and asked questions.",
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Kim Jensen",
+          "description": "Discussed the proposed citizen's advisory board."
+        },
+        {
+          "@type": "Person",
+          "name": "Vanessa Bongiorno",
+          "description": "Inquired about agenda and resolutions access."
+        },
+        {
+          "@type": "Person",
+          "name": "Jennifer Mann",
+          "description": "Asked about citizen's advisory board and commercial corridor moratorium."
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Approval of previous meeting minutes.",
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Reports",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Reports from various town departments.",
+      "about": [
+        {
+          "@type": "Report",
+          "name": "Town Clerk Report",
+          "author": {
+            "@type": "Person",
+            "name": "Rebecca Del Gaizo"
+          },
+          "description": "January report with financials and event announcements.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "name": "Total remitted",
+              "value": 7406.02
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Highway Superintendent Report",
+          "author": {
+            "@type": "Person",
+            "name": "Mike Bayly"
+          },
+          "description": "January activities including plowing and repairs."
+        },
+        {
+          "@type": "Report",
+          "name": "Water & Sewer Report",
+          "author": {
+            "@type": "Person",
+            "name": "Bill Bradley"
+          },
+          "description": "January report on water meter readings and repairs."
+        },
+        {
+          "@type": "Report",
+          "name": "Code Enforcement Report",
+          "author": {
+            "@type": "Person",
+            "name": "Charles Golden"
+          },
+          "description": "January report on permits and code inspections.",
+          "about": [
+            {
+              "@type": "QuantitativeValue",
+              "name": "Building permits issued",
+              "value": 15,
+              "unitText": "permits"
+            },
+            {
+              "@type": "MonetaryAmount",
+              "name": "Fees collected",
+              "value": 4921.25
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Town Attorney Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Cioffi"
+          },
+          "description": "January legal activities and document preparations."
+        },
+        {
+          "@type": "Report",
+          "name": "Town Historian Report",
+          "author": {
+            "@type": "Person",
+            "name": "Tracy Broderick"
+          },
+          "description": "Historical research on local general stores."
+        },
+        {
+          "@type": "Report",
+          "name": "Recycling Coordinator Report",
+          "author": {
+            "@type": "Person",
+            "name": "Thomas Engster"
+          },
+          "description": "January recycling and landfill activities.",
+          "about": [
+            {
+              "@type": "MonetaryAmount",
+              "name": "Revenues",
+              "value": 4508.12
+            },
+            {
+              "@type": "MonetaryAmount",
+              "name": "Expenses",
+              "value": 2277.05
+            }
+          ]
+        },
+        {
+          "@type": "Report",
+          "name": "Community Library Report",
+          "author": {
+            "@type": "Person",
+            "name": "Sara Hopkins"
+          },
+          "description": "January report on library activities and events."
+        }
+      ],
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Rebecca Del Gaizo"
+        },
+        {
+          "@type": "Person",
+          "name": "Mike Bayly"
+        },
+        {
+          "@type": "Person",
+          "name": "Bill Bradley"
+        },
+        {
+          "@type": "Person",
+          "name": "Charles Golden"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Cioffi"
+        },
+        {
+          "@type": "Person",
+          "name": "Tracy Broderick"
+        },
+        {
+          "@type": "Person",
+          "name": "Thomas Engster"
+        },
+        {
+          "@type": "Person",
+          "name": "Sara Hopkins"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Correspondence",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Acknowledgment of correspondence from the Rimkunas family."
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Approval of warrants for various funds.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town Board"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 334527.12
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 256018.63
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 53035.13
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 24913.65
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 941.92
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District #6",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 618.79
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        }
+      ]
+    }
+  ]
+}

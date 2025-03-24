@@ -1,0 +1,340 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Special Meeting",
+  "url": "https://townofbrunswick.org/files/TBSpecialMeetingMinutes20240820.pdf",
+  "startDate": "2024-08-20T18:00:00-04:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "description": "Special meeting to discuss employment matters and personnel actions.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "performers": [
+    {
+      "@type": "Person",
+      "name": "Herrington",
+      "jobTitle": "Supervisor"
+    },
+    {
+      "@type": "Person",
+      "name": "Christian",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Sullivan",
+      "jobTitle": "Councilman"
+    },
+    {
+      "@type": "Person",
+      "name": "Cipperly",
+      "jobTitle": "Councilman"
+    }
+  ],
+  "about": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Executive Session",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Discussion on the employment and employment history of a particular individual.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": {
+        "@type": "VoteAction",
+        "name": "Motion to enter Executive Session",
+        "description": "Motion to discuss employment and employment history of a particular individual.",
+        "agent": {
+          "@type": "Person",
+          "name": "Herrington"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Herrington",
+            "jobTitle": "Supervisor"
+          },
+          {
+            "@type": "Person",
+            "name": "Christian",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Sullivan",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Cipperly",
+            "jobTitle": "Councilman"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Regular Session Resumption",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Return to regular session after executive session.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": {
+        "@type": "VoteAction",
+        "name": "Motion to resume Regular Session",
+        "description": "Motion to exit executive session and return to regular session.",
+        "agent": {
+          "@type": "Person",
+          "name": "Christian"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Herrington",
+            "jobTitle": "Supervisor"
+          },
+          {
+            "@type": "Person",
+            "name": "Christian",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Sullivan",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Cipperly",
+            "jobTitle": "Councilman"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Personnel Action",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Consideration and approval of an Employment Separation Agreement.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": {
+        "@type": "VoteAction",
+        "name": "Approval of Employment Separation Agreement",
+        "description": "Approval of Employee Separation Agreement for a town employee.",
+        "agent": {
+          "@type": "Person",
+          "name": "Christian"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Herrington",
+            "jobTitle": "Supervisor"
+          },
+          {
+            "@type": "Person",
+            "name": "Christian",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Sullivan",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Cipperly",
+            "jobTitle": "Councilman"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Acceptance of Resignation",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Acceptance of the resignation of Robert H. Alber III.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": {
+        "@type": "VoteAction",
+        "name": "Acceptance of Resignation",
+        "description": "Acceptance of the resignation of Robert H. Alber III from his employment.",
+        "agent": {
+          "@type": "Person",
+          "name": "Christian"
+        },
+        "participant": [
+          {
+            "@type": "Person",
+            "name": "Herrington",
+            "jobTitle": "Supervisor"
+          },
+          {
+            "@type": "Person",
+            "name": "Christian",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Sullivan",
+            "jobTitle": "Councilman"
+          },
+          {
+            "@type": "Person",
+            "name": "Cipperly",
+            "jobTitle": "Councilman"
+          }
+        ],
+        "actionStatus": "CompletedActionStatus"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian"
+        },
+        {
+          "@type": "Person",
+          "name": "Herrington"
+        }
+      ],
+      "about": {
+        "@type": "Thing",
+        "name": "Meeting Closure",
+        "description": "The meeting was officially closed."
+      }
+    }
+  ]
+}

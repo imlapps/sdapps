@@ -1,0 +1,932 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Special Meeting: 2025 Organizational Meeting",
+  "url": "https://townofbrunswick.org/files/TBSpecialMeetingMinutes20250102 - Organizational.pdf",
+  "startDate": "2025-01-02T18:00:00-05:00",
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "The Town of Brunswick held its 2025 Organizational Meeting.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "about": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "A set of vote actions made by the town board.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Sullivan",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 1",
+          "description": "Resolution Appointing and Fixing 2025 Salaries of Officers and Employees of the Town of Brunswick.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 2",
+          "description": "Resolution Fixing Salaries of Elected Officials of the Town of Brunswick for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 3",
+          "description": "Resolution Designating Official Depositories for the Town of Brunswick for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 4",
+          "description": "Resolution Authorizing Supervisor to Make Inter-Fund Cash Transfers Pursuant to General Municipal Law, Section 9-A, for and During the Fiscal Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 5",
+          "description": "Resolution Re-Issuing, Re-Adopting and Continuing Town Policies.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 6",
+          "description": "Resolution Appointing Members to Planning Board and Zoning Board of Appeals.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 7",
+          "description": "Resolution That Rebecca Del Gaizo, Town Clerk, Be Appointed the Delegate of Authority Pertaining to Bingo Licenses and Permits for the Town of Brunswick for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Cipperly"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 8",
+          "description": "Resolution Authorizing Highway Superintendent to Purchase Equipment, Tools and other Implements in a Total Amount Not to Exceed $1,500.00 During Fiscal 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 9",
+          "description": "Resolution Establishing Petty Cash Funds for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 10",
+          "description": "Resolution Establishing Communications/Expense Account for the Town Supervisor for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 11",
+          "description": "Resolution Designating Town Supervisor as the Official Delegate of the Town of Brunswick for the 2025 Annual Meeting of the NYS Association of Towns.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 12",
+          "description": "Resolution Designating Official Newspaper and Alternate Official Newspaper for the Town of Brunswick for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 13",
+          "description": "Resolution Establishing Official and Regular Date, Time and Location for Meetings for the Town Board of the Town of Brunswick for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 14",
+          "description": "Resolution Authorizing Dog Control Officer to Collect Impoundment Fees.",
+          "agent": {
+            "@type": "Person",
+            "name": "Cipperly"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 15",
+          "description": "Resolution Authorizing the Buildings and Code Inspector to Collect Fees for Licenses and Permits and Remit them to the Supervisor on a Monthly Basis.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 16",
+          "description": "Resolution Designating Polling Places for Election Districts Within Town of Brunswick for and During the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 17",
+          "description": "Resolution Appointing Chairpersons of Planning Board and Zoning Board of Appeals.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 18",
+          "description": "Resolution Authorizing Checks to Be Signed with Facsimile Signatures.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 19",
+          "description": "Resolution Fixing Compensation Payable to Chairpersons and Members of Planning Board and Zoning Board of Appeals for the Year 2025.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 20",
+          "description": "Resolution That Town Employees Using their Own Vehicles on Town Business be Reimbursed Therefor at the 2025 Per Mile Rate Allowed by Internal Revenue Service for Business Use of a Personal Vehicle.",
+          "agent": {
+            "@type": "Person",
+            "name": "Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 21",
+          "description": "Resolution Establishing Keyes Lane Community Center Use Fee.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 22",
+          "description": "Resolution Appointing Town Attorney.",
+          "agent": {
+            "@type": "Person",
+            "name": "Herrington"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Sullivan",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Old Business",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "No old business was discussed.",
+      "about": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "New Business",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "No new business was discussed.",
+      "about": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Sullivan"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly"
+        }
+      ],
+      "about": {
+        "@type": "Person",
+        "name": "Rebecca Del Gaizo",
+        "description": "Town Clerk"
+      }
+    }
+  ]
+}

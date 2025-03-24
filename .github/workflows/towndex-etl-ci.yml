@@ -1,0 +1,40 @@
+name: CI for towndex-etl
+on: [push]
+permissions:
+  contents: write
+  checks: write
+  pull-requests: write
+jobs:
+  continuous-integration:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.x"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-in-project: true
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}-v2
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: apps/towndex_etl/script/bootstrap.sh
+      - name: Run tests
+        run: apps/towndex_etl/script/test.sh
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: apps/towndex_etl/test-results/*.xml
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+            junitxml-path: apps/towndex_etl/test-results/junit.xml
+            pytest-coverage-path: apps/towndex_etl/test-results/coverage.txt

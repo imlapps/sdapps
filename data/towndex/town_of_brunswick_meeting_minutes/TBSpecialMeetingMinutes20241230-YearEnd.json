@@ -1,0 +1,225 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Special Meeting: End of Year",
+  "url": "https://townofbrunswick.org/files/TBSpecialMeetingMinutes20241230-Year End.pdf",
+  
+  "location": {
+    "@type": "Place",
+    "name": "Town of Brunswick Town Hall"
+  },
+  "description": "Special meeting for discussion and consideration of resolutions, law adoption, and warrants.",
+  "about": "End of Year Special Meeting for budget amendments and local law adoption.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "startDate": "2024-12-30T18:15:00-05:00",
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Business Meeting",
+      "description": "Discussion and resolutions on budget amendments and local law adoption.",
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 85",
+          "description": "Resolution amending adopted 2024 Town Budget.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Cipperly"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 86",
+          "description": "Resolution adopting Town of Brunswick Local Law No. 5 of the Year 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Councilman Sullivan"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Councilman Cipperly"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Christian"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Sullivan"
+            },
+            {
+              "@type": "Person",
+              "name": "Councilman Balistreri"
+            },
+            {
+              "@type": "Person",
+              "name": "Supervisor Herrington"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Warrants Discussion",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "Approval of warrants for various funds.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town Board"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Councilman Balistreri"
+        },
+        {
+          "@type": "Person",
+          "name": "Councilman Cipperly"
+        },
+        {
+          "@type": "Person",
+          "name": "Councilman Sullivan"
+        },
+        {
+          "@type": "Person",
+          "name": "Supervisor Herrington"
+        }
+      ],
+      "about": [
+        {
+          "@type": "Invoice",
+          "name": "Approval of Warrants",
+          "provider": {
+            "@type": "GovernmentOrganization",
+            "name": "Town of Brunswick"
+          },
+          "totalPaymentDue": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": 99764.25
+          },
+          "description": "Approval of warrants for various funds.",
+          "category": "Government Expenses",
+          "referencesOrder": [
+            {
+              "@type": "Order",
+              "name": "General Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 61871.88
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Highway Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 23357.6
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Water Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 9726.65
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Sewer Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 4312.43
+                }
+              }
+            },
+            {
+              "@type": "Order",
+              "name": "Special Sewer District Fund",
+              "partOfInvoice": {
+                "@type": "Invoice",
+                "totalPaymentDue": {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": 595.69
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town of Brunswick Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Councilman Sullivan"
+        },
+        {
+          "@type": "Person",
+          "name": "Councilman Balistreri"
+        }
+      ],
+      "about": "End of Year Special Meeting adjournment."
+    }
+  ]
+}

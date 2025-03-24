@@ -1,0 +1,245 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Town of Brunswick Organizational Meeting",
+  "url": "https://townofbrunswick.org/files/TBSpecialMeetingMinutes20240102-Organizational.pdf",
+  "location": {
+    "@type": "Place",
+    "name": "Town Hall"
+  },
+  "startDate": "2024-01-02T18:30:00-05:00",
+  "endDate": "2024-01-02T18:53:00-05:00",
+  "description": "Organizational meeting of the Town of Brunswick held to discuss resolutions and other town matters.",
+  "organizer": {
+    "@type": "GovernmentOrganization",
+    "name": "Town of Brunswick"
+  },
+  "about": "Organizational meeting for the Town of Brunswick.",
+  "subEvent": [
+    {
+      "@type": "Event",
+      "name": "Resolutions",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "Discussion and voting on various resolutions for the year 2024.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Herrington",
+          "jobTitle": "Supervisor"
+        },
+        {
+          "@type": "Person",
+          "name": "Christian",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Balistreri",
+          "jobTitle": "Councilman"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly",
+          "jobTitle": "Councilman"
+        }
+      ],
+      "about": [
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 1",
+          "description": "Resolution Appointing and Fixing 2024 Salaries of Officers and Employees of the Town of Brunswick.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 2",
+          "description": "Resolution Fixing Salaries of Elected Officials of the Town of Brunswick for the Year 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 3",
+          "description": "Resolution Designating Official Depositories for the Town of Brunswick for the Year 2024.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 4",
+          "description": "Resolution Authorizing Supervisor to Make Inter-Fund Cash Transfers Pursuant to General Municipal Law, Section 9-A, for and During the Fiscal Year 2023.",
+          "agent": {
+            "@type": "Person",
+            "name": "Balistreri"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        },
+        {
+          "@type": "VoteAction",
+          "name": "Resolution No. 5",
+          "description": "Resolution Re-Issuing, Re-Adopting and Continuing Town Policies.",
+          "agent": {
+            "@type": "Person",
+            "name": "Christian"
+          },
+          "participant": [
+            {
+              "@type": "Person",
+              "name": "Herrington",
+              "jobTitle": "Supervisor"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Balistreri",
+              "jobTitle": "Councilman"
+            },
+            {
+              "@type": "Person",
+              "name": "Cipperly",
+              "jobTitle": "Councilman"
+            }
+          ],
+          "actionStatus": "CompletedActionStatus"
+        }
+      ]
+    },
+    {
+      "@type": "Event",
+      "name": "Adjournment of Meeting",
+      "location": {
+        "@type": "Place",
+        "name": "Town Hall"
+      },
+      "description": "The meeting was adjourned.",
+      "organizer": {
+        "@type": "GovernmentOrganization",
+        "name": "Town of Brunswick"
+      },
+      "performers": [
+        {
+          "@type": "Person",
+          "name": "Christian"
+        },
+        {
+          "@type": "Person",
+          "name": "Cipperly"
+        }
+      ],
+      "about": {
+        "@type": "Event",
+        "name": "Town of Brunswick Organizational Meeting",
+        "about": "Adjournment of organizational meeting."
+      }
+    }
+  ]
+}

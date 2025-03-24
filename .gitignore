@@ -1,15 +1,2 @@
-.DS_Store
-.env
-.env.development.local
-.env.local
-.env.production.local
-.env.test.local
-.next/
-.turbo
-build
-coverage
-data/congress/.cache
-dist/
-node_modules
-npm-debug.log*
-out/
+*.env 
+*.pyc
