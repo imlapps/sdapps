@@ -108,21 +108,18 @@ schema:Organization-members
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "members" ;
-    sh:nodeKind sh:IRI ;
     sh:path schema:member .
 
 schema:Organization-parentOrganizations
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "parentOrganizations" ;
-    sh:nodeKind sh:IRI ;
     sh:path schema:parentOrganization .
 
 schema:Organization-subOrganizations
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "subOrganizations" ;
-    sh:nodeKind sh:IRI ;
     sh:path schema:subOrganization .
 
 schema:Person
@@ -181,7 +178,6 @@ schema:Person-memberOf
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "memberOf" ;
-    sh:nodeKind sh:IRI ;
     sh:path schema:memberOf .
 
 schema:QuantitativeValue
@@ -216,7 +212,6 @@ schema:Role
     shaclmate:name "Role" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible ;
-    sh:nodeKind sh:IRI ;
     sh:property schema:Role-endDate, schema:Role-roleName, schema:Role-startDate .
 
 schema:Role-endDate
@@ -250,7 +245,6 @@ schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
     sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
 
 schema:Thing-description
