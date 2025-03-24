@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@kos-kit/next-utils": "2.0.113",
     "@sdapps/models": "*",
     "@sdapps/ui": "*",
     "next": "^15.2.1",
