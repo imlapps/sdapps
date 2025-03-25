@@ -1,6 +1,6 @@
 "use client";
 
-import { Person } from "@sdapps/models";
+import { Organization } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -10,16 +10,15 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 interface Row {
-  readonly jobTitle: string | null;
   readonly name: string;
 }
 
-export function PersonTable(json: {
-  people: readonly ReturnType<Person["toJson"]>[];
+export function OrganizationsTable(json: {
+  organizations: readonly ReturnType<Organization["toJson"]>[];
 }) {
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const people = json.people.flatMap((person) =>
-      Person.fromJson(person).toMaybe().toList(),
+    const organizations = json.organizations.flatMap((organization) =>
+      Organization.fromJson(organization).toMaybe().toList(),
     );
 
     const columns: DataTableColumn<Row>[] = [
@@ -29,23 +28,13 @@ export function PersonTable(json: {
       },
     ];
     const rows: Row[] = [];
-    for (const person of people) {
-      if (!person.name.isJust()) {
+    for (const organization of organizations) {
+      if (!organization.name.isJust()) {
         continue;
       }
       const row: Row = {
-        jobTitle: person.jobTitle.extractNullable(),
-        name: person.name.unsafeCoerce(),
+        name: organization.name.unsafeCoerce(),
       };
-      if (
-        row.jobTitle &&
-        !columns.some((column) => column.accessor === "jobTitle")
-      ) {
-        columns.push({
-          accessor: "jobTitle",
-          sortable: true,
-        });
-      }
       rows.push(row);
     }
     return {
