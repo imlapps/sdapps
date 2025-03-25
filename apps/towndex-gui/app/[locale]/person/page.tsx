@@ -4,6 +4,7 @@ import { PeopleTable } from "@/lib/components/PeopleTable";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
+import { PersonStub } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -17,7 +18,9 @@ export default async function PeoplePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const people = (await modelSet.people()).orDefault([]);
+  const people = (await modelSet.models<PersonStub>("PersonStub")).orDefault(
+    [],
+  );
   const translations = await getTranslations("PeoplePage");
 
   return (

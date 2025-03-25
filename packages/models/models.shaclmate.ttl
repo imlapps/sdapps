@@ -31,7 +31,14 @@ sdapps:PersonStub
     shaclmate:fromRdfType schema:Person ;
     shaclmate:name "PersonStub" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf sdapps:ThingStub .
+    rdfs:subClassOf sdapps:ThingStub ;
+    sh:property schema:Person-jobTitle .
+
+sdapps:ThingStub
+    shaclmate:abstract true ;
+    shaclmate:name "ThingStub" ;
+    a owl:Class, sh:NodeShape ;
+    sh:property schema:Thing-name .
 
 <http://schema.org/>
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
@@ -378,10 +385,4 @@ schema:Thing-url
     sh:name "url" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:url .
-
-schema:ThingStub
-    shaclmate:abstract true ;
-    shaclmate:name "ThingStub" ;
-    a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-name .
 

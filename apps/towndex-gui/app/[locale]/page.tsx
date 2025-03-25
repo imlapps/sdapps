@@ -45,14 +45,16 @@ export default async function LocalePage({
                 </Anchor>
               </TableTd>
               <TableTd>
-                {(await modelSet.organizationsCount()).unsafeCoerce()}
+                {(await modelSet.modelCount("OrganizationStub")).unsafeCoerce()}
               </TableTd>
             </TableTr>
             <TableTr>
               <TableTd>
                 <Anchor href={hrefs.people}>{translations("People")}</Anchor>
               </TableTd>
-              <TableTd>{(await modelSet.peopleCount()).unsafeCoerce()}</TableTd>
+              <TableTd>
+                {(await modelSet.modelCount("PersonStub")).unsafeCoerce()}
+              </TableTd>
             </TableTr>
             <TableTr>
               <TableTd>{translations("Dataset")}</TableTd>

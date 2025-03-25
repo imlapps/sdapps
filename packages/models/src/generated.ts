@@ -103,34 +103,6 @@ export function strictEquals<T extends bigint | boolean | number | string>(
 ): EqualsResult {
   return EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
-export function maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
-
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return EqualsResult.Equal;
-}
 export function arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
@@ -189,6 +161,34 @@ export function arrayEquals<T>(
       });
     }
     // Else there was a right element equal to the left element, continue to the next left element
+  }
+
+  return EqualsResult.Equal;
+}
+export function maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | EqualsResult,
+): EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
   }
 
   return EqualsResult.Equal;
@@ -441,187 +441,6 @@ export namespace sh_EventStub {
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     return [];
-  }
-}
-export abstract class ThingStub {
-  abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-  readonly name: purify.Maybe<string>;
-
-  constructor(parameters: { readonly name?: purify.Maybe<string> | string }) {
-    if (purify.Maybe.isMaybe(parameters.name)) {
-      this.name = parameters.name;
-    } else if (typeof parameters.name === "string") {
-      this.name = purify.Maybe.of(parameters.name);
-    } else if (typeof parameters.name === "undefined") {
-      this.name = purify.Maybe.empty();
-    } else {
-      this.name = parameters.name as never;
-    }
-  }
-
-  equals(other: ThingStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
-          this.name,
-          other.name,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "name",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.name.ifJust((_value0) => {
-      _hasher.update(_value0);
-    });
-    return _hasher;
-  }
-
-  toJson(): { readonly "@id": string; readonly name: string | undefined } {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        name: this.name.map((_item) => _item).extract(),
-      } satisfies ReturnType<ThingStub["toJson"]>),
-    );
-  }
-
-  toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
-      mutateGraph,
-    });
-    _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
-    return _resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace ThingStub {
-  export function _propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      name: purify.Maybe<string>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const name = purify.Maybe.fromNullable(_jsonObject["name"]);
-    return purify.Either.of({ identifier, name });
-  }
-
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      name: purify.Maybe<string>;
-    }
-  > {
-    const identifier = _resource.identifier;
-    const _nameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/name"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
-    if (_nameEither.isLeft()) {
-      return _nameEither;
-    }
-
-    const name = _nameEither.unsafeCoerce();
-    return purify.Either.of({ identifier, name });
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/name`, type: "Control" },
-      ],
-      label: "ThingStub",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      name: zod.string().optional(),
-    });
   }
 }
 export abstract class Thing {
@@ -4897,10 +4716,10 @@ export namespace Organization {
       elements: [
         Thing.thingJsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/members`, type: "Control" },
-        OrganizationStub.jsonUiSchema({
+        OrganizationStub.organizationStubJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/parentOrganizations`,
         }),
-        OrganizationStub.jsonUiSchema({
+        OrganizationStub.organizationStubJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/subOrganizations`,
         }),
       ],
@@ -4915,10 +4734,305 @@ export namespace Organization {
         "@id": zod.string().min(1),
         type: zod.literal("Organization"),
         members: AgentStub.jsonZodSchema().array(),
-        parentOrganizations: OrganizationStub.jsonZodSchema().array(),
-        subOrganizations: OrganizationStub.jsonZodSchema().array(),
+        parentOrganizations:
+          OrganizationStub.organizationStubJsonZodSchema().array(),
+        subOrganizations:
+          OrganizationStub.organizationStubJsonZodSchema().array(),
       }),
     );
+  }
+}
+export abstract class ThingStub {
+  abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+  abstract readonly type: "EventStub" | "OrganizationStub" | "PersonStub";
+  readonly name: purify.Maybe<string>;
+
+  constructor(parameters: { readonly name?: purify.Maybe<string> | string }) {
+    if (purify.Maybe.isMaybe(parameters.name)) {
+      this.name = parameters.name;
+    } else if (typeof parameters.name === "string") {
+      this.name = purify.Maybe.of(parameters.name);
+    } else if (typeof parameters.name === "undefined") {
+      this.name = purify.Maybe.empty();
+    } else {
+      this.name = parameters.name as never;
+    }
+  }
+
+  equals(other: ThingStub): EqualsResult {
+    return booleanEquals(this.identifier, other.identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        strictEquals(this.type, other.type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.name,
+          other.name,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "name",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.identifier.value);
+    _hasher.update(this.type);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.name.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    return _hasher;
+  }
+
+  toJson(): {
+    readonly "@id": string;
+    readonly type: "EventStub" | "OrganizationStub" | "PersonStub";
+    readonly name: string | undefined;
+  } {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.identifier.termType === "BlankNode"
+            ? `_:${this.identifier.value}`
+            : this.identifier.value,
+        type: this.type,
+        name: this.name.map((_item) => _item).extract(),
+      } satisfies ReturnType<ThingStub["toJson"]>),
+    );
+  }
+
+  toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ThingStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      name: purify.Maybe<string>;
+    }
+  > {
+    const _jsonSafeParseResult = thingStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const name = purify.Maybe.fromNullable(_jsonObject["name"]);
+    return purify.Either.of({ identifier, name });
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      name: purify.Maybe<string>;
+    }
+  > {
+    const identifier = _resource.identifier;
+    const _nameEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/name"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_nameEither.isLeft()) {
+      return _nameEither;
+    }
+
+    const name = _nameEither.unsafeCoerce();
+    return purify.Either.of({ identifier, name });
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(thingStubJsonZodSchema());
+  }
+
+  export function thingStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ThingStub" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/name`, type: "Control" },
+      ],
+      label: "ThingStub",
+      type: "Group",
+    };
+  }
+
+  export function thingStubJsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.enum(["EventStub", "OrganizationStub", "PersonStub"]),
+      name: zod.string().optional(),
+    });
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ThingStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ThingStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ThingStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("thingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "thingStub");
+    return [
+      {
+        object: dataFactory.variable!(`${variablePrefix}Name`),
+        predicate: dataFactory.namedNode("http://schema.org/name"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("thingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "thingStub");
+    return [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Name`),
+                predicate: dataFactory.namedNode("http://schema.org/name"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
   }
 }
 export class Event extends Thing {
@@ -5572,13 +5686,16 @@ export namespace Event {
     );
   }
 }
-export class EventStub {
+export class EventStub extends ThingStub {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "EventStub";
+  override readonly type = "EventStub";
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
     } else if (typeof parameters.identifier === "string") {
@@ -5589,67 +5706,14 @@ export class EventStub {
     }
   }
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  equals(other: EventStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      );
-  }
-
-  hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    return _hasher;
-  }
-
-  toJson(): { readonly "@id": string; readonly type: "EventStub" } {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
-      } satisfies ReturnType<EventStub["toJson"]>),
-    );
-  }
-
-  toRdf({
+  override toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -5658,8 +5722,10 @@ export class EventStub {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
       mutateGraph,
+      resourceSet,
     });
     if (!ignoreRdfType) {
       _resource.add(
@@ -5673,7 +5739,7 @@ export class EventStub {
     return _resource;
   }
 
-  toString(): string {
+  override toString(): string {
     return JSON.stringify(this.toJson());
   }
 }
@@ -5683,18 +5749,26 @@ export namespace EventStub {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromJson>
+    >
   > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = eventStubJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ identifier });
+    return purify.Either.of({ ..._super0, identifier });
   }
 
   export function fromJson(
@@ -5718,8 +5792,21 @@ export namespace EventStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromRdf>
+    >
   > {
+    const _super0Either = ThingStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Event"))
@@ -5734,7 +5821,7 @@ export namespace EventStub {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ identifier });
+    return purify.Either.of({ ..._super0, identifier });
   }
 
   export function fromRdf(
@@ -5750,40 +5837,25 @@ export namespace EventStub {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
+    return zodToJsonSchema(eventStubJsonZodSchema());
   }
 
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function eventStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "EventStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-      ],
+      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
       label: "EventStub",
       type: "Group",
     };
   }
 
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("EventStub"),
-    });
+  export function eventStubJsonZodSchema() {
+    return ThingStub.thingStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("EventStub"),
+      }),
+    );
   }
 
   export function sparqlConstructQuery(
@@ -5832,6 +5904,11 @@ export namespace EventStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "eventStub");
     return [
+      ...ThingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -5856,6 +5933,11 @@ export namespace EventStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "eventStub");
     return [
+      ...ThingStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -5887,13 +5969,18 @@ export namespace EventStub {
     ];
   }
 }
-export class PersonStub {
+export class PersonStub extends ThingStub {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "PersonStub";
+  override readonly type = "PersonStub";
+  readonly jobTitle: purify.Maybe<string>;
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly jobTitle?: purify.Maybe<string> | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
     } else if (typeof parameters.identifier === "string") {
@@ -5902,69 +5989,75 @@ export class PersonStub {
     } else {
       this._identifier = parameters.identifier as never;
     }
+
+    if (purify.Maybe.isMaybe(parameters.jobTitle)) {
+      this.jobTitle = parameters.jobTitle;
+    } else if (typeof parameters.jobTitle === "string") {
+      this.jobTitle = purify.Maybe.of(parameters.jobTitle);
+    } else if (typeof parameters.jobTitle === "undefined") {
+      this.jobTitle = purify.Maybe.empty();
+    } else {
+      this.jobTitle = parameters.jobTitle as never;
+    }
   }
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  equals(other: PersonStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
+  override equals(other: PersonStub): EqualsResult {
+    return super
+      .equals(other)
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
-  hash<
+  override hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
     this.hashShaclProperties(_hasher);
     return _hasher;
   }
 
-  protected hashShaclProperties<
+  protected override hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.jobTitle.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
     return _hasher;
   }
 
-  toJson(): { readonly "@id": string; readonly type: "PersonStub" } {
+  override toJson(): { readonly jobTitle: string | undefined } & ReturnType<
+    ThingStub["toJson"]
+  > {
     return JSON.parse(
       JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
+        ...super.toJson(),
+        jobTitle: this.jobTitle.map((_item) => _item).extract(),
       } satisfies ReturnType<PersonStub["toJson"]>),
     );
   }
 
-  toRdf({
+  override toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -5973,8 +6066,10 @@ export class PersonStub {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
       mutateGraph,
+      resourceSet,
     });
     if (!ignoreRdfType) {
       _resource.add(
@@ -5985,10 +6080,14 @@ export class PersonStub {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/jobTitle"),
+      this.jobTitle,
+    );
     return _resource;
   }
 
-  toString(): string {
+  override toString(): string {
     return JSON.stringify(this.toJson());
   }
 }
@@ -5998,18 +6097,28 @@ export namespace PersonStub {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      jobTitle: purify.Maybe<string>;
+    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = personStubJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ identifier });
+    const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
+    return purify.Either.of({ ..._super0, identifier, jobTitle });
   }
 
   export function fromJson(
@@ -6033,8 +6142,22 @@ export namespace PersonStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      jobTitle: purify.Maybe<string>;
+    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromRdf>>
   > {
+    const _super0Either = ThingStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Person"))
@@ -6049,7 +6172,24 @@ export namespace PersonStub {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ identifier });
+    const _jobTitleEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/jobTitle"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_jobTitleEither.isLeft()) {
+      return _jobTitleEither;
+    }
+
+    const jobTitle = _jobTitleEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, jobTitle });
   }
 
   export function fromRdf(
@@ -6065,40 +6205,31 @@ export namespace PersonStub {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
+    return zodToJsonSchema(personStubJsonZodSchema());
   }
 
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function personStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PersonStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
+        ThingStub.thingStubJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
       ],
       label: "PersonStub",
       type: "Group",
     };
   }
 
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("PersonStub"),
-    });
+  export function personStubJsonZodSchema() {
+    return ThingStub.thingStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("PersonStub"),
+        jobTitle: zod.string().optional(),
+      }),
+    );
   }
 
   export function sparqlConstructQuery(
@@ -6147,6 +6278,11 @@ export namespace PersonStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "personStub");
     return [
+      ...ThingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -6158,6 +6294,11 @@ export namespace PersonStub {
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
           ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}JobTitle`),
+        predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
+        subject,
+      },
     ];
   }
 
@@ -6171,6 +6312,11 @@ export namespace PersonStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "personStub");
     return [
+      ...ThingStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -6199,16 +6345,34 @@ export namespace PersonStub {
               type: "bgp" as const,
             },
           ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}JobTitle`),
+                predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
     ];
   }
 }
-export class OrganizationStub {
+export class OrganizationStub extends ThingStub {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "OrganizationStub";
+  override readonly type = "OrganizationStub";
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
     } else if (typeof parameters.identifier === "string") {
@@ -6219,67 +6383,14 @@ export class OrganizationStub {
     }
   }
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  equals(other: OrganizationStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      );
-  }
-
-  hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    return _hasher;
-  }
-
-  toJson(): { readonly "@id": string; readonly type: "OrganizationStub" } {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
-      } satisfies ReturnType<OrganizationStub["toJson"]>),
-    );
-  }
-
-  toRdf({
+  override toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -6288,8 +6399,10 @@ export class OrganizationStub {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
       mutateGraph,
+      resourceSet,
     });
     if (!ignoreRdfType) {
       _resource.add(
@@ -6303,7 +6416,7 @@ export class OrganizationStub {
     return _resource;
   }
 
-  toString(): string {
+  override toString(): string {
     return JSON.stringify(this.toJson());
   }
 }
@@ -6313,18 +6426,27 @@ export namespace OrganizationStub {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromJson>
+    >
   > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult =
+      organizationStubJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ identifier });
+    return purify.Either.of({ ..._super0, identifier });
   }
 
   export function fromJson(
@@ -6348,8 +6470,21 @@ export namespace OrganizationStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromRdf>
+    >
   > {
+    const _super0Either = ThingStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(
@@ -6366,7 +6501,7 @@ export namespace OrganizationStub {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ identifier });
+    return purify.Either.of({ ..._super0, identifier });
   }
 
   export function fromRdf(
@@ -6382,40 +6517,27 @@ export namespace OrganizationStub {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
+    return zodToJsonSchema(organizationStubJsonZodSchema());
   }
 
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function organizationStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "OrganizationStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-      ],
+      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
       label: "OrganizationStub",
       type: "Group",
     };
   }
 
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("OrganizationStub"),
-    });
+  export function organizationStubJsonZodSchema() {
+    return ThingStub.thingStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("OrganizationStub"),
+      }),
+    );
   }
 
   export function sparqlConstructQuery(
@@ -6468,6 +6590,11 @@ export namespace OrganizationStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "organizationStub");
     return [
+      ...ThingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -6493,6 +6620,11 @@ export namespace OrganizationStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "organizationStub");
     return [
+      ...ThingStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -6588,8 +6720,8 @@ export namespace AgentStub {
 
   export function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
-      OrganizationStub.jsonZodSchema(),
-      PersonStub.jsonZodSchema(),
+      OrganizationStub.organizationStubJsonZodSchema(),
+      PersonStub.personStubJsonZodSchema(),
     ]);
   }
 

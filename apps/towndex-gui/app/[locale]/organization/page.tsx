@@ -4,6 +4,7 @@ import { OrganizationsTable } from "@/lib/components/OrganizationsTable";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
+import { OrganizationStub } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -17,13 +18,17 @@ export default async function OrganizationsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const organizations = (await modelSet.organizations()).orDefault([]);
+  const organizations = (
+    await modelSet.models<OrganizationStub>("OrganizationStub")
+  ).orDefault([]);
   const translations = await getTranslations("OrganizationsPage");
 
   return (
     <MainSectionShell title={translations("Organizations")}>
       <OrganizationsTable
-        organizations={organizations.map((person) => person.toJson())}
+        organizations={organizations.map((organization) =>
+          organization.toJson(),
+        )}
       />
     </MainSectionShell>
   );

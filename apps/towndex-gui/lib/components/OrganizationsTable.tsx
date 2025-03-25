@@ -1,6 +1,6 @@
 "use client";
 
-import { Organization } from "@sdapps/models";
+import { OrganizationStub } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -14,11 +14,11 @@ interface Row {
 }
 
 export function OrganizationsTable(json: {
-  organizations: readonly ReturnType<Organization["toJson"]>[];
+  organizations: readonly ReturnType<OrganizationStub["toJson"]>[];
 }) {
   const { columns, rows: unsortedRows } = useMemo(() => {
     const organizations = json.organizations.flatMap((organization) =>
-      Organization.fromJson(organization).toMaybe().toList(),
+      OrganizationStub.fromJson(organization).toMaybe().toList(),
     );
 
     const columns: DataTableColumn<Row>[] = [

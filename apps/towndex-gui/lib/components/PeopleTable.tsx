@@ -1,6 +1,6 @@
 "use client";
 
-import { Person } from "@sdapps/models";
+import { PersonStub } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -15,11 +15,11 @@ interface Row {
 }
 
 export function PeopleTable(json: {
-  people: readonly ReturnType<Person["toJson"]>[];
+  people: readonly ReturnType<PersonStub["toJson"]>[];
 }) {
   const { columns, rows: unsortedRows } = useMemo(() => {
     const people = json.people.flatMap((person) =>
-      Person.fromJson(person).toMaybe().toList(),
+      PersonStub.fromJson(person).toMaybe().toList(),
     );
 
     const columns: DataTableColumn<Row>[] = [
