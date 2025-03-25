@@ -1,7 +1,7 @@
 import { ClientProviders } from "@/lib/components/ClientProviders";
 import { ClientConfiguration } from "@/lib/models/ClientConfiguration";
+import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { Locale } from "@sdapps/models";
 import { getLocale, getMessages, getTimeZone } from "next-intl/server";
 import React from "react";
 
