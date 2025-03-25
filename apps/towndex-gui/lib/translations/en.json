@@ -9,7 +9,10 @@
     "People": "People",
     "quads": "quads"
   },
-  "PageMetadata": {},
+  "PageMetadata": {
+    "Organizations": "Organizations",
+    "People": "People"
+  },
   "OrganizationsPage": {
     "Organizations": "Organizations"
   },
