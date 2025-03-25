@@ -1,7 +1,7 @@
 "use client";
 import { useClientConfiguration } from "@/lib/hooks/useClientConfiguration";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { Burger, Group } from "@mantine/core";
+import { Anchor, Burger, Group, useMantineTheme } from "@mantine/core";
 import { IconBinaryTree2Filled } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import classes from "./Header.module.css";
@@ -12,6 +12,7 @@ export function Header({
 }: { opened: boolean; toggle: () => void }) {
   const configuration = useClientConfiguration();
   const hrefs = useHrefs();
+  const theme = useMantineTheme();
   const translations = useTranslations("Header");
   const links = [
     { link: hrefs.organizations, label: translations("Organizations") },
@@ -23,8 +24,12 @@ export function Header({
       <div className={classes["inner"]}>
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
-          <IconBinaryTree2Filled size={28} stroke={1.5} />
-          <span>Towndex: {configuration.siteTitle}</span>
+          <Anchor href={hrefs.locale}>
+            <Group gap="sm">
+              <IconBinaryTree2Filled size={28} stroke={1.5} />
+              <span>Towndex: {configuration.siteTitle}</span>
+            </Group>
+          </Anchor>
         </Group>
 
         <Group>
