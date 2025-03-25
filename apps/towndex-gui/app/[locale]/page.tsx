@@ -34,9 +34,17 @@ export default async function LocalePage({
         </TableTr>
         <TableTr>
           <TableTd>
+            <a href={hrefs.people}>{translations("Organizations")}</a>
+          </TableTd>
+          <TableTd>
+            {(await modelSet.organizationsCount()).unsafeCoerce()}
+          </TableTd>
+        </TableTr>
+        <TableTr>
+          <TableTd>
             <a href={hrefs.people}>{translations("People")}</a>
           </TableTd>
-          <TableTd>{(await modelSet.people()).unsafeCoerce().length}</TableTd>
+          <TableTd>{(await modelSet.peopleCount()).unsafeCoerce()}</TableTd>
         </TableTr>
       </TableTbody>
     </Table>

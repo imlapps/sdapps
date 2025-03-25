@@ -6,7 +6,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@sdapps/tsconfig": "*",
+    "@sdapps/tsconfig": "0.0.0",
     "@types/node": "^22.13.9",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",

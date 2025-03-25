@@ -1,6 +1,11 @@
 {
+  "Header": {
+    "Organizations": "Organizations",
+    "People": "People"
+  },
   "LocalePage": {
     "Dataset": "Dataset",
+    "Organizations": "Organizations",
     "People": "People",
     "quads": "quads"
   },

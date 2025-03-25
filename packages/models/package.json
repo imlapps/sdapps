@@ -8,7 +8,7 @@
     "rdfjs-resource": "1.0.19"
   },
   "devDependencies": {
-    "@sdapps/tsconfig": "*",
+    "@sdapps/tsconfig": "0.0.0",
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
   },

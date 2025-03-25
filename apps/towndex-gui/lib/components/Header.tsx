@@ -2,6 +2,7 @@
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Burger, Group } from "@mantine/core";
 import { IconBinaryTree2Filled } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import classes from "./Header.module.css";
 
 export function Header({
@@ -9,7 +10,11 @@ export function Header({
   toggle,
 }: { opened: boolean; toggle: () => void }) {
   const hrefs = useHrefs();
-  const links = [{ link: hrefs.people, label: "People" }];
+  const translations = useTranslations("Header");
+  const links = [
+    { link: hrefs.organizations, label: translations("Organizations") },
+    { link: hrefs.people, label: translations("People") },
+  ];
 
   return (
     <header className={classes["header"]}>

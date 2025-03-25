@@ -28,6 +28,17 @@ export class RdfjsDatasetModelSet implements ModelSet {
     });
   }
 
+  async organizationsCount(): Promise<Either<Error, number>> {
+    return this.organizationsCountSync();
+  }
+
+  organizationsCountSync(): Either<Error, number> {
+    return this.modelsCountByRdfTypeSync({
+      modelFromRdf: Organization.fromRdf,
+      rdfType: Organization.fromRdfType,
+    });
+  }
+
   async people(): Promise<Either<Error, readonly Person[]>> {
     return this.peopleSync();
   }
@@ -37,6 +48,34 @@ export class RdfjsDatasetModelSet implements ModelSet {
       modelFromRdf: Person.fromRdf,
       rdfType: Person.fromRdfType,
     });
+  }
+
+  async peopleCount(): Promise<Either<Error, number>> {
+    return this.peopleCountSync();
+  }
+
+  peopleCountSync(): Either<Error, number> {
+    return this.modelsCountByRdfTypeSync({
+      modelFromRdf: Person.fromRdf,
+      rdfType: Person.fromRdfType,
+    });
+  }
+
+  private modelsCountByRdfTypeSync<ModelT>({
+    modelFromRdf,
+    rdfType,
+  }: {
+    modelFromRdf: (parameters: { resource: Resource }) => Either<Error, ModelT>;
+    rdfType: NamedNode;
+  }): Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(rdfType)) {
+      const modelEither = modelFromRdf({ resource });
+      if (modelEither.isRight()) {
+        count++;
+      }
+    }
+    return Either.of(count);
   }
 
   private modelsByRdfTypeSync<ModelT>({
