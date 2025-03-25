@@ -2,7 +2,7 @@ import { DatasetCore, NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { ModelSet } from "./ModelSet.js";
-import { Person } from "./index.js";
+import { Organization, Person } from "./index.js";
 
 export class RdfjsDatasetModelSet implements ModelSet {
   readonly resourceSet: ResourceSet;
@@ -14,6 +14,17 @@ export class RdfjsDatasetModelSet implements ModelSet {
   }) {
     this.resourceSet = new ResourceSet({
       dataset,
+    });
+  }
+
+  async organizations(): Promise<Either<Error, readonly Organization[]>> {
+    return this.organizationsSync();
+  }
+
+  organizationsSync(): Either<Error, readonly Organization[]> {
+    return this.modelsByRdfTypeSync({
+      modelFromRdf: Organization.fromRdf,
+      rdfType: Organization.fromRdfType,
     });
   }
 
