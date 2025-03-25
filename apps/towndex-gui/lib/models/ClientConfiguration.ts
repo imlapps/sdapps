@@ -3,4 +3,5 @@
  */
 export interface ClientConfiguration {
   readonly basePath: string;
+  readonly siteTitle: string;
 }

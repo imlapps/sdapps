@@ -12,6 +12,7 @@ if (!serverConfigurationGlobalRef.value) {
     INPUT_DATA_PATHS: existingPathsValidator({ default: [] }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
     INPUT_NEXT_OUTPUT: envalid.str({ default: "" }),
+    INPUT_SITE_TITLE: envalid.str({ default: "Untitled" }),
   });
 
   serverConfigurationGlobalRef.value = {
@@ -20,6 +21,7 @@ if (!serverConfigurationGlobalRef.value) {
     dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() === "standalone",
     locales: routing.locales,
     nextBasePath: env.INPUT_NEXT_BASE_PATH,
+    siteTitle: env.INPUT_SITE_TITLE,
   } satisfies ServerConfiguration;
 }
 export const serverConfiguration: ServerConfiguration =

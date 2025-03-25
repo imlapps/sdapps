@@ -6,4 +6,5 @@ export interface ServerConfiguration {
   readonly dynamic: boolean;
   readonly locales: readonly Locale[];
   readonly nextBasePath: string;
+  readonly siteTitle: string;
 }

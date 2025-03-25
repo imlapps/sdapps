@@ -4,7 +4,7 @@ import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { Table, TableTbody, TableTd, TableTr } from "@mantine/core";
+import { Table, TableTbody, TableTd, TableTr, Title } from "@mantine/core";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -22,32 +22,35 @@ export default async function LocalePage({
   const translations = await getTranslations("LocalePage");
 
   return (
-    <Table>
-      <TableTbody>
-        <TableTr>
-          <TableTd>
-            <a href={hrefs.people}>{translations("Dataset")}</a>
-          </TableTd>
-          <TableTd>
-            {dataset.size} {translations("quads")}
-          </TableTd>
-        </TableTr>
-        <TableTr>
-          <TableTd>
-            <a href={hrefs.people}>{translations("Organizations")}</a>
-          </TableTd>
-          <TableTd>
-            {(await modelSet.organizationsCount()).unsafeCoerce()}
-          </TableTd>
-        </TableTr>
-        <TableTr>
-          <TableTd>
-            <a href={hrefs.people}>{translations("People")}</a>
-          </TableTd>
-          <TableTd>{(await modelSet.peopleCount()).unsafeCoerce()}</TableTd>
-        </TableTr>
-      </TableTbody>
-    </Table>
+    <>
+      <Title size="lg" style={{ textAlign: "center" }}>
+        Towndex: {serverConfiguration.siteTitle}
+      </Title>
+      <Table>
+        <TableTbody>
+          <TableTr>
+            <TableTd>
+              <a href={hrefs.organizations}>{translations("Organizations")}</a>
+            </TableTd>
+            <TableTd>
+              {(await modelSet.organizationsCount()).unsafeCoerce()}
+            </TableTd>
+          </TableTr>
+          <TableTr>
+            <TableTd>
+              <a href={hrefs.people}>{translations("People")}</a>
+            </TableTd>
+            <TableTd>{(await modelSet.peopleCount()).unsafeCoerce()}</TableTd>
+          </TableTr>
+          <TableTr>
+            <TableTd>{translations("Dataset")}</TableTd>
+            <TableTd>
+              {dataset.size} {translations("quads")}
+            </TableTd>
+          </TableTr>
+        </TableTbody>
+      </Table>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import { Locale } from "@/lib/models/Locale";
+import { serverConfiguration } from "@/lib/serverConfiguration";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -21,7 +22,7 @@ export class PageMetadata {
 
   get locale(): Metadata {
     return {
-      title: "Towndex",
+      title: `Towndex: ${serverConfiguration.siteTitle}`,
     };
   }
 

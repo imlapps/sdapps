@@ -13,6 +13,7 @@ export async function ClientProvidersServer({
 }: React.PropsWithChildren) {
   const clientConfiguration: ClientConfiguration = {
     basePath: serverConfiguration.nextBasePath,
+    siteTitle: serverConfiguration.siteTitle,
   };
 
   return (

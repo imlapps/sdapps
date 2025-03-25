@@ -11,11 +11,11 @@ export function AppShell({ children }: PropsWithChildren) {
   return (
     <MantineAppShell
       header={{ height: 60 }}
-      navbar={{
-        width: 300,
-        breakpoint: "sm",
-        collapsed: { mobile: !opened },
-      }}
+      // navbar={{
+      //   width: 300,
+      //   breakpoint: "sm",
+      //   collapsed: { mobile: !opened },
+      // }}
       padding="md"
     >
       <MantineAppShell.Header>

@@ -1,4 +1,5 @@
 "use client";
+import { useClientConfiguration } from "@/lib/hooks/useClientConfiguration";
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Burger, Group } from "@mantine/core";
 import { IconBinaryTree2Filled } from "@tabler/icons-react";
@@ -9,6 +10,7 @@ export function Header({
   opened,
   toggle,
 }: { opened: boolean; toggle: () => void }) {
+  const configuration = useClientConfiguration();
   const hrefs = useHrefs();
   const translations = useTranslations("Header");
   const links = [
@@ -22,6 +24,7 @@ export function Header({
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
           <IconBinaryTree2Filled size={28} stroke={1.5} />
+          <span>Towndex: {configuration.siteTitle}</span>
         </Group>
 
         <Group>
