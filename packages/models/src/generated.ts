@@ -2285,27 +2285,21 @@ export namespace Person {
 export class Organization extends Thing {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type = "Organization";
-  members: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
-  parentOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
-  subOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+  members: (rdfjs.BlankNode | rdfjs.NamedNode)[];
+  parentOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode)[];
+  subOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode)[];
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly members?: readonly (
-        | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal
-      )[];
+      readonly members?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
       readonly parentOrganizations?: readonly (
         | rdfjs.BlankNode
         | rdfjs.NamedNode
-        | rdfjs.Literal
       )[];
       readonly subOrganizations?: readonly (
         | rdfjs.BlankNode
         | rdfjs.NamedNode
-        | rdfjs.Literal
       )[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
@@ -2426,87 +2420,27 @@ export class Organization extends Thing {
   }
 
   override toJson(): {
-    readonly members: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-    readonly parentOrganizations: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-    readonly subOrganizations: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
+    readonly members: readonly { readonly "@id": string }[];
+    readonly parentOrganizations: readonly { readonly "@id": string }[];
+    readonly subOrganizations: readonly { readonly "@id": string }[];
   } & ReturnType<Thing["toJson"]> {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         members: this.members.map((_item) =>
-          _item.termType === "Literal"
-            ? {
-                "@language":
-                  _item.language.length > 0 ? _item.language : undefined,
-                "@type":
-                  _item.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? _item.datatype.value
-                    : undefined,
-                "@value": _item.value,
-                termType: "Literal" as const,
-              }
-            : _item.termType === "NamedNode"
-              ? { "@id": _item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
+          _item.termType === "BlankNode"
+            ? { "@id": `_:${_item.value}` }
+            : { "@id": _item.value },
         ),
         parentOrganizations: this.parentOrganizations.map((_item) =>
-          _item.termType === "Literal"
-            ? {
-                "@language":
-                  _item.language.length > 0 ? _item.language : undefined,
-                "@type":
-                  _item.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? _item.datatype.value
-                    : undefined,
-                "@value": _item.value,
-                termType: "Literal" as const,
-              }
-            : _item.termType === "NamedNode"
-              ? { "@id": _item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
+          _item.termType === "BlankNode"
+            ? { "@id": `_:${_item.value}` }
+            : { "@id": _item.value },
         ),
         subOrganizations: this.subOrganizations.map((_item) =>
-          _item.termType === "Literal"
-            ? {
-                "@language":
-                  _item.language.length > 0 ? _item.language : undefined,
-                "@type":
-                  _item.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? _item.datatype.value
-                    : undefined,
-                "@value": _item.value,
-                termType: "Literal" as const,
-              }
-            : _item.termType === "NamedNode"
-              ? { "@id": _item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
+          _item.termType === "BlankNode"
+            ? { "@id": `_:${_item.value}` }
+            : { "@id": _item.value },
         ),
       } satisfies ReturnType<Organization["toJson"]>),
     );
@@ -2562,13 +2496,9 @@ export namespace Organization {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      members: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
-      parentOrganizations: (
-        | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal
-      )[];
-      subOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+      members: (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      parentOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      subOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode)[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = organizationJsonZodSchema().safeParse(_json);
@@ -2587,47 +2517,20 @@ export namespace Organization {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const members = _jsonObject["members"].map((_item) =>
-      _item.termType === "Literal"
-        ? dataFactory.literal(
-            _item["@value"],
-            typeof _item["@language"] !== "undefined"
-              ? _item["@language"]
-              : typeof _item["@type"] !== "undefined"
-                ? dataFactory.namedNode(_item["@type"])
-                : undefined,
-          )
-        : _item.termType === "NamedNode"
-          ? dataFactory.namedNode(_item["@id"])
-          : dataFactory.blankNode(_item["@id"].substring(2)),
+      _item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(_item["@id"].substring(2))
+        : dataFactory.namedNode(_item["@id"]),
     );
     const parentOrganizations = _jsonObject["parentOrganizations"].map(
       (_item) =>
-        _item.termType === "Literal"
-          ? dataFactory.literal(
-              _item["@value"],
-              typeof _item["@language"] !== "undefined"
-                ? _item["@language"]
-                : typeof _item["@type"] !== "undefined"
-                  ? dataFactory.namedNode(_item["@type"])
-                  : undefined,
-            )
-          : _item.termType === "NamedNode"
-            ? dataFactory.namedNode(_item["@id"])
-            : dataFactory.blankNode(_item["@id"].substring(2)),
+        _item["@id"].startsWith("_:")
+          ? dataFactory.blankNode(_item["@id"].substring(2))
+          : dataFactory.namedNode(_item["@id"]),
     );
     const subOrganizations = _jsonObject["subOrganizations"].map((_item) =>
-      _item.termType === "Literal"
-        ? dataFactory.literal(
-            _item["@value"],
-            typeof _item["@language"] !== "undefined"
-              ? _item["@language"]
-              : typeof _item["@type"] !== "undefined"
-                ? dataFactory.namedNode(_item["@type"])
-                : undefined,
-          )
-        : _item.termType === "NamedNode"
-          ? dataFactory.namedNode(_item["@id"])
-          : dataFactory.blankNode(_item["@id"].substring(2)),
+      _item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(_item["@id"].substring(2))
+        : dataFactory.namedNode(_item["@id"]),
     );
     return purify.Either.of({
       ..._super0,
@@ -2661,13 +2564,9 @@ export namespace Organization {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      members: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
-      parentOrganizations: (
-        | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal
-      )[];
-      subOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+      members: (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      parentOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      subOrganizations: (rdfjs.BlankNode | rdfjs.NamedNode)[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
     const _super0Either = Thing._propertiesFromRdf({
@@ -2699,7 +2598,7 @@ export namespace Organization {
     const identifier = _resource.identifier;
     const _membersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/member"), {
@@ -2709,7 +2608,7 @@ export namespace Organization {
           _item
             .toValues()
             .head()
-            .chain((_value) => purify.Either.of(_value.toTerm()))
+            .chain((_value) => _value.toIdentifier())
             .toMaybe()
             .toList(),
         ),
@@ -2721,7 +2620,7 @@ export namespace Organization {
     const members = _membersEither.unsafeCoerce();
     const _parentOrganizationsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/parentOrganization"), {
@@ -2731,7 +2630,7 @@ export namespace Organization {
           _item
             .toValues()
             .head()
-            .chain((_value) => purify.Either.of(_value.toTerm()))
+            .chain((_value) => _value.toIdentifier())
             .toMaybe()
             .toList(),
         ),
@@ -2743,7 +2642,7 @@ export namespace Organization {
     const parentOrganizations = _parentOrganizationsEither.unsafeCoerce();
     const _subOrganizationsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/subOrganization"), {
@@ -2753,7 +2652,7 @@ export namespace Organization {
           _item
             .toValues()
             .head()
-            .chain((_value) => purify.Either.of(_value.toTerm()))
+            .chain((_value) => _value.toIdentifier())
             .toMaybe()
             .toList(),
         ),
@@ -2815,60 +2714,9 @@ export namespace Organization {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("Organization"),
-        members: zod
-          .discriminatedUnion("termType", [
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("BlankNode"),
-            }),
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("NamedNode"),
-            }),
-            zod.object({
-              "@language": zod.string().optional(),
-              "@type": zod.string().optional(),
-              "@value": zod.string(),
-              termType: zod.literal("Literal"),
-            }),
-          ])
-          .array(),
-        parentOrganizations: zod
-          .discriminatedUnion("termType", [
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("BlankNode"),
-            }),
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("NamedNode"),
-            }),
-            zod.object({
-              "@language": zod.string().optional(),
-              "@type": zod.string().optional(),
-              "@value": zod.string(),
-              termType: zod.literal("Literal"),
-            }),
-          ])
-          .array(),
-        subOrganizations: zod
-          .discriminatedUnion("termType", [
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("BlankNode"),
-            }),
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("NamedNode"),
-            }),
-            zod.object({
-              "@language": zod.string().optional(),
-              "@type": zod.string().optional(),
-              "@value": zod.string(),
-              termType: zod.literal("Literal"),
-            }),
-          ])
-          .array(),
+        members: zod.object({ "@id": zod.string().min(1) }).array(),
+        parentOrganizations: zod.object({ "@id": zod.string().min(1) }).array(),
+        subOrganizations: zod.object({ "@id": zod.string().min(1) }).array(),
       }),
     );
   }

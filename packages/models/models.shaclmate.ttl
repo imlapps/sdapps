@@ -108,18 +108,21 @@ schema:Organization-members
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "members" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:member .
 
 schema:Organization-parentOrganizations
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "parentOrganizations" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:parentOrganization .
 
 schema:Organization-subOrganizations
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "subOrganizations" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:subOrganization .
 
 schema:Person
