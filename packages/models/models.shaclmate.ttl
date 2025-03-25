@@ -126,7 +126,7 @@ schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-memberOf, schema:Thing-images .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Thing-images .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -173,6 +173,13 @@ schema:Person-hasOccupation
             sh:node schema:Role
         ]
     ) .
+
+schema:Person-jobTitle
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "jobTitle" ;
+    sh:path schema:jobTitle .
 
 schema:Person-memberOf
     shaclmate:mutable true ;

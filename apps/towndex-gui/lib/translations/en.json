@@ -9,5 +9,8 @@
     "People": "People",
     "quads": "quads"
   },
-  "PageMetadata": {}
+  "PageMetadata": {},
+  "PeoplePage": {
+    "People": "People"
+  }
 }

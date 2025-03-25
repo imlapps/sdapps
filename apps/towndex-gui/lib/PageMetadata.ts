@@ -20,12 +20,6 @@ export class PageMetadata {
     this.translations = translations;
   }
 
-  get locale(): Metadata {
-    return {
-      title: `Towndex: ${serverConfiguration.siteTitle}`,
-    };
-  }
-
   static async get({ locale }: { locale: Locale }) {
     return new PageMetadata({
       locale,
@@ -35,8 +29,23 @@ export class PageMetadata {
       }),
     });
   }
+
+  get locale(): Metadata {
+    return {
+      title: titlePartsToString(["Towndex", serverConfiguration.siteTitle]),
+    };
+  }
+
+  get people(): Metadata {
+    return {
+      title: titlePartsToString([
+        this.locale.title as string,
+        this.translations("People"),
+      ]),
+    };
+  }
 }
 
-// function titlePartsToString(titleParts: readonly string[]): string {
-//   return titleParts.join(": ");
-// }
+function titlePartsToString(titleParts: readonly string[]): string {
+  return titleParts.join(": ");
+}

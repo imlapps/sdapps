@@ -1358,6 +1358,7 @@ export class Person extends Thing {
   readonly givenName: purify.Maybe<string>;
   readonly hasOccupation: readonly (Occupation | Role)[];
   readonly images: readonly ImageObject[];
+  readonly jobTitle: purify.Maybe<string>;
   memberOf: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
 
   constructor(
@@ -1375,6 +1376,7 @@ export class Person extends Thing {
       readonly givenName?: purify.Maybe<string> | string;
       readonly hasOccupation?: readonly (Occupation | Role)[];
       readonly images?: readonly ImageObject[];
+      readonly jobTitle?: purify.Maybe<string> | string;
       readonly memberOf?: readonly (
         | rdfjs.BlankNode
         | rdfjs.NamedNode
@@ -1466,6 +1468,16 @@ export class Person extends Thing {
       this.images = parameters.images;
     } else {
       this.images = parameters.images as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.jobTitle)) {
+      this.jobTitle = parameters.jobTitle;
+    } else if (typeof parameters.jobTitle === "string") {
+      this.jobTitle = purify.Maybe.of(parameters.jobTitle);
+    } else if (typeof parameters.jobTitle === "undefined") {
+      this.jobTitle = purify.Maybe.empty();
+    } else {
+      this.jobTitle = parameters.jobTitle as never;
     }
 
     if (typeof parameters.memberOf === "undefined") {
@@ -1584,6 +1596,18 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) => arrayEquals(left, right, booleanEquals))(
           this.memberOf,
           other.memberOf,
@@ -1642,6 +1666,9 @@ export class Person extends Thing {
       _item0.hash(_hasher);
     }
 
+    this.jobTitle.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
     for (const _item0 of this.memberOf) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
@@ -1673,6 +1700,7 @@ export class Person extends Thing {
       | ReturnType<Role["toJson"]>
     )[];
     readonly images: readonly ReturnType<ImageObject["toJson"]>[];
+    readonly jobTitle: string | undefined;
     readonly memberOf: readonly (
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
@@ -1714,6 +1742,7 @@ export class Person extends Thing {
           _item.type === "Role" ? _item.toJson() : _item.toJson(),
         ),
         images: this.images.map((_item) => _item.toJson()),
+        jobTitle: this.jobTitle.map((_item) => _item).extract(),
         memberOf: this.memberOf.map((_item) =>
           _item.termType === "Literal"
             ? {
@@ -1796,6 +1825,10 @@ export class Person extends Thing {
       ),
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/jobTitle"),
+      this.jobTitle,
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/memberOf"),
       this.memberOf.map((_item) => _item),
     );
@@ -1820,6 +1853,7 @@ export namespace Person {
       givenName: purify.Maybe<string>;
       hasOccupation: readonly (Occupation | Role)[];
       images: readonly ImageObject[];
+      jobTitle: purify.Maybe<string>;
       memberOf: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
@@ -1866,6 +1900,7 @@ export namespace Person {
     const images = _jsonObject["images"].map((_item) =>
       ImageObject.fromJson(_item).unsafeCoerce(),
     );
+    const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
     const memberOf = _jsonObject["memberOf"].map((_item) =>
       _item.termType === "Literal"
         ? dataFactory.literal(
@@ -1889,6 +1924,7 @@ export namespace Person {
       givenName,
       hasOccupation,
       images,
+      jobTitle,
       memberOf,
     });
   }
@@ -1920,6 +1956,7 @@ export namespace Person {
       givenName: purify.Maybe<string>;
       hasOccupation: readonly (Occupation | Role)[];
       images: readonly ImageObject[];
+      jobTitle: purify.Maybe<string>;
       memberOf: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
@@ -2099,6 +2136,23 @@ export namespace Person {
     }
 
     const images = _imagesEither.unsafeCoerce();
+    const _jobTitleEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/jobTitle"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_jobTitleEither.isLeft()) {
+      return _jobTitleEither;
+    }
+
+    const jobTitle = _jobTitleEither.unsafeCoerce();
     const _memberOfEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
@@ -2130,6 +2184,7 @@ export namespace Person {
       givenName,
       hasOccupation,
       images,
+      jobTitle,
       memberOf,
     });
   }
@@ -2163,6 +2218,7 @@ export namespace Person {
         ImageObject.imageObjectJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/images`,
         }),
+        { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
         { scope: `${scopePrefix}/properties/memberOf`, type: "Control" },
       ],
       label: "Person",
@@ -2203,6 +2259,7 @@ export namespace Person {
           ])
           .array(),
         images: ImageObject.imageObjectJsonZodSchema().array(),
+        jobTitle: zod.string().optional(),
         memberOf: zod
           .discriminatedUnion("termType", [
             zod.object({
