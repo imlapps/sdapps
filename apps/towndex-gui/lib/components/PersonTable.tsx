@@ -43,6 +43,7 @@ export function PersonTable(json: {
       ) {
         columns.push({
           accessor: "jobTitle",
+          sortable: true,
         });
       }
       rows.push(row);
