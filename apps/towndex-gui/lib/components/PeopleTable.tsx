@@ -1,5 +1,7 @@
 "use client";
 
+import { useHrefs } from "@/lib/hooks/useHrefs";
+import { Anchor } from "@mantine/core";
 import { PersonStub } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
@@ -10,6 +12,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 interface Row {
+  readonly href: string;
   readonly jobTitle: string | null;
   readonly name: string;
 }
@@ -17,6 +20,8 @@ interface Row {
 export function PeopleTable(json: {
   people: readonly ReturnType<PersonStub["toJson"]>[];
 }) {
+  const hrefs = useHrefs();
+
   const { columns, rows: unsortedRows } = useMemo(() => {
     const people = json.people.flatMap((person) =>
       PersonStub.fromJson(person).toMaybe().toList(),
@@ -25,6 +30,7 @@ export function PeopleTable(json: {
     const columns: DataTableColumn<Row>[] = [
       {
         accessor: "name",
+        render: (row) => <Anchor href={row.href}>{row.name}</Anchor>,
         sortable: true,
       },
     ];
@@ -34,6 +40,7 @@ export function PeopleTable(json: {
         continue;
       }
       const row: Row = {
+        href: hrefs.person(person),
         jobTitle: person.jobTitle.extractNullable(),
         name: person.name.unsafeCoerce(),
       };
@@ -52,7 +59,7 @@ export function PeopleTable(json: {
       columns,
       rows,
     };
-  }, [json]);
+  }, [hrefs, json]);
 
   const [rows, setRows] = useState<Row[] | null>(null);
 
@@ -76,6 +83,7 @@ export function PeopleTable(json: {
       onSortStatusChange={setSortStatus}
       records={rows}
       sortStatus={sortStatus}
+      striped
       withColumnBorders
       withTableBorder
     />
