@@ -23,6 +23,10 @@
     "Person": "Person"
   },
   "PersonPage": {
+    "Job title": "Job title",
+    "Member of organizations": "Member of organizations",
+    "Name": "Name",
+    "Participant in events": "Participant in events",
     "Person": "Person"
   },
   "OrganizationsPage": {

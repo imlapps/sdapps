@@ -2,25 +2,20 @@
 
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor, Text, Timeline, TimelineItem } from "@mantine/core";
-import { Event, Identifier } from "@sdapps/models";
+import { EventStub, Identifier } from "@sdapps/models";
 import { useMemo } from "react";
 
 export function EventsTimeline(json: {
-  events: readonly ReturnType<Event["toJson"]>[];
+  events: readonly ReturnType<EventStub["toJson"]>[];
 }) {
   const hrefs = useHrefs();
 
   const events = useMemo(
     () =>
       json.events.flatMap((json) =>
-        Event.fromJson(json)
+        EventStub.fromJson(json)
           .toMaybe()
-          .filter(
-            (event) =>
-              event.name.isJust() &&
-              event.startDate.isJust() &&
-              event.superEvent.isNothing(),
-          )
+          .filter((event) => event.startDate.isJust())
           .toList(),
       ),
     [json],
@@ -33,7 +28,7 @@ export function EventsTimeline(json: {
           key={Identifier.toString(event.identifier)}
           title={
             <Anchor href={hrefs.event(event)}>
-              {event.name.unsafeCoerce()}
+              {event.name.orDefault(Identifier.toString(event.identifier))}
             </Anchor>
           }
         >

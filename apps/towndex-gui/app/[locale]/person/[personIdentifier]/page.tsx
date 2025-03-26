@@ -1,15 +1,27 @@
-import { project } from "@/app/project";
 import { PageMetadata } from "@/lib/PageMetadata";
 import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
+import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
+import {
+  Anchor,
+  Fieldset,
+  List,
+  ListItem,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTr,
+} from "@mantine/core";
 import { Identifier, Person, PersonStub } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { ReactNode } from "react";
 
 interface PersonPageParams {
   locale: Locale;
@@ -39,11 +51,79 @@ export default async function PersonPage({
   const hrefs = await getHrefs();
   const translations = await getTranslations("PersonPage");
 
+  const properties: { label: string; value: ReactNode }[] = [];
+  person.name.ifJust((name) => {
+    properties.push({ label: translations("Name"), value: name });
+  });
+  person.jobTitle.ifJust((jobTitle) => {
+    properties.push({ label: translations("Job title"), value: jobTitle });
+  });
+  const performerInRootEvents = person.performerIn
+    .filter(
+      (event) =>
+        event.name.isJust() &&
+        event.startDate.isJust() &&
+        event.superEvent.isNothing(),
+    )
+    .toSorted(
+      (left, right) =>
+        right.startDate.unsafeCoerce().getTime() -
+        left.startDate.unsafeCoerce().getTime(),
+    );
+
   return (
     <MainSectionShell
       title={`${translations("Person")}: ${person.name.orDefault(personIdentifier)}`}
     >
-      <div />
+      <Stack>
+        <Table>
+          <TableTbody>
+            {properties.map((property) => (
+              <TableTr key={property.label}>
+                <TableTd>{property.label}</TableTd>
+                <TableTd>{property.value}</TableTd>
+              </TableTr>
+            ))}
+          </TableTbody>
+        </Table>
+        {person.memberOf.length > 0 ? (
+          <Fieldset legend={translations("Member of organizations")}>
+            <List listStyleType="none">
+              {person.memberOf.map((organization) => (
+                <ListItem key={Identifier.toString(organization.identifier)}>
+                  <Anchor href={hrefs.organization(organization)}>
+                    {organization.name.orDefault(
+                      Identifier.toString(organization.identifier),
+                    )}
+                  </Anchor>
+                </ListItem>
+              ))}
+            </List>
+          </Fieldset>
+        ) : null}
+        {performerInRootEvents.length > 0 ? (
+          <Fieldset legend={translations("Participant in events")}>
+            <Table>
+              <TableTbody>
+                {performerInRootEvents.map((event) => (
+                  <TableTr key={Identifier.toString(event.identifier)}>
+                    <TableTd>
+                      {event.startDate.unsafeCoerce().toLocaleDateString()}
+                    </TableTd>
+                    <TableTd>
+                      <Anchor href={hrefs.event(event)}>
+                        {event.name.orDefault(
+                          Identifier.toString(event.identifier),
+                        )}
+                      </Anchor>
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </Fieldset>
+        ) : null}
+      </Stack>
     </MainSectionShell>
   );
 }
@@ -68,25 +148,19 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams(): Promise<PersonPageParams[]> {
-  if (!project.nextConfiguration.generateStaticParams) {
+  if (serverConfiguration.dynamic) {
     return [];
   }
 
   const staticParams: PersonPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const concept of (
-      await (
-        await project.modelSet({ locale })
-      ).conceptStubs({
-        limit: null,
-        offset: 0,
-        query: { type: "All" },
-      })
+    for (const person of (
+      await modelSet.models<PersonStub>("PersonStub")
     ).unsafeCoerce()) {
       staticParams.push({
         personIdentifier: encodeFileName(
-          Identifier.toString(concept.identifier),
+          Identifier.toString(person.identifier),
         ),
         locale,
       });

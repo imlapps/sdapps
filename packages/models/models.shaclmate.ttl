@@ -19,7 +19,16 @@ sdapps:EventStub
     shaclmate:fromRdfType schema:Event ;
     shaclmate:name "EventStub" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf sdapps:ThingStub .
+    rdfs:subClassOf sdapps:ThingStub ;
+    sh:property sdapps:EventStub-superEvent, schema:Event-startDate .
+
+sdapps:EventStub-superEvent
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "superEvent" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path schema:superEvent .
 
 sdapps:OrganizationStub
     shaclmate:fromRdfType schema:Organization ;
@@ -208,7 +217,7 @@ schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Thing-images .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Person-performerIn, schema:Thing-images .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -267,7 +276,15 @@ schema:Person-memberOf
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "memberOf" ;
+    sh:node sdapps:OrganizationStub ;
     sh:path schema:memberOf .
+
+schema:Person-performerIn
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "performerIn" ;
+    sh:node sdapps:EventStub ;
+    sh:path schema:performerIn .
 
 schema:QuantitativeValue
     shaclmate:name "QuantitiveValue" ;

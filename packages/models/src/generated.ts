@@ -3129,7 +3129,8 @@ export class Person extends Thing {
   readonly hasOccupation: readonly (Occupation | Role)[];
   readonly images: readonly ImageObject[];
   readonly jobTitle: purify.Maybe<string>;
-  memberOf: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+  memberOf: OrganizationStub[];
+  performerIn: EventStub[];
 
   constructor(
     parameters: {
@@ -3147,11 +3148,8 @@ export class Person extends Thing {
       readonly hasOccupation?: readonly (Occupation | Role)[];
       readonly images?: readonly ImageObject[];
       readonly jobTitle?: purify.Maybe<string> | string;
-      readonly memberOf?: readonly (
-        | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal
-      )[];
+      readonly memberOf?: readonly OrganizationStub[];
+      readonly performerIn?: readonly EventStub[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
@@ -3256,6 +3254,14 @@ export class Person extends Thing {
       this.memberOf = parameters.memberOf;
     } else {
       this.memberOf = parameters.memberOf as never;
+    }
+
+    if (typeof parameters.performerIn === "undefined") {
+      this.performerIn = [];
+    } else if (Array.isArray(parameters.performerIn)) {
+      this.performerIn = parameters.performerIn;
+    } else {
+      this.performerIn = parameters.performerIn as never;
     }
   }
 
@@ -3378,13 +3384,27 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, booleanEquals))(
+        ((left, right) =>
+          arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.memberOf,
           other.memberOf,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
           propertyName: "memberOf",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.performerIn,
+          other.performerIn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "performerIn",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -3440,8 +3460,11 @@ export class Person extends Thing {
       _hasher.update(_value0);
     });
     for (const _item0 of this.memberOf) {
-      _hasher.update(_item0.termType);
-      _hasher.update(_item0.value);
+      _item0.hash(_hasher);
+    }
+
+    for (const _item0 of this.performerIn) {
+      _item0.hash(_hasher);
     }
 
     return _hasher;
@@ -3471,15 +3494,8 @@ export class Person extends Thing {
     )[];
     readonly images: readonly ReturnType<ImageObject["toJson"]>[];
     readonly jobTitle: string | undefined;
-    readonly memberOf: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
+    readonly memberOf: readonly ReturnType<OrganizationStub["toJson"]>[];
+    readonly performerIn: readonly ReturnType<EventStub["toJson"]>[];
   } & ReturnType<Thing["toJson"]> {
     return JSON.parse(
       JSON.stringify({
@@ -3513,23 +3529,8 @@ export class Person extends Thing {
         ),
         images: this.images.map((_item) => _item.toJson()),
         jobTitle: this.jobTitle.map((_item) => _item).extract(),
-        memberOf: this.memberOf.map((_item) =>
-          _item.termType === "Literal"
-            ? {
-                "@language":
-                  _item.language.length > 0 ? _item.language : undefined,
-                "@type":
-                  _item.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? _item.datatype.value
-                    : undefined,
-                "@value": _item.value,
-                termType: "Literal" as const,
-              }
-            : _item.termType === "NamedNode"
-              ? { "@id": _item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
-        ),
+        memberOf: this.memberOf.map((_item) => _item.toJson()),
+        performerIn: this.performerIn.map((_item) => _item.toJson()),
       } satisfies ReturnType<Person["toJson"]>),
     );
   }
@@ -3600,7 +3601,15 @@ export class Person extends Thing {
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/memberOf"),
-      this.memberOf.map((_item) => _item),
+      this.memberOf.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/performerIn"),
+      this.performerIn.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
     );
     return _resource;
   }
@@ -3624,7 +3633,8 @@ export namespace Person {
       hasOccupation: readonly (Occupation | Role)[];
       images: readonly ImageObject[];
       jobTitle: purify.Maybe<string>;
-      memberOf: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+      memberOf: OrganizationStub[];
+      performerIn: EventStub[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = personJsonZodSchema().safeParse(_json);
@@ -3672,18 +3682,10 @@ export namespace Person {
     );
     const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
     const memberOf = _jsonObject["memberOf"].map((_item) =>
-      _item.termType === "Literal"
-        ? dataFactory.literal(
-            _item["@value"],
-            typeof _item["@language"] !== "undefined"
-              ? _item["@language"]
-              : typeof _item["@type"] !== "undefined"
-                ? dataFactory.namedNode(_item["@type"])
-                : undefined,
-          )
-        : _item.termType === "NamedNode"
-          ? dataFactory.namedNode(_item["@id"])
-          : dataFactory.blankNode(_item["@id"].substring(2)),
+      OrganizationStub.fromJson(_item).unsafeCoerce(),
+    );
+    const performerIn = _jsonObject["performerIn"].map((_item) =>
+      EventStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -3696,6 +3698,7 @@ export namespace Person {
       images,
       jobTitle,
       memberOf,
+      performerIn,
     });
   }
 
@@ -3727,7 +3730,8 @@ export namespace Person {
       hasOccupation: readonly (Occupation | Role)[];
       images: readonly ImageObject[];
       jobTitle: purify.Maybe<string>;
-      memberOf: (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[];
+      memberOf: OrganizationStub[];
+      performerIn: EventStub[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
     const _super0Either = Thing._propertiesFromRdf({
@@ -3925,7 +3929,7 @@ export namespace Person {
     const jobTitle = _jobTitleEither.unsafeCoerce();
     const _memberOfEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      OrganizationStub[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/memberOf"), {
@@ -3935,7 +3939,15 @@ export namespace Person {
           _item
             .toValues()
             .head()
-            .chain((_value) => purify.Either.of(_value.toTerm()))
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              OrganizationStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
             .toMaybe()
             .toList(),
         ),
@@ -3945,6 +3957,36 @@ export namespace Person {
     }
 
     const memberOf = _memberOfEither.unsafeCoerce();
+    const _performerInEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      EventStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/performerIn"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              EventStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_performerInEither.isLeft()) {
+      return _performerInEither;
+    }
+
+    const performerIn = _performerInEither.unsafeCoerce();
     return purify.Either.of({
       ..._super0,
       identifier,
@@ -3956,6 +3998,7 @@ export namespace Person {
       images,
       jobTitle,
       memberOf,
+      performerIn,
     });
   }
 
@@ -3989,7 +4032,12 @@ export namespace Person {
           scopePrefix: `${scopePrefix}/properties/images`,
         }),
         { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
-        { scope: `${scopePrefix}/properties/memberOf`, type: "Control" },
+        OrganizationStub.organizationStubJsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/memberOf`,
+        }),
+        EventStub.eventStubJsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/performerIn`,
+        }),
       ],
       label: "Person",
       type: "Group",
@@ -4030,24 +4078,8 @@ export namespace Person {
           .array(),
         images: ImageObject.imageObjectJsonZodSchema().array(),
         jobTitle: zod.string().optional(),
-        memberOf: zod
-          .discriminatedUnion("termType", [
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("BlankNode"),
-            }),
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("NamedNode"),
-            }),
-            zod.object({
-              "@language": zod.string().optional(),
-              "@type": zod.string().optional(),
-              "@value": zod.string(),
-              termType: zod.literal("Literal"),
-            }),
-          ])
-          .array(),
+        memberOf: OrganizationStub.organizationStubJsonZodSchema().array(),
+        performerIn: EventStub.eventStubJsonZodSchema().array(),
       }),
     );
   }
@@ -5448,10 +5480,17 @@ export namespace Event {
 export class EventStub extends ThingStub {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type = "EventStub";
+  readonly startDate: purify.Maybe<Date>;
+  superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly startDate?: Date | purify.Maybe<Date>;
+      readonly superEvent?:
+        | (rdfjs.BlankNode | rdfjs.NamedNode)
+        | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+        | string;
     } & ConstructorParameters<typeof ThingStub>[0],
   ) {
     super(parameters);
@@ -5463,6 +5502,33 @@ export class EventStub extends ThingStub {
     } else {
       this._identifier = parameters.identifier as never;
     }
+
+    if (purify.Maybe.isMaybe(parameters.startDate)) {
+      this.startDate = parameters.startDate;
+    } else if (
+      typeof parameters.startDate === "object" &&
+      parameters.startDate instanceof Date
+    ) {
+      this.startDate = purify.Maybe.of(parameters.startDate);
+    } else if (typeof parameters.startDate === "undefined") {
+      this.startDate = purify.Maybe.empty();
+    } else {
+      this.startDate = parameters.startDate as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.superEvent)) {
+      this.superEvent = parameters.superEvent;
+    } else if (typeof parameters.superEvent === "object") {
+      this.superEvent = purify.Maybe.of(parameters.superEvent);
+    } else if (typeof parameters.superEvent === "string") {
+      this.superEvent = purify.Maybe.of(
+        dataFactory.namedNode(parameters.superEvent),
+      );
+    } else if (typeof parameters.superEvent === "undefined") {
+      this.superEvent = purify.Maybe.empty();
+    } else {
+      this.superEvent = parameters.superEvent as never;
+    }
   }
 
   override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
@@ -5470,6 +5536,79 @@ export class EventStub extends ThingStub {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
+  }
+
+  override equals(other: EventStub): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, dateEquals))(
+          this.startDate,
+          other.startDate,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "startDate",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, booleanEquals))(
+          this.superEvent,
+          other.superEvent,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "superEvent",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.startDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
+    this.superEvent.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    return _hasher;
+  }
+
+  override toJson(): {
+    readonly startDate: string | undefined;
+    readonly superEvent: { readonly "@id": string } | undefined;
+  } & ReturnType<ThingStub["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
+        superEvent: this.superEvent
+          .map((_item) =>
+            _item.termType === "BlankNode"
+              ? { "@id": `_:${_item.value}` }
+              : { "@id": _item.value },
+          )
+          .extract(),
+      } satisfies ReturnType<EventStub["toJson"]>),
+    );
   }
 
   override toRdf({
@@ -5495,6 +5634,21 @@ export class EventStub extends ThingStub {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/startDate"),
+      this.startDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/superEvent"),
+      this.superEvent,
+    );
     return _resource;
   }
 
@@ -5508,9 +5662,11 @@ export namespace EventStub {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      startDate: purify.Maybe<Date>;
+      superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = eventStubJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -5527,7 +5683,16 @@ export namespace EventStub {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
+    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
+      (_item) => new Date(_item),
+    );
+    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
+      (_item) =>
+        _item["@id"].startsWith("_:")
+          ? dataFactory.blankNode(_item["@id"].substring(2))
+          : dataFactory.namedNode(_item["@id"]),
+    );
+    return purify.Either.of({ ..._super0, identifier, startDate, superEvent });
   }
 
   export function fromJson(
@@ -5551,9 +5716,11 @@ export namespace EventStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      startDate: purify.Maybe<Date>;
+      superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromRdf>>
   > {
     const _super0Either = ThingStub._propertiesFromRdf({
       ..._context,
@@ -5580,7 +5747,41 @@ export namespace EventStub {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
+    const _startDateEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/startDate"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_startDateEither.isLeft()) {
+      return _startDateEither;
+    }
+
+    const startDate = _startDateEither.unsafeCoerce();
+    const _superEventEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/superEvent"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toIdentifier())
+        .toMaybe(),
+    );
+    if (_superEventEither.isLeft()) {
+      return _superEventEither;
+    }
+
+    const superEvent = _superEventEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, startDate, superEvent });
   }
 
   export function fromRdf(
@@ -5602,7 +5803,11 @@ export namespace EventStub {
   export function eventStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
+      elements: [
+        ThingStub.thingStubJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/superEvent`, type: "Control" },
+      ],
       label: "EventStub",
       type: "Group",
     };
@@ -5613,6 +5818,8 @@ export namespace EventStub {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("EventStub"),
+        startDate: zod.string().datetime().optional(),
+        superEvent: zod.object({ "@id": zod.string().min(1) }).optional(),
       }),
     );
   }
@@ -5679,6 +5886,16 @@ export namespace EventStub {
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
           ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}StartDate`),
+        predicate: dataFactory.namedNode("http://schema.org/startDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+        predicate: dataFactory.namedNode("http://schema.org/superEvent"),
+        subject,
+      },
     ];
   }
 
@@ -5725,6 +5942,38 @@ export namespace EventStub {
               type: "bgp" as const,
             },
           ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartDate`),
+                predicate: dataFactory.namedNode("http://schema.org/startDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/superEvent",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
     ];
   }
 }
