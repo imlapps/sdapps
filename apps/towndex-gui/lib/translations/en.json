@@ -1,4 +1,12 @@
 {
+  "EventPage": {
+    "Description": "Description",
+    "Event": "Event",
+    "Name": "Name",
+    "Organizers": "Organizers",
+    "Participants": "Participants",
+    "Sub-events": "Sub-events"
+  },
   "EventsPage": {
     "Events": "Events"
   },

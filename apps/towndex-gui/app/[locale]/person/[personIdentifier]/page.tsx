@@ -17,7 +17,7 @@ import {
   TableTd,
   TableTr,
 } from "@mantine/core";
-import { Identifier, Person, PersonStub } from "@sdapps/models";
+import { Identifier, Person, PersonStub, displayLabel } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -73,10 +73,10 @@ export default async function PersonPage({
 
   return (
     <MainSectionShell
-      title={`${translations("Person")}: ${person.name.orDefault(personIdentifier)}`}
+      title={`${translations("Person")}: ${displayLabel(person)}`}
     >
       <Stack>
-        <Table>
+        <Table withColumnBorders withRowBorders withTableBorder>
           <TableTbody>
             {properties.map((property) => (
               <TableTr key={property.label}>

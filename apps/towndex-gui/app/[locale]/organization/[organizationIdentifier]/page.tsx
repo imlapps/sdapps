@@ -1,4 +1,5 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { AgentList } from "@/lib/components/AgentList";
 import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
@@ -6,8 +7,13 @@ import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import { Anchor, Fieldset, List, ListItem, Stack } from "@mantine/core";
-import { Identifier, Organization, OrganizationStub } from "@sdapps/models";
+import { Fieldset, Stack } from "@mantine/core";
+import {
+  Identifier,
+  Organization,
+  OrganizationStub,
+  displayLabel,
+} from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -42,28 +48,12 @@ export default async function OrganizationPage({
 
   return (
     <MainSectionShell
-      title={`${translations("Organization")}: ${organization.name.orDefault(organizationIdentifier)}`}
+      title={`${translations("Organization")}: ${displayLabel(organization)}`}
     >
       <Stack>
         {organization.members.length > 0 ? (
           <Fieldset legend={translations("Members")}>
-            <List listStyleType="none">
-              {organization.members.map((agent) => (
-                <ListItem key={Identifier.toString(agent.identifier)}>
-                  <Anchor
-                    href={
-                      agent.type === "OrganizationStub"
-                        ? hrefs.organization(agent)
-                        : hrefs.person(agent)
-                    }
-                  >
-                    {agent.name.orDefault(
-                      Identifier.toString(agent.identifier),
-                    )}
-                  </Anchor>
-                </ListItem>
-              ))}
-            </List>
+            <AgentList agents={organization.members} hrefs={hrefs} />
           </Fieldset>
         ) : null}
       </Stack>

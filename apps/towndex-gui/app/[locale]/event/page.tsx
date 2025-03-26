@@ -25,7 +25,7 @@ export default async function EventsPage({
     <MainSectionShell title={translations("Events")}>
       <EventsTimeline
         events={events.flatMap((event) =>
-          event.superEvent.isJust() ? [event.toJson()] : [],
+          event.superEvent.isNothing() ? [event.toJson()] : [],
         )}
       />
     </MainSectionShell>
