@@ -1,5 +1,8 @@
-name: CI for towndex-etl
-on: [push]
+name: Continuous Integration for towndex-etl
+on:
+  push:
+    paths: ["apps/towndex_etl/**"]
+  workflow_dispatch:
 permissions:
   contents: write
   checks: write
