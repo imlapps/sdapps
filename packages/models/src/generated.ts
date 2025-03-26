@@ -204,245 +204,6 @@ export function dateEquals(left: Date, right: Date): EqualsResult {
     left.getTime() === right.getTime(),
   );
 }
-export class sh_EventStub {
-  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "sh_EventStub";
-
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier as never;
-    }
-  }
-
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  equals(other: sh_EventStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      );
-  }
-
-  hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    return _hasher;
-  }
-
-  toJson(): { readonly "@id": string; readonly type: "sh_EventStub" } {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
-      } satisfies ReturnType<sh_EventStub["toJson"]>),
-    );
-  }
-
-  toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
-      mutateGraph,
-    });
-    return _resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace sh_EventStub {
-  export function _propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, sh_EventStub> {
-    return sh_EventStub
-      ._propertiesFromJson(json)
-      .map((properties) => new sh_EventStub(properties));
-  }
-
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
-    const identifier = _resource.identifier;
-    return purify.Either.of({ identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof sh_EventStub._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, sh_EventStub> {
-    return sh_EventStub
-      ._propertiesFromRdf(parameters)
-      .map((properties) => new sh_EventStub(properties));
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "sh_EventStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-      ],
-      label: "sh_EventStub",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("sh_EventStub"),
-    });
-  }
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        sh_EventStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        sh_EventStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      sh_EventStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(_parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    return [];
-  }
-
-  export function sparqlWherePatterns(_parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    return [];
-  }
-}
 export abstract class Thing {
   abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   abstract readonly type:
@@ -5042,8 +4803,8 @@ export class Event extends Thing {
   readonly organizers: readonly AgentStub[];
   readonly performers: readonly AgentStub[];
   readonly startDate: purify.Maybe<Date>;
-  subEvents: sh_EventStub[];
-  superEvent: purify.Maybe<sh_EventStub>;
+  subEvents: EventStub[];
+  superEvent: purify.Maybe<EventStub>;
 
   constructor(
     parameters: {
@@ -5052,8 +4813,8 @@ export class Event extends Thing {
       readonly organizers?: readonly AgentStub[];
       readonly performers?: readonly AgentStub[];
       readonly startDate?: Date | purify.Maybe<Date>;
-      readonly subEvents?: readonly sh_EventStub[];
-      readonly superEvent?: purify.Maybe<sh_EventStub> | sh_EventStub;
+      readonly subEvents?: readonly EventStub[];
+      readonly superEvent?: EventStub | purify.Maybe<EventStub>;
     } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
@@ -5120,7 +4881,7 @@ export class Event extends Thing {
       this.superEvent = parameters.superEvent;
     } else if (
       typeof parameters.superEvent === "object" &&
-      parameters.superEvent instanceof sh_EventStub
+      parameters.superEvent instanceof EventStub
     ) {
       this.superEvent = purify.Maybe.of(parameters.superEvent);
     } else if (typeof parameters.superEvent === "undefined") {
@@ -5266,8 +5027,8 @@ export class Event extends Thing {
       | ReturnType<PersonStub["toJson"]>
     )[];
     readonly startDate: string | undefined;
-    readonly subEvents: readonly ReturnType<sh_EventStub["toJson"]>[];
-    readonly superEvent: ReturnType<sh_EventStub["toJson"]> | undefined;
+    readonly subEvents: readonly ReturnType<EventStub["toJson"]>[];
+    readonly superEvent: ReturnType<EventStub["toJson"]> | undefined;
   } & ReturnType<Thing["toJson"]> {
     return JSON.parse(
       JSON.stringify({
@@ -5275,9 +5036,7 @@ export class Event extends Thing {
         endDate: this.endDate.map((_item) => _item.toISOString()).extract(),
         organizers: this.organizers.map((_item) => _item.toJson()),
         performers: this.performers.map((_item) => _item.toJson()),
-        startDate: this.startDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
-          .extract(),
+        startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
         subEvents: this.subEvents.map((_item) => _item.toJson()),
         superEvent: this.superEvent.map((_item) => _item.toJson()).extract(),
       } satisfies ReturnType<Event["toJson"]>),
@@ -5336,7 +5095,7 @@ export class Event extends Thing {
         rdfLiteral.toRdf(_value, {
           dataFactory,
           datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#date",
+            "http://www.w3.org/2001/XMLSchema#dateTime",
           ),
         }),
       ),
@@ -5372,8 +5131,8 @@ export namespace Event {
       organizers: readonly AgentStub[];
       performers: readonly AgentStub[];
       startDate: purify.Maybe<Date>;
-      subEvents: sh_EventStub[];
-      superEvent: purify.Maybe<sh_EventStub>;
+      subEvents: EventStub[];
+      superEvent: purify.Maybe<EventStub>;
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = eventJsonZodSchema().safeParse(_json);
@@ -5404,10 +5163,10 @@ export namespace Event {
       (_item) => new Date(_item),
     );
     const subEvents = _jsonObject["subEvents"].map((_item) =>
-      sh_EventStub.fromJson(_item).unsafeCoerce(),
+      EventStub.fromJson(_item).unsafeCoerce(),
     );
     const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
-      (_item) => sh_EventStub.fromJson(_item).unsafeCoerce(),
+      (_item) => EventStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -5446,8 +5205,8 @@ export namespace Event {
       organizers: readonly AgentStub[];
       performers: readonly AgentStub[];
       startDate: purify.Maybe<Date>;
-      subEvents: sh_EventStub[];
-      superEvent: purify.Maybe<sh_EventStub>;
+      subEvents: EventStub[];
+      superEvent: purify.Maybe<EventStub>;
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
     const _super0Either = Thing._propertiesFromRdf({
@@ -5569,7 +5328,7 @@ export namespace Event {
     const startDate = _startDateEither.unsafeCoerce();
     const _subEventsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      sh_EventStub[]
+      EventStub[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/subEvent"), {
@@ -5581,7 +5340,7 @@ export namespace Event {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              sh_EventStub.fromRdf({
+              EventStub.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -5599,7 +5358,7 @@ export namespace Event {
     const subEvents = _subEventsEither.unsafeCoerce();
     const _superEventEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<sh_EventStub>
+      purify.Maybe<EventStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/superEvent"), {
@@ -5608,7 +5367,7 @@ export namespace Event {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          sh_EventStub.fromRdf({
+          EventStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -5659,10 +5418,10 @@ export namespace Event {
         { scope: `${scopePrefix}/properties/organizers`, type: "Control" },
         { scope: `${scopePrefix}/properties/performers`, type: "Control" },
         { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-        sh_EventStub.jsonUiSchema({
+        EventStub.eventStubJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/subEvents`,
         }),
-        sh_EventStub.jsonUiSchema({
+        EventStub.eventStubJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/superEvent`,
         }),
       ],
@@ -5679,9 +5438,9 @@ export namespace Event {
         endDate: zod.string().datetime().optional(),
         organizers: AgentStub.jsonZodSchema().array(),
         performers: AgentStub.jsonZodSchema().array(),
-        startDate: zod.string().date().optional(),
-        subEvents: sh_EventStub.jsonZodSchema().array(),
-        superEvent: sh_EventStub.jsonZodSchema().optional(),
+        startDate: zod.string().datetime().optional(),
+        subEvents: EventStub.eventStubJsonZodSchema().array(),
+        superEvent: EventStub.eventStubJsonZodSchema().optional(),
       }),
     );
   }

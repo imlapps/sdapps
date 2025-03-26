@@ -90,7 +90,7 @@ schema:Event-performers
 
 schema:Event-startDate
     a sh:PropertyShape ;
-    sh:datatype xsd:date ;
+    sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     sh:name "startDate" ;
     sh:path schema:startDate .
@@ -99,7 +99,7 @@ schema:Event-subEvents
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "subEvents" ;
-    sh:node sh:EventStub ;
+    sh:node sdapps:EventStub ;
     sh:path schema:subEvent .
 
 schema:Event-superEvent
@@ -107,7 +107,7 @@ schema:Event-superEvent
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "superEvent" ;
-    sh:node sh:EventStub ;
+    sh:node sdapps:EventStub ;
     sh:path schema:superEvent .
 
 schema:Female

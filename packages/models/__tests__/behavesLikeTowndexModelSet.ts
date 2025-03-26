@@ -1,9 +1,14 @@
 import { it } from "vitest";
 import { ModelSet } from "../src/ModelSet.js";
+import { Event } from "../src/generated.js";
 
 export function behavesLikeTowndexModelSet(modelSet: ModelSet): void {
   it("events", async ({ expect }) => {
-    expect((await modelSet.models("Event")).unsafeCoerce()).toHaveLength(26);
+    const events = (await modelSet.models<Event>("Event")).unsafeCoerce();
+    expect(events).toHaveLength(113);
+    expect(
+      events.filter((event) => event.startDate.isJust() && event.name.isJust()),
+    ).toHaveLength(26);
   });
 
   it("event count", async ({ expect }) => {
