@@ -4,8 +4,8 @@ import { MantineProvider } from "@mantine/core";
 
 import { ClientConfigurationContext } from "@/lib/contexts/ClientConfigurationContext";
 import { ClientConfiguration } from "@/lib/models/ClientConfiguration";
+import { Locale } from "@/lib/models/Locale";
 import { theme } from "@/lib/theme";
-import { Locale } from "@sdapps/models";
 import { NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import React from "react";
