@@ -14,6 +14,13 @@
     "People": "People",
     "quads": "quads"
   },
+  "OrganizationPage": {
+    "Members": "Members",
+    "Organization": "Organization"
+  },
+  "OrganizationsPage": {
+    "Organizations": "Organizations"
+  },
   "PageMetadata": {
     "Event": "Event",
     "Events": "Events",
@@ -28,9 +35,6 @@
     "Name": "Name",
     "Participant in events": "Participant in events",
     "Person": "Person"
-  },
-  "OrganizationsPage": {
-    "Organizations": "Organizations"
   },
   "PeoplePage": {
     "People": "People"
