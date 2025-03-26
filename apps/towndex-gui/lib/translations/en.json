@@ -1,0 +1,50 @@
+{
+  "EventPage": {
+    "Description": "Description",
+    "Event": "Event",
+    "Name": "Name",
+    "Organizers": "Organizers",
+    "Participants": "Participants",
+    "Sub-events": "Sub-events"
+  },
+  "EventsPage": {
+    "Events": "Events"
+  },
+  "Header": {
+    "Events": "Events",
+    "Organizations": "Organizations",
+    "People": "People"
+  },
+  "LocalePage": {
+    "Dataset": "Dataset",
+    "Events": "Events",
+    "Organizations": "Organizations",
+    "People": "People",
+    "quads": "quads"
+  },
+  "OrganizationPage": {
+    "Members": "Members",
+    "Organization": "Organization"
+  },
+  "OrganizationsPage": {
+    "Organizations": "Organizations"
+  },
+  "PageMetadata": {
+    "Event": "Event",
+    "Events": "Events",
+    "Organization": "Organization",
+    "Organizations": "Organizations",
+    "People": "People",
+    "Person": "Person"
+  },
+  "PersonPage": {
+    "Job title": "Job title",
+    "Member of organizations": "Member of organizations",
+    "Name": "Name",
+    "Participant in events": "Participant in events",
+    "Person": "Person"
+  },
+  "PeoplePage": {
+    "People": "People"
+  }
+}

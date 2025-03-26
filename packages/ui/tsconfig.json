@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["es2022", "DOM", "DOM.Iterable"]
+    "outDir": "dist"
   },
-  "extends": ["@sdapps/tsconfig/lib.json"],
+  "extends": ["@sdapps/tsconfig/react-lib.json"],
   "include": ["src/*.tsx"]
 }

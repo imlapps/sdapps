@@ -1,6 +1,33 @@
 import type { Either } from "purify-ts";
-import type { Person } from "./index.js";
+import type {
+  Event,
+  EventStub,
+  Identifier,
+  Organization,
+  OrganizationStub,
+  Person,
+  PersonStub,
+} from "./index.js";
 
 export interface ModelSet {
-  people(): Promise<Either<Error, readonly Person[]>>;
+  model<ModelT extends ModelSet.Model>(kwds: {
+    identifier: Identifier;
+    type: ModelT["type"];
+  }): Promise<Either<Error, ModelT>>;
+
+  modelCount(type: ModelSet.Model["type"]): Promise<Either<Error, number>>;
+
+  models<ModelT extends ModelSet.Model>(
+    type: ModelT["type"],
+  ): Promise<Either<Error, readonly ModelT[]>>;
+}
+
+export namespace ModelSet {
+  export type Model =
+    | Event
+    | EventStub
+    | Organization
+    | OrganizationStub
+    | Person
+    | PersonStub;
 }

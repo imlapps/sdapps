@@ -1,12 +1,53 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dash: <http://datashapes.org/dash#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix prosopa: <http://purl.archive.org/purl/prosopa/ontology#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix schema: <http://schema.org/> .
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix sdapps: <http://purl.org/sdapps/ontology#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+sdapps:AgentStub
+    shaclmate:name "AgentStub" ;
+    a sh:NodeShape ;
+    sh:xone (sdapps:OrganizationStub
+        sdapps:PersonStub
+    ) .
+
+sdapps:EventStub
+    shaclmate:fromRdfType schema:Event ;
+    shaclmate:name "EventStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub ;
+    sh:property sdapps:EventStub-superEvent, schema:Event-startDate .
+
+sdapps:EventStub-superEvent
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "superEvent" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path schema:superEvent .
+
+sdapps:OrganizationStub
+    shaclmate:fromRdfType schema:Organization ;
+    shaclmate:name "OrganizationStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
+sdapps:PersonStub
+    shaclmate:fromRdfType schema:Person ;
+    shaclmate:name "PersonStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub ;
+    sh:property schema:Person-jobTitle .
+
+sdapps:ThingStub
+    shaclmate:abstract true ;
+    shaclmate:name "ThingStub" ;
+    a owl:Class, sh:NodeShape ;
+    sh:property schema:Thing-name .
 
 <http://schema.org/>
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
@@ -28,8 +69,55 @@ schema:CreativeWork-isBasedOn
 schema:Enumeration
     shaclmate:abstract true ;
     shaclmate:name "Enumeration" ;
-    a rdfs:Class, sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
+
+schema:Event
+    shaclmate:name "Event" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing ;
+    sh:property schema:Event-endDate, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent .
+
+schema:Event-endDate
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "endDate" ;
+    sh:path schema:endDate .
+
+schema:Event-organizers
+    a sh:PropertyShape ;
+    sh:name "organizers" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:organizer .
+
+schema:Event-performers
+    a sh:PropertyShape ;
+    sh:name "performers" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:performer .
+
+schema:Event-startDate
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "startDate" ;
+    sh:path schema:startDate .
+
+schema:Event-subEvents
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "subEvents" ;
+    sh:node sdapps:EventStub ;
+    sh:path schema:subEvent .
+
+schema:Event-superEvent
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "superEvent" ;
+    sh:node sdapps:EventStub ;
+    sh:path schema:superEvent .
 
 schema:Female
     a schema:GenderType ;
@@ -108,28 +196,28 @@ schema:Organization-members
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "members" ;
-    sh:nodeKind sh:IRI ;
+    sh:node sdapps:AgentStub ;
     sh:path schema:member .
 
 schema:Organization-parentOrganizations
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "parentOrganizations" ;
-    sh:nodeKind sh:IRI ;
+    sh:node sdapps:OrganizationStub ;
     sh:path schema:parentOrganization .
 
 schema:Organization-subOrganizations
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "subOrganizations" ;
-    sh:nodeKind sh:IRI ;
+    sh:node sdapps:OrganizationStub ;
     sh:path schema:subOrganization .
 
 schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-memberOf, schema:Thing-images .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Person-performerIn, schema:Thing-images .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -177,12 +265,26 @@ schema:Person-hasOccupation
         ]
     ) .
 
+schema:Person-jobTitle
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "jobTitle" ;
+    sh:path schema:jobTitle .
+
 schema:Person-memberOf
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "memberOf" ;
-    sh:nodeKind sh:IRI ;
+    sh:node sdapps:OrganizationStub ;
     sh:path schema:memberOf .
+
+schema:Person-performerIn
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "performerIn" ;
+    sh:node sdapps:EventStub ;
+    sh:path schema:performerIn .
 
 schema:QuantitativeValue
     shaclmate:name "QuantitiveValue" ;
@@ -216,7 +318,6 @@ schema:Role
     shaclmate:name "Role" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible ;
-    sh:nodeKind sh:IRI ;
     sh:property schema:Role-endDate, schema:Role-roleName, schema:Role-startDate .
 
 schema:Role-endDate
@@ -250,8 +351,13 @@ schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
+    sh:property schema:Thing-about, schema:Thing-description, schema:Thing-identifiers, schema:Thing-locations, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
+
+schema:Thing-about
+    a sh:PropertyShape ;
+    sh:name "about" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path schema:about .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -271,6 +377,11 @@ schema:Thing-images
     sh:name "images" ;
     sh:node schema:ImageObject ;
     sh:path schema:image .
+
+schema:Thing-locations
+    a sh:PropertyShape ;
+    sh:name "locations" ;
+    sh:path schema:location .
 
 schema:Thing-name
     a sh:PropertyShape ;

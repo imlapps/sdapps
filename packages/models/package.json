@@ -1,14 +1,14 @@
 {
   "dependencies": {
     "@rdfjs/types": "^1.1.0",
-    "@shaclmate/runtime": "2.0.18",
+    "@shaclmate/runtime": "2.0.22",
     "@types/n3": "^1.21.1",
     "n3": "^1.24.0",
     "purify-ts": "^2.1.0",
-    "rdfjs-resource": "1.0.16"
+    "rdfjs-resource": "1.0.19"
   },
   "devDependencies": {
-    "@sdapps/tsconfig": "*",
+    "@sdapps/tsconfig": "0.0.0",
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
   },
