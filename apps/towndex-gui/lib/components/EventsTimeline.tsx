@@ -15,14 +15,19 @@ export function EventsTimeline(json: {
       json.events.flatMap((json) =>
         Event.fromJson(json)
           .toMaybe()
-          .filter((event) => event.name.isJust() && event.startDate.isJust())
+          .filter(
+            (event) =>
+              event.name.isJust() &&
+              event.startDate.isJust() &&
+              event.superEvent.isNothing(),
+          )
           .toList(),
       ),
     [json],
   );
 
   return (
-    <Timeline active={1} bulletSize={24} lineWidth={2}>
+    <Timeline active={0} bulletSize={24} lineWidth={2}>
       {events.map((event) => (
         <TimelineItem
           key={Identifier.toString(event.identifier)}
@@ -32,7 +37,7 @@ export function EventsTimeline(json: {
             </Anchor>
           }
         >
-          <Text size="xs" mt={4}>
+          <Text size="sm" mt={4}>
             {event.startDate.unsafeCoerce().toLocaleString()}
           </Text>
         </TimelineItem>
