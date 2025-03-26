@@ -3,3 +3,12 @@ services:
     build:
       context: .
       dockerfile: apps/towndex-gui/Dockerfile
+    command: ["tail", "-f", "/dev/null"]
+    container_name: towndex
+    environment: 
+      INPUT_DATA_PATHS: "/data/us/ny/brunswick/minutes.trig"
+      INPUT_SITE_TITLE: "Town of Brunswick"
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./data/towndex:/data:ro
