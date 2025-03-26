@@ -1,6 +1,6 @@
 import { Locale } from "@/lib/models/Locale";
 import { encodeFileName } from "@kos-kit/next-utils";
-import { Identifier, Organization, Person } from "@sdapps/models";
+import { Event, Identifier, Organization, Person } from "@sdapps/models";
 
 export class Hrefs {
   private readonly basePath: string;
@@ -11,12 +11,20 @@ export class Hrefs {
     this._locale = locale;
   }
 
+  event(event: { identifier: Event["identifier"] }) {
+    return `${this.events}/${encodeFileName(Identifier.toString(event.identifier))}`;
+  }
+
+  get events() {
+    return `${this.locale}/event`;
+  }
+
   get locale() {
     return `${this.basePath}/${this._locale}`;
   }
 
-  organization(person: { identifier: Organization["identifier"] }) {
-    return `${this.organizations}/${encodeFileName(Identifier.toString(person.identifier))}`;
+  organization(organization: { identifier: Organization["identifier"] }) {
+    return `${this.organizations}/${encodeFileName(Identifier.toString(organization.identifier))}`;
   }
 
   get organizations() {

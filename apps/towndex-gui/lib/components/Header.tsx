@@ -1,7 +1,7 @@
 "use client";
 import { useClientConfiguration } from "@/lib/hooks/useClientConfiguration";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { Anchor, Burger, Group, useMantineTheme } from "@mantine/core";
+import { Anchor, Burger, Group } from "@mantine/core";
 import { IconBinaryTree2Filled } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import classes from "./Header.module.css";
@@ -12,9 +12,9 @@ export function Header({
 }: { opened: boolean; toggle: () => void }) {
   const configuration = useClientConfiguration();
   const hrefs = useHrefs();
-  const theme = useMantineTheme();
   const translations = useTranslations("Header");
   const links = [
+    { link: hrefs.events, label: translations("Events") },
     { link: hrefs.organizations, label: translations("Organizations") },
     { link: hrefs.people, label: translations("People") },
   ];

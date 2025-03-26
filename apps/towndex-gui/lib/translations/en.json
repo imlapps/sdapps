@@ -1,15 +1,21 @@
 {
+  "EventsPage": {
+    "Events": "Events"
+  },
   "Header": {
+    "Events": "Events",
     "Organizations": "Organizations",
     "People": "People"
   },
   "LocalePage": {
     "Dataset": "Dataset",
+    "Events": "Events",
     "Organizations": "Organizations",
     "People": "People",
     "quads": "quads"
   },
   "PageMetadata": {
+    "Events": "Events",
     "Organizations": "Organizations",
     "People": "People"
   },

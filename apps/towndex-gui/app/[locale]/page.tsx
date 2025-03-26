@@ -40,6 +40,14 @@ export default async function LocalePage({
           <TableTbody>
             <TableTr>
               <TableTd>
+                <Anchor href={hrefs.events}>{translations("Events")}</Anchor>
+              </TableTd>
+              <TableTd>
+                {(await modelSet.modelCount("EventStub")).unsafeCoerce()}
+              </TableTd>
+            </TableTr>
+            <TableTr>
+              <TableTd>
                 <Anchor href={hrefs.organizations}>
                   {translations("Organizations")}
                 </Anchor>

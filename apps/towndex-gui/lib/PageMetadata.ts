@@ -16,6 +16,15 @@ export class PageMetadata {
     this.translations = translations;
   }
 
+  get events(): Metadata {
+    return {
+      title: titlePartsToString([
+        this.locale.title as string,
+        this.translations("Events"),
+      ]),
+    };
+  }
+
   static async get({ locale }: { locale: Locale }) {
     return new PageMetadata({
       translations: await getTranslations({
