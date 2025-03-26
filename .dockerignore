@@ -1,0 +1,15 @@
+**/__pycache__/
+**/__tests__/
+**/.mypy_cache/
+**/.next/
+**/.pytest_cache/
+**/*.log
+**/*.pyc
+**/dist/
+**/node_modules/
+**/out/
+/.git/
+/.github/
+/data/
+/README.md
+**/.turbo/
