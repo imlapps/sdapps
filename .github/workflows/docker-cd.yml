@@ -18,7 +18,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./apps/towndex/Dockerfile
+          file: ./apps/towndex-gui/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/towndex:latest
