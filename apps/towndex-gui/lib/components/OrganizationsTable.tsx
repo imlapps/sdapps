@@ -1,5 +1,7 @@
 "use client";
 
+import { useHrefs } from "@/lib/hooks/useHrefs";
+import { Anchor } from "@mantine/core";
 import { OrganizationStub } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
@@ -10,12 +12,15 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 interface Row {
+  readonly href: string;
   readonly name: string;
 }
 
 export function OrganizationsTable(json: {
   organizations: readonly ReturnType<OrganizationStub["toJson"]>[];
 }) {
+  const hrefs = useHrefs();
+
   const { columns, rows: unsortedRows } = useMemo(() => {
     const organizations = json.organizations.flatMap((organization) =>
       OrganizationStub.fromJson(organization).toMaybe().toList(),
@@ -24,6 +29,7 @@ export function OrganizationsTable(json: {
     const columns: DataTableColumn<Row>[] = [
       {
         accessor: "name",
+        render: (row) => <Anchor href={row.href}>{row.name}</Anchor>,
         sortable: true,
       },
     ];
@@ -33,6 +39,7 @@ export function OrganizationsTable(json: {
         continue;
       }
       const row: Row = {
+        href: hrefs.organization(organization),
         name: organization.name.unsafeCoerce(),
       };
       rows.push(row);
@@ -41,7 +48,7 @@ export function OrganizationsTable(json: {
       columns,
       rows,
     };
-  }, [json]);
+  }, [hrefs, json]);
 
   const [rows, setRows] = useState<Row[] | null>(null);
 
