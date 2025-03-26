@@ -7,6 +7,7 @@ on:
 jobs:
   build-push-towndex-docker-image:
     name: Build and push towndex Docker image
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
