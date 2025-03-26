@@ -15,12 +15,14 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:packages": "turbo run --filter \"./packages/*\" build",
     "biome:check": "biome check",
     "biome:check:write": "biome check --write",
     "biome:check:write:unsafe": "biome check --write --unsafe",
     "tsc:noEmit": "turbo run tsc:noEmit",
     "syncpack:fix-mismatches": "syncpack fix-mismatches",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "test:packages": "turbo run --filter \"./packages/*\" test"
   },
   "workspaces": ["apps/*", "packages/*"]
 }
