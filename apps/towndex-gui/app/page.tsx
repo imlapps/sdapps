@@ -1,7 +1,7 @@
-import { getHrefs } from "@/lib/getHrefs";
 import { routing } from "@/lib/routing";
 import { redirect } from "next/navigation";
 
 export default async function RootPage() {
-  redirect((await getHrefs({ locale: routing.defaultLocale })).locale);
+  // Don't use Hrefs here, since they prepend basePath explicitly and redirect does that implicitly.
+  redirect(`/${routing.defaultLocale}`);
 }
