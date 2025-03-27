@@ -20,7 +20,8 @@ export class Hrefs {
   }
 
   get locale() {
-    return `${this.basePath}/${this._locale}`;
+    return `/${this._locale}`;
+    // return `${this.basePath}/${this._locale}`;
   }
 
   organization(organization: { identifier: Organization["identifier"] }) {
