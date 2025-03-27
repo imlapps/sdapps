@@ -1,7 +1,6 @@
 import { PageMetadata } from "@/lib/PageMetadata";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
-import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { OrganizationsTable } from "@/lib/components/OrganizationsTable";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
@@ -27,14 +26,12 @@ export default async function OrganizationsPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell>
-        <MainSectionShell title={translations("Organizations")}>
-          <OrganizationsTable
-            organizations={organizations.map((organization) =>
-              organization.toJson(),
-            )}
-          />
-        </MainSectionShell>
+      <AppShell title={translations("Organizations")}>
+        <OrganizationsTable
+          organizations={organizations.map((organization) =>
+            organization.toJson(),
+          )}
+        />
       </AppShell>
     </ClientProvidersServer>
   );

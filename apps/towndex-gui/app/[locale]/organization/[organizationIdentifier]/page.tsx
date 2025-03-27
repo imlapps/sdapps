@@ -2,7 +2,6 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
-import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
@@ -50,18 +49,16 @@ export default async function OrganizationPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell>
-        <MainSectionShell
-          title={`${translations("Organization")}: ${displayLabel(organization)}`}
-        >
-          <Stack>
-            {organization.members.length > 0 ? (
-              <Fieldset legend={translations("Members")}>
-                <AgentList agents={organization.members} hrefs={hrefs} />
-              </Fieldset>
-            ) : null}
-          </Stack>
-        </MainSectionShell>
+      <AppShell
+        title={`${translations("Organization")}: ${displayLabel(organization)}`}
+      >
+        <Stack>
+          {organization.members.length > 0 ? (
+            <Fieldset legend={translations("Members")}>
+              <AgentList agents={organization.members} hrefs={hrefs} />
+            </Fieldset>
+          ) : null}
+        </Stack>
       </AppShell>
     </ClientProvidersServer>
   );

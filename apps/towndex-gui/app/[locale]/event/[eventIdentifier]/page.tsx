@@ -3,7 +3,6 @@ import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
-import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
@@ -62,40 +61,36 @@ export default async function EventPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell>
-        <MainSectionShell
-          title={`${translations("Event")}: ${displayLabel(event)}`}
-        >
-          <Stack>
-            <Table withColumnBorders withRowBorders withTableBorder>
-              <TableTbody>
-                {properties.map((property) => (
-                  <TableTr key={property.label}>
-                    <TableTd>{property.label}</TableTd>
-                    <TableTd>{property.value}</TableTd>
-                  </TableTr>
-                ))}
-              </TableTbody>
-            </Table>
-            {event.organizers.length > 0 ? (
-              <Fieldset legend={translations("Organizers")}>
-                <AgentList agents={event.organizers} hrefs={hrefs} />
-              </Fieldset>
-            ) : null}
-            {event.performers.length > 0 ? (
-              <Fieldset legend={translations("Participants")}>
-                <AgentList agents={event.performers} hrefs={hrefs} />
-              </Fieldset>
-            ) : null}
-            {event.subEvents.length > 0 ? (
-              <Fieldset legend={translations("Sub-events")}>
-                <EventsTimeline
-                  events={event.subEvents.map((event) => event.toJson())}
-                />
-              </Fieldset>
-            ) : null}
-          </Stack>
-        </MainSectionShell>
+      <AppShell title={`${translations("Event")}: ${displayLabel(event)}`}>
+        <Stack>
+          <Table withColumnBorders withRowBorders withTableBorder>
+            <TableTbody>
+              {properties.map((property) => (
+                <TableTr key={property.label}>
+                  <TableTd>{property.label}</TableTd>
+                  <TableTd>{property.value}</TableTd>
+                </TableTr>
+              ))}
+            </TableTbody>
+          </Table>
+          {event.organizers.length > 0 ? (
+            <Fieldset legend={translations("Organizers")}>
+              <AgentList agents={event.organizers} hrefs={hrefs} />
+            </Fieldset>
+          ) : null}
+          {event.performers.length > 0 ? (
+            <Fieldset legend={translations("Participants")}>
+              <AgentList agents={event.performers} hrefs={hrefs} />
+            </Fieldset>
+          ) : null}
+          {event.subEvents.length > 0 ? (
+            <Fieldset legend={translations("Sub-events")}>
+              <EventsTimeline
+                events={event.subEvents.map((event) => event.toJson())}
+              />
+            </Fieldset>
+          ) : null}
+        </Stack>
       </AppShell>
     </ClientProvidersServer>
   );

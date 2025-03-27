@@ -1,11 +1,19 @@
 "use client";
 
 import { Header } from "@/lib/components/Header";
-import { AppShell as MantineAppShell } from "@mantine/core";
+import {
+  Group,
+  AppShell as MantineAppShell,
+  Stack,
+  Title,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { PropsWithChildren } from "react";
 
-export function AppShell({ children }: PropsWithChildren) {
+export function AppShell({
+  children,
+  title,
+}: PropsWithChildren<{ title: string }>) {
   const [opened, { toggle }] = useDisclosure(false);
 
   return (
@@ -22,7 +30,18 @@ export function AppShell({ children }: PropsWithChildren) {
         <Header opened={opened} toggle={toggle} />
       </MantineAppShell.Header>
 
-      <MantineAppShell.Main>{children}</MantineAppShell.Main>
+      <MantineAppShell.Main>
+        {title ? (
+          <Stack>
+            <Title size="lg" style={{ textAlign: "center" }}>
+              {title}
+            </Title>
+            <Group mx="auto">{children}</Group>
+          </Stack>
+        ) : (
+          <>{children}</>
+        )}
+      </MantineAppShell.Main>
     </MantineAppShell>
   );
 }

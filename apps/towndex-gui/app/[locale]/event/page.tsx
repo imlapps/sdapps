@@ -2,7 +2,6 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
-import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
@@ -25,14 +24,12 @@ export default async function EventsPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell>
-        <MainSectionShell title={translations("Events")}>
-          <EventsTimeline
-            events={events.flatMap((event) =>
-              event.superEvent.isNothing() ? [event.toJson()] : [],
-            )}
-          />
-        </MainSectionShell>
+      <AppShell title={translations("Events")}>
+        <EventsTimeline
+          events={events.flatMap((event) =>
+            event.superEvent.isNothing() ? [event.toJson()] : [],
+          )}
+        />
       </AppShell>
     </ClientProvidersServer>
   );
