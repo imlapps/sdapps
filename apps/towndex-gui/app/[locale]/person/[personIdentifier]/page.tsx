@@ -1,4 +1,6 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { AppShell } from "@/lib/components/AppShell";
+import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
@@ -72,59 +74,65 @@ export default async function PersonPage({
     );
 
   return (
-    <MainSectionShell
-      title={`${translations("Person")}: ${displayLabel(person)}`}
-    >
-      <Stack>
-        <Table withColumnBorders withRowBorders withTableBorder>
-          <TableTbody>
-            {properties.map((property) => (
-              <TableTr key={property.label}>
-                <TableTd>{property.label}</TableTd>
-                <TableTd>{property.value}</TableTd>
-              </TableTr>
-            ))}
-          </TableTbody>
-        </Table>
-        {person.memberOf.length > 0 ? (
-          <Fieldset legend={translations("Member of organizations")}>
-            <List listStyleType="none">
-              {person.memberOf.map((organization) => (
-                <ListItem key={Identifier.toString(organization.identifier)}>
-                  <Anchor href={hrefs.organization(organization)}>
-                    {organization.name.orDefault(
-                      Identifier.toString(organization.identifier),
-                    )}
-                  </Anchor>
-                </ListItem>
-              ))}
-            </List>
-          </Fieldset>
-        ) : null}
-        {performerInRootEvents.length > 0 ? (
-          <Fieldset legend={translations("Participant in events")}>
-            <Table>
+    <ClientProvidersServer>
+      <AppShell>
+        <MainSectionShell
+          title={`${translations("Person")}: ${displayLabel(person)}`}
+        >
+          <Stack>
+            <Table withColumnBorders withRowBorders withTableBorder>
               <TableTbody>
-                {performerInRootEvents.map((event) => (
-                  <TableTr key={Identifier.toString(event.identifier)}>
-                    <TableTd>
-                      {event.startDate.unsafeCoerce().toLocaleDateString()}
-                    </TableTd>
-                    <TableTd>
-                      <Anchor href={hrefs.event(event)}>
-                        {event.name.orDefault(
-                          Identifier.toString(event.identifier),
-                        )}
-                      </Anchor>
-                    </TableTd>
+                {properties.map((property) => (
+                  <TableTr key={property.label}>
+                    <TableTd>{property.label}</TableTd>
+                    <TableTd>{property.value}</TableTd>
                   </TableTr>
                 ))}
               </TableTbody>
             </Table>
-          </Fieldset>
-        ) : null}
-      </Stack>
-    </MainSectionShell>
+            {person.memberOf.length > 0 ? (
+              <Fieldset legend={translations("Member of organizations")}>
+                <List listStyleType="none">
+                  {person.memberOf.map((organization) => (
+                    <ListItem
+                      key={Identifier.toString(organization.identifier)}
+                    >
+                      <Anchor href={hrefs.organization(organization)}>
+                        {organization.name.orDefault(
+                          Identifier.toString(organization.identifier),
+                        )}
+                      </Anchor>
+                    </ListItem>
+                  ))}
+                </List>
+              </Fieldset>
+            ) : null}
+            {performerInRootEvents.length > 0 ? (
+              <Fieldset legend={translations("Participant in events")}>
+                <Table>
+                  <TableTbody>
+                    {performerInRootEvents.map((event) => (
+                      <TableTr key={Identifier.toString(event.identifier)}>
+                        <TableTd>
+                          {event.startDate.unsafeCoerce().toLocaleDateString()}
+                        </TableTd>
+                        <TableTd>
+                          <Anchor href={hrefs.event(event)}>
+                            {event.name.orDefault(
+                              Identifier.toString(event.identifier),
+                            )}
+                          </Anchor>
+                        </TableTd>
+                      </TableTr>
+                    ))}
+                  </TableTbody>
+                </Table>
+              </Fieldset>
+            ) : null}
+          </Stack>
+        </MainSectionShell>
+      </AppShell>
+    </ClientProvidersServer>
   );
 }
 

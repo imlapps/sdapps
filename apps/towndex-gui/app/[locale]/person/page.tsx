@@ -1,4 +1,6 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { AppShell } from "@/lib/components/AppShell";
+import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { MainSectionShell } from "@/lib/components/MainSectionShell";
 import { PeopleTable } from "@/lib/components/PeopleTable";
 import { modelSet } from "@/lib/modelSet";
@@ -24,9 +26,13 @@ export default async function PeoplePage({
   const translations = await getTranslations("PeoplePage");
 
   return (
-    <MainSectionShell title={translations("People")}>
-      <PeopleTable people={people.map((person) => person.toJson())} />
-    </MainSectionShell>
+    <ClientProvidersServer>
+      <AppShell>
+        <MainSectionShell title={translations("People")}>
+          <PeopleTable people={people.map((person) => person.toJson())} />
+        </MainSectionShell>
+      </AppShell>
+    </ClientProvidersServer>
   );
 }
 

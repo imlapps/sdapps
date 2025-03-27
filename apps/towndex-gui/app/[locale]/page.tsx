@@ -1,4 +1,6 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { AppShell } from "@/lib/components/AppShell";
+import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { dataset } from "@/lib/dataset";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
@@ -31,49 +33,59 @@ export default async function LocalePage({
   const translations = await getTranslations("LocalePage");
 
   return (
-    <Stack>
-      <Title size="lg" style={{ textAlign: "center" }}>
-        Towndex: {serverConfiguration.siteTitle}
-      </Title>
-      <Group mx="auto">
-        <Table striped withColumnBorders>
-          <TableTbody>
-            <TableTr>
-              <TableTd>
-                <Anchor href={hrefs.events}>{translations("Events")}</Anchor>
-              </TableTd>
-              <TableTd>
-                {(await modelSet.modelCount("EventStub")).unsafeCoerce()}
-              </TableTd>
-            </TableTr>
-            <TableTr>
-              <TableTd>
-                <Anchor href={hrefs.organizations}>
-                  {translations("Organizations")}
-                </Anchor>
-              </TableTd>
-              <TableTd>
-                {(await modelSet.modelCount("OrganizationStub")).unsafeCoerce()}
-              </TableTd>
-            </TableTr>
-            <TableTr>
-              <TableTd>
-                <Anchor href={hrefs.people}>{translations("People")}</Anchor>
-              </TableTd>
-              <TableTd>
-                {(await modelSet.modelCount("PersonStub")).unsafeCoerce()}
-              </TableTd>
-            </TableTr>
-            <TableTr>
-              <TableTd>{translations("Dataset")}</TableTd>
-              <TableTd>
-                {dataset.size} {translations("quads")}
-              </TableTd>
-            </TableTr>
-          </TableTbody>
-        </Table>
-      </Group>
-    </Stack>
+    <ClientProvidersServer>
+      <AppShell>
+        <Stack>
+          <Title size="lg" style={{ textAlign: "center" }}>
+            Towndex: {serverConfiguration.siteTitle}
+          </Title>
+          <Group mx="auto">
+            <Table striped withColumnBorders>
+              <TableTbody>
+                <TableTr>
+                  <TableTd>
+                    <Anchor href={hrefs.events}>
+                      {translations("Events")}
+                    </Anchor>
+                  </TableTd>
+                  <TableTd>
+                    {(await modelSet.modelCount("EventStub")).unsafeCoerce()}
+                  </TableTd>
+                </TableTr>
+                <TableTr>
+                  <TableTd>
+                    <Anchor href={hrefs.organizations}>
+                      {translations("Organizations")}
+                    </Anchor>
+                  </TableTd>
+                  <TableTd>
+                    {(
+                      await modelSet.modelCount("OrganizationStub")
+                    ).unsafeCoerce()}
+                  </TableTd>
+                </TableTr>
+                <TableTr>
+                  <TableTd>
+                    <Anchor href={hrefs.people}>
+                      {translations("People")}
+                    </Anchor>
+                  </TableTd>
+                  <TableTd>
+                    {(await modelSet.modelCount("PersonStub")).unsafeCoerce()}
+                  </TableTd>
+                </TableTr>
+                <TableTr>
+                  <TableTd>{translations("Dataset")}</TableTd>
+                  <TableTd>
+                    {dataset.size} {translations("quads")}
+                  </TableTd>
+                </TableTr>
+              </TableTbody>
+            </Table>
+          </Group>
+        </Stack>
+      </AppShell>
+    </ClientProvidersServer>
   );
 }
 
