@@ -3,11 +3,10 @@ import { encodeFileName } from "@kos-kit/next-utils";
 import { Event, Identifier, Organization, Person } from "@sdapps/models";
 
 export class Hrefs {
-  private readonly basePath: string;
+  // private readonly basePath: string;
   private readonly _locale: string;
 
-  constructor({ basePath, locale }: { basePath: string; locale: Locale }) {
-    this.basePath = basePath;
+  constructor({ locale }: { basePath: string; locale: Locale }) {
     this._locale = locale;
   }
 
