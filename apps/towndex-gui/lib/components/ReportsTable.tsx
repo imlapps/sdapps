@@ -2,7 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { AgentStub, VoteAction } from "@sdapps/models";
+import { AgentStub, Report } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -12,20 +12,19 @@ import {
 import { useEffect, useMemo, useState } from "react";
 
 interface Row {
-  readonly agents: readonly AgentStub[];
+  readonly authors: readonly AgentStub[];
   readonly description: string | null;
   readonly name: string;
-  readonly participants: readonly AgentStub[];
 }
 
-export function VoteActionsTable(json: {
-  voteActions: readonly ReturnType<VoteAction["toJson"]>[];
+export function ReportsTable(json: {
+  reports: readonly ReturnType<Report["toJson"]>[];
 }) {
   const hrefs = useHrefs();
 
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const voteActions = json.voteActions.flatMap((voteAction) =>
-      VoteAction.fromJson(voteAction).toMaybe().toList(),
+    const reports = json.reports.flatMap((report) =>
+      Report.fromJson(report).toMaybe().toList(),
     );
 
     const columns: DataTableColumn<Row>[] = [
@@ -35,25 +34,24 @@ export function VoteActionsTable(json: {
       },
     ];
     const rows: Row[] = [];
-    for (const voteAction of voteActions) {
-      if (!voteAction.name.isJust()) {
+    for (const report of reports) {
+      if (!report.name.isJust()) {
         continue;
       }
 
       const row: Row = {
-        agents: voteAction.agents,
-        description: voteAction.description.extractNullable(),
-        name: voteAction.name.unsafeCoerce(),
-        participants: voteAction.participants,
+        authors: report.authors,
+        description: report.description.extractNullable(),
+        name: report.name.unsafeCoerce(),
       };
 
       if (
-        row.agents.length > 0 &&
-        !columns.some((column) => column.accessor === "agents")
+        row.authors.length > 0 &&
+        !columns.some((column) => column.accessor === "authors")
       ) {
         columns.push({
-          accessor: "agents",
-          render: (row) => <AgentList agents={row.agents} hrefs={hrefs} />,
+          accessor: "authors",
+          render: (row) => <AgentList agents={row.authors} hrefs={hrefs} />,
         });
       }
 
@@ -64,18 +62,6 @@ export function VoteActionsTable(json: {
         columns.push({
           accessor: "description",
           sortable: true,
-        });
-      }
-
-      if (
-        row.participants.length > 0 &&
-        !columns.some((column) => column.accessor === "participants")
-      ) {
-        columns.push({
-          accessor: "participants",
-          render: (row) => (
-            <AgentList agents={row.participants} hrefs={hrefs} />
-          ),
         });
       }
 

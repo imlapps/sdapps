@@ -208,6 +208,7 @@ export abstract class Thing {
   abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   abstract readonly type:
     | "Action"
+    | "Article"
     | "AssessAction"
     | "ChooseAction"
     | "Event"
@@ -218,6 +219,7 @@ export abstract class Thing {
     | "Person"
     | "Place"
     | "QuantitiveValue"
+    | "Report"
     | "Role"
     | "TextObject"
     | "VoteAction";
@@ -471,6 +473,7 @@ export abstract class Thing {
     readonly "@id": string;
     readonly type:
       | "Action"
+      | "Article"
       | "AssessAction"
       | "ChooseAction"
       | "Event"
@@ -481,6 +484,7 @@ export abstract class Thing {
       | "Person"
       | "Place"
       | "QuantitiveValue"
+      | "Report"
       | "Role"
       | "TextObject"
       | "VoteAction";
@@ -897,6 +901,7 @@ export namespace Thing {
       "@id": zod.string().min(1),
       type: zod.enum([
         "Action",
+        "Article",
         "AssessAction",
         "ChooseAction",
         "Event",
@@ -907,6 +912,7 @@ export namespace Thing {
         "Person",
         "Place",
         "QuantitiveValue",
+        "Report",
         "Role",
         "TextObject",
         "VoteAction",
@@ -927,13 +933,21 @@ export namespace Thing {
 }
 export abstract class CreativeWork extends Thing {
   abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-  abstract override readonly type: "ImageObject" | "TextObject";
+  abstract override readonly type:
+    | "Article"
+    | "ImageObject"
+    | "Report"
+    | "TextObject";
   readonly about: readonly ThingStub[];
+  readonly authors: readonly AgentStub[];
+  readonly datePublished: purify.Maybe<Date>;
   readonly isBasedOn: readonly rdfjs.NamedNode[];
 
   constructor(
     parameters: {
       readonly about?: readonly ThingStub[];
+      readonly authors?: readonly AgentStub[];
+      readonly datePublished?: Date | purify.Maybe<Date>;
       readonly isBasedOn?: readonly rdfjs.NamedNode[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
@@ -944,6 +958,27 @@ export abstract class CreativeWork extends Thing {
       this.about = parameters.about;
     } else {
       this.about = parameters.about as never;
+    }
+
+    if (typeof parameters.authors === "undefined") {
+      this.authors = [];
+    } else if (Array.isArray(parameters.authors)) {
+      this.authors = parameters.authors;
+    } else {
+      this.authors = parameters.authors as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.datePublished)) {
+      this.datePublished = parameters.datePublished;
+    } else if (
+      typeof parameters.datePublished === "object" &&
+      parameters.datePublished instanceof Date
+    ) {
+      this.datePublished = purify.Maybe.of(parameters.datePublished);
+    } else if (typeof parameters.datePublished === "undefined") {
+      this.datePublished = purify.Maybe.empty();
+    } else {
+      this.datePublished = parameters.datePublished as never;
     }
 
     if (typeof parameters.isBasedOn === "undefined") {
@@ -967,6 +1002,30 @@ export abstract class CreativeWork extends Thing {
           left: this,
           right: other,
           propertyName: "about",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+          this.authors,
+          other.authors,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "authors",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, dateEquals))(
+          this.datePublished,
+          other.datePublished,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "datePublished",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -1004,6 +1063,13 @@ export abstract class CreativeWork extends Thing {
       _item0.hash(_hasher);
     }
 
+    for (const _item0 of this.authors) {
+      _item0.hash(_hasher);
+    }
+
+    this.datePublished.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
     for (const _item0 of this.isBasedOn) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
@@ -1014,12 +1080,21 @@ export abstract class CreativeWork extends Thing {
 
   override toJson(): {
     readonly about: readonly ReturnType<ThingStub["toJson"]>[];
+    readonly authors: readonly (
+      | ReturnType<OrganizationStub["toJson"]>
+      | ReturnType<PersonStub["toJson"]>
+    )[];
+    readonly datePublished: string | undefined;
     readonly isBasedOn: readonly { readonly "@id": string }[];
   } & ReturnType<Thing["toJson"]> {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         about: this.about.map((_item) => _item.toJson()),
+        authors: this.authors.map((_item) => _item.toJson()),
+        datePublished: this.datePublished
+          .map((_item) => _item.toISOString())
+          .extract(),
         isBasedOn: this.isBasedOn.map((_item) => ({ "@id": _item.value })),
       } satisfies ReturnType<CreativeWork["toJson"]>),
     );
@@ -1045,6 +1120,23 @@ export abstract class CreativeWork extends Thing {
       ),
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/author"),
+      this.authors.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/datePublished"),
+      this.datePublished.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/isBasedOn"),
       this.isBasedOn.map((_item) => _item),
     );
@@ -1064,6 +1156,8 @@ export namespace CreativeWork {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       about: readonly ThingStub[];
+      authors: readonly AgentStub[];
+      datePublished: purify.Maybe<Date>;
       isBasedOn: readonly rdfjs.NamedNode[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
   > {
@@ -1085,19 +1179,34 @@ export namespace CreativeWork {
     const about = _jsonObject["about"].map((_item) =>
       ThingStub.fromJson(_item).unsafeCoerce(),
     );
+    const authors = _jsonObject["authors"].map((_item) =>
+      AgentStub.fromJson(_item).unsafeCoerce(),
+    );
+    const datePublished = purify.Maybe.fromNullable(
+      _jsonObject["datePublished"],
+    ).map((_item) => new Date(_item));
     const isBasedOn = _jsonObject["isBasedOn"].map((_item) =>
       dataFactory.namedNode(_item["@id"]),
     );
-    return purify.Either.of({ ..._super0, identifier, about, isBasedOn });
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      about,
+      authors,
+      datePublished,
+      isBasedOn,
+    });
   }
 
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, CreativeWork> {
-    return MediaObject.fromJson(json) as purify.Either<
-      zod.ZodError,
-      CreativeWork
-    >;
+    return (
+      Article.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>
+    ).altLazy(
+      () =>
+        MediaObject.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
+    );
   }
 
   export function _propertiesFromRdf({
@@ -1116,6 +1225,8 @@ export namespace CreativeWork {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       about: readonly ThingStub[];
+      authors: readonly AgentStub[];
+      datePublished: purify.Maybe<Date>;
       isBasedOn: readonly rdfjs.NamedNode[];
     } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
   > {
@@ -1161,6 +1272,52 @@ export namespace CreativeWork {
     }
 
     const about = _aboutEither.unsafeCoerce();
+    const _authorsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly AgentStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/author"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              AgentStub.fromRdf({
+                ..._context,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_authorsEither.isLeft()) {
+      return _authorsEither;
+    }
+
+    const authors = _authorsEither.unsafeCoerce();
+    const _datePublishedEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/datePublished"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_datePublishedEither.isLeft()) {
+      return _datePublishedEither;
+    }
+
+    const datePublished = _datePublishedEither.unsafeCoerce();
     const _isBasedOnEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode[]
@@ -1183,17 +1340,32 @@ export namespace CreativeWork {
     }
 
     const isBasedOn = _isBasedOnEither.unsafeCoerce();
-    return purify.Either.of({ ..._super0, identifier, about, isBasedOn });
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      about,
+      authors,
+      datePublished,
+      isBasedOn,
+    });
   }
 
   export function fromRdf(
     parameters: Parameters<typeof CreativeWork._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWork> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return MediaObject.fromRdf(otherParameters) as purify.Either<
-      rdfjsResource.Resource.ValueError,
-      CreativeWork
-    >;
+    return (
+      Article.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        CreativeWork
+      >
+    ).altLazy(
+      () =>
+        MediaObject.fromRdf(otherParameters) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          CreativeWork
+        >,
+    );
   }
 
   export function jsonSchema() {
@@ -1210,6 +1382,8 @@ export namespace CreativeWork {
         ThingStub.thingStubJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/about`,
         }),
+        { scope: `${scopePrefix}/properties/authors`, type: "Control" },
+        { scope: `${scopePrefix}/properties/datePublished`, type: "Control" },
         { scope: `${scopePrefix}/properties/isBasedOn`, type: "Control" },
       ],
       label: "CreativeWork",
@@ -1221,8 +1395,10 @@ export namespace CreativeWork {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["ImageObject", "TextObject"]),
+        type: zod.enum(["Article", "ImageObject", "Report", "TextObject"]),
         about: ThingStub.thingStubJsonZodSchema().array(),
+        authors: AgentStub.jsonZodSchema().array(),
+        datePublished: zod.string().datetime().optional(),
         isBasedOn: zod.object({ "@id": zod.string().min(1) }).array(),
       }),
     );
@@ -4602,6 +4778,7 @@ export abstract class ThingStub {
   abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   abstract readonly type:
     | "ActionStub"
+    | "ArticleStub"
     | "AssessActionStub"
     | "ChooseActionStub"
     | "CreativeWorkStub"
@@ -4609,6 +4786,7 @@ export abstract class ThingStub {
     | "OrganizationStub"
     | "PersonStub"
     | "PlaceStub"
+    | "ReportStub"
     | "VoteActionStub";
   readonly name: purify.Maybe<string>;
 
@@ -4684,6 +4862,7 @@ export abstract class ThingStub {
     readonly "@id": string;
     readonly type:
       | "ActionStub"
+      | "ArticleStub"
       | "AssessActionStub"
       | "ChooseActionStub"
       | "CreativeWorkStub"
@@ -4691,6 +4870,7 @@ export abstract class ThingStub {
       | "OrganizationStub"
       | "PersonStub"
       | "PlaceStub"
+      | "ReportStub"
       | "VoteActionStub";
     readonly name: string | undefined;
   } {
@@ -4903,6 +5083,7 @@ export namespace ThingStub {
       "@id": zod.string().min(1),
       type: zod.enum([
         "ActionStub",
+        "ArticleStub",
         "AssessActionStub",
         "ChooseActionStub",
         "CreativeWorkStub",
@@ -4910,6 +5091,7 @@ export namespace ThingStub {
         "OrganizationStub",
         "PersonStub",
         "PlaceStub",
+        "ReportStub",
         "VoteActionStub",
       ]),
       name: zod.string().optional(),
@@ -6184,6 +6366,1232 @@ export namespace VoteActionStub {
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                   ),
                   object: dataFactory.namedNode("http://schema.org/VoteAction"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class Article extends CreativeWork {
+  protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type: "Article" | "Report" = "Article";
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Article"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace Article {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof CreativeWork._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = articleJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, Article> {
+    return (
+      Report.fromJson(json) as purify.Either<zod.ZodError, Article>
+    ).altLazy(() =>
+      Article._propertiesFromJson(json).map(
+        (properties) => new Article(properties),
+      ),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof CreativeWork._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWork._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/Article"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Article)`,
+          predicate: dataFactory.namedNode("http://schema.org/Article"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof Article._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Article> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      Report.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        Article
+      >
+    ).altLazy(() =>
+      Article._propertiesFromRdf(parameters).map(
+        (properties) => new Article(properties),
+      ),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Article",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(articleJsonZodSchema());
+  }
+
+  export function articleJsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWork.creativeWorkJsonUiSchema({ scopePrefix })],
+      label: "Article",
+      type: "Group",
+    };
+  }
+
+  export function articleJsonZodSchema() {
+    return CreativeWork.creativeWorkJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["Article", "Report"]),
+      }),
+    );
+  }
+}
+export class Report extends Article {
+  override readonly type = "Report";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof Article>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Report"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace Report {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof Article._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = reportJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = Article._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(json: unknown): purify.Either<zod.ZodError, Report> {
+    return Report._propertiesFromJson(json).map(
+      (properties) => new Report(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof Article._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = Article._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Report"))
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Report)`,
+          predicate: dataFactory.namedNode("http://schema.org/Report"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof Report._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Report> {
+    return Report._propertiesFromRdf(parameters).map(
+      (properties) => new Report(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Report",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(reportJsonZodSchema());
+  }
+
+  export function reportJsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [Article.articleJsonUiSchema({ scopePrefix })],
+      label: "Report",
+      type: "Group",
+    };
+  }
+
+  export function reportJsonZodSchema() {
+    return Article.articleJsonZodSchema().merge(
+      zod.object({ "@id": zod.string().min(1), type: zod.literal("Report") }),
+    );
+  }
+}
+export class CreativeWorkStub extends ThingStub {
+  protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type: "ArticleStub" | "CreativeWorkStub" | "ReportStub" =
+    "CreativeWorkStub";
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/CreativeWork"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace CreativeWorkStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult =
+      creativeWorkStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, CreativeWorkStub> {
+    return (
+      ArticleStub.fromJson(json) as purify.Either<
+        zod.ZodError,
+        CreativeWorkStub
+      >
+    ).altLazy(() =>
+      CreativeWorkStub._propertiesFromJson(json).map(
+        (properties) => new CreativeWorkStub(properties),
+      ),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = ThingStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/CreativeWork"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/CreativeWork)`,
+          predicate: dataFactory.namedNode("http://schema.org/CreativeWork"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof CreativeWorkStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ArticleStub.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        CreativeWorkStub
+      >
+    ).altLazy(() =>
+      CreativeWorkStub._propertiesFromRdf(parameters).map(
+        (properties) => new CreativeWorkStub(properties),
+      ),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/CreativeWork",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(creativeWorkStubJsonZodSchema());
+  }
+
+  export function creativeWorkStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
+      label: "CreativeWorkStub",
+      type: "Group",
+    };
+  }
+
+  export function creativeWorkStubJsonZodSchema() {
+    return ThingStub.thingStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["ArticleStub", "CreativeWorkStub", "ReportStub"]),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        CreativeWorkStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        CreativeWorkStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      CreativeWorkStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
+    return [
+      ...ThingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
+    return [
+      ...ThingStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/CreativeWork",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class ArticleStub extends CreativeWorkStub {
+  override readonly type: "ArticleStub" | "ReportStub" = "ArticleStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWorkStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Article"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ArticleStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof CreativeWorkStub._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = articleStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ArticleStub> {
+    return (
+      ReportStub.fromJson(json) as purify.Either<zod.ZodError, ArticleStub>
+    ).altLazy(() =>
+      ArticleStub._propertiesFromJson(json).map(
+        (properties) => new ArticleStub(properties),
+      ),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof CreativeWorkStub._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/Article"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Article)`,
+          predicate: dataFactory.namedNode("http://schema.org/Article"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ArticleStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ArticleStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ReportStub.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        ArticleStub
+      >
+    ).altLazy(() =>
+      ArticleStub._propertiesFromRdf(parameters).map(
+        (properties) => new ArticleStub(properties),
+      ),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Article",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(articleStubJsonZodSchema());
+  }
+
+  export function articleStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStub.creativeWorkStubJsonUiSchema({ scopePrefix }),
+      ],
+      label: "ArticleStub",
+      type: "Group",
+    };
+  }
+
+  export function articleStubJsonZodSchema() {
+    return CreativeWorkStub.creativeWorkStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["ArticleStub", "ReportStub"]),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ArticleStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ArticleStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ArticleStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("articleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "articleStub");
+    return [
+      ...CreativeWorkStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("articleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "articleStub");
+    return [
+      ...CreativeWorkStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Article"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class ReportStub extends ArticleStub {
+  override readonly type = "ReportStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof ArticleStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Report"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ReportStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ArticleStub._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = reportStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ArticleStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ReportStub> {
+    return ReportStub._propertiesFromJson(json).map(
+      (properties) => new ReportStub(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ArticleStub._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = ArticleStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Report"))
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Report)`,
+          predicate: dataFactory.namedNode("http://schema.org/Report"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ReportStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ReportStub> {
+    return ReportStub._propertiesFromRdf(parameters).map(
+      (properties) => new ReportStub(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Report",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(reportStubJsonZodSchema());
+  }
+
+  export function reportStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ArticleStub.articleStubJsonUiSchema({ scopePrefix })],
+      label: "ReportStub",
+      type: "Group",
+    };
+  }
+
+  export function reportStubJsonZodSchema() {
+    return ArticleStub.articleStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ReportStub"),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ReportStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ReportStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ReportStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("reportStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "reportStub");
+    return [
+      ...ArticleStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("reportStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "reportStub");
+    return [
+      ...ArticleStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Report"),
                 },
               ],
               type: "bgp" as const,
@@ -9367,301 +10775,6 @@ export namespace EventStub {
         ],
         type: "optional",
       },
-    ];
-  }
-}
-export class CreativeWorkStub extends ThingStub {
-  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  override readonly type = "CreativeWorkStub";
-
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof ThingStub>[0],
-  ) {
-    super(parameters);
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier as never;
-    }
-  }
-
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/CreativeWork"),
-      );
-    }
-
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace CreativeWorkStub {
-  export function _propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
-    >
-  > {
-    const _jsonSafeParseResult =
-      creativeWorkStubJsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, CreativeWorkStub> {
-    return CreativeWorkStub._propertiesFromJson(json).map(
-      (properties) => new CreativeWorkStub(properties),
-    );
-  }
-
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
-    >
-  > {
-    const _super0Either = ThingStub._propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/CreativeWork"),
-      )
-    ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/CreativeWork)`,
-          predicate: dataFactory.namedNode("http://schema.org/CreativeWork"),
-        }),
-      );
-    }
-
-    const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof CreativeWorkStub._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkStub> {
-    return CreativeWorkStub._propertiesFromRdf(parameters).map(
-      (properties) => new CreativeWorkStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/CreativeWork",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(creativeWorkStubJsonZodSchema());
-  }
-
-  export function creativeWorkStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
-      label: "CreativeWorkStub",
-      type: "Group",
-    };
-  }
-
-  export function creativeWorkStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("CreativeWorkStub"),
-      }),
-    );
-  }
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        CreativeWorkStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        CreativeWorkStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      CreativeWorkStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
-    return [
-      ...ThingStub.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
-    return [
-      ...ThingStub.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/CreativeWork",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
     ];
   }
 }

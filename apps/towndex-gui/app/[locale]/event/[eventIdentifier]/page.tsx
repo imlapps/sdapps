@@ -3,6 +3,7 @@ import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
+import { ReportsTable } from "@/lib/components/ReportsTable";
 import { VoteActionsTable } from "@/lib/components/VoteActionsTable";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
@@ -24,6 +25,7 @@ import {
   Event,
   EventStub,
   Identifier,
+  Report,
   VoteAction,
   displayLabel,
 } from "@sdapps/models";
@@ -81,15 +83,26 @@ export default async function EventPage({
       value: startDate.toLocaleString(),
     });
   });
+  const reports: Report[] = [];
   const voteActions: VoteAction[] = [];
   for (const about of event.about) {
-    if (about.type === "VoteActionStub") {
-      (
-        await modelSet.model<VoteAction>({
-          identifier: about.identifier,
-          type: "VoteAction",
-        })
-      ).ifRight((voteAction) => voteActions.push(voteAction));
+    switch (about.type) {
+      case "ReportStub":
+        (
+          await modelSet.model<Report>({
+            identifier: about.identifier,
+            type: "Report",
+          })
+        ).ifRight((report) => reports.push(report));
+        break;
+      case "VoteActionStub":
+        (
+          await modelSet.model<VoteAction>({
+            identifier: about.identifier,
+            type: "VoteAction",
+          })
+        ).ifRight((voteAction) => voteActions.push(voteAction));
+        break;
     }
   }
 
@@ -134,6 +147,13 @@ export default async function EventPage({
                 voteActions={voteActions.map((voteAction) =>
                   voteAction.toJson(),
                 )}
+              />
+            </Fieldset>
+          ) : null}
+          {reports.length > 0 ? (
+            <Fieldset legend={translations("Reports")}>
+              <ReportsTable
+                reports={reports.map((report) => report.toJson())}
               />
             </Fieldset>
           ) : null}

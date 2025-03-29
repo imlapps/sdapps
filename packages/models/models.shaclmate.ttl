@@ -21,6 +21,12 @@ sdapps:AgentStub
         sdapps:PersonStub
     ) .
 
+sdapps:ArticleStub
+    shaclmate:fromRdfType schema:Article ;
+    shaclmate:name "ArticleStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:AssessActionStub
     shaclmate:fromRdfType schema:AssessAction ;
     shaclmate:name "AssessActionStub" ;
@@ -73,6 +79,12 @@ sdapps:PlaceStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
+sdapps:ReportStub
+    shaclmate:fromRdfType schema:Report ;
+    shaclmate:name "ReportStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ArticleStub .
+
 sdapps:ThingStub
     shaclmate:abstract true ;
     shaclmate:name "ThingStub" ;
@@ -121,6 +133,11 @@ schema:Action-startTime
     sh:name "startTime" ;
     sh:path schema:startTime .
 
+schema:Article
+    shaclmate:name "Article" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork .
+
 schema:AssessAction
     shaclmate:name "AssessAction" ;
     a owl:Class, sh:NodeShape ;
@@ -136,13 +153,26 @@ schema:CreativeWork
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-about, schema:CreativeWork-isBasedOn .
+    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-isBasedOn .
 
 schema:CreativeWork-about
     a sh:PropertyShape ;
     sh:name "about" ;
     sh:node sdapps:ThingStub ;
     sh:path schema:about .
+
+schema:CreativeWork-authors
+    a sh:PropertyShape ;
+    sh:name "authors" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:author .
+
+schema:CreativeWork-datePublished
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "datePublished" ;
+    sh:path schema:datePublished .
 
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
@@ -414,6 +444,11 @@ schema:QuantitativeValue-value
     sh:maxCount 1 ;
     sh:name "value" ;
     sh:path schema:value .
+
+schema:Report
+    shaclmate:name "Report" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Article .
 
 schema:Role
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;

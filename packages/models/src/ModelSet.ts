@@ -9,6 +9,7 @@ import type {
   PersonStub,
   Place,
   PlaceStub,
+  Report,
   VoteAction,
 } from "./index.js";
 
@@ -35,5 +36,6 @@ export namespace ModelSet {
     | PersonStub
     | Place
     | PlaceStub
+    | Report
     | VoteAction;
 }
