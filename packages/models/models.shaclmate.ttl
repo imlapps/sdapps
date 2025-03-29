@@ -31,7 +31,7 @@ sdapps:ChooseActionStub
     shaclmate:fromRdfType schema:ChooseAction ;
     shaclmate:name "ChooseActionStub" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:AssessActionStub .
+    rdfs:subClassOf sdapps:AssessActionStub .
 
 sdapps:CreativeWorkStub
     shaclmate:fromRdfType schema:CreativeWork ;
@@ -83,7 +83,7 @@ sdapps:VoteActionStub
     shaclmate:fromRdfType schema:VoteAction ;
     shaclmate:name "VoteActionStub" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:ChooseActionStub .
+    rdfs:subClassOf sdapps:ChooseActionStub .
 
 <http://schema.org/>
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;

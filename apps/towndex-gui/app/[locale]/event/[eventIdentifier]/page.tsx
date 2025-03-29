@@ -3,6 +3,7 @@ import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
+import { VoteActionsTable } from "@/lib/components/VoteActionsTable";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
@@ -19,7 +20,13 @@ import {
   TableTd,
   TableTr,
 } from "@mantine/core";
-import { Event, EventStub, Identifier, displayLabel } from "@sdapps/models";
+import {
+  Event,
+  EventStub,
+  Identifier,
+  VoteAction,
+  displayLabel,
+} from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -74,6 +81,17 @@ export default async function EventPage({
       value: startDate.toLocaleString(),
     });
   });
+  const voteActions: VoteAction[] = [];
+  for (const about of event.about) {
+    if (about.type === "VoteActionStub") {
+      (
+        await modelSet.model<VoteAction>({
+          identifier: about.identifier,
+          type: "VoteAction",
+        })
+      ).ifRight((voteAction) => voteActions.push(voteAction));
+    }
+  }
 
   return (
     <ClientProvidersServer>
@@ -107,6 +125,15 @@ export default async function EventPage({
             <Fieldset legend={translations("Sub-events")}>
               <EventsTimeline
                 events={event.subEvents.map((event) => event.toJson())}
+              />
+            </Fieldset>
+          ) : null}
+          {voteActions.length > 0 ? (
+            <Fieldset legend={translations("Votes")}>
+              <VoteActionsTable
+                voteActions={voteActions.map((voteAction) =>
+                  voteAction.toJson(),
+                )}
               />
             </Fieldset>
           ) : null}

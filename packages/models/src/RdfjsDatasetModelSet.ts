@@ -13,6 +13,7 @@ import {
   Place,
   PlaceStub,
   Thing,
+  VoteAction,
 } from "./index.js";
 
 export class RdfjsDatasetModelSet implements ModelSet {
@@ -114,6 +115,8 @@ export class RdfjsDatasetModelSet implements ModelSet {
         return PlaceStub.fromRdf as any;
       case "Thing":
         return Thing.fromRdf as any;
+      case "VoteAction":
+        return VoteAction.fromRdf as any;
     }
   }
 
@@ -130,6 +133,8 @@ export class RdfjsDatasetModelSet implements ModelSet {
       case "Person":
       case "PersonStub":
         return Person.fromRdfType;
+      case "VoteAction":
+        return VoteAction.fromRdfType;
       default:
         throw new RangeError(modelType);
     }

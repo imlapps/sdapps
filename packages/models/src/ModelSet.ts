@@ -9,6 +9,7 @@ import type {
   PersonStub,
   Place,
   PlaceStub,
+  VoteAction,
 } from "./index.js";
 
 export interface ModelSet {
@@ -33,5 +34,6 @@ export namespace ModelSet {
     | Person
     | PersonStub
     | Place
-    | PlaceStub;
+    | PlaceStub
+    | VoteAction;
 }
