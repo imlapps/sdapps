@@ -740,7 +740,6 @@ export namespace Thing {
               .chain((_resource) =>
                 CreativeWorkStub.fromRdf({
                   ..._context,
-                  ignoreRdfType: true,
                   languageIn: _languageIn,
                   resource: _resource,
                 }),
@@ -758,7 +757,6 @@ export namespace Thing {
                   .chain((_resource) =>
                     EventStub.fromRdf({
                       ..._context,
-                      ignoreRdfType: true,
                       languageIn: _languageIn,
                       resource: _resource,
                     }),
@@ -6493,7 +6491,6 @@ export namespace Person {
               .chain((_resource) =>
                 Occupation.fromRdf({
                   ..._context,
-                  ignoreRdfType: true,
                   languageIn: _languageIn,
                   resource: _resource,
                 }),
@@ -6511,7 +6508,6 @@ export namespace Person {
                   .chain((_resource) =>
                     Role.fromRdf({
                       ..._context,
-                      ignoreRdfType: true,
                       languageIn: _languageIn,
                       resource: _resource,
                     }),
