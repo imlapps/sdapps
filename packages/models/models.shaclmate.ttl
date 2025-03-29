@@ -8,12 +8,30 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+sdapps:ActionStub
+    shaclmate:fromRdfType schema:Action ;
+    shaclmate:name "ActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
 sdapps:AgentStub
     shaclmate:name "AgentStub" ;
     a sh:NodeShape ;
     sh:xone (sdapps:OrganizationStub
         sdapps:PersonStub
     ) .
+
+sdapps:AssessActionStub
+    shaclmate:fromRdfType schema:AssessAction ;
+    shaclmate:name "AssessActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ActionStub .
+
+sdapps:ChooseActionStub
+    shaclmate:fromRdfType schema:ChooseAction ;
+    shaclmate:name "ChooseActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:AssessActionStub .
 
 sdapps:EventStub
     shaclmate:fromRdfType schema:Event ;
@@ -55,9 +73,57 @@ sdapps:ThingStub
     a owl:Class, sh:NodeShape ;
     sh:property schema:Thing-name .
 
+sdapps:VoteActionStub
+    shaclmate:fromRdfType schema:VoteAction ;
+    shaclmate:name "VoteActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:ChooseActionStub .
+
 <http://schema.org/>
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
     a owl:Ontology .
+
+schema:Action
+    shaclmate:name "Action" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing ;
+    sh:property schema:Action-agents, schema:Action-endTime, schema:Action-participants, schema:Action-startTime .
+
+schema:Action-agents
+    a sh:PropertyShape ;
+    sh:name "agents" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:agent .
+
+schema:Action-endTime
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "endTime" ;
+    sh:path schema:endTime .
+
+schema:Action-participants
+    a sh:PropertyShape ;
+    sh:name "participants" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:participant .
+
+schema:Action-startTime
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "startTime" ;
+    sh:path schema:startTime .
+
+schema:AssessAction
+    shaclmate:name "AssessAction" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Action .
+
+schema:ChooseAction
+    shaclmate:name "ChooseAction" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:AssessAction .
 
 schema:CreativeWork
     shaclmate:abstract true ;
@@ -426,4 +492,9 @@ schema:Thing-url
     sh:name "url" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:url .
+
+schema:VoteAction
+    shaclmate:name "VoteAction" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:ChooseAction .
 
