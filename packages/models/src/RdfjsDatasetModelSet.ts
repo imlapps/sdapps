@@ -10,6 +10,9 @@ import {
   OrganizationStub,
   Person,
   PersonStub,
+  Place,
+  PlaceStub,
+  Thing,
 } from "./index.js";
 
 export class RdfjsDatasetModelSet implements ModelSet {
@@ -37,9 +40,9 @@ export class RdfjsDatasetModelSet implements ModelSet {
     type,
   }: {
     identifier: Identifier;
-    type: ModelT["type"];
+    type: ModelT["type"] | "Thing";
   }): Either<Error, ModelT> {
-    const { fromRdf } = this.modelFactory(type);
+    const fromRdf = this.modelFromRdf(type);
     const resource = this.resourceSet.resource(identifier);
     return fromRdf({ resource });
   }
@@ -53,9 +56,11 @@ export class RdfjsDatasetModelSet implements ModelSet {
   modelsSync<ModelT extends ModelSet.Model>(
     type: ModelT["type"],
   ): Either<Error, readonly ModelT[]> {
-    const { fromRdf, fromRdfType } = this.modelFactory(type);
+    const fromRdf = this.modelFromRdf(type);
     const models: ModelT[] = [];
-    for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+    for (const resource of this.resourceSet.instancesOf(
+      this.modelFromRdfType(type),
+    )) {
       const modelEither = fromRdf({ resource });
       if (modelEither.isLeft()) {
         return modelEither;
@@ -72,9 +77,11 @@ export class RdfjsDatasetModelSet implements ModelSet {
   }
 
   modelCountSync(type: ModelSet.Model["type"]): Either<Error, number> {
-    const { fromRdf, fromRdfType } = this.modelFactory(type);
+    const fromRdf = this.modelFromRdf(type);
     let count = 0;
-    for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+    for (const resource of this.resourceSet.instancesOf(
+      this.modelFromRdfType(type),
+    )) {
       const modelEither = fromRdf({ resource });
       if (modelEither.isRight()) {
         count++;
@@ -83,46 +90,48 @@ export class RdfjsDatasetModelSet implements ModelSet {
     return Either.of(count);
   }
 
-  private modelFactory<ModelT extends ModelSet.Model>(
-    modelType: ModelT["type"],
-  ): {
-    readonly fromRdf: (parameters: {
-      [_index: string]: any;
-      resource: Resource;
-    }) => Either<Resource.ValueError, ModelT>;
-    readonly fromRdfType: NamedNode;
-  } {
+  private modelFromRdf<ModelT extends ModelSet.Model>(
+    modelType: ModelT["type"] | "Thing",
+  ): (parameters: {
+    resource: Resource;
+  }) => Either<Resource.ValueError, ModelT> {
     switch (modelType) {
       case "Event":
-        return {
-          fromRdf: Event.fromRdf as any,
-          fromRdfType: Event.fromRdfType,
-        };
+        return Event.fromRdf as any;
       case "EventStub":
-        return {
-          fromRdf: EventStub.fromRdf as any,
-          fromRdfType: EventStub.fromRdfType,
-        };
+        return EventStub.fromRdf as any;
       case "Organization":
-        return {
-          fromRdf: Organization.fromRdf as any,
-          fromRdfType: Organization.fromRdfType,
-        };
+        return Organization.fromRdf as any;
       case "OrganizationStub":
-        return {
-          fromRdf: OrganizationStub.fromRdf as any,
-          fromRdfType: OrganizationStub.fromRdfType,
-        };
+        return OrganizationStub.fromRdf as any;
       case "Person":
-        return {
-          fromRdf: Person.fromRdf as any,
-          fromRdfType: Person.fromRdfType,
-        };
+        return Person.fromRdf as any;
       case "PersonStub":
-        return {
-          fromRdf: PersonStub.fromRdf as any,
-          fromRdfType: PersonStub.fromRdfType,
-        };
+        return PersonStub.fromRdf as any;
+      case "Place":
+        return Place.fromRdf as any;
+      case "PlaceStub":
+        return PlaceStub.fromRdf as any;
+      case "Thing":
+        return Thing.fromRdf as any;
+    }
+  }
+
+  private modelFromRdfType<ModelT extends ModelSet.Model>(
+    modelType: ModelT["type"],
+  ): NamedNode {
+    switch (modelType) {
+      case "Event":
+      case "EventStub":
+        return Event.fromRdfType;
+      case "Organization":
+      case "OrganizationStub":
+        return Organization.fromRdfType;
+      case "Person":
+      case "PersonStub":
+        return Person.fromRdfType;
+      default:
+        throw new RangeError(modelType);
     }
   }
 

@@ -43,6 +43,12 @@ sdapps:PersonStub
     rdfs:subClassOf sdapps:ThingStub ;
     sh:property schema:Person-jobTitle .
 
+sdapps:PlaceStub
+    shaclmate:fromRdfType schema:Place ;
+    shaclmate:name "PlaceStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
 sdapps:ThingStub
     shaclmate:abstract true ;
     shaclmate:name "ThingStub" ;
@@ -58,7 +64,13 @@ schema:CreativeWork
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-isBasedOn .
+    sh:property schema:CreativeWork-about, schema:CreativeWork-isBasedOn .
+
+schema:CreativeWork-about
+    a sh:PropertyShape ;
+    sh:name "about" ;
+    sh:node sdapps:ThingStub ;
+    sh:path schema:about .
 
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
@@ -76,7 +88,13 @@ schema:Event
     shaclmate:name "Event" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Event-endDate, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent .
+    sh:property schema:Event-about, schema:Event-endDate, schema:Event-location, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent .
+
+schema:Event-about
+    a sh:PropertyShape ;
+    sh:name "about" ;
+    sh:node sdapps:ThingStub ;
+    sh:path schema:about .
 
 schema:Event-endDate
     a sh:PropertyShape ;
@@ -84,6 +102,13 @@ schema:Event-endDate
     sh:maxCount 1 ;
     sh:name "endDate" ;
     sh:path schema:endDate .
+
+schema:Event-location
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "location" ;
+    sh:node sdapps:PlaceStub ;
+    sh:path schema:location .
 
 schema:Event-organizers
     a sh:PropertyShape ;
@@ -286,6 +311,11 @@ schema:Person-performerIn
     sh:node sdapps:EventStub ;
     sh:path schema:performerIn .
 
+schema:Place
+    shaclmate:name "Place" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing .
+
 schema:QuantitativeValue
     shaclmate:name "QuantitiveValue" ;
     a owl:Class, sh:NodeShape ;
@@ -347,17 +377,16 @@ schema:StructuredValue
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
 
+schema:TextObject
+    shaclmate:name "TextObject" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:MediaObject .
+
 schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-about, schema:Thing-description, schema:Thing-identifiers, schema:Thing-locations, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
-
-schema:Thing-about
-    a sh:PropertyShape ;
-    sh:name "about" ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:path schema:about .
+    sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -377,11 +406,6 @@ schema:Thing-images
     sh:name "images" ;
     sh:node schema:ImageObject ;
     sh:path schema:image .
-
-schema:Thing-locations
-    a sh:PropertyShape ;
-    sh:name "locations" ;
-    sh:path schema:location .
 
 schema:Thing-name
     a sh:PropertyShape ;

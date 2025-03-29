@@ -10,7 +10,9 @@ import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import {
+  Anchor,
   Fieldset,
+  Group,
   Stack,
   Table,
   TableTbody,
@@ -58,6 +60,20 @@ export default async function EventPage({
   event.description.ifJust((description) => {
     properties.push({ label: translations("Description"), value: description });
   });
+  event.location.ifJust((location) => {
+    properties.push({
+      label: translations("Location"),
+      value: (
+        <Anchor href={hrefs.place(location)}>{displayLabel(location)}</Anchor>
+      ),
+    });
+  });
+  event.startDate.ifJust((startDate) => {
+    properties.push({
+      label: translations("Start date"),
+      value: startDate.toLocaleString(),
+    });
+  });
 
   return (
     <ClientProvidersServer>
@@ -73,15 +89,19 @@ export default async function EventPage({
               ))}
             </TableTbody>
           </Table>
-          {event.organizers.length > 0 ? (
-            <Fieldset legend={translations("Organizers")}>
-              <AgentList agents={event.organizers} hrefs={hrefs} />
-            </Fieldset>
-          ) : null}
-          {event.performers.length > 0 ? (
-            <Fieldset legend={translations("Participants")}>
-              <AgentList agents={event.performers} hrefs={hrefs} />
-            </Fieldset>
+          {event.organizers.length > 0 || event.performers.length > 0 ? (
+            <Group>
+              {event.organizers.length > 0 ? (
+                <Fieldset legend={translations("Organizers")}>
+                  <AgentList agents={event.organizers} hrefs={hrefs} />
+                </Fieldset>
+              ) : null}
+              {event.performers.length > 0 ? (
+                <Fieldset legend={translations("Participants")}>
+                  <AgentList agents={event.performers} hrefs={hrefs} />
+                </Fieldset>
+              ) : null}
+            </Group>
           ) : null}
           {event.subEvents.length > 0 ? (
             <Fieldset legend={translations("Sub-events")}>

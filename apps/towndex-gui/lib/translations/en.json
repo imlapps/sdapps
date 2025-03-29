@@ -2,9 +2,11 @@
   "EventPage": {
     "Description": "Description",
     "Event": "Event",
+    "Location": "Location",
     "Name": "Name",
     "Organizers": "Organizers",
     "Participants": "Participants",
+    "Start date": "Start date",
     "Sub-events": "Sub-events"
   },
   "EventsPage": {
@@ -34,6 +36,7 @@
     "Events": "Events",
     "Organization": "Organization",
     "Organizations": "Organizations",
+    "Place": "Place",
     "People": "People",
     "Person": "Person"
   },
@@ -46,5 +49,8 @@
   },
   "PeoplePage": {
     "People": "People"
+  },
+  "PlacePage": {
+    "Place": "Place"
   }
 }
