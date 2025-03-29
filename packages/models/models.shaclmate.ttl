@@ -33,6 +33,12 @@ sdapps:ChooseActionStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:AssessActionStub .
 
+sdapps:CreativeWorkStub
+    shaclmate:fromRdfType schema:CreativeWork ;
+    shaclmate:name "CreativeWorkStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
 sdapps:EventStub
     shaclmate:fromRdfType schema:Event ;
     shaclmate:name "EventStub" ;
@@ -452,7 +458,7 @@ schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
+    sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -485,6 +491,18 @@ schema:Thing-sameAs
     sh:name "sameAs" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:sameAs .
+
+schema:Thing-subjectOf
+    a sh:PropertyShape ;
+    sh:name "subjectOf" ;
+    sh:path schema:subjectOf ;
+    sh:xone ([
+            sh:node sdapps:CreativeWorkStub
+        ]
+        [
+            sh:node sdapps:EventStub
+        ]
+    ) .
 
 schema:Thing-url
     a sh:PropertyShape ;
