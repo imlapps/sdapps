@@ -100,6 +100,19 @@ export class PageMetadata {
       ]),
     };
   }
+
+  place(place: {
+    identifier: Identifier;
+    name: Maybe<string>;
+  }): Metadata {
+    return {
+      title: titlePartsToString([
+        this.locale.title as string,
+        this.translations("Place"),
+        displayLabel(place),
+      ]),
+    };
+  }
 }
 
 function titlePartsToString(titleParts: readonly string[]): string {

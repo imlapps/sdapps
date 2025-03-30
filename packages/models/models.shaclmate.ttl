@@ -8,12 +8,42 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+sdapps:ActionStub
+    shaclmate:fromRdfType schema:Action ;
+    shaclmate:name "ActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
 sdapps:AgentStub
     shaclmate:name "AgentStub" ;
     a sh:NodeShape ;
     sh:xone (sdapps:OrganizationStub
         sdapps:PersonStub
     ) .
+
+sdapps:ArticleStub
+    shaclmate:fromRdfType schema:Article ;
+    shaclmate:name "ArticleStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:AssessActionStub
+    shaclmate:fromRdfType schema:AssessAction ;
+    shaclmate:name "AssessActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ActionStub .
+
+sdapps:ChooseActionStub
+    shaclmate:fromRdfType schema:ChooseAction ;
+    shaclmate:name "ChooseActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:AssessActionStub .
+
+sdapps:CreativeWorkStub
+    shaclmate:fromRdfType schema:CreativeWork ;
+    shaclmate:name "CreativeWorkStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
 
 sdapps:EventStub
     shaclmate:fromRdfType schema:Event ;
@@ -30,6 +60,18 @@ sdapps:EventStub-superEvent
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:superEvent .
 
+sdapps:MediaObjectStub
+    shaclmate:fromRdfType schema:MediaObject ;
+    shaclmate:name "MediaObjectStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MessageStub
+    shaclmate:fromRdfType schema:Message ;
+    shaclmate:name "MessageStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:OrganizationStub
     shaclmate:fromRdfType schema:Organization ;
     shaclmate:name "OrganizationStub" ;
@@ -43,22 +85,112 @@ sdapps:PersonStub
     rdfs:subClassOf sdapps:ThingStub ;
     sh:property schema:Person-jobTitle .
 
+sdapps:PlaceStub
+    shaclmate:fromRdfType schema:Place ;
+    shaclmate:name "PlaceStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
+sdapps:ReportStub
+    shaclmate:fromRdfType schema:Report ;
+    shaclmate:name "ReportStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ArticleStub .
+
+sdapps:TextObjectStub
+    shaclmate:fromRdfType schema:TextObject ;
+    shaclmate:name "TextObjectStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:MediaObjectStub .
+
 sdapps:ThingStub
     shaclmate:abstract true ;
     shaclmate:name "ThingStub" ;
     a owl:Class, sh:NodeShape ;
     sh:property schema:Thing-name .
 
+sdapps:VoteActionStub
+    shaclmate:fromRdfType schema:VoteAction ;
+    shaclmate:name "VoteActionStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ChooseActionStub .
+
 <http://schema.org/>
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
     a owl:Ontology .
+
+schema:Action
+    shaclmate:name "Action" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing ;
+    sh:property schema:Action-agents, schema:Action-endTime, schema:Action-participants, schema:Action-startTime .
+
+schema:Action-agents
+    a sh:PropertyShape ;
+    sh:name "agents" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:agent .
+
+schema:Action-endTime
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "endTime" ;
+    sh:path schema:endTime .
+
+schema:Action-participants
+    a sh:PropertyShape ;
+    sh:name "participants" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:participant .
+
+schema:Action-startTime
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "startTime" ;
+    sh:path schema:startTime .
+
+schema:Article
+    shaclmate:name "Article" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork .
+
+schema:AssessAction
+    shaclmate:name "AssessAction" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Action .
+
+schema:ChooseAction
+    shaclmate:name "ChooseAction" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:AssessAction .
 
 schema:CreativeWork
     shaclmate:abstract true ;
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-isBasedOn .
+    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-isBasedOn .
+
+schema:CreativeWork-about
+    a sh:PropertyShape ;
+    sh:name "about" ;
+    sh:node sdapps:ThingStub ;
+    sh:path schema:about .
+
+schema:CreativeWork-authors
+    a sh:PropertyShape ;
+    sh:name "authors" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:author .
+
+schema:CreativeWork-datePublished
+    a sh:PropertyShape ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "datePublished" ;
+    sh:path schema:datePublished .
 
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
@@ -76,7 +208,13 @@ schema:Event
     shaclmate:name "Event" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Event-endDate, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent .
+    sh:property schema:Event-about, schema:Event-endDate, schema:Event-location, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent .
+
+schema:Event-about
+    a sh:PropertyShape ;
+    sh:name "about" ;
+    sh:node sdapps:ThingStub ;
+    sh:path schema:about .
 
 schema:Event-endDate
     a sh:PropertyShape ;
@@ -84,6 +222,13 @@ schema:Event-endDate
     sh:maxCount 1 ;
     sh:name "endDate" ;
     sh:path schema:endDate .
+
+schema:Event-location
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "location" ;
+    sh:node sdapps:PlaceStub ;
+    sh:path schema:location .
 
 schema:Event-organizers
     a sh:PropertyShape ;
@@ -180,6 +325,19 @@ schema:MediaObject-width
     sh:name "width" ;
     sh:node schema:QuantitativeValue ;
     sh:path schema:width .
+
+schema:Message
+    shaclmate:name "Message" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:Message-sender .
+
+schema:Message-sender
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "sender" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:sender .
 
 schema:Occupation
     shaclmate:name "Occupation" ;
@@ -286,6 +444,11 @@ schema:Person-performerIn
     sh:node sdapps:EventStub ;
     sh:path schema:performerIn .
 
+schema:Place
+    shaclmate:name "Place" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Thing .
+
 schema:QuantitativeValue
     shaclmate:name "QuantitiveValue" ;
     a owl:Class, sh:NodeShape ;
@@ -312,6 +475,11 @@ schema:QuantitativeValue-value
     sh:maxCount 1 ;
     sh:name "value" ;
     sh:path schema:value .
+
+schema:Report
+    shaclmate:name "Report" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Article .
 
 schema:Role
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
@@ -347,17 +515,16 @@ schema:StructuredValue
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
 
+schema:TextObject
+    shaclmate:name "TextObject" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:MediaObject .
+
 schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-about, schema:Thing-description, schema:Thing-identifiers, schema:Thing-locations, schema:Thing-name, schema:Thing-sameAs, schema:Thing-url .
-
-schema:Thing-about
-    a sh:PropertyShape ;
-    sh:name "about" ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:path schema:about .
+    sh:property schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -378,11 +545,6 @@ schema:Thing-images
     sh:node schema:ImageObject ;
     sh:path schema:image .
 
-schema:Thing-locations
-    a sh:PropertyShape ;
-    sh:name "locations" ;
-    sh:path schema:location .
-
 schema:Thing-name
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
@@ -396,10 +558,27 @@ schema:Thing-sameAs
     sh:nodeKind sh:IRI ;
     sh:path schema:sameAs .
 
+schema:Thing-subjectOf
+    a sh:PropertyShape ;
+    sh:name "subjectOf" ;
+    sh:path schema:subjectOf ;
+    sh:xone ([
+            sh:node sdapps:CreativeWorkStub
+        ]
+        [
+            sh:node sdapps:EventStub
+        ]
+    ) .
+
 schema:Thing-url
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "url" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:url .
+
+schema:VoteAction
+    shaclmate:name "VoteAction" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:ChooseAction .
 

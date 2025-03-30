@@ -1,6 +1,7 @@
 import { Hrefs } from "@/lib/Hrefs";
-import { Anchor, List, ListItem } from "@mantine/core";
-import { AgentStub, Identifier, displayLabel } from "@sdapps/models";
+import { AgentAnchor } from "@/lib/components/AgentAnchor";
+import { List, ListItem } from "@mantine/core";
+import { AgentStub, Identifier } from "@sdapps/models";
 
 export function AgentList({
   agents,
@@ -10,15 +11,7 @@ export function AgentList({
     <List listStyleType="none">
       {agents.map((agent) => (
         <ListItem key={Identifier.toString(agent.identifier)}>
-          <Anchor
-            href={
-              agent.type === "OrganizationStub"
-                ? hrefs.organization(agent)
-                : hrefs.person(agent)
-            }
-          >
-            {displayLabel(agent)}
-          </Anchor>
+          <AgentAnchor agent={agent} hrefs={hrefs} />
         </ListItem>
       ))}
     </List>

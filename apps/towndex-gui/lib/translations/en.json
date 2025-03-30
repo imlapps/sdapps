@@ -2,10 +2,17 @@
   "EventPage": {
     "Description": "Description",
     "Event": "Event",
+    "Location": "Location",
+    "Messages": "Messages",
+    "Minutes": "Minutes",
     "Name": "Name",
     "Organizers": "Organizers",
+    "Parent event": "Parent event",
     "Participants": "Participants",
-    "Sub-events": "Sub-events"
+    "Reports": "Reports",
+    "Start date": "Start date",
+    "Sub-events": "Sub-events",
+    "Votes": "Votes"
   },
   "EventsPage": {
     "Events": "Events"
@@ -34,6 +41,7 @@
     "Events": "Events",
     "Organization": "Organization",
     "Organizations": "Organizations",
+    "Place": "Place",
     "People": "People",
     "Person": "Person"
   },
@@ -46,5 +54,8 @@
   },
   "PeoplePage": {
     "People": "People"
+  },
+  "PlacePage": {
+    "Place": "Place"
   }
 }

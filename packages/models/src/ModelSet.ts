@@ -3,16 +3,22 @@ import type {
   Event,
   EventStub,
   Identifier,
+  Message,
   Organization,
   OrganizationStub,
   Person,
   PersonStub,
+  Place,
+  PlaceStub,
+  Report,
+  TextObject,
+  VoteAction,
 } from "./index.js";
 
 export interface ModelSet {
   model<ModelT extends ModelSet.Model>(kwds: {
     identifier: Identifier;
-    type: ModelT["type"];
+    type: ModelT["type"] | "Thing";
   }): Promise<Either<Error, ModelT>>;
 
   modelCount(type: ModelSet.Model["type"]): Promise<Either<Error, number>>;
@@ -26,8 +32,14 @@ export namespace ModelSet {
   export type Model =
     | Event
     | EventStub
+    | Message
     | Organization
     | OrganizationStub
     | Person
-    | PersonStub;
+    | PersonStub
+    | Place
+    | PlaceStub
+    | Report
+    | TextObject
+    | VoteAction;
 }
