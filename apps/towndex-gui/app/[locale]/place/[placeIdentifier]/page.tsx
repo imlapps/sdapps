@@ -1,7 +1,6 @@
 import { PageMetadata } from "@/lib/PageMetadata";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
-import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
@@ -38,7 +37,6 @@ export default async function PlacePage({
     notFound();
   }
 
-  const hrefs = await getHrefs();
   const translations = await getTranslations("PlacePage");
 
   return (
