@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": [".next/**", "out/**"],
+    "ignore": [".next/**", "out/**", "*.jsonld"],
     "maxSize": 2097152
   },
   "formatter": {

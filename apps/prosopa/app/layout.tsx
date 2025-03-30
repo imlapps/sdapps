@@ -4,7 +4,6 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
-import React from "react";
 import { theme } from "../theme";
 
 export const metadata = {

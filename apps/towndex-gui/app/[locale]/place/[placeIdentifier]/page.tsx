@@ -43,9 +43,7 @@ export default async function PlacePage({
 
   return (
     <ClientProvidersServer>
-      <AppShell
-        title={`${translations("Place")}: ${displayLabel(place)}`}
-      ></AppShell>
+      <AppShell title={`${translations("Place")}: ${displayLabel(place)}`} />
     </ClientProvidersServer>
   );
 }
