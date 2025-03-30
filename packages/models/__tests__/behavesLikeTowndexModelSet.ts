@@ -34,11 +34,11 @@ export function behavesLikeTowndexModelSet(modelSet: ModelSet): void {
 
   it("person stubs", async ({ expect }) => {
     expect((await modelSet.models("PersonStub")).unsafeCoerce()).toHaveLength(
-      55,
+      52,
     );
   });
 
   it("person count", async ({ expect }) => {
-    expect((await modelSet.modelCount("Person")).unsafeCoerce()).toEqual(55);
+    expect((await modelSet.modelCount("Person")).unsafeCoerce()).toEqual(52);
   });
 }
