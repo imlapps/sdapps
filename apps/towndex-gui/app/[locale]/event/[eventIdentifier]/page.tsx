@@ -151,6 +151,15 @@ export default async function EventPage({
               ) : null}
             </Group>
           ) : null}
+          {event.superEvent
+            .map((superEvent) => (
+              <Fieldset key="superEvent" legend={translations("Parent event")}>
+                <Anchor href={hrefs.event(superEvent)}>
+                  {displayLabel(superEvent)}
+                </Anchor>
+              </Fieldset>
+            ))
+            .extractNullable()}
           {event.subEvents.length > 0 ? (
             <Fieldset legend={translations("Sub-events")}>
               <EventsTimeline
