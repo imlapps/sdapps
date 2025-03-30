@@ -214,6 +214,7 @@ export abstract class Thing {
     | "Event"
     | "GenderType"
     | "ImageObject"
+    | "Message"
     | "Occupation"
     | "Organization"
     | "Person"
@@ -479,6 +480,7 @@ export abstract class Thing {
       | "Event"
       | "GenderType"
       | "ImageObject"
+      | "Message"
       | "Occupation"
       | "Organization"
       | "Person"
@@ -907,6 +909,7 @@ export namespace Thing {
         "Event",
         "GenderType",
         "ImageObject",
+        "Message",
         "Occupation",
         "Organization",
         "Person",
@@ -936,6 +939,7 @@ export abstract class CreativeWork extends Thing {
   abstract override readonly type:
     | "Article"
     | "ImageObject"
+    | "Message"
     | "Report"
     | "TextObject";
   readonly about: readonly ThingStub[];
@@ -1201,12 +1205,18 @@ export namespace CreativeWork {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, CreativeWork> {
-    return (
-      Article.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>
-    ).altLazy(
-      () =>
-        MediaObject.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
-    );
+    return (Article.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>)
+      .altLazy(
+        () =>
+          Message.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
+      )
+      .altLazy(
+        () =>
+          MediaObject.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      );
   }
 
   export function _propertiesFromRdf({
@@ -1359,13 +1369,21 @@ export namespace CreativeWork {
         rdfjsResource.Resource.ValueError,
         CreativeWork
       >
-    ).altLazy(
-      () =>
-        MediaObject.fromRdf(otherParameters) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          CreativeWork
-        >,
-    );
+    )
+      .altLazy(
+        () =>
+          Message.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MediaObject.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      );
   }
 
   export function jsonSchema() {
@@ -1395,7 +1413,13 @@ export namespace CreativeWork {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["Article", "ImageObject", "Report", "TextObject"]),
+        type: zod.enum([
+          "Article",
+          "ImageObject",
+          "Message",
+          "Report",
+          "TextObject",
+        ]),
         about: ThingStub.thingStubJsonZodSchema().array(),
         authors: AgentStub.jsonZodSchema().array(),
         datePublished: zod.string().datetime().optional(),
@@ -4783,6 +4807,7 @@ export abstract class ThingStub {
     | "ChooseActionStub"
     | "CreativeWorkStub"
     | "EventStub"
+    | "MessageStub"
     | "OrganizationStub"
     | "PersonStub"
     | "PlaceStub"
@@ -4867,6 +4892,7 @@ export abstract class ThingStub {
       | "ChooseActionStub"
       | "CreativeWorkStub"
       | "EventStub"
+      | "MessageStub"
       | "OrganizationStub"
       | "PersonStub"
       | "PlaceStub"
@@ -5088,6 +5114,7 @@ export namespace ThingStub {
         "ChooseActionStub",
         "CreativeWorkStub",
         "EventStub",
+        "MessageStub",
         "OrganizationStub",
         "PersonStub",
         "PlaceStub",
@@ -6733,8 +6760,11 @@ export namespace Report {
 }
 export class CreativeWorkStub extends ThingStub {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  override readonly type: "ArticleStub" | "CreativeWorkStub" | "ReportStub" =
-    "CreativeWorkStub";
+  override readonly type:
+    | "ArticleStub"
+    | "CreativeWorkStub"
+    | "MessageStub"
+    | "ReportStub" = "CreativeWorkStub";
 
   constructor(
     parameters: {
@@ -6826,11 +6856,19 @@ export namespace CreativeWorkStub {
         zod.ZodError,
         CreativeWorkStub
       >
-    ).altLazy(() =>
-      CreativeWorkStub._propertiesFromJson(json).map(
-        (properties) => new CreativeWorkStub(properties),
-      ),
-    );
+    )
+      .altLazy(
+        () =>
+          MessageStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(() =>
+        CreativeWorkStub._propertiesFromJson(json).map(
+          (properties) => new CreativeWorkStub(properties),
+        ),
+      );
   }
 
   export function _propertiesFromRdf({
@@ -6889,11 +6927,19 @@ export namespace CreativeWorkStub {
         rdfjsResource.Resource.ValueError,
         CreativeWorkStub
       >
-    ).altLazy(() =>
-      CreativeWorkStub._propertiesFromRdf(parameters).map(
-        (properties) => new CreativeWorkStub(properties),
-      ),
-    );
+    )
+      .altLazy(
+        () =>
+          MessageStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(() =>
+        CreativeWorkStub._propertiesFromRdf(parameters).map(
+          (properties) => new CreativeWorkStub(properties),
+        ),
+      );
   }
 
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
@@ -6919,7 +6965,12 @@ export namespace CreativeWorkStub {
     return ThingStub.thingStubJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["ArticleStub", "CreativeWorkStub", "ReportStub"]),
+        type: zod.enum([
+          "ArticleStub",
+          "CreativeWorkStub",
+          "MessageStub",
+          "ReportStub",
+        ]),
       }),
     );
   }
@@ -9476,6 +9527,566 @@ export namespace Organization {
           OrganizationStub.organizationStubJsonZodSchema().array(),
       }),
     );
+  }
+}
+export class Message extends CreativeWork {
+  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type = "Message";
+  readonly sender: purify.Maybe<AgentStub>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly sender?: AgentStub | purify.Maybe<AgentStub>;
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.sender)) {
+      this.sender = parameters.sender;
+    } else if (typeof parameters.sender === "object") {
+      this.sender = purify.Maybe.of(parameters.sender);
+    } else if (typeof parameters.sender === "undefined") {
+      this.sender = purify.Maybe.empty();
+    } else {
+      this.sender = parameters.sender as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: Message): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, AgentStub.equals))(
+          this.sender,
+          other.sender,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "sender",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.sender.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  override toJson(): {
+    readonly sender:
+      | (
+          | ReturnType<OrganizationStub["toJson"]>
+          | ReturnType<PersonStub["toJson"]>
+        )
+      | undefined;
+  } & ReturnType<CreativeWork["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        sender: this.sender.map((_item) => _item.toJson()).extract(),
+      } satisfies ReturnType<Message["toJson"]>),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Message"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/sender"),
+      this.sender.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace Message {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      sender: purify.Maybe<AgentStub>;
+    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = messageJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const sender = purify.Maybe.fromNullable(_jsonObject["sender"]).map(
+      (_item) => AgentStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, sender });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, Message> {
+    return Message._propertiesFromJson(json).map(
+      (properties) => new Message(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      sender: purify.Maybe<AgentStub>;
+    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromRdf>>
+  > {
+    const _super0Either = CreativeWork._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/Message"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Message)`,
+          predicate: dataFactory.namedNode("http://schema.org/Message"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _senderEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<AgentStub>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/sender"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          AgentStub.fromRdf({
+            ..._context,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_senderEither.isLeft()) {
+      return _senderEither;
+    }
+
+    const sender = _senderEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, sender });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof Message._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Message> {
+    return Message._propertiesFromRdf(parameters).map(
+      (properties) => new Message(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Message",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(messageJsonZodSchema());
+  }
+
+  export function messageJsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWork.creativeWorkJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/sender`, type: "Control" },
+      ],
+      label: "Message",
+      type: "Group",
+    };
+  }
+
+  export function messageJsonZodSchema() {
+    return CreativeWork.creativeWorkJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Message"),
+        sender: AgentStub.jsonZodSchema().optional(),
+      }),
+    );
+  }
+}
+export class MessageStub extends CreativeWorkStub {
+  override readonly type = "MessageStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWorkStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Message"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MessageStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof CreativeWorkStub._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = messageStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MessageStub> {
+    return MessageStub._propertiesFromJson(json).map(
+      (properties) => new MessageStub(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof CreativeWorkStub._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/Message"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Message)`,
+          predicate: dataFactory.namedNode("http://schema.org/Message"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MessageStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MessageStub> {
+    return MessageStub._propertiesFromRdf(parameters).map(
+      (properties) => new MessageStub(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Message",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(messageStubJsonZodSchema());
+  }
+
+  export function messageStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStub.creativeWorkStubJsonUiSchema({ scopePrefix }),
+      ],
+      label: "MessageStub",
+      type: "Group",
+    };
+  }
+
+  export function messageStubJsonZodSchema() {
+    return CreativeWorkStub.creativeWorkStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MessageStub"),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MessageStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MessageStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MessageStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("messageStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "messageStub");
+    return [
+      ...CreativeWorkStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("messageStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "messageStub");
+    return [
+      ...CreativeWorkStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Message"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
   }
 }
 export class Event extends Thing {

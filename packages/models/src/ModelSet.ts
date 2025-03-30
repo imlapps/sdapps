@@ -3,6 +3,7 @@ import type {
   Event,
   EventStub,
   Identifier,
+  Message,
   Organization,
   OrganizationStub,
   Person,
@@ -30,6 +31,7 @@ export namespace ModelSet {
   export type Model =
     | Event
     | EventStub
+    | Message
     | Organization
     | OrganizationStub
     | Person

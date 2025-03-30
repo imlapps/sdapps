@@ -59,13 +59,9 @@ export default async function PersonPage({
   person.jobTitle.ifJust((jobTitle) => {
     properties.push({ label: translations("Job title"), value: jobTitle });
   });
-  const performerInRootEvents = person.performerIn
-    .filter(
-      (event) =>
-        event.name.isJust() &&
-        event.startDate.isJust() &&
-        event.superEvent.isNothing(),
-    )
+  const events = person.performerIn
+    .concat(person.subjectOf.filter((_) => _.type === "EventStub"))
+    .filter((event) => event.name.isJust() && event.startDate.isJust())
     .toSorted(
       (left, right) =>
         right.startDate.unsafeCoerce().getTime() -
@@ -101,11 +97,11 @@ export default async function PersonPage({
               </List>
             </Fieldset>
           ) : null}
-          {performerInRootEvents.length > 0 ? (
+          {events.length > 0 ? (
             <Fieldset legend={translations("Participant in events")}>
               <Table>
                 <TableTbody>
-                  {performerInRootEvents.map((event) => (
+                  {events.map((event) => (
                     <TableTr key={Identifier.toString(event.identifier)}>
                       <TableTd>
                         {event.startDate.unsafeCoerce().toLocaleDateString()}

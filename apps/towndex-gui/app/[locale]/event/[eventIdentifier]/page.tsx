@@ -3,6 +3,7 @@ import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
+import { MessagesTable } from "@/lib/components/MessagesTable";
 import { ReportsTable } from "@/lib/components/ReportsTable";
 import { VoteActionsTable } from "@/lib/components/VoteActionsTable";
 import { getHrefs } from "@/lib/getHrefs";
@@ -25,6 +26,8 @@ import {
   Event,
   EventStub,
   Identifier,
+  Message,
+  PersonStub,
   Report,
   VoteAction,
   displayLabel,
@@ -83,10 +86,24 @@ export default async function EventPage({
       value: startDate.toLocaleString(),
     });
   });
+
+  const participants = event.performers.concat();
+  const messages: Message[] = [];
   const reports: Report[] = [];
   const voteActions: VoteAction[] = [];
   for (const about of event.about) {
     switch (about.type) {
+      case "MessageStub":
+        (
+          await modelSet.model<Message>({
+            identifier: about.identifier,
+            type: "Message",
+          })
+        ).ifRight((message) => messages.push(message));
+        break;
+      case "PersonStub":
+        participants.push(about as PersonStub);
+        break;
       case "ReportStub":
         (
           await modelSet.model<Report>({
@@ -120,16 +137,16 @@ export default async function EventPage({
               ))}
             </TableTbody>
           </Table>
-          {event.organizers.length > 0 || event.performers.length > 0 ? (
+          {event.organizers.length > 0 || participants.length > 0 ? (
             <Group>
               {event.organizers.length > 0 ? (
                 <Fieldset legend={translations("Organizers")}>
                   <AgentList agents={event.organizers} hrefs={hrefs} />
                 </Fieldset>
               ) : null}
-              {event.performers.length > 0 ? (
+              {participants.length > 0 ? (
                 <Fieldset legend={translations("Participants")}>
-                  <AgentList agents={event.performers} hrefs={hrefs} />
+                  <AgentList agents={participants} hrefs={hrefs} />
                 </Fieldset>
               ) : null}
             </Group>
@@ -141,12 +158,10 @@ export default async function EventPage({
               />
             </Fieldset>
           ) : null}
-          {voteActions.length > 0 ? (
-            <Fieldset legend={translations("Votes")}>
-              <VoteActionsTable
-                voteActions={voteActions.map((voteAction) =>
-                  voteAction.toJson(),
-                )}
+          {messages.length > 0 ? (
+            <Fieldset legend={translations("Messages")}>
+              <MessagesTable
+                messages={messages.map((message) => message.toJson())}
               />
             </Fieldset>
           ) : null}
@@ -154,6 +169,15 @@ export default async function EventPage({
             <Fieldset legend={translations("Reports")}>
               <ReportsTable
                 reports={reports.map((report) => report.toJson())}
+              />
+            </Fieldset>
+          ) : null}
+          {voteActions.length > 0 ? (
+            <Fieldset legend={translations("Votes")}>
+              <VoteActionsTable
+                voteActions={voteActions.map((voteAction) =>
+                  voteAction.toJson(),
+                )}
               />
             </Fieldset>
           ) : null}

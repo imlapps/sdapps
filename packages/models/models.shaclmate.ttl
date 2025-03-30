@@ -60,6 +60,12 @@ sdapps:EventStub-superEvent
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:superEvent .
 
+sdapps:MessageStub
+    shaclmate:fromRdfType schema:Message ;
+    shaclmate:name "MessageStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:OrganizationStub
     shaclmate:fromRdfType schema:Organization ;
     shaclmate:name "OrganizationStub" ;
@@ -307,6 +313,19 @@ schema:MediaObject-width
     sh:name "width" ;
     sh:node schema:QuantitativeValue ;
     sh:path schema:width .
+
+schema:Message
+    shaclmate:name "Message" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:Message-sender .
+
+schema:Message-sender
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "sender" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:sender .
 
 schema:Occupation
     shaclmate:name "Occupation" ;
