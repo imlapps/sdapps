@@ -60,6 +60,12 @@ sdapps:EventStub-superEvent
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:superEvent .
 
+sdapps:MediaObjectStub
+    shaclmate:fromRdfType schema:MediaObject ;
+    shaclmate:name "MediaObjectStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:MessageStub
     shaclmate:fromRdfType schema:Message ;
     shaclmate:name "MessageStub" ;
@@ -90,6 +96,12 @@ sdapps:ReportStub
     shaclmate:name "ReportStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ArticleStub .
+
+sdapps:TextObjectStub
+    shaclmate:fromRdfType schema:TextObject ;
+    shaclmate:name "TextObjectStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:MediaObjectStub .
 
 sdapps:ThingStub
     shaclmate:abstract true ;

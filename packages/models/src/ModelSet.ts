@@ -11,6 +11,7 @@ import type {
   Place,
   PlaceStub,
   Report,
+  TextObject,
   VoteAction,
 } from "./index.js";
 
@@ -39,5 +40,6 @@ export namespace ModelSet {
     | Place
     | PlaceStub
     | Report
+    | TextObject
     | VoteAction;
 }

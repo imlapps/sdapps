@@ -29,6 +29,7 @@ import {
   Message,
   PersonStub,
   Report,
+  TextObject,
   VoteAction,
   displayLabel,
 } from "@sdapps/models";
@@ -86,6 +87,27 @@ export default async function EventPage({
       value: startDate.toLocaleString(),
     });
   });
+  for (const subjectOf of event.subjectOf) {
+    if (subjectOf.type === "TextObjectStub") {
+      (
+        await modelSet.model<TextObject>({
+          identifier: subjectOf.identifier,
+          type: "TextObject",
+        })
+      ).ifRight((textObject) => {
+        textObject.url.ifJust((url) => {
+          properties.push({
+            label: translations("Minutes"),
+            value: (
+              <Anchor href={url.value}>
+                {textObject.name.orDefault(url.value)}
+              </Anchor>
+            ),
+          });
+        });
+      });
+    }
+  }
 
   const participants = event.performers.concat();
   const messages: Message[] = [];
