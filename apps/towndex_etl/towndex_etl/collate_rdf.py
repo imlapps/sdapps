@@ -9,13 +9,11 @@ from rdflib.plugins.stores.memory import Memory
 
 from rdflib import Graph, Literal, RDF, URIRef
 
-# rdflib knows about quite a few popular namespaces, like W3C ontologies, schema.org etc.
-from rdflib.namespace import FOAF, XSD
 
 from models.schema_class_relationships import SCHEMA_CLASS_RELATIONSHIPS
 
 
-def collate_rdf(meeting_minutes_directory_path: Path) -> None:
+def collate_rdf(meeting_minutes_graphs_directory_path: Path) -> None:
     """Read in RDF graphs and collate them in an RDF dataset."""
     
     store = Memory()
@@ -38,7 +36,7 @@ def collate_rdf(meeting_minutes_directory_path: Path) -> None:
     for meeting_file_path in list(
         Path(__file__)
         .parent.absolute()
-        .glob( meeting_minutes_directory_path/ Path("*.jsonld"))
+        .glob( meeting_minutes_graphs_directory_path / Path("*.jsonld"))
     ):
         
         g = towndex_dataset.graph(URIRef("https://townofbrunswick.org/files/" + meeting_file_path.stem))

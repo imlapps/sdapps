@@ -14,7 +14,7 @@ def parse_meeting_minutes(  # noqa: PLR0913
     towndex_kg_builder_output_directory_path: Path,
 ) -> None:
     """Run a pipeline consisting of TowndexKgBuilder and validate_towndex_kg."""
-    
+
     minutes_files = list(
         read_meeting_minutes(
             meeting_minutes_directory_path=meeting_minutes_directory_path
