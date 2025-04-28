@@ -2,7 +2,7 @@ services:
   towndex:
     build:
       context: .
-      dockerfile: apps/towndex-gui/Dockerfile
+      dockerfile: apps/towndex/Dockerfile
     command: ["tail", "-f", "/dev/null"]
     container_name: towndex
     environment: 

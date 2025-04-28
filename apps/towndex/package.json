@@ -27,7 +27,7 @@
     "postcss-simple-vars": "^7.0.1",
     "typescript": "5.8.2"
   },
-  "name": "@sdapps/towndex-gui",
+  "name": "@sdapps/towndex-app",
   "private": true,
   "scripts": {
     "build": "next build",
