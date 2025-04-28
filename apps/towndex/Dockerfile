@@ -2,7 +2,7 @@ FROM node:22
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY ./apps/towndex-gui /sdapps/apps/towndex-gui
+COPY ./apps/towndex /sdapps/apps/towndex
 COPY ./packages /sdapps/packages
 COPY ./package.json ./package-lock.json ./turbo.json /sdapps
 

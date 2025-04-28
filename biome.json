@@ -1,42 +1,42 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "files": {
-    "ignore": ["dist/**", ".next/**", "out/**", "*.jsonld"],
-    "maxSize": 2097152
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space"
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "complexity": {
-        "noForEach": "off",
-        "useLiteralKeys": "off"
-      },
-      "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedPrivateClassMembers": "error",
-        "useHookAtTopLevel": "error",
-        "useImportExtensions": "off"
-      },
-      "nursery": {
-        "noDuplicateElseIf": "error"
-      },
-      "recommended": true,
-      "style": {
-        "noNonNullAssertion": "off",
-        "useBlockStatements": "error",
-        "useImportType": "off"
-      },
-      "suspicious": {
-        "noArrayIndexKey": "off",
-        "noExplicitAny": "off"
-      }
-    }
-  },
-  "organizeImports": {
-    "enabled": true
-  }
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"files": {
+		"ignore": ["dist/**", ".next/**", "node_modules/**", "out/**", "*.jsonld"],
+		"maxSize": 2097152
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"complexity": {
+				"noForEach": "off",
+				"useLiteralKeys": "off"
+			},
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"useHookAtTopLevel": "error",
+				"useImportExtensions": "off"
+			},
+			"nursery": {
+				"noDuplicateElseIf": "error"
+			},
+			"recommended": true,
+			"style": {
+				"noNonNullAssertion": "off",
+				"useBlockStatements": "error",
+				"useImportType": "off"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "off",
+				"noExplicitAny": "off"
+			}
+		}
+	},
+	"organizeImports": {
+		"enabled": true
+	}
 }
