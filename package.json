@@ -1,28 +1,28 @@
 {
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"rimraf": "6.0.1",
-		"syncpack": "^13.0.2",
-		"turbo": "^2.4.4",
-		"typescript": "5.8.2",
-		"vitest": "^3.0.7"
-	},
-	"engines": {
-		"node": ">=18"
-	},
-	"name": "prosopa",
-	"packageManager": "npm@10.9.0",
-	"private": true,
-	"scripts": {
-		"build": "turbo run build",
-		"build:packages": "turbo run --filter \"./packages/*\" build",
-		"biome:check": "biome check",
-		"biome:check:write": "biome check --write",
-		"biome:check:write:unsafe": "biome check --write --unsafe",
-		"tsc:noEmit": "turbo run tsc:noEmit",
-		"syncpack:fix-mismatches": "syncpack fix-mismatches",
-		"test": "turbo run test",
-		"test:packages": "turbo run --filter \"./packages/*\" test"
-	},
-	"workspaces": ["apps/*", "etl/*", "packages/*"]
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "rimraf": "6.0.1",
+    "syncpack": "^13.0.2",
+    "turbo": "^2.4.4",
+    "typescript": "5.8.2",
+    "vitest": "^3.0.7"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "name": "prosopa",
+  "packageManager": "npm@10.9.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "build:packages": "turbo run --filter \"./packages/*\" build",
+    "biome:check": "biome check",
+    "biome:check:write": "biome check --write",
+    "biome:check:write:unsafe": "biome check --write --unsafe",
+    "tsc:noEmit": "turbo run tsc:noEmit",
+    "syncpack:fix-mismatches": "syncpack fix-mismatches",
+    "test": "turbo run test",
+    "test:packages": "turbo run --filter \"./packages/*\" test"
+  },
+  "workspaces": ["apps/*", "etl/*", "packages/*"]
 }
