@@ -1,0 +1,74 @@
+A GUIDE ON WHAT ERRORS TO CORRECT AND FEATURES TO ADD TO THE LARGE LANGUAGE MODEL'S OUTPUT
+
+1. Add a TextObject graph with a schema:about that points to the root Event.
+   
+2. Add Schema.org class hierarchy statements.
+
+3. Fix typo in names. Names that were corrected are:
+   * Jim Tkacik not Jim Tzacik.
+   * Michael McDonald not Mike McDonald.
+   * Mary Beth Bruno not Marybeth Bruno.
+   * Charles Golden not Chuck Golden.
+
+4. Prepend a job title to the name of council members.
+
+5. Add Person, schema:hasOccupation -> Occupation, schema:jobTitle.
+
+6. Add dateTime or date to entities.
+   Add schema:startDate to the root Event, and propagate the date component to the root Event's children. Only the root Event uses dateTime. 
+   On the root Event's children:
+     * For CreativeWork, Report and Message, the date property used was schema:datePublished.
+     * For Event, the date property used was schema:startDate.
+     * For Invoice, the date property used was schema:paymentDueDate.
+     * For MonetaryAmount, the date property used was schema:validFrom.
+     * For Order, the date property used was schema:orderDate.
+     * For VoteAction, the date property used was schema:startTime.
+
+7. Add IRIs to entities.
+   TOWNDEX_NAMESPACE is "http://purl.org/towndex/instance/us/ny/brunswick/".
+
+   The general IRI scheme is: TOWNDEX_NAMESPACE/type/name.
+
+   * Person scheme: TOWNDEX_NAMESPACE/person/name.
+     If Person, schema:jobTitle exists then the scheme is TOWNDEX_NAMESPACE/person/jobTitle_name.
+   
+   * The following have a standard scheme of TOWNDEX_NAMESPACE/type/date/name, where date is in the YYYY/MM/DD format.
+     * For CreativeWork, Report and Message, the date property used was schema:datePublished.
+     * For Event, the date property used was schema:startDate.
+     * For Invoice, the date property used was schema:paymentDueDate .
+     * For MonetaryAmount, the date property used was schema:validFrom.
+     * For Order, the date property used was schema:orderDate.
+     * For VoteAction, the date property used was schema:startTime.
+
+    * For QuantitativeValue or if the name was absent a UUID was minted.
+ 
+8. Fix superseded properties. 
+    * schema:performer not schema:performers.
+    * schema:subEvent not schema:subEvents.
+
+9. Add inverse relationships. 
+     * _, schema:about <-> _, schema:subjectOf.
+     * Event, schema:performer <-> _,schema:performerIn.
+     * Event, schema:subEvent <-> _,schema:superEvent.
+     * Person, schema:memberOf <-> GovernmentOrganization, schema:member.
+     * For the root event only: Event, schema:location <-> Place, schema:event.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
