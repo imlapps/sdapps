@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "extends": ["@sdapps/tsconfig/react-lib.json"],
-  "include": ["src/*.tsx"]
-}
