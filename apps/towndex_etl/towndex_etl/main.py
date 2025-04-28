@@ -1,9 +1,7 @@
-from models.settings import Settings
-
-from collate_rdf import collate_rdf
-from modify_graphs import modify_graphs
-from parse_meeting_minutes import parse_meeting_minutes
-
+from towndex_etl.collate_rdf import collate_rdf
+from towndex_etl.models.settings import Settings
+from towndex_etl.modify_graphs import modify_graphs
+from towndex_etl.parse_meeting_minutes import parse_meeting_minutes
 
 settings = Settings()
 
@@ -16,7 +14,9 @@ parse_meeting_minutes(
     shacl_validator_cache_directory_path=settings.shacl_validator_cache_directory_path,
     towndex_kg_builder_output_directory_path=settings.towndex_kg_builder_output_directory_path,
 )
-modify_graphs(meeting_minutes_graphs_directory_path=settings.towndex_kg_builder_output_directory_path)
-collate_rdf(meeting_minutes_graphs_directory_path=settings.towndex_kg_builder_output_directory_path)
-
-
+modify_graphs(
+    meeting_minutes_graphs_directory_path=settings.towndex_kg_builder_output_directory_path
+)
+collate_rdf(
+    meeting_minutes_graphs_directory_path=settings.towndex_kg_builder_output_directory_path
+)

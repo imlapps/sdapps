@@ -1,9 +1,9 @@
+from pathlib import Path
 
-from read_meeting_minutes import read_meeting_minutes
-from towndex_kg_builder import TowndexKgBuilder
-from validate_towndex_kg import validate_towndex_kg
+from towndex_etl.read_meeting_minutes import read_meeting_minutes
+from towndex_etl.towndex_kg_builder import TowndexKgBuilder
+from towndex_etl.validate_towndex_kg import validate_towndex_kg
 
-from pathlib import Path 
 
 def parse_meeting_minutes(  # noqa: PLR0913
     meeting_minutes_directory_path: Path,
@@ -31,7 +31,7 @@ def parse_meeting_minutes(  # noqa: PLR0913
         while True:
             if minutes_files_index == len(minutes_files):
                 break
-            
+
             # TowndexKgPipeline
             validate_towndex_kg(
                 data_graph_path=towndex_kg_builder.build_graph(

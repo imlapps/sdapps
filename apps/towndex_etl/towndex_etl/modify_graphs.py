@@ -1,26 +1,25 @@
-import json 
+import json
 from pathlib import Path
-def modify_graphs(meeting_minutes_graphs_directory_path: Path)->None:
+
+
+def modify_graphs(meeting_minutes_graphs_directory_path: Path) -> None:
     """Modify the JSON-LD graphs that were obtained from the large language model."""
-    
+
     for file_path in list(
-    Path(__file__)
-    .parent.absolute()
-    .glob( meeting_minutes_graphs_directory_path / Path("*.jsonld"))
+        Path(__file__)
+        .parent.absolute()
+        .glob(str(meeting_minutes_graphs_directory_path / Path("*.jsonld")))
     ):
         minutes_graph = dict(json.load(file_path.open(encoding="utf-8")))
-    
-        if "url" in minutes_graph:
-            document_entity = {
-                "url": minutes_graph["url"]
-            }
 
+        if "url" in minutes_graph:
+            document_entity = {"url": minutes_graph["url"]}
 
         minutes_graph.pop("url", None)
         minutes_graph.pop("@context", None)
-        
-        minutes_graph["subjectOf"] = {"@id": document_entity["url"].replace(" ","%20")}
-        
+
+        minutes_graph["subjectOf"] = {"@id": document_entity["url"].replace(" ", "%20")}
+
         minutes_graph["@context"] = {
             "@vocab": "http://schema.org/",
             "tdx": "http://purl.org/towndex/instance/us/ny/brunswick/",
@@ -28,7 +27,7 @@ def modify_graphs(meeting_minutes_graphs_directory_path: Path)->None:
 
         json.dump(
             [document_entity, minutes_graph],
-            (meeting_minutes_graphs_directory_path/Path(file_path.stem + ".jsonld")).open(
-                mode="w"
-            ),
+            (
+                meeting_minutes_graphs_directory_path / Path(file_path.stem + ".jsonld")
+            ).open(mode="w"),
         )
