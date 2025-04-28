@@ -80,7 +80,7 @@ class TowndexKgBuilder:
 
         meeting_minutes_json_ld_file_path = (
             self.__towndex_kg_builder_output_directory_path
-            / Path(meeting_minutes.id + ".json")
+            / Path(meeting_minutes.id + ".jsonld")
         )
 
         with meeting_minutes_json_ld_file_path.open(
