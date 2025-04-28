@@ -22,6 +22,7 @@ def collate_rdf(meeting_minutes_graphs_directory_path: Path) -> None:
     towndex_dataset.bind("rdfs", Namespace("http://www.w3.org/2000/01/rdf-schema#"))
     towndex_dataset.bind("sdo", Namespace("http://schema.org/"))
 
+    # Add class hierarchy statements
     for schema_type in SCHEMA_CLASS_RELATIONSHIPS:
         towndex_dataset.add(
             (
@@ -36,39 +37,41 @@ def collate_rdf(meeting_minutes_graphs_directory_path: Path) -> None:
         .parent.absolute()
         .glob(str(meeting_minutes_graphs_directory_path / Path("*.jsonld")))
     ):
-        g = towndex_dataset.graph(
+        dateset_graph = towndex_dataset.graph(
             URIRef("https://townofbrunswick.org/files/" + meeting_file_path.stem)
         )
         meeting_minutes_graph = Graph()
         meeting_minutes_graph.parse(meeting_file_path)
         for triples in meeting_minutes_graph:
-            g.add(triples)
+            dateset_graph.add(triples)
 
+        # Add a TextObject graph to the dataset
         minutes_file = json.load(meeting_file_path.open(encoding="utf-8"))
-        document_graph = [
+        document_url = minutes_file[0]["subjectOf"]["@id"]
+        text_object_graph = [
             (
-                URIRef(minutes_file[0]["url"].replace(" ", "%20")),
+                URIRef(document_url),
                 RDF.type,
                 URIRef("http://schema.org/TextObject"),
             ),
             (
-                URIRef(minutes_file[0]["url"].replace(" ", "%20")),
+                URIRef(document_url),
                 URIRef("http://schema.org/url"),
-                URIRef(minutes_file[0]["url"].replace(" ", "%20")),
+                URIRef(document_url),
             ),
             (
-                URIRef(minutes_file[0]["url"].replace(" ", "%20")),
+                URIRef(document_url),
                 URIRef("http://schema.org/about"),
-                URIRef(minutes_file[1]["@id"]),
+                URIRef(minutes_file[0]["@id"]),
             ),
             (
-                URIRef(minutes_file[0]["url"].replace(" ", "%20")),
+                URIRef(document_url),
                 URIRef("http://schema.org/name"),
-                Literal(minutes_file[0]["url"][len(tob) :][:-4]),
+                Literal(str(document_url).replace("%20", " ")[len(tob) :][:-4]),
             ),
         ]
-        for triples in document_graph:
-            g.add(triples)
+        for triples in text_object_graph:
+            dateset_graph.add(triples)
 
     towndex_dataset.serialize(
         format="trig", destination=Path("./us/ny/brunswick/minutes.trig")
