@@ -18,7 +18,7 @@ def modify_graphs(meeting_minutes_graphs_directory_path: Path) -> None:
             }
 
         minutes_graph.pop("url", None)
-        minutes_graph.pop("@context", None) # The LLM returned a bad context
+        minutes_graph.pop("@context", None)  # The LLM returned a bad context
 
         minutes_graph["@context"] = {
             "@vocab": "http://schema.org/",
