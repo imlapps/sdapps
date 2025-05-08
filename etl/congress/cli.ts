@@ -11,6 +11,7 @@ import {
   Person,
   QuantitiveValue,
   Role,
+  stubify,
 } from "@sdapps/models";
 import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { command, flag, run } from "cmd-ts";
@@ -219,6 +220,7 @@ const cmd = command({
       sameAs: [dataFactory.namedNode("http://www.wikidata.org/entity/Q11701")],
       url: "https://www.house.gov/",
     });
+    const houseOrganizationStub = stubify(houseOrganization);
 
     const senateOrganization = new Organization({
       identifier: "urn:congress:chamber:senate",
@@ -226,6 +228,7 @@ const cmd = command({
       sameAs: [dataFactory.namedNode("http://www.wikidata.org/entity/Q66096")],
       url: "https://www.senate.gov/",
     });
+    const senateOrganizationStub = stubify(senateOrganization);
 
     const committeeOrganizationsById: Record<string, Organization> = {};
     for (const committee of committees) {
@@ -247,16 +250,17 @@ const cmd = command({
         name: committee.name,
         sameAs: committeeSameAs,
       });
+      const committeeOrganizationStub = stubify(committeeOrganization);
       committeeOrganizationsById[committee.thomas_id] = committeeOrganization;
 
       for (const subcommittee of committee.subcommittees ?? []) {
         const subcommitteeOrganization = new Organization({
           identifier: `urn:congress:committee:${committee.thomas_id}:subcommittee:${subcommittee.thomas_id}`,
           name: `${committee.name}: Subcommittees: ${subcommittee.name}`,
-          parentOrganizations: [committeeOrganization.identifier],
+          parentOrganizations: [committeeOrganizationStub],
         });
         committeeOrganization.subOrganizations.push(
-          subcommitteeOrganization.identifier,
+          stubify(subcommitteeOrganization),
         );
         committeeOrganizationsById[
           `${committee.thomas_id}${subcommittee.thomas_id}`
@@ -265,34 +269,22 @@ const cmd = command({
 
       switch (committee.type) {
         case "house":
-          committeeOrganization.parentOrganizations.push(
-            houseOrganization.identifier,
-          );
-          houseOrganization.subOrganizations.push(
-            committeeOrganization.identifier,
-          );
+          committeeOrganization.parentOrganizations.push(houseOrganizationStub);
+          houseOrganization.subOrganizations.push(committeeOrganizationStub);
           break;
         case "joint":
+          committeeOrganization.parentOrganizations.push(houseOrganizationStub);
           committeeOrganization.parentOrganizations.push(
-            houseOrganization.identifier,
+            senateOrganizationStub,
           );
-          committeeOrganization.parentOrganizations.push(
-            senateOrganization.identifier,
-          );
-          houseOrganization.subOrganizations.push(
-            committeeOrganization.identifier,
-          );
-          senateOrganization.subOrganizations.push(
-            committeeOrganization.identifier,
-          );
+          houseOrganization.subOrganizations.push(committeeOrganizationStub);
+          senateOrganization.subOrganizations.push(committeeOrganizationStub);
           break;
         case "senate":
           committeeOrganization.parentOrganizations.push(
-            senateOrganization.identifier,
+            senateOrganizationStub,
           );
-          senateOrganization.subOrganizations.push(
-            committeeOrganization.identifier,
-          );
+          senateOrganization.subOrganizations.push(committeeOrganizationStub);
           break;
       }
     }
@@ -394,14 +386,14 @@ const cmd = command({
       const legislatorImageObjects = [
         legislatorOriginalImageObject,
         legislatorImageObject({
-          isBasedOn: legislatorOriginalImageObject.identifier,
+          isBasedOn: legislatorOriginalImageObject.identifier as NamedNode,
           size: {
             height: 550,
             width: 450,
           },
         }),
         legislatorImageObject({
-          isBasedOn: legislatorOriginalImageObject.identifier,
+          isBasedOn: legislatorOriginalImageObject.identifier as NamedNode,
           size: {
             height: 225,
             width: 275,
@@ -441,13 +433,14 @@ const cmd = command({
         name: legislator.name.official_full,
         sameAs: legislatorSameAs,
       });
+      const legislatorPersonStub = stubify(legislatorPerson);
 
       for (const [committeeId, _committeeMembership] of Object.entries(
         committeeMembershipsByIds[legislator.id.bioguide] ?? {},
       )) {
         const committeeOrganization = committeeOrganizationsById[committeeId];
-        committeeOrganization.members.push(legislatorPerson.identifier);
-        legislatorPerson.memberOf.push(committeeOrganization.identifier);
+        committeeOrganization.members.push(legislatorPersonStub);
+        legislatorPerson.memberOf.push(stubify(committeeOrganization));
       }
 
       let partyOrganization: Organization | undefined;
@@ -478,8 +471,8 @@ const cmd = command({
           });
       }
       if (partyOrganization) {
-        legislatorPerson.memberOf.push(partyOrganization.identifier);
-        partyOrganization.members.push(legislatorPerson.identifier);
+        legislatorPerson.memberOf.push(stubify(partyOrganization));
+        partyOrganization.members.push(legislatorPersonStub);
       }
 
       legislatorPerson.toRdf({ resourceSet });
