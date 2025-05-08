@@ -1,0 +1,15 @@
+{
+	"dependencies": {
+		"cmd-ts": "^0.13.0",
+		"node-fetch-cache": "^5.0.2",
+		"tsx": "^4.19.3",
+		"typescript": "5.8.2"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"name": "@sdapps/towndex-etl",
+	"packageManager": "npm@10.9.0",
+	"private": true,
+	"type": "module"
+}
