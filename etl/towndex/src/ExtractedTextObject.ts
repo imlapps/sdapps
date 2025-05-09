@@ -3,24 +3,24 @@ import { TextObject } from "@sdapps/models";
 
 export class ExtractedTextObject {
   readonly content: Blob;
+  readonly contentUrl: NamedNode;
   readonly dataset: DatasetCore;
   readonly identifier: TextObject["identifier"];
-  readonly url: NamedNode;
 
   constructor({
     content,
+    contentUrl: url,
     dataset,
     identifier,
-    url,
   }: {
     content: Blob;
+    contentUrl: NamedNode;
     dataset: DatasetCore;
     identifier: TextObject["identifier"];
-    url: NamedNode;
   }) {
     this.content = content;
     this.dataset = dataset;
     this.identifier = identifier;
-    this.url = url;
+    this.contentUrl = url;
   }
 }

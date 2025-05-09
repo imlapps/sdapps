@@ -10,14 +10,14 @@ export async function* resolveInputTextObjects(
   const modelSet = new RdfjsDatasetModelSet({ dataset: inputDataset });
   for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
     const textObject = model as TextObject;
-    const textObjectUrl = textObject.url
+    const contentUrl = textObject.url
       .altLazy(() =>
         textObject.identifier.termType === "NamedNode"
           ? Maybe.of(textObject.identifier)
           : Maybe.empty(),
       )
       .extractNullable();
-    if (textObjectUrl === null || !textObjectUrl?.value.startsWith("http")) {
+    if (contentUrl === null || !contentUrl?.value.startsWith("http")) {
       logger.warn(
         "TextObject",
         Identifier.toString(textObject.identifier),
@@ -26,12 +26,12 @@ export async function* resolveInputTextObjects(
       continue;
     }
 
-    const response = await fetch(textObjectUrl.value);
+    const response = await fetch(contentUrl.value);
     yield new ExtractedTextObject({
       content: await response.blob(),
+      contentUrl,
       dataset: inputDataset,
       identifier: textObject.identifier,
-      url: textObjectUrl,
     });
   }
 }
