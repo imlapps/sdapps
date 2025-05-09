@@ -1,0 +1,6 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sdo: <http://schema.org/> .
+@prefix tob: <https://townofbrunswick.org/files/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+tob:TBSpecialMeetingMinutes20241001-2025TentativeBudget.pdf a sdo:TextObject .

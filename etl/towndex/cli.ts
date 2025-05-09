@@ -1,8 +1,8 @@
 #!/usr/bin/env npm exec tsx --
 import fs from "node:fs";
 import { command, flag, run } from "cmd-ts";
-import { extractInput } from "./src/extractInput";
-import { extractWebDocuments } from "./src/extractWebDocuments";
+import { extractInput } from "./src/extractInputDataset";
+import { extractTextObjects } from "./src/extractInputTextObjects";
 import { load } from "./src/load";
 import { cacheDirectoryPath } from "./src/paths";
 import { transform } from "./src/transform";
@@ -25,7 +25,7 @@ run(
 
       await load(
         transform({
-          documentDatasets: extractWebDocuments(inputDataset),
+          documentDatasets: extractTextObjects(inputDataset),
           inputDataset,
         }),
       );
