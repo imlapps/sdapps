@@ -159,7 +159,7 @@ const fetchYaml = async (url: string): Promise<any> => {
 const cmd = command({
   description:
     "extract, transform and load data about the United States Congress",
-  name: "extract-transform-load",
+  name: "cli",
   args: {
     noCache: flag({
       long: "no-cache",
