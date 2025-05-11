@@ -4,3 +4,4 @@ export * from "./DocumentFactory.js";
 export * from "./DocumentFormatConverter.js";
 export * from "./DocumentTextExtractor.js";
 export * from "./encodeFileName.js";
+export * from "./fileNameCodec.js";

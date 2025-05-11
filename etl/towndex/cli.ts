@@ -1,6 +1,7 @@
 #!/usr/bin/env npm exec tsx --
 import fs from "node:fs";
 import { command, flag, run } from "cmd-ts";
+import * as dotenv from "dotenv";
 import * as N3 from "n3";
 import { extract } from "./src/extract";
 import { load } from "./src/load";
@@ -18,6 +19,8 @@ run(
       }),
     },
     handler: async ({ noCache }) => {
+      dotenv.config();
+
       if (noCache) {
         logger.debug(`deleting caches directory ${cachesDirectoryPath}`);
         await fs.promises.rm(cachesDirectoryPath, { recursive: true });
