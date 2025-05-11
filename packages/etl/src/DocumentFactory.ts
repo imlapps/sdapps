@@ -1,12 +1,16 @@
+import fs from "node:fs";
 import path from "node:path";
+import mime from "mime";
 import { Logger } from "pino";
-import { Either, Left } from "purify-ts";
+import { Either, EitherAsync, Left } from "purify-ts";
+import { Document } from "./Document.js";
 import { DocumentFormatConverter } from "./DocumentFormatConverter.js";
 import { DocumentTextExtractor } from "./DocumentTextExtractor.js";
 import { HtmlDocument } from "./HtmlDocument.js";
 import { PdfDocument } from "./PdfDocument.js";
 import { RichDocument } from "./RichDocument.js";
 import { TextDocument } from "./TextDocument.js";
+import { convertHtmlToText } from "./convertHtmlToText.js";
 
 export class DocumentFactory {
   private readonly cachesDirectoryPath: string;
@@ -20,13 +24,54 @@ export class DocumentFactory {
     this.logger = logger;
   }
 
-  async createDocument({
+  async createDocumentFromLocalFile({
+    filePath,
+  }: { filePath: string }): Promise<Either<Error, Document>> {
+    return await EitherAsync(async ({ liftEither }) => {
+      const mimeType = mime.getType(filePath);
+      if (mimeType === null) {
+        const errorMessage = `unable to guess MIME type from file path: ${filePath}`;
+        this.logger?.warn(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      const buffer = await fs.promises.readFile(filePath);
+
+      return await liftEither(
+        await this.createDocument({
+          buffer,
+          mimeType,
+        }),
+      );
+    });
+  }
+
+  async createDocumentFromText({
+    mimeType: mimeTypeParameter,
+    text,
+  }: { mimeType?: string; text: string }): Promise<Either<Error, Document>> {
+    let mimeType: string;
+    if (mimeTypeParameter != null) {
+      mimeType = mimeTypeParameter;
+    } else if (convertHtmlToText(text) !== text) {
+      mimeType = "text/html";
+    } else {
+      mimeType = "text/plain";
+    }
+
+    return this.createDocument({
+      buffer: Buffer.from(text),
+      mimeType,
+    });
+  }
+
+  private async createDocument({
     buffer,
     mimeType,
   }: {
     buffer: Buffer;
     mimeType: string;
-  }): Promise<Document> {
+  }): Promise<Either<Error, Document>> {
     switch (mimeType) {
       case "application/pdf":
         return Either.of(

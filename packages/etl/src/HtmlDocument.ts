@@ -1,9 +1,7 @@
-import { compile } from "html-to-text";
 import { Either } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { Document } from "./Document";
-
-const convert = compile();
+import { convertHtmlToText } from "./convertHtmlToText.js";
 
 export class HtmlDocument implements Document {
   private readonly _html: string;
@@ -25,6 +23,6 @@ export class HtmlDocument implements Document {
 
   @Memoize()
   async text(): Promise<Either<Error, string>> {
-    return Either.of(convert(this._html));
+    return Either.of(convertHtmlToText(this._html));
   }
 }

@@ -3,10 +3,10 @@ import path from "node:path";
 import * as tmp from "tmp-promise";
 import { describe, it } from "vitest";
 import { DocumentFormatConverter } from "../src/DocumentFormatConverter";
-import { testData } from "./testData";
+import { testDocumentFilePaths } from "./paths";
 
 describe.skipIf(process.env["CI"])("DocumentFormatConverter", async () => {
-  [testData.testDocumentFilePaths.pdf].forEach((testDocumentFilePath) => {
+  [testDocumentFilePaths.pdf].forEach((testDocumentFilePath) => {
     it(`should convert ${testDocumentFilePath} to PDF`, async () => {
       await tmp.withDir(
         async ({ path: tempDirPath }) => {
