@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "extends": ["@sdapps/tsconfig/lib.json"],
+  "include": ["src/*.ts"]
+}
