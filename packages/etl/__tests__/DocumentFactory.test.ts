@@ -63,12 +63,12 @@ describe("DocumentFactory", async () => {
     });
   });
 
-  it("should create a document from HTML text (no MIME type)", async ({
+  it("should create a document from HTML string (no MIME type)", async ({
     expect,
   }) => {
     const document = (
-      await sut.createDocumentFromText({
-        text: testDocumentHtml,
+      await sut.createDocumentFromString({
+        string: testDocumentHtml,
       })
     ).unsafeCoerce();
     expect((await document.html()).unsafeCoerce()).toStrictEqual(
@@ -79,12 +79,12 @@ describe("DocumentFactory", async () => {
     );
   });
 
-  it("should create a document from plain text (no MIME type)", async ({
+  it("should create a document from plaintext string (no MIME type)", async ({
     expect,
   }) => {
     const document = (
-      await sut.createDocumentFromText({
-        text: testDocumentText,
+      await sut.createDocumentFromString({
+        string: testDocumentText,
       })
     ).unsafeCoerce();
     expect((await document.html()).unsafeCoerce()).toStrictEqual(
@@ -95,13 +95,13 @@ describe("DocumentFactory", async () => {
     );
   });
 
-  it("should create a document from plain text (explicit text/html type)", async ({
+  it("should create a document from plaintext string (explicit text/html type)", async ({
     expect,
   }) => {
     const document = (
-      await sut.createDocumentFromText({
+      await sut.createDocumentFromString({
         mimeType: "text/html",
-        text: testDocumentText,
+        string: testDocumentText,
       })
     ).unsafeCoerce();
     expect((await document.html()).unsafeCoerce()).toStrictEqual(

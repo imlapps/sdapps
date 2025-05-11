@@ -24,48 +24,18 @@ export class DocumentFactory {
     this.logger = logger;
   }
 
-  async createDocumentFromLocalFile({
-    filePath,
-  }: { filePath: string }): Promise<Either<Error, Document>> {
-    return await EitherAsync(async ({ liftEither }) => {
-      const mimeType = mime.getType(filePath);
-      if (mimeType === null) {
-        const errorMessage = `unable to guess MIME type from file path: ${filePath}`;
-        this.logger?.warn(errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      const buffer = await fs.promises.readFile(filePath);
-
-      return await liftEither(
-        await this.createDocument({
-          buffer,
-          mimeType,
-        }),
-      );
+  async createDocumentFromBlob({
+    blob,
+  }: {
+    blob: Blob;
+  }): Promise<Either<Error, Document>> {
+    return this.createDocumentFromBuffer({
+      buffer: Buffer.from(await blob.arrayBuffer()),
+      mimeType: blob.type,
     });
   }
 
-  async createDocumentFromText({
-    mimeType: mimeTypeParameter,
-    text,
-  }: { mimeType?: string; text: string }): Promise<Either<Error, Document>> {
-    let mimeType: string;
-    if (mimeTypeParameter != null) {
-      mimeType = mimeTypeParameter;
-    } else if (convertHtmlToText(text) !== text) {
-      mimeType = "text/html";
-    } else {
-      mimeType = "text/plain";
-    }
-
-    return this.createDocument({
-      buffer: Buffer.from(text),
-      mimeType,
-    });
-  }
-
-  private async createDocument({
+  async createDocumentFromBuffer({
     buffer,
     mimeType,
   }: {
@@ -120,6 +90,47 @@ export class DocumentFactory {
         return Left(new Error(errorMessage));
       }
     }
+  }
+
+  async createDocumentFromLocalFile({
+    filePath,
+  }: { filePath: string }): Promise<Either<Error, Document>> {
+    return await EitherAsync(async ({ liftEither }) => {
+      const mimeType = mime.getType(filePath);
+      if (mimeType === null) {
+        const errorMessage = `unable to guess MIME type from file path: ${filePath}`;
+        this.logger?.warn(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      const buffer = await fs.promises.readFile(filePath);
+
+      return await liftEither(
+        await this.createDocumentFromBuffer({
+          buffer,
+          mimeType,
+        }),
+      );
+    });
+  }
+
+  async createDocumentFromString({
+    mimeType: mimeTypeParameter,
+    string,
+  }: { mimeType?: string; string: string }): Promise<Either<Error, Document>> {
+    let mimeType: string;
+    if (mimeTypeParameter != null) {
+      mimeType = mimeTypeParameter;
+    } else if (convertHtmlToText(string) !== string) {
+      mimeType = "text/html";
+    } else {
+      mimeType = "text/plain";
+    }
+
+    return this.createDocumentFromBuffer({
+      buffer: Buffer.from(string),
+      mimeType,
+    });
   }
 
   private documentFormatConverter(): Promise<
