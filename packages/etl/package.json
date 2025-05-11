@@ -2,6 +2,8 @@
   "dependencies": {
     "@aws-sdk/client-textract": "^3.645.0",
     "amazon-textract-response-parser": "^0.4.2",
+    "html-to-text": "^9.0.5",
+    "mime": "^4.0.4",
     "pino": "^9.1.0",
     "purify-ts": "^2.1.0",
     "tmp-promise": "^3.0.3",
@@ -11,6 +13,7 @@
   },
   "devDependencies": {
     "@sdapps/tsconfig": "0.0.0",
+    "@types/html-to-text": "^9.0.4",
     "@types/node": "^22.13.9",
     "@types/which": "^3.0.4",
     "typescript": "5.8.2"

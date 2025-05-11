@@ -89,18 +89,20 @@ export class DocumentFormatConverter {
   }: {
     inputFilePath: string;
     outputFilePath: string;
-  }): Promise<void> {
+  }): Promise<Either<Error, null>> {
     if (
       !(await fsEither.stat(inputFilePath))
         .map((stats) => stats.isFile())
         .orDefault(false)
     ) {
-      throw new Error(`${inputFilePath} is not a file`);
+      return Left(new Error(`${inputFilePath} is not a file`));
     }
 
     const outputFileExtension = path.extname(outputFilePath).toLowerCase();
     if (outputFileExtension.length === 0) {
-      throw new Error(`output file path ${outputFilePath} has no extension`);
+      return Left(
+        new Error(`output file path ${outputFilePath} has no extension`),
+      );
     }
 
     if (!this.cacheDirectoryPath.isJust()) {
@@ -109,7 +111,7 @@ export class DocumentFormatConverter {
         inputFilePath,
         outputFilePath,
       });
-      return;
+      return Either.of(null);
     }
 
     // Caching path
@@ -152,6 +154,8 @@ export class DocumentFormatConverter {
       cachedOutputFilePath,
       outputFilePath,
     );
+
+    return Either.of(null);
   }
 
   private async _convert({
