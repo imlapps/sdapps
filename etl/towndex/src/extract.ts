@@ -1,95 +1,126 @@
 import fs from "node:fs";
+import path from "node:path";
 import { DatasetCore } from "@rdfjs/types";
+import { DocumentFactory, encodeFileName } from "@sdapps/etl";
 import {
   TextObject as GeneratedTextObject,
   Identifier,
   RdfjsDatasetModelSet,
 } from "@sdapps/models";
+import { JsonLdParser } from "jsonld-streaming-parser";
 import * as N3 from "n3";
-import { Either, Left, Maybe } from "purify-ts";
-import { TextObject } from "./TextObject";
+import { Either, EitherAsync, Maybe } from "purify-ts";
+import { TextObject } from "./TextObject.js";
+import { fetch } from "./fetch.js";
+import { logger } from "./logger.js";
+import { cachesDirectoryPath } from "./paths.js";
 
-export async function* extract(): AsyncIterable<Either<Error, TextObject>> {
-  const inputDatasetEither = extractInputDataset();
-  if (inputDatasetEither.isLeft()) {
-    yield inputDatasetEither;
-    return;
-  }
-  const inputDataset = inputDatasetEither.unsafeCoerce();
+const documentFactory = new DocumentFactory({
+  cachesDirectoryPath,
+  logger,
+});
 
+export async function* extract(
+  inputDataset: DatasetCore,
+): AsyncIterable<TextObject> {
   const modelSet = new RdfjsDatasetModelSet({ dataset: inputDataset });
   for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
     const textObject = model as GeneratedTextObject;
 
-    yield (await extractTextObjectContent(textObject)).map(
+    const textObjectEither = (await extractTextObjectContent(textObject)).map(
       (content) =>
         new TextObject({
           content,
-          dataset: inputDataset,
           identifier: textObject.identifier,
         }),
     );
+    if (textObjectEither.isLeft()) {
+      logger.error(textObjectEither.extract() as Error);
+      continue;
+    }
+    yield textObjectEither.unsafeCoerce();
   }
-}
-
-function extractInputDataset(): Either<Error, DatasetCore> {
-  return Either.encase(() => {
-    const inputString = fs.readFileSync(process.stdin.fd, "utf-8");
-    const inputParser = new N3.Parser();
-    const store = new N3.Store();
-    store.addQuads(inputParser.parse(inputString));
-    return store;
-  });
 }
 
 async function extractTextObjectContent(
   textObject: GeneratedTextObject,
 ): Promise<Either<Error, TextObject.Content>> {
-  const contentBlobEither = await extractTextObjectContentBlob(textObject);
-  if (contentBlobEither.isLeft()) {
-    return contentBlobEither;
-  }
-  const { blob: contentBlob, url: contentUrl } =
-    contentBlobEither.unsafeCoerce();
+  return EitherAsync(async () => {
+    logger.debug(
+      `extracting content dataset for ${Identifier.toString(textObject.identifier)}`,
+    );
 
-  const contentDatasetEither =
-    await extractTextObjectContentDataset(contentBlob);
+    const contentUrl = textObject.url
+      .altLazy(() =>
+        textObject.identifier.termType === "NamedNode"
+          ? Maybe.of(textObject.identifier)
+          : Maybe.empty(),
+      )
+      .filter((contentUrl) => contentUrl.value.startsWith("http"))
+      .extractNullable();
+    if (contentUrl === null) {
+      throw new Error(
+        `TextObject ${Identifier.toString(textObject.identifier)} doesn't have a resolvable content URL`,
+      );
+    }
 
-  return Either.of({
-    blob: contentBlob,
-    dataset: contentDatasetEither.unsafeCoerce(),
-    url: contentUrl,
+    const completionsCacheDirectoryPath = path.join(
+      cachesDirectoryPath,
+      "completions",
+    );
+    const completionsCacheFilePath = path.join(
+      completionsCacheDirectoryPath,
+      `${encodeFileName(contentUrl.value)}.jsonld`,
+    );
+
+    try {
+      const stat = await fs.promises.stat(completionsCacheFilePath);
+      if (stat.isFile()) {
+        return {
+          dataset: await parseJsonLdString(
+            (await fs.promises.readFile(completionsCacheFilePath)).toString(
+              "utf-8",
+            ),
+          ),
+          url: contentUrl,
+        };
+      }
+    } catch (e) {}
+
+    logger.debug(
+      `fetching ${Identifier.toString(textObject.identifier)} content from ${contentUrl.value}`,
+    );
+    const contentResponse = await fetch(contentUrl.value);
+    const contentBlob = await contentResponse.blob();
+    logger.debug(
+      `fetched ${contentBlob.size} bytes from ${contentUrl.value} (cache ${contentResponse.isCacheMiss ? "miss" : "hit"})`,
+    );
+
+    const contentHtml = (
+      await (
+        await documentFactory.createDocumentFromBlob({ blob: contentBlob })
+      )
+        .unsafeCoerce()
+        .html()
+    ).unsafeCoerce();
+
+    throw new Error("not implemented");
   });
 }
 
-async function extractTextObjectContentBlob(
-  textObject: GeneratedTextObject,
-): Promise<Either<Error, Pick<TextObject.Content, "blob" | "url">>> {
-  const contentUrl = textObject.url
-    .altLazy(() =>
-      textObject.identifier.termType === "NamedNode"
-        ? Maybe.of(textObject.identifier)
-        : Maybe.empty(),
-    )
-    .extractNullable();
-  if (contentUrl === null || !contentUrl?.value.startsWith("http")) {
-    return Left(
-      new Error(
-        `TextObject ${Identifier.toString(textObject.identifier)} has no resolvable content URL`,
-      ),
-    );
-  }
-
-  try {
-    const response = await fetch(contentUrl.value);
-    return Either.of({ blob: await response.blob(), url: contentUrl });
-  } catch (e) {
-    return Left(e as Error);
-  }
-}
-
-async function extractTextObjectContentDataset(
-  contentBlob: Blob,
-): Promise<Either<Error, DatasetCore>> {
-  return Left(new Error("not implemented"));
+function parseJsonLdString(jsonLdString: string): Promise<DatasetCore> {
+  return new Promise((resolve, reject) => {
+    const store = new N3.Store();
+    const parser = new JsonLdParser({ dataFactory: N3.DataFactory });
+    parser.on("data", (quad) => {
+      store.add(quad);
+    });
+    parser.on("error", reject);
+    parser.on("end", () => {
+      resolve(store);
+    });
+    parser.on("error", reject);
+    parser.write(jsonLdString);
+    parser.end();
+  });
 }

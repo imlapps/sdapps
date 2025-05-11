@@ -4,12 +4,16 @@ import { DatasetCore, Quad } from "@rdfjs/types";
 import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import * as N3 from "n3";
 
-export async function load(
-  outputDatasets: AsyncIterable<DatasetCore>,
-): Promise<void> {
+export async function load({
+  inputDataset,
+  transformedDatasets,
+}: {
+  inputDataset: DatasetCore;
+  transformedDatasets: AsyncIterable<DatasetCore>;
+}): Promise<void> {
   const quads: Quad[] = [];
-  for await (const outputDataset of outputDatasets) {
-    for (const quad of outputDataset) {
+  for await (const transformedDataset of transformedDatasets) {
+    for (const quad of transformedDataset) {
       quads.push(quad);
     }
   }

@@ -1,15 +1,16 @@
 #!/usr/bin/env npm exec tsx --
 import fs from "node:fs";
 import { command, flag, run } from "cmd-ts";
-import { extractInput } from "./src/extractInputDataset";
-import { extractTextObjects } from "./src/extractInputTextObjects";
+import * as N3 from "n3";
+import { extract } from "./src/extract";
 import { load } from "./src/load";
-import { cacheDirectoryPath } from "./src/paths";
+import { logger } from "./src/logger";
+import { cachesDirectoryPath } from "./src/paths";
 import { transform } from "./src/transform";
 
 run(
   command({
-    description: "extract, transform and load town data",
+    description: "extract, transform and load Towndex data",
     name: "cli",
     args: {
       noCache: flag({
@@ -18,17 +19,23 @@ run(
     },
     handler: async ({ noCache }) => {
       if (noCache) {
-        await fs.promises.rm(cacheDirectoryPath, { recursive: true });
+        logger.debug(`deleting caches directory ${cachesDirectoryPath}`);
+        await fs.promises.rm(cachesDirectoryPath, { recursive: true });
+        logger.debug(`deleted cache directory ${cachesDirectoryPath}`);
       }
+      logger.debug(`cache directory: ${cachesDirectoryPath}`);
 
-      const inputDataset = extractInput();
+      logger.debug("extracting input dataset from stdin");
+      const inputString = fs.readFileSync(process.stdin.fd, "utf-8");
+      const inputParser = new N3.Parser();
+      const inputDataset = new N3.Store();
+      inputDataset.addQuads(inputParser.parse(inputString));
+      logger.debug(`extracted ${inputDataset.size} quads from stdin`);
 
-      await load(
-        transform({
-          documentDatasets: extractTextObjects(inputDataset),
-          inputDataset,
-        }),
-      );
+      await load({
+        inputDataset,
+        transformedDatasets: transform(extract(inputDataset)),
+      });
     },
   }),
   process.argv.slice(2),

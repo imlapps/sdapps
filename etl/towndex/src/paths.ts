@@ -9,8 +9,9 @@ export const dataDirectoryPath = path.resolve(
   thisDirectoryPath,
   "..",
   "..",
+  "..",
   "data",
   "towndex",
 );
 
-export const cacheDirectoryPath = path.join(dataDirectoryPath, ".cache");
+export const cachesDirectoryPath = path.join(dataDirectoryPath, ".caches");
