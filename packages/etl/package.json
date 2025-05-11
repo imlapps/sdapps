@@ -2,6 +2,7 @@
   "dependencies": {
     "@aws-sdk/client-textract": "^3.645.0",
     "amazon-textract-response-parser": "^0.4.2",
+    "base-x": "^3.0.9",
     "html-to-text": "^9.0.5",
     "mime": "^4.0.4",
     "pino": "^9.1.0",
