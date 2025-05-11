@@ -132,7 +132,9 @@ async function extractTextObjectContent(
         .unsafeCoerce()
         .html()
     ).unsafeCoerce();
-    logger.debug(`got HTML for ${contentUrl.value}`);
+    logger.debug(
+      `got HTML (${contentHtml.length} characters) for ${contentUrl.value}`,
+    );
 
     const messages: CoreMessage[] = [
       {
