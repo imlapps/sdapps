@@ -1,13 +1,9 @@
 import { Either } from "purify-ts";
 
-export abstract class Document {
+export interface Document {
   readonly mimeType: string;
 
-  constructor({ mimeType }: { mimeType: string }) {
-    this.mimeType = mimeType;
-  }
-
-  abstract buffer(): Promise<Either<Error, Buffer>>;
-  abstract html(): Promise<Either<Error, string>>;
-  abstract text(): Promise<Either<Error, string>>;
+  buffer(): Promise<Either<Error, Buffer>>;
+  html(): Promise<Either<Error, string>>;
+  text(): Promise<Either<Error, string>>;
 }

@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "vitest";
@@ -14,17 +15,19 @@ describe.skipIf(process.env["CI"])("DocumentTextExtractor", async () => {
     it(`should extract text from ${testDocumentFilePath} `, async ({
       expect,
     }) => {
-      const result = await (
-        (
-          await DocumentTextExtractor.create({
-            cacheDirectoryPath: path.resolve(cachesDirectoryPath, "textract"),
-          })
-        )
-          .ifLeft((error) => {
-            throw error;
-          })
-          .extract() as DocumentTextExtractor
-      ).extractDocumentText(testDocumentFilePath);
+      const result = (
+        await (
+          (
+            await DocumentTextExtractor.create({
+              cacheDirectoryPath: path.resolve(cachesDirectoryPath, "textract"),
+            })
+          )
+            .ifLeft((error) => {
+              throw error;
+            })
+            .extract() as DocumentTextExtractor
+        ).extractDocumentText(await fs.promises.readFile(testDocumentFilePath))
+      ).unsafeCoerce();
       expect(result.html).not.toHaveLength(0);
       expect(result.text).not.toHaveLength(0);
     });

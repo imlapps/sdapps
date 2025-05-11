@@ -95,10 +95,8 @@ export class DocumentTextExtractor {
   }
 
   async extractDocumentText(
-    documentFilePath: string,
-  ): Promise<DocumentTextExtractor.Result> {
-    const documentBuffer = await fs.promises.readFile(documentFilePath);
-
+    documentBuffer: Buffer,
+  ): Promise<Either<Error, DocumentTextExtractor.Result>> {
     const documentSha256HashHexDigest = sha256(documentBuffer);
 
     const documentCacheDirectoryPath = path.resolve(
@@ -178,11 +176,13 @@ export class DocumentTextExtractor {
       ]);
     }
 
-    return new DocumentTextExtractor.Result({
-      htmlFilePath: resultHtmlFilePath,
-      jsonFilePath: resultJsonFilePath,
-      textFilePath: resultTextFilePath,
-    });
+    return Either.of(
+      new DocumentTextExtractor.Result({
+        htmlFilePath: resultHtmlFilePath,
+        jsonFilePath: resultJsonFilePath,
+        textFilePath: resultTextFilePath,
+      }),
+    );
   }
 }
 

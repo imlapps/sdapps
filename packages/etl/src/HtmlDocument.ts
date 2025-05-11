@@ -5,29 +5,26 @@ import { Document } from "./Document";
 
 const convert = compile();
 
-export class HtmlDocument extends Document {
+export class HtmlDocument implements Document {
   private readonly _html: string;
+  readonly mimeType = "text/html";
 
-  constructor({
-    html,
-    ...superParameters
-  }: { html: string } & ConstructorParameters<typeof Document>[0]) {
-    super(superParameters);
+  constructor({ html }: { html: string }) {
     this._html = html;
   }
 
   @Memoize()
-  override async buffer(): Promise<Either<Error, Buffer>> {
+  async buffer(): Promise<Either<Error, Buffer>> {
     return Either.of(Buffer.from(this._html));
   }
 
   @Memoize()
-  override async html(): Promise<Either<Error, string>> {
+  async html(): Promise<Either<Error, string>> {
     return Either.of(this._html);
   }
 
   @Memoize()
-  override async text(): Promise<Either<Error, string>> {
+  async text(): Promise<Either<Error, string>> {
     return Either.of(convert(this._html));
   }
 }
