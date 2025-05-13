@@ -10,6 +10,7 @@ import {
 } from "@sdapps/models";
 import { _void } from "@tpluscode/rdf-ns-builders";
 import { CoreMessage, generateText } from "ai";
+import { FetchDocumentLoader } from "jsonld-context-parser";
 import { JsonLdParser } from "jsonld-streaming-parser";
 import { jsonrepair } from "jsonrepair";
 import * as N3 from "n3";
@@ -192,7 +193,10 @@ ${contentHtml}
 function parseJsonLdString(jsonLdString: string): Promise<DatasetCore> {
   return new Promise((resolve, reject) => {
     const store = new N3.Store();
-    const parser = new JsonLdParser({ dataFactory: N3.DataFactory });
+    const parser = new JsonLdParser({
+      dataFactory: N3.DataFactory,
+      documentLoader: new FetchDocumentLoader(fetch as any),
+    });
     parser.on("data", (quad) => {
       store.add(quad);
     });
