@@ -3,11 +3,29 @@ import type { BlankNode, DatasetCore, NamedNode } from "@rdfjs/types";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
-import { ResourceSet } from "rdfjs-resource";
+import { Either, Left } from "purify-ts";
+import { type Resource, ResourceSet } from "rdfjs-resource";
 import type { TextObject } from "./TextObject.js";
 import { logger } from "./logger.js";
 
 const sdoNamespaces = ["https://schema.org/", "http://schema.org/"];
+
+function sdoValue(
+  resource: Resource,
+  unqualifiedPredicate: string,
+): Either<Resource.ValueError, Resource.Value> {
+  let valueError: Either<Resource.ValueError, Resource.Value>;
+  for (const sdoNamespace of sdoNamespaces) {
+    const value = resource.value(
+      N3.DataFactory.namedNode(`${sdoNamespace}${unqualifiedPredicate}`),
+    );
+    if (value.isRight()) {
+      return value;
+    }
+    valueError = value;
+  }
+  return valueError!;
+}
 
 function skolemize(dataset: DatasetCore, namespace: NamedNode): DatasetCore {
   // Simple approach: one pass to construct the names and another pass to replace them
@@ -33,38 +51,46 @@ function skolemize(dataset: DatasetCore, namespace: NamedNode): DatasetCore {
     }
 
     const resource = resourceSet.resource(rdfTypeQuad.subject);
-    let schemaJobTitle: string | undefined;
-    let schemaName: string | undefined;
-    for (const sdoNamespace of sdoNamespaces) {
-      if (!schemaJobTitle) {
-        schemaJobTitle = resource
-          .value(N3.DataFactory.namedNode(`${sdoNamespace}jobTitle`))
-          .chain((value) => value.toString())
-          .toMaybe()
-          .extract();
-      }
-      if (!schemaName) {
-        schemaName = resource
-          .value(N3.DataFactory.namedNode(`${sdoNamespace}name`))
-          .chain((value) => value.toString())
-          .toMaybe()
-          .extract();
-      }
-    }
-    const name: string[] = [];
-    if (schemaJobTitle) {
-      name.push(schemaJobTitle);
-    }
-    if (!schemaName) {
-      logger.warn("blakn node has no schema:name");
+
+    const nameQualifiers: string[] = [
+      kebabCase(rdfTypeQuad.object.value.substring(rdfTypeNamespace.length)),
+    ];
+    sdoValue(resource, "startDate")
+      .chain((value) => value.toString())
+      // startDate doesn't always have proper literal datatype
+      .chain((value) => {
+        const date = Date.parse(value);
+        return !Number.isNaN(date)
+          ? Either.of(new Date(date))
+          : Left(new Error("value is not a date"));
+      })
+      .ifRight((value) => {
+        nameQualifiers.push(
+          value.getFullYear().toString(),
+          value.getMonth().toString().padStart(2, "0"),
+          value.getDate().toString().padStart(2, "0"),
+        );
+      });
+
+    const schemaName = sdoValue(resource, "name").chain((value) =>
+      value.toString(),
+    );
+    if (!schemaName.isRight()) {
+      logger.warn("blank node has no schema:name");
       continue;
     }
-    name.push(schemaName);
+    const unqualifiedNameParts: string[] = [];
+    sdoValue(resource, "jobTitle")
+      .chain((value) => value.toString())
+      .ifRight((value) => {
+        unqualifiedNameParts.push(value);
+      });
+    unqualifiedNameParts.push(schemaName.unsafeCoerce());
 
     blankNodeToNamedNodeMap.set(
       rdfTypeQuad.subject,
       N3.DataFactory.namedNode(
-        `${namespace.value}${kebabCase(rdfTypeQuad.object.value.substring(rdfTypeNamespace.length))}/${kebabCase(name.join(" "))}`,
+        `${namespace.value}${nameQualifiers.join("/")}/${kebabCase(unqualifiedNameParts.join(" "))}`,
       ),
     );
   }
