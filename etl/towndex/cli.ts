@@ -1,6 +1,6 @@
 #!/usr/bin/env npm exec tsx --
 import fs from "node:fs";
-import { command, flag, option, run } from "cmd-ts";
+import { command, flag, run } from "cmd-ts";
 import * as dotenv from "dotenv";
 import * as N3 from "n3";
 import { extract } from "./src/extract";
@@ -14,16 +14,11 @@ run(
     description: "extract, transform and load Towndex data",
     name: "cli",
     args: {
-      namespace: option({
-        description: "namespace to mint new IRIs in",
-        long: "namespace",
-        short: "n",
-      }),
       noCache: flag({
         long: "no-cache",
       }),
     },
-    handler: async ({ namespace, noCache }) => {
+    handler: async ({ noCache }) => {
       dotenv.config();
 
       if (noCache) {
@@ -43,7 +38,6 @@ run(
       await load({
         inputDataset,
         transformedDatasets: transform({
-          namespace: N3.DataFactory.namedNode(namespace),
           textObjects: extract(inputDataset),
         }),
       });

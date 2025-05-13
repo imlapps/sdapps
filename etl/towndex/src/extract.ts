@@ -8,6 +8,7 @@ import {
   Identifier,
   RdfjsDatasetModelSet,
 } from "@sdapps/models";
+import { _void } from "@tpluscode/rdf-ns-builders";
 import { CoreMessage, generateText } from "ai";
 import { JsonLdParser } from "jsonld-streaming-parser";
 import { jsonrepair } from "jsonrepair";
@@ -49,11 +50,23 @@ export async function* extract(
   for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
     const textObject = model as GeneratedTextObject;
 
+    const uriSpace = modelSet.resourceSet
+      .resource(textObject.identifier)
+      .value(_void.uriSpace)
+      .chain((value) => value.toString());
+    if (uriSpace.isLeft()) {
+      logger.error(
+        `TextObject ${Identifier.toString(textObject.identifier)} has no void:uriSpace`,
+      );
+      continue;
+    }
+
     const textObjectEither = (await extractTextObjectContent(textObject)).map(
       (content) =>
         new TextObject({
           content,
           identifier: textObject.identifier,
+          uriSpace: uriSpace.unsafeCoerce(),
         }),
     );
     if (textObjectEither.isLeft()) {

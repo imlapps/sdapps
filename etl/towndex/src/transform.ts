@@ -27,7 +27,7 @@ function sdoValue(
   return valueError!;
 }
 
-function skolemize(dataset: DatasetCore, namespace: NamedNode): DatasetCore {
+function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
   // Simple approach: one pass to construct the names and another pass to replace them
 
   const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
@@ -90,7 +90,7 @@ function skolemize(dataset: DatasetCore, namespace: NamedNode): DatasetCore {
     blankNodeToNamedNodeMap.set(
       rdfTypeQuad.subject,
       N3.DataFactory.namedNode(
-        `${namespace.value}${nameQualifiers.join("/")}/${kebabCase(unqualifiedNameParts.join(" "))}`,
+        `${uriSpace}${nameQualifiers.join("/")}/${kebabCase(unqualifiedNameParts.join(" "))}`,
       ),
     );
   }
@@ -110,13 +110,11 @@ function skolemize(dataset: DatasetCore, namespace: NamedNode): DatasetCore {
 }
 
 export async function* transform({
-  namespace,
   textObjects,
 }: {
-  namespace: NamedNode;
   textObjects: AsyncIterable<TextObject>;
 }): AsyncIterable<DatasetCore> {
   for await (const textObject of textObjects) {
-    yield skolemize(textObject.content.dataset, namespace);
+    yield skolemize(textObject.content.dataset, textObject.uriSpace);
   }
 }
