@@ -197,6 +197,9 @@ function parseJsonLdString(jsonLdString: string): Promise<DatasetCore> {
       dataFactory: N3.DataFactory,
       documentLoader: new FetchDocumentLoader(fetch as any),
     });
+    parser.on("context", (context) => {
+      logger.debug(`JSON-LD context: ${context}`);
+    });
     parser.on("data", (quad) => {
       store.add(quad);
     });
