@@ -1,31 +1,57 @@
 import TermMap from "@rdfjs/term-map";
-import type { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
-import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
+import type {
+  BlankNode,
+  DatasetCore,
+  Literal,
+  NamedNode,
+  Term,
+} from "@rdfjs/types";
+import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
-import { Either } from "purify-ts";
-import { type Resource, ResourceSet } from "rdfjs-resource";
+import { Maybe } from "purify-ts";
+import { MutableResourceSet, type Resource, ResourceSet } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type { TextObject } from "./TextObject.js";
 import { logger } from "./logger.js";
 
-const sdoNamespaces = ["https://schema.org/", "http://schema.org/"];
-
-function sdoValue(
-  resource: Resource,
-  unqualifiedPredicate: string,
-): Either<Resource.ValueError, Resource.Value> {
-  let valueError: Either<Resource.ValueError, Resource.Value>;
-  for (const sdoNamespace of sdoNamespaces) {
-    const value = resource.value(
-      N3.DataFactory.namedNode(`${sdoNamespace}${unqualifiedPredicate}`),
-    );
-    if (value.isRight()) {
-      return value;
+function addInversePropertyQuads(dataset: DatasetCore): DatasetCore {
+  const resultDataset = copyDataset(dataset);
+  const properties = [[schema.subEvent, schema.superEvent]];
+  for (const quad of dataset) {
+    for (const [directProperty, inverseProperty] of properties) {
+      if (quad.predicate.equals(directProperty)) {
+        invariant(quad.object.termType !== "Literal");
+        resultDataset.add(
+          N3.DataFactory.quad(
+            quad.object,
+            inverseProperty,
+            quad.subject,
+            quad.graph,
+          ),
+        );
+      } else if (quad.predicate.equals(inverseProperty)) {
+        invariant(quad.object.termType !== "Literal");
+        resultDataset.add(
+          N3.DataFactory.quad(
+            quad.object,
+            directProperty,
+            quad.subject,
+            quad.graph,
+          ),
+        );
+      }
     }
-    valueError = value;
   }
-  return valueError!;
+  return resultDataset;
+}
+
+function copyDataset(dataset: DatasetCore): DatasetCore {
+  const datasetCopy = new N3.Store();
+  for (const quad of dataset) {
+    datasetCopy.add(quad);
+  }
+  return datasetCopy;
 }
 
 function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
@@ -34,26 +60,15 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
     if (literal.datatype.value.startsWith(xsd[""].value)) {
       return literal;
     }
-    const sdoNamespace = sdoNamespaces.find((sdoNamespace) =>
-      literal.datatype.value.startsWith(sdoNamespace),
+    if (literal.datatype.equals(schema.Date)) {
+      return N3.DataFactory.literal(literal.value, xsd.date);
+    }
+    if (literal.datatype.equals(schema.DateTime)) {
+      return N3.DataFactory.literal(literal.value, xsd.dateTime);
+    }
+    throw new Error(
+      `unrecognized schema: literal datatype: ${literal.datatype.value}`,
     );
-    if (!sdoNamespace) {
-      logger.debug(
-        `non-xsd:, non-schema: literal datatype: ${literal.datatype.value}`,
-      );
-      return literal;
-    }
-    const sdoDatatype = literal.datatype.value.substring(sdoNamespace.length);
-    switch (sdoDatatype) {
-      case "Date":
-        return N3.DataFactory.literal(literal.value, xsd.date);
-      case "DateTime":
-        return N3.DataFactory.literal(literal.value, xsd.dateTime);
-      default:
-        throw new Error(
-          `unrecognized schema: literal datatype: ${literal.datatype.value}`,
-        );
-    }
   }
 
   const resultDataset = new N3.Store();
@@ -74,26 +89,50 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
   return resultDataset;
 }
 
-function setNamedGraph(
-  dataset: DatasetCore,
-  namedGraph: NamedNode,
-): DatasetCore {
-  const resultDataset = new N3.Store();
-  const defaultGraph = N3.DataFactory.defaultGraph();
-  for (const quad of dataset) {
-    if (quad.graph.equals(defaultGraph)) {
-      resultDataset.add(
-        N3.DataFactory.quad(
-          quad.subject,
-          quad.predicate,
-          quad.object,
-          namedGraph,
-        ),
-      );
-    } else {
-      logger.warn("quad is already in a named graph");
-      resultDataset.add(quad);
+function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
+  invariant(schema[""].value === "http://schema.org/");
+  const httpsSdoNamespace = "https://schema.org/";
+
+  function normalizeTermSdoNamespace<TermT extends Term>(term: TermT): TermT {
+    switch (term.termType) {
+      case "BlankNode":
+      case "DefaultGraph":
+      case "Quad":
+      case "Variable":
+        return term;
+      case "Literal":
+        if (
+          term.language.length === 0 &&
+          term.datatype.value.startsWith(httpsSdoNamespace)
+        ) {
+          return N3.DataFactory.literal(
+            term.value,
+            N3.DataFactory.namedNode(
+              `${schema[""].value}${term.datatype.value.substring(httpsSdoNamespace.length)}`,
+            ),
+          ) as any;
+        }
+        return term;
+      case "NamedNode":
+        if (term.value.startsWith(httpsSdoNamespace)) {
+          return N3.DataFactory.namedNode(
+            `${schema[""].value}${term.value.substring(httpsSdoNamespace.length)}`,
+          ) as any;
+        }
+        return term;
     }
+  }
+
+  const resultDataset = new N3.Store();
+  for (const quad of dataset) {
+    resultDataset.add(
+      N3.DataFactory.quad(
+        normalizeTermSdoNamespace(quad.subject),
+        normalizeTermSdoNamespace(quad.predicate),
+        normalizeTermSdoNamespace(quad.object),
+        quad.graph,
+      ),
+    );
   }
   return resultDataset;
 }
@@ -111,10 +150,7 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
     if (rdfTypeQuad.object.termType !== "NamedNode") {
       continue;
     }
-    const rdfTypeNamespace = sdoNamespaces.find((sdoNamespace) =>
-      rdfTypeQuad.object.value.startsWith(sdoNamespace),
-    );
-    if (!rdfTypeNamespace) {
+    if (!rdfTypeQuad.object.value.startsWith(schema[""].value)) {
       logger.warn(
         `blank node has non-schema.org rdf:type: ${rdfTypeQuad.object.value}`,
       );
@@ -124,9 +160,10 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
     const resource = resourceSet.resource(rdfTypeQuad.subject);
 
     const nameQualifiers: string[] = [
-      kebabCase(rdfTypeQuad.object.value.substring(rdfTypeNamespace.length)),
+      kebabCase(rdfTypeQuad.object.value.substring(schema[""].value.length)),
     ];
-    sdoValue(resource, "startDate")
+    resource
+      .value(schema.startDate)
       .chain((value) => value.toDate())
       .ifRight((value) => {
         nameQualifiers.push(
@@ -136,15 +173,16 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
         );
       });
 
-    const schemaName = sdoValue(resource, "name").chain((value) =>
-      value.toString(),
-    );
+    const schemaName = resource
+      .value(schema.name)
+      .chain((value) => value.toString());
     if (!schemaName.isRight()) {
       logger.warn("blank node has no schema:name");
       continue;
     }
     const unqualifiedNameParts: string[] = [];
-    sdoValue(resource, "jobTitle")
+    resource
+      .value(schema.jobTitle)
       .chain((value) => value.toString())
       .ifRight((value) => {
         unqualifiedNameParts.push(value);
@@ -173,17 +211,98 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
   return skolemizedDataset;
 }
 
+function setNamedGraph(
+  dataset: DatasetCore,
+  namedGraph: NamedNode,
+): DatasetCore {
+  const resultDataset = new N3.Store();
+  const defaultGraph = N3.DataFactory.defaultGraph();
+  for (const quad of dataset) {
+    if (quad.graph.equals(defaultGraph)) {
+      resultDataset.add(
+        N3.DataFactory.quad(
+          quad.subject,
+          quad.predicate,
+          quad.object,
+          namedGraph,
+        ),
+      );
+    } else {
+      logger.warn("quad is already in a named graph");
+      resultDataset.add(quad);
+    }
+  }
+  return resultDataset;
+}
+
+function propagateEventDates(dataset: DatasetCore): DatasetCore {
+  const resultDataset = copyDataset(dataset);
+
+  const resourceSet = new MutableResourceSet({
+    dataFactory: N3.DataFactory,
+    dataset: resultDataset,
+  });
+
+  const eventDateRecursive = (
+    eventResource: Resource,
+    predicate: NamedNode,
+  ): Maybe<Literal> => {
+    const eventDateLiteral = eventResource
+      .value(predicate)
+      .chain((value) => value.toLiteral());
+    if (eventDateLiteral.isRight()) {
+      return Maybe.of(eventDateLiteral.unsafeCoerce());
+    }
+    const superEventResource = eventResource
+      .value(schema.superEvent)
+      .chain((value) => value.toResource());
+    if (superEventResource.isRight()) {
+      return eventDateRecursive(superEventResource.unsafeCoerce(), predicate);
+    }
+    return Maybe.empty();
+  };
+
+  for (const eventResource of resourceSet.instancesOf(schema.Event)) {
+    const eventRdfTypeQuads = [
+      ...dataset.match(eventResource.identifier, rdf.type, null),
+    ];
+    invariant(eventRdfTypeQuads.length > 0);
+    const mutateGraph = eventRdfTypeQuads[0].graph;
+    for (const predicate of [schema.startDate]) {
+      eventDateRecursive(eventResource, predicate).ifJust(
+        (eventDateLiteral) => {
+          resultDataset.add(
+            N3.DataFactory.quad(
+              eventResource.identifier,
+              predicate,
+              eventDateLiteral,
+              mutateGraph,
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  return resultDataset;
+}
+
 export async function* transform({
   textObjects,
 }: {
   textObjects: AsyncIterable<TextObject>;
 }): AsyncIterable<DatasetCore> {
   for await (const textObject of textObjects) {
+    // Order of transformations is important
     let dataset = textObject.content.dataset;
+
+    dataset = normalizeSdoNamespace(dataset);
     dataset = fixLiteralDatatypes(dataset);
     if (textObject.identifier.termType === "NamedNode") {
       dataset = setNamedGraph(dataset, textObject.identifier);
     }
+    dataset = addInversePropertyQuads(dataset);
+    dataset = propagateEventDates(dataset);
     dataset = skolemize(dataset, textObject.uriSpace);
     yield dataset;
   }

@@ -4,9 +4,11 @@ import * as N3 from "n3";
 
 export async function load({
   inputDataset,
+  sdoDataset,
   transformedDatasets,
 }: {
   inputDataset: DatasetCore;
+  sdoDataset: DatasetCore;
   transformedDatasets: AsyncIterable<DatasetCore>;
 }): Promise<void> {
   const writer = new N3.Writer(process.stdout, {
@@ -20,6 +22,9 @@ export async function load({
   });
 
   for (const quad of inputDataset) {
+    writer.addQuad(quad);
+  }
+  for (const quad of sdoDataset) {
     writer.addQuad(quad);
   }
   for await (const transformedDataset of transformedDatasets) {
