@@ -9,13 +9,14 @@ import {
   Identifier,
   RdfjsDatasetModelSet,
 } from "@sdapps/models";
-import { _void, rdfs } from "@tpluscode/rdf-ns-builders";
+import { _void, rdf, rdfs, schema } from "@tpluscode/rdf-ns-builders";
 import { CoreMessage, generateText } from "ai";
 import { FetchDocumentLoader } from "jsonld-context-parser";
 import { JsonLdParser } from "jsonld-streaming-parser";
 import { jsonrepair } from "jsonrepair";
 import * as N3 from "n3";
 import { Either, EitherAsync, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { TextObject } from "./TextObject.js";
 import { fetch } from "./fetch.js";
 import { logger } from "./logger.js";
@@ -69,7 +70,7 @@ function extractInputDataset(): DatasetCore {
 }
 
 async function extractOntologyDataset(): Promise<DatasetCore> {
-  const ontologyDataset = new N3.Store();
+  const ontologyDataset: DatasetCore = new N3.Store();
   for (const quad of new N3.Parser().parse(
     (
       await fs.promises.readFile(
@@ -80,11 +81,32 @@ async function extractOntologyDataset(): Promise<DatasetCore> {
       )
     ).toString("utf-8"),
   )) {
-    if (quad.predicate.equals(rdfs.subClassOf)) {
-      ontologyDataset.add(quad);
+    ontologyDataset.add(quad);
+  }
+
+  const filteredOntologyDataset = new N3.Store();
+  // Add (s, rdfs:subClassOf, o) triples
+  for (const quad of ontologyDataset.match(null, rdfs.subClassOf, null)) {
+    invariant(quad.graph.termType === "DefaultGraph");
+    filteredOntologyDataset.add(quad);
+  }
+  // Add (s, rdf:type, rdf:Property) when there's also a (s, schema:inverseOf, o)
+  for (const propertyRdfTypeQuad of ontologyDataset.match(
+    null,
+    rdf.type,
+    rdf.Property,
+  )) {
+    for (const propertyInverseOfQuad of ontologyDataset.match(
+      propertyRdfTypeQuad.subject,
+      schema.inverseOf,
+      null,
+    )) {
+      filteredOntologyDataset.add(propertyRdfTypeQuad);
+      filteredOntologyDataset.add(propertyInverseOfQuad);
     }
   }
-  return ontologyDataset;
+
+  return filteredOntologyDataset;
 }
 
 async function extractTextObjectContent(

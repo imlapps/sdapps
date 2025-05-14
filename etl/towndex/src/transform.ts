@@ -15,38 +15,42 @@ import { invariant } from "ts-invariant";
 import type { TextObject } from "./TextObject.js";
 import { logger } from "./logger.js";
 
-function addInversePropertyQuads(dataset: DatasetCore): DatasetCore {
-  const resultDataset = copyDataset(dataset);
-  const properties = [[schema.subEvent, schema.superEvent]];
-  for (const quad of dataset) {
-    for (const [directProperty, inverseProperty] of properties) {
-      if (quad.predicate.equals(directProperty)) {
-        invariant(quad.object.termType !== "Literal");
-        resultDataset.add(
-          N3.DataFactory.quad(
-            quad.object,
-            inverseProperty,
-            quad.subject,
-            quad.graph,
-          ),
-        );
-      } else if (quad.predicate.equals(inverseProperty)) {
-        invariant(quad.object.termType !== "Literal");
-        resultDataset.add(
-          N3.DataFactory.quad(
-            quad.object,
-            directProperty,
-            quad.subject,
-            quad.graph,
-          ),
-        );
-      }
+function addInversePropertyQuads({
+  instanceDataset,
+  ontologyDataset,
+}: {
+  instanceDataset: DatasetCore;
+  ontologyDataset: DatasetCore;
+}): DatasetCore {
+  const resultDataset = copyDataset(instanceDataset);
+
+  for (const propertyInverseOfQuad of ontologyDataset.match(
+    null,
+    schema.inverseOf,
+    null,
+  )) {
+    const directProperty = propertyInverseOfQuad.subject;
+    invariant(directProperty.termType === "NamedNode");
+    const inverseProperty = propertyInverseOfQuad.object;
+    invariant(inverseProperty.termType === "NamedNode");
+
+    for (const quad of instanceDataset.match(null, directProperty, null)) {
+      invariant(quad.object.termType !== "Literal");
+      resultDataset.add(
+        N3.DataFactory.quad(
+          quad.object,
+          inverseProperty,
+          quad.subject,
+          quad.graph,
+        ),
+      );
     }
   }
+
   return resultDataset;
 }
 
-function addTextObjectAboutQuad(
+function addTextObjectAboutQuads(
   dataset: DatasetCore,
   textObject: TextObject,
 ): DatasetCore {
@@ -61,6 +65,14 @@ function addTextObjectAboutQuad(
           textObject.identifier,
           schema.about,
           eventResource.identifier,
+        ),
+      );
+      resultDataset.add(
+        N3.DataFactory.quad(
+          eventResource.identifier,
+          schema.subjectOf,
+          textObject.identifier,
+          textObject.identifier,
         ),
       );
       return resultDataset;
@@ -344,9 +356,10 @@ export async function* transform({
     transformedTextObjectContentDataset = fixLiteralDatatypes(
       transformedTextObjectContentDataset,
     );
-    transformedTextObjectContentDataset = addInversePropertyQuads(
-      transformedTextObjectContentDataset,
-    );
+    transformedTextObjectContentDataset = addInversePropertyQuads({
+      instanceDataset: transformedTextObjectContentDataset,
+      ontologyDataset,
+    });
     transformedTextObjectContentDataset = propagateEventDates(
       transformedTextObjectContentDataset,
     );
@@ -355,7 +368,7 @@ export async function* transform({
       ontologyDataset,
       uriSpace: textObject.uriSpace,
     });
-    transformedTextObjectContentDataset = addTextObjectAboutQuad(
+    transformedTextObjectContentDataset = addTextObjectAboutQuads(
       transformedTextObjectContentDataset,
       textObject,
     );
