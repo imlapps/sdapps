@@ -61,7 +61,12 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
       return literal;
     }
     if (literal.datatype.equals(schema.Date)) {
-      return N3.DataFactory.literal(literal.value, xsd.date);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(literal.value)) {
+        // The JSON-LD -> RDF conversion with the schema.org context has a lot of Date | DateTime unions
+        // Test whether it's only a date or also has a time.
+        return N3.DataFactory.literal(literal.value, xsd.date);
+      }
+      return N3.DataFactory.literal(literal.value, xsd.dateTime);
     }
     if (literal.datatype.equals(schema.DateTime)) {
       return N3.DataFactory.literal(literal.value, xsd.dateTime);
@@ -168,7 +173,7 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
       .ifRight((value) => {
         nameQualifiers.push(
           value.getFullYear().toString(),
-          value.getMonth().toString().padStart(2, "0"),
+          (value.getMonth() + 1).toString().padStart(2, "0"),
           value.getDate().toString().padStart(2, "0"),
         );
       });
