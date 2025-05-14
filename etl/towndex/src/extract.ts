@@ -104,6 +104,14 @@ async function extractOntologyDataset(): Promise<DatasetCore> {
       filteredOntologyDataset.add(propertyRdfTypeQuad);
       filteredOntologyDataset.add(propertyInverseOfQuad);
     }
+    for (const propertySupersededByQuad of ontologyDataset.match(
+      propertyRdfTypeQuad.subject,
+      schema.supersededBy,
+      null,
+    )) {
+      filteredOntologyDataset.add(propertyRdfTypeQuad);
+      filteredOntologyDataset.add(propertySupersededByQuad);
+    }
   }
 
   return filteredOntologyDataset;

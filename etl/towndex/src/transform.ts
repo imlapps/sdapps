@@ -177,6 +177,44 @@ function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
   return resultDataset;
 }
 
+function replaceSupersededPredicates({
+  instanceDataset,
+  ontologyDataset,
+}: {
+  instanceDataset: DatasetCore;
+  ontologyDataset: DatasetCore;
+}): DatasetCore {
+  const resultDataset = new N3.Store();
+
+  for (const quad of instanceDataset) {
+    let addQuad = true;
+    for (const supersededByQuad of ontologyDataset.match(
+      null,
+      schema.supersededBy,
+      null,
+    )) {
+      if (quad.predicate.equals(supersededByQuad.subject)) {
+        invariant(supersededByQuad.object.termType === "NamedNode");
+        resultDataset.add(
+          N3.DataFactory.quad(
+            quad.subject,
+            supersededByQuad.object,
+            quad.object,
+            quad.graph,
+          ),
+        );
+        addQuad = false;
+        break;
+      }
+    }
+    if (addQuad) {
+      resultDataset.add(quad);
+    }
+  }
+
+  return resultDataset;
+}
+
 function skolemize({
   instanceDataset,
   ontologyDataset,
@@ -353,6 +391,10 @@ export async function* transform({
     transformedTextObjectContentDataset = normalizeSdoNamespace(
       transformedTextObjectContentDataset,
     );
+    transformedTextObjectContentDataset = replaceSupersededPredicates({
+      instanceDataset: transformedTextObjectContentDataset,
+      ontologyDataset,
+    });
     transformedTextObjectContentDataset = fixLiteralDatatypes(
       transformedTextObjectContentDataset,
     );
