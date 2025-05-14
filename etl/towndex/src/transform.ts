@@ -74,6 +74,30 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
   return resultDataset;
 }
 
+function setNamedGraph(
+  dataset: DatasetCore,
+  namedGraph: NamedNode,
+): DatasetCore {
+  const resultDataset = new N3.Store();
+  const defaultGraph = N3.DataFactory.defaultGraph();
+  for (const quad of dataset) {
+    if (quad.graph.equals(defaultGraph)) {
+      resultDataset.add(
+        N3.DataFactory.quad(
+          quad.subject,
+          quad.predicate,
+          quad.object,
+          namedGraph,
+        ),
+      );
+    } else {
+      logger.warn("quad is already in a named graph");
+      resultDataset.add(quad);
+    }
+  }
+  return resultDataset;
+}
+
 function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
   // Simple approach: one pass to construct the names and another pass to replace them
 
@@ -155,9 +179,12 @@ export async function* transform({
   textObjects: AsyncIterable<TextObject>;
 }): AsyncIterable<DatasetCore> {
   for await (const textObject of textObjects) {
-    yield skolemize(
-      fixLiteralDatatypes(textObject.content.dataset),
-      textObject.uriSpace,
-    );
+    let dataset = textObject.content.dataset;
+    dataset = fixLiteralDatatypes(dataset);
+    if (textObject.identifier.termType === "NamedNode") {
+      dataset = setNamedGraph(dataset, textObject.identifier);
+    }
+    dataset = skolemize(dataset, textObject.uriSpace);
+    yield dataset;
   }
 }
