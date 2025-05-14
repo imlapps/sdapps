@@ -1,10 +1,11 @@
 import TermMap from "@rdfjs/term-map";
-import type { BlankNode, DatasetCore, NamedNode } from "@rdfjs/types";
-import { rdf } from "@tpluscode/rdf-ns-builders";
+import type { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
+import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
-import { Either, Left } from "purify-ts";
+import { Either } from "purify-ts";
 import { type Resource, ResourceSet } from "rdfjs-resource";
+import { invariant } from "ts-invariant";
 import type { TextObject } from "./TextObject.js";
 import { logger } from "./logger.js";
 
@@ -25,6 +26,52 @@ function sdoValue(
     valueError = value;
   }
   return valueError!;
+}
+
+function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
+  function fixLiteralDatatype(literal: Literal): Literal {
+    invariant(literal.datatype);
+    if (literal.datatype.value.startsWith(xsd[""].value)) {
+      return literal;
+    }
+    const sdoNamespace = sdoNamespaces.find((sdoNamespace) =>
+      literal.datatype.value.startsWith(sdoNamespace),
+    );
+    if (!sdoNamespace) {
+      logger.debug(
+        `non-xsd:, non-schema: literal datatype: ${literal.datatype.value}`,
+      );
+      return literal;
+    }
+    const sdoDatatype = literal.datatype.value.substring(sdoNamespace.length);
+    switch (sdoDatatype) {
+      case "Date":
+        return N3.DataFactory.literal(literal.value, xsd.date);
+      case "DateTime":
+        return N3.DataFactory.literal(literal.value, xsd.dateTime);
+      default:
+        throw new Error(
+          `unrecognized schema: literal datatype: ${literal.datatype.value}`,
+        );
+    }
+  }
+
+  const resultDataset = new N3.Store();
+  for (const quad of dataset) {
+    if (quad.object.termType !== "Literal") {
+      resultDataset.add(quad);
+      continue;
+    }
+    resultDataset.add(
+      N3.DataFactory.quad(
+        quad.subject,
+        quad.predicate,
+        fixLiteralDatatype(quad.object),
+        quad.graph,
+      ),
+    );
+  }
+  return resultDataset;
 }
 
 function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
@@ -56,14 +103,7 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
       kebabCase(rdfTypeQuad.object.value.substring(rdfTypeNamespace.length)),
     ];
     sdoValue(resource, "startDate")
-      .chain((value) => value.toString())
-      // startDate doesn't always have proper literal datatype
-      .chain((value) => {
-        const date = Date.parse(value);
-        return !Number.isNaN(date)
-          ? Either.of(new Date(date))
-          : Left(new Error("value is not a date"));
-      })
+      .chain((value) => value.toDate())
       .ifRight((value) => {
         nameQualifiers.push(
           value.getFullYear().toString(),
@@ -115,6 +155,9 @@ export async function* transform({
   textObjects: AsyncIterable<TextObject>;
 }): AsyncIterable<DatasetCore> {
   for await (const textObject of textObjects) {
-    yield skolemize(textObject.content.dataset, textObject.uriSpace);
+    yield skolemize(
+      fixLiteralDatatypes(textObject.content.dataset),
+      textObject.uriSpace,
+    );
   }
 }
