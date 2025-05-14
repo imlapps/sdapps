@@ -21,10 +21,10 @@ export async function load({
     },
   });
 
-  for (const quad of inputDataset) {
+  for (const quad of sdoDataset) {
     writer.addQuad(quad);
   }
-  for (const quad of sdoDataset) {
+  for (const quad of inputDataset) {
     writer.addQuad(quad);
   }
   for await (const transformedDataset of transformedDatasets) {

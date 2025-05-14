@@ -46,6 +46,29 @@ function addInversePropertyQuads(dataset: DatasetCore): DatasetCore {
   return resultDataset;
 }
 
+function addTextObjectAboutQuad(
+  dataset: DatasetCore,
+  textObject: TextObject,
+): DatasetCore {
+  const resultDataset = copyDataset(dataset);
+  const resourceSet = new ResourceSet({ dataset: resultDataset });
+  for (const eventResource of resourceSet.instancesOf(schema.Event)) {
+    if (eventResource.value(schema.superEvent).isLeft()) {
+      // This is the root event
+      // Assume the TextObject is about it.
+      resultDataset.add(
+        N3.DataFactory.quad(
+          textObject.identifier,
+          schema.about,
+          eventResource.identifier,
+        ),
+      );
+      return resultDataset;
+    }
+  }
+  return resultDataset;
+}
+
 function copyDataset(dataset: DatasetCore): DatasetCore {
   const datasetCopy = new N3.Store();
   for (const quad of dataset) {
@@ -309,6 +332,8 @@ export async function* transform({
     dataset = addInversePropertyQuads(dataset);
     dataset = propagateEventDates(dataset);
     dataset = skolemize(dataset, textObject.uriSpace);
+    dataset = addTextObjectAboutQuad(dataset, textObject);
+
     yield dataset;
   }
 }
