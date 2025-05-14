@@ -1,14 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { openai } from "@ai-sdk/openai";
-import { DatasetCore } from "@rdfjs/types";
+import { DatasetCore, DefaultGraph, NamedNode } from "@rdfjs/types";
 import { DocumentFactory, fileNameCodec } from "@sdapps/etl";
 import {
   TextObject as GeneratedTextObject,
   Identifier,
   RdfjsDatasetModelSet,
 } from "@sdapps/models";
-import { _void } from "@tpluscode/rdf-ns-builders";
+import { _void, rdfs } from "@tpluscode/rdf-ns-builders";
 import { CoreMessage, generateText } from "ai";
 import { FetchDocumentLoader } from "jsonld-context-parser";
 import { JsonLdParser } from "jsonld-streaming-parser";
@@ -44,38 +45,46 @@ const documentFactory = new DocumentFactory({
   logger,
 });
 
-export async function* extract(
-  inputDataset: DatasetCore,
-): AsyncIterable<TextObject> {
-  const modelSet = new RdfjsDatasetModelSet({ dataset: inputDataset });
-  for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
-    const textObject = model as GeneratedTextObject;
+export async function extract(): Promise<{
+  inputDataset: DatasetCore;
+  ontologyDataset: DatasetCore;
+  textObjects: AsyncIterable<TextObject>;
+}> {
+  const inputDataset = extractInputDataset();
+  return {
+    inputDataset,
+    ontologyDataset: await extractOntologyDataset(),
+    textObjects: extractTextObjects(inputDataset),
+  };
+}
 
-    const uriSpace = modelSet.resourceSet
-      .resource(textObject.identifier)
-      .value(_void.uriSpace)
-      .chain((value) => value.toString());
-    if (uriSpace.isLeft()) {
-      logger.error(
-        `TextObject ${Identifier.toString(textObject.identifier)} has no void:uriSpace`,
-      );
-      continue;
-    }
+function extractInputDataset(): DatasetCore {
+  const inputDataset = new N3.Store();
+  logger.debug("extracting input dataset from stdin");
+  inputDataset.addQuads(
+    new N3.Parser().parse(fs.readFileSync(process.stdin.fd, "utf-8")),
+  );
+  logger.debug(`extracted ${inputDataset.size} quads from stdin`);
+  return inputDataset;
+}
 
-    const textObjectEither = (await extractTextObjectContent(textObject)).map(
-      (content) =>
-        new TextObject({
-          content,
-          identifier: textObject.identifier,
-          uriSpace: uriSpace.unsafeCoerce(),
-        }),
-    );
-    if (textObjectEither.isLeft()) {
-      logger.error(textObjectEither.extract() as Error);
-      continue;
+async function extractOntologyDataset(): Promise<DatasetCore> {
+  const ontologyDataset = new N3.Store();
+  for (const quad of new N3.Parser().parse(
+    (
+      await fs.promises.readFile(
+        path.join(
+          path.dirname(fileURLToPath(import.meta.url)),
+          "schemaorg-current-http.ttl",
+        ),
+      )
+    ).toString("utf-8"),
+  )) {
+    if (quad.predicate.equals(rdfs.subClassOf)) {
+      ontologyDataset.add(quad);
     }
-    yield textObjectEither.unsafeCoerce();
   }
+  return ontologyDataset;
 }
 
 async function extractTextObjectContent(
@@ -180,7 +189,12 @@ ${contentHtml}
     );
 
     logger.debug("parsing completion JSON-LD");
-    const dataset = await parseJsonLdString(cleanedCompletionText);
+    const dataset = await parseJsonLdString(
+      textObject.identifier.termType === "NamedNode"
+        ? textObject.identifier
+        : N3.DataFactory.defaultGraph(),
+      cleanedCompletionText,
+    );
     logger.debug(`parsed ${dataset.size} quads from completion JSON-LD`);
 
     return {
@@ -190,7 +204,44 @@ ${contentHtml}
   });
 }
 
-function parseJsonLdString(jsonLdString: string): Promise<DatasetCore> {
+async function* extractTextObjects(
+  inputDataset: DatasetCore,
+): AsyncIterable<TextObject> {
+  const modelSet = new RdfjsDatasetModelSet({ dataset: inputDataset });
+  for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
+    const textObject = model as GeneratedTextObject;
+
+    const uriSpace = modelSet.resourceSet
+      .resource(textObject.identifier)
+      .value(_void.uriSpace)
+      .chain((value) => value.toString());
+    if (uriSpace.isLeft()) {
+      logger.error(
+        `TextObject ${Identifier.toString(textObject.identifier)} has no void:uriSpace`,
+      );
+      continue;
+    }
+
+    const textObjectEither = (await extractTextObjectContent(textObject)).map(
+      (content) =>
+        new TextObject({
+          content,
+          identifier: textObject.identifier,
+          uriSpace: uriSpace.unsafeCoerce(),
+        }),
+    );
+    if (textObjectEither.isLeft()) {
+      logger.error(textObjectEither.extract() as Error);
+      continue;
+    }
+    yield textObjectEither.unsafeCoerce();
+  }
+}
+
+function parseJsonLdString(
+  defaultGraph: DefaultGraph | NamedNode,
+  jsonLdString: string,
+): Promise<DatasetCore> {
   return new Promise((resolve, reject) => {
     const store = new N3.Store();
     const parser = new JsonLdParser({
@@ -201,7 +252,21 @@ function parseJsonLdString(jsonLdString: string): Promise<DatasetCore> {
       logger.debug(`JSON-LD context: ${context}`);
     });
     parser.on("data", (quad) => {
-      store.add(quad);
+      if (
+        quad.graph.termType === "DefaultGraph" &&
+        defaultGraph.termType !== "DefaultGraph"
+      ) {
+        store.add(
+          N3.DataFactory.quad(
+            quad.subject,
+            quad.predicate,
+            quad.object,
+            defaultGraph,
+          ),
+        );
+      } else {
+        store.add(quad);
+      }
     });
     parser.on("error", reject);
     parser.on("end", () => {

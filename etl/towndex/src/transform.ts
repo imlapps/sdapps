@@ -165,20 +165,35 @@ function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
   return resultDataset;
 }
 
-function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
+function skolemize({
+  instanceDataset,
+  ontologyDataset,
+  uriSpace,
+}: {
+  instanceDataset: DatasetCore;
+  ontologyDataset: DatasetCore;
+  uriSpace: string;
+}): DatasetCore {
   // Simple approach: one pass to construct the names and another pass to replace them
 
-  const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
-  const resourceSet = new ResourceSet({ dataset });
+  // Combine the instance and ontology datasets in order to do instance-of checks on subclasses
+  const combinedDataset = copyDataset(instanceDataset);
+  for (const quad of ontologyDataset) {
+    instanceDataset.add(quad);
+  }
 
-  for (const rdfTypeQuad of dataset.match(null, rdf.type, null, null)) {
+  const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
+  const resourceSet = new ResourceSet({ dataset: combinedDataset });
+
+  for (const rdfTypeQuad of combinedDataset.match(null, rdf.type, null, null)) {
     if (rdfTypeQuad.subject.termType !== "BlankNode") {
       continue;
     }
-    if (rdfTypeQuad.object.termType !== "NamedNode") {
+    const rdfType = rdfTypeQuad.object;
+    if (rdfType.termType !== "NamedNode") {
       continue;
     }
-    if (!rdfTypeQuad.object.value.startsWith(schema[""].value)) {
+    if (!rdfType.value.startsWith(schema[""].value)) {
       logger.warn(
         `blank node has non-schema.org rdf:type: ${rdfTypeQuad.object.value}`,
       );
@@ -188,18 +203,34 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
     const resource = resourceSet.resource(rdfTypeQuad.subject);
 
     const nameQualifiers: string[] = [
-      kebabCase(rdfTypeQuad.object.value.substring(schema[""].value.length)),
+      kebabCase(rdfType.value.substring(schema[""].value.length)),
     ];
-    resource
-      .value(schema.startDate)
-      .chain((value) => value.toDate())
-      .ifRight((value) => {
-        nameQualifiers.push(
-          value.getFullYear().toString(),
-          (value.getMonth() + 1).toString().padStart(2, "0"),
-          value.getDate().toString().padStart(2, "0"),
+    let datePredicate: NamedNode | undefined;
+    if (resource.isInstanceOf(schema.Action)) {
+      datePredicate = schema.startTime;
+    } else if (resource.isInstanceOf(schema.CreativeWork)) {
+      datePredicate = schema.datePublished;
+    } else if (resource.isInstanceOf(schema.Event)) {
+      datePredicate = schema.startDate;
+    } else if (resource.isInstanceOf(schema.Invoice)) {
+      datePredicate = schema.paymentDueDate;
+    } else if (resource.isInstanceOf(schema.MonetaryAmount)) {
+      datePredicate = schema.validFrom;
+    } else if (resource.isInstanceOf(schema.OrderReturned)) {
+      datePredicate = schema.orderDate;
+    }
+    if (datePredicate) {
+      resource
+        .value(datePredicate)
+        .chain((value) => value.toDate())
+        .ifRight((value) =>
+          nameQualifiers.push(
+            value.getFullYear().toString(),
+            (value.getMonth() + 1).toString().padStart(2, "0"),
+            value.getDate().toString().padStart(2, "0"),
+          ),
         );
-      });
+    }
 
     const schemaName = resource
       .value(schema.name)
@@ -225,9 +256,9 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
     );
   }
 
-  const skolemizedDataset = new N3.Store();
-  for (const quad of dataset) {
-    skolemizedDataset.add(
+  const skolemizedInstanceDataset = new N3.Store();
+  for (const quad of instanceDataset) {
+    skolemizedInstanceDataset.add(
       N3.DataFactory.quad(
         blankNodeToNamedNodeMap.get(quad.subject) ?? quad.subject,
         quad.predicate,
@@ -236,31 +267,7 @@ function skolemize(dataset: DatasetCore, uriSpace: string): DatasetCore {
       ),
     );
   }
-  return skolemizedDataset;
-}
-
-function setNamedGraph(
-  dataset: DatasetCore,
-  namedGraph: NamedNode,
-): DatasetCore {
-  const resultDataset = new N3.Store();
-  const defaultGraph = N3.DataFactory.defaultGraph();
-  for (const quad of dataset) {
-    if (quad.graph.equals(defaultGraph)) {
-      resultDataset.add(
-        N3.DataFactory.quad(
-          quad.subject,
-          quad.predicate,
-          quad.object,
-          namedGraph,
-        ),
-      );
-    } else {
-      logger.warn("quad is already in a named graph");
-      resultDataset.add(quad);
-    }
-  }
-  return resultDataset;
+  return skolemizedInstanceDataset;
 }
 
 function propagateEventDates(dataset: DatasetCore): DatasetCore {
@@ -316,24 +323,43 @@ function propagateEventDates(dataset: DatasetCore): DatasetCore {
 }
 
 export async function* transform({
+  inputDataset,
+  ontologyDataset,
   textObjects,
 }: {
+  inputDataset;
+  ontologyDataset;
   textObjects: AsyncIterable<TextObject>;
 }): AsyncIterable<DatasetCore> {
+  yield ontologyDataset;
+  yield inputDataset;
+
   for await (const textObject of textObjects) {
     // Order of transformations is important
-    let dataset = textObject.content.dataset;
+    let transformedTextObjectContentDataset = textObject.content.dataset;
 
-    dataset = normalizeSdoNamespace(dataset);
-    dataset = fixLiteralDatatypes(dataset);
-    if (textObject.identifier.termType === "NamedNode") {
-      dataset = setNamedGraph(dataset, textObject.identifier);
-    }
-    dataset = addInversePropertyQuads(dataset);
-    dataset = propagateEventDates(dataset);
-    dataset = skolemize(dataset, textObject.uriSpace);
-    dataset = addTextObjectAboutQuad(dataset, textObject);
+    transformedTextObjectContentDataset = normalizeSdoNamespace(
+      transformedTextObjectContentDataset,
+    );
+    transformedTextObjectContentDataset = fixLiteralDatatypes(
+      transformedTextObjectContentDataset,
+    );
+    transformedTextObjectContentDataset = addInversePropertyQuads(
+      transformedTextObjectContentDataset,
+    );
+    transformedTextObjectContentDataset = propagateEventDates(
+      transformedTextObjectContentDataset,
+    );
+    transformedTextObjectContentDataset = skolemize({
+      instanceDataset: transformedTextObjectContentDataset,
+      ontologyDataset,
+      uriSpace: textObject.uriSpace,
+    });
+    transformedTextObjectContentDataset = addTextObjectAboutQuad(
+      transformedTextObjectContentDataset,
+      textObject,
+    );
 
-    yield dataset;
+    yield transformedTextObjectContentDataset;
   }
 }

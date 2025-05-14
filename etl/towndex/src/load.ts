@@ -2,15 +2,9 @@ import { DatasetCore } from "@rdfjs/types";
 import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import * as N3 from "n3";
 
-export async function load({
-  inputDataset,
-  sdoDataset,
-  transformedDatasets,
-}: {
-  inputDataset: DatasetCore;
-  sdoDataset: DatasetCore;
-  transformedDatasets: AsyncIterable<DatasetCore>;
-}): Promise<void> {
+export async function load(
+  datasets: AsyncIterable<DatasetCore>,
+): Promise<void> {
   const writer = new N3.Writer(process.stdout, {
     format: "application/trig",
     end: false,
@@ -21,14 +15,8 @@ export async function load({
     },
   });
 
-  for (const quad of sdoDataset) {
-    writer.addQuad(quad);
-  }
-  for (const quad of inputDataset) {
-    writer.addQuad(quad);
-  }
-  for await (const transformedDataset of transformedDatasets) {
-    for (const quad of transformedDataset) {
+  for await (const dataset of datasets) {
+    for (const quad of dataset) {
       writer.addQuad(quad);
     }
   }
