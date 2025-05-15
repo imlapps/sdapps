@@ -1,23 +1,30 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import {
-  AnalyzeDocumentCommand,
   FeatureType,
+  GetDocumentAnalysisCommand,
+  StartDocumentAnalysisCommand,
   TextractClient,
 } from "@aws-sdk/client-textract";
 import {
-  ApiDetectDocumentTextResponse,
+  ApiAnalyzeDocumentResponse,
   TextractDocument,
 } from "amazon-textract-response-parser";
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { setTimeout } from "node:timers/promises";
 import { fsEither } from "@kos-kit/next-utils/server";
 import * as envalid from "envalid";
 import { sha256 } from "js-sha256";
 import { Logger } from "pino";
 import { Either, Left } from "purify-ts";
-import invariant from "ts-invariant";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
+interface Document {
+  bytes: Buffer;
+  mimeType: string;
+}
 
 export class DocumentTextExtractor {
   private readonly cacheDirectoryPath: string;
@@ -126,9 +133,15 @@ export class DocumentTextExtractor {
   }
 
   async extractDocumentText(
-    documentBuffer: Buffer,
+    document: Document,
   ): Promise<Either<Error, DocumentTextExtractor.Result>> {
-    const documentSha256HashHexDigest = sha256(documentBuffer);
+    return this.extractDocumentTextCached(document);
+  }
+
+  private async extractDocumentTextCached(
+    document: Document,
+  ): Promise<Either<Error, DocumentTextExtractor.Result>> {
+    const documentSha256HashHexDigest = sha256(document.bytes);
 
     const documentCacheDirectoryPath = path.resolve(
       this.cacheDirectoryPath,
@@ -174,39 +187,27 @@ export class DocumentTextExtractor {
       !resultJsonFileExists ||
       !resultTextFileExists
     ) {
-      let resultJson: any;
+      let apiResponsePages: ApiAnalyzeDocumentResponse[];
       if (resultJsonFileExists) {
-        resultJson = (await fs.promises.readFile(resultJsonFilePath)).toString(
-          "utf-8",
+        apiResponsePages = JSON.parse(
+          (await fs.promises.readFile(resultJsonFilePath)).toString("utf-8"),
         );
       } else {
-        this.logger?.debug(
-          `analyzing ${documentBuffer.length}-byte document with Textract`,
-        );
-        // Multipage document processing must be asynchronous. Always use the asynchronous API.
-
-        const response = await this.textractClient.send(
-          new AnalyzeDocumentCommand({
-            Document: {
-              Bytes: documentBuffer,
-            },
-            FeatureTypes: this.textractFeatures.concat(),
-          }),
-        );
-        this.logger?.debug(
-          `analyzed ${documentBuffer.length}-byte document with Textract`,
-        );
-        resultJson = response;
-
+        const resultEither = await this.extractDocumentTextUncached({
+          document,
+          documentSha256HashHexDigest,
+        });
+        if (resultEither.isLeft()) {
+          return resultEither;
+        }
+        apiResponsePages = resultEither.unsafeCoerce();
         await fs.promises.writeFile(
           resultJsonFilePath,
-          JSON.stringify(response),
+          JSON.stringify(apiResponsePages),
         );
       }
 
-      const parsedResponse = new TextractDocument(
-        resultJson as unknown as ApiDetectDocumentTextResponse,
-      );
+      const parsedResponse = new TextractDocument(apiResponsePages);
 
       // Rewrite the HTML and text files even if they already exist.
       await Promise.all([
@@ -222,6 +223,100 @@ export class DocumentTextExtractor {
         textFilePath: resultTextFilePath,
       }),
     );
+  }
+
+  private async extractDocumentTextUncached({
+    document,
+    documentSha256HashHexDigest,
+  }: {
+    document: Document;
+    documentSha256HashHexDigest: string;
+  }): Promise<Either<Error, ApiAnalyzeDocumentResponse[]>> {
+    this.logger?.debug(
+      `analyzing ${document.bytes.length}-byte document with Textract`,
+    );
+
+    // Multipage document processing must be asynchronous. Always use the asynchronous API.
+
+    const s3Key = documentSha256HashHexDigest;
+    try {
+      this.logger?.debug(
+        `putting document to s3://${this.s3BucketName}/${s3Key}`,
+      );
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Body: document.bytes,
+          Bucket: this.s3BucketName,
+          ContentType: document.mimeType,
+          Key: s3Key,
+        }),
+      );
+      this.logger?.debug(`put document to s3://${this.s3BucketName}/${s3Key}`);
+
+      this.logger?.debug("starting document analysis");
+      const documentAnalysisJobId = (
+        await this.textractClient.send(
+          new StartDocumentAnalysisCommand({
+            DocumentLocation: {
+              S3Object: {
+                Bucket: this.s3BucketName,
+                Name: s3Key,
+              },
+            },
+            FeatureTypes: this.textractFeatures.concat(),
+          }),
+        )
+      ).JobId!;
+      this.logger?.debug(
+        `started document analysis, job id=${documentAnalysisJobId}`,
+      );
+
+      const apiResponsePages: ApiAnalyzeDocumentResponse[] = [];
+      for (let pollI = 0; pollI < 10; pollI++) {
+        this.logger?.debug(
+          `getting document analysis, jobId=${documentAnalysisJobId}, pollI=${pollI}`,
+        );
+        let getDocumentAnalysisCommandOutput = await this.textractClient.send(
+          new GetDocumentAnalysisCommand({
+            JobId: documentAnalysisJobId,
+          }),
+        );
+        if (getDocumentAnalysisCommandOutput.JobStatus === "SUCCEEDED") {
+          this.logger?.debug(
+            `analyzed ${document.bytes.length}-byte document with Textract`,
+          );
+          apiResponsePages.push(
+            getDocumentAnalysisCommandOutput as unknown as ApiAnalyzeDocumentResponse,
+          );
+          while (getDocumentAnalysisCommandOutput.NextToken) {
+            this.logger?.debug("getting next page of results");
+            getDocumentAnalysisCommandOutput = await this.textractClient.send(
+              new GetDocumentAnalysisCommand({
+                JobId: documentAnalysisJobId,
+                NextToken: getDocumentAnalysisCommandOutput.NextToken,
+              }),
+            );
+            apiResponsePages.push(
+              getDocumentAnalysisCommandOutput as unknown as ApiAnalyzeDocumentResponse,
+            );
+          }
+
+          return Either.of(apiResponsePages);
+        }
+        this.logger?.debug(
+          `sleeping before next get document analysis poll, jobId=${documentAnalysisJobId}`,
+        );
+        await setTimeout(1000);
+      }
+      return Left(
+        new Error(
+          `document analysis (jobId=${documentAnalysisJobId}) failed to complete in time`,
+        ),
+      );
+    } catch (e) {
+      invariant(e instanceof Error);
+      return Left(e);
+    }
   }
 }
 

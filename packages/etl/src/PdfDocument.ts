@@ -40,6 +40,6 @@ export class PdfDocument implements Document {
   > {
     return this.documentTextExtractor
       .unsafeCoerce()
-      .extractDocumentText(this._buffer);
+      .extractDocumentText({ bytes: this._buffer, mimeType: this.mimeType });
   }
 }
