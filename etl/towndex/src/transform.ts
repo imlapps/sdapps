@@ -7,7 +7,7 @@ import type {
   Quad_Graph,
   Term,
 } from "@rdfjs/types";
-import { Identifier } from "@sdapps/models";
+import { Identifier, Organization } from "@sdapps/models";
 import { rdf, rdfs, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
@@ -343,10 +343,11 @@ function skolemize({
 
     const resource = mergedResourceSet.resource(rdfTypeQuad.subject);
 
-    const nameQualifiers: string[] = [
+    const iriPath: string[] = [
       kebabCase(rdfType.value.substring(schema[""].value.length)),
     ];
-    let datePredicate: NamedNode | undefined;
+
+    let datePredicate: NamedNode | null;
     if (resource.isInstanceOf(schema.Action)) {
       datePredicate = schema.startTime;
     } else if (resource.isInstanceOf(schema.CreativeWork)) {
@@ -357,15 +358,29 @@ function skolemize({
       datePredicate = schema.paymentDueDate;
     } else if (resource.isInstanceOf(schema.MonetaryAmount)) {
       datePredicate = schema.validFrom;
-    } else if (resource.isInstanceOf(schema.OrderReturned)) {
+    } else if (resource.isInstanceOf(schema.Order)) {
       datePredicate = schema.orderDate;
+    } else if (
+      resource.isInstanceOf(schema.Organization) ||
+      resource.isInstanceOf(schema.Person) ||
+      resource.isInstanceOf(schema.Place) ||
+      resource.isInstanceOf(schema.MonetaryAmount) ||
+      resource.isInstanceOf(schema.QuantitativeValue) ||
+      resource.isInstanceOf(schema.Thing, { excludeSubclasses: true })
+    ) {
+      datePredicate = null;
+    } else {
+      logger.debug(
+        `resource with rdf:type ${rdfType.value} has no date predicate`,
+      );
+      datePredicate = null;
     }
     if (datePredicate) {
       resource
         .value(datePredicate)
         .chain((value) => value.toDate())
         .ifRight((value) =>
-          nameQualifiers.push(
+          iriPath.push(
             value.getFullYear().toString(),
             (value.getMonth() + 1).toString().padStart(2, "0"),
             value.getDate().toString().padStart(2, "0"),
@@ -373,28 +388,67 @@ function skolemize({
         );
     }
 
-    const schemaName = resource
+    const name: string[] = [];
+
+    if (resource.isInstanceOf(schema.Person)) {
+      name.push(
+        ...resource
+          .value(schema.jobTitle)
+          .chain((value) => value.toString())
+          .toMaybe()
+          .toList(),
+      );
+    }
+
+    resource
       .value(schema.name)
-      .chain((value) => value.toString());
-    if (!schemaName.isRight()) {
+      .chain((value) => value.toString())
+      .ifRight((schemaName) => {
+        name.push(schemaName);
+      })
+      .ifLeft(() => {
+        if (resource.isInstanceOf(schema.MonetaryAmount)) {
+          name.push(
+            ...resource
+              .value(schema.value)
+              .chain((value) => value.toNumber())
+              .map((value) => value.toString())
+              .toMaybe()
+              .toList(),
+            ...resource
+              .value(schema.currency)
+              .chain((value) => value.toString())
+              .toMaybe()
+              .toList(),
+          );
+        } else if (resource.isInstanceOf(schema.QuantitativeValue)) {
+          name.push(
+            ...resource
+              .value(schema.value)
+              .chain((value) => value.toNumber())
+              .map((value) => value.toString())
+              .toMaybe()
+              .toList(),
+            ...resource
+              .value(schema.unitText)
+              .chain((value) => value.toString())
+              .toMaybe()
+              .toList(),
+          );
+        }
+      });
+
+    if (name.length === 0) {
       logger.warn(
-        `blank node with rdf:type ${rdfType.value} has no schema:name`,
+        `could not reconstruct name for blank node with rdf:type ${rdfType.value}`,
       );
       continue;
     }
-    const unqualifiedNameParts: string[] = [];
-    resource
-      .value(schema.jobTitle)
-      .chain((value) => value.toString())
-      .ifRight((value) => {
-        unqualifiedNameParts.push(value);
-      });
-    unqualifiedNameParts.push(schemaName.unsafeCoerce());
 
     blankNodeToNamedNodeMap.set(
       rdfTypeQuad.subject,
       N3.DataFactory.namedNode(
-        `${uriSpace}${nameQualifiers.join("/")}/${kebabCase(unqualifiedNameParts.join(" "))}`,
+        `${uriSpace}${iriPath.join("/")}/${kebabCase(name.join(" "))}`,
       ),
     );
   }
@@ -570,31 +624,6 @@ function propagateNames({
                   schema.name,
                   N3.DataFactory.literal(`${orderName} Invoice`),
                   resourceGraph(invoiceResource),
-                ),
-              );
-            });
-          });
-      });
-  }
-
-  for (const invoiceResource of new ResourceSet({
-    dataset: mergeDatasets(classOntologyDataset, resultDataset),
-  }).instancesOf(schema.Invoice)) {
-    invoiceResource
-      .value(schema.name)
-      .chain((value) => value.toString())
-      .ifRight((invoiceName) => {
-        invoiceResource
-          .value(schema.totalPaymentDue)
-          .chain((value) => value.toResource())
-          .ifRight((totalPaymentDueResource) => {
-            totalPaymentDueResource.value(schema.name).ifLeft(() => {
-              resultDataset.add(
-                N3.DataFactory.quad(
-                  totalPaymentDueResource.identifier,
-                  schema.name,
-                  N3.DataFactory.literal(`${invoiceName} Total Payment Due`),
-                  resourceGraph(totalPaymentDueResource),
                 ),
               );
             });
