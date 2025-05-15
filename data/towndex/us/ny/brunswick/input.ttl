@@ -4,6 +4,10 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix void: <http://rdfs.org/ns/void#> .
 
-tob:TBSpecialMeetingMinutes20241001-2025TentativeBudget.pdf a sdo:TextObject ;
+# tob:TBSpecialMeetingMinutes20241001-2025TentativeBudget.pdf a sdo:TextObject ;
+#     void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/" ;
+# .
+
+tob:TBMeetingMinutes20250213.pdf a sdo:TextObject ;
     void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/" ;
 .

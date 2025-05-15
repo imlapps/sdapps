@@ -1,11 +1,11 @@
-import { Either, Left, Maybe } from "purify-ts";
+import { Either } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { Document } from "./Document.js";
 import { DocumentTextExtractor } from "./DocumentTextExtractor.js";
 
 export class PdfDocument implements Document {
   private readonly _buffer: Buffer;
-  private readonly documentTextExtractor: Maybe<DocumentTextExtractor>;
+  private readonly documentTextExtractor: Either<Error, DocumentTextExtractor>;
   readonly mimeType = "application/pdf";
 
   constructor({
@@ -13,7 +13,7 @@ export class PdfDocument implements Document {
     documentTextExtractor,
   }: {
     buffer: Buffer;
-    documentTextExtractor: Maybe<DocumentTextExtractor>;
+    documentTextExtractor: Either<Error, DocumentTextExtractor>;
   }) {
     this._buffer = buffer;
     this.documentTextExtractor = documentTextExtractor;
@@ -38,10 +38,6 @@ export class PdfDocument implements Document {
   private async extractDocumentText(): Promise<
     Either<Error, DocumentTextExtractor.Result>
   > {
-    if (!this.documentTextExtractor.isJust()) {
-      return Left(new Error("no document text extractor configured"));
-    }
-
     return this.documentTextExtractor
       .unsafeCoerce()
       .extractDocumentText(this._buffer);

@@ -47,9 +47,7 @@ export class DocumentFactory {
         return Either.of(
           new PdfDocument({
             buffer,
-            documentTextExtractor: (
-              await this.documentTextExtractor()
-            ).toMaybe(),
+            documentTextExtractor: await this.documentTextExtractor(),
           }),
         );
 
@@ -75,12 +73,8 @@ export class DocumentFactory {
         return Either.of(
           new RichDocument({
             buffer,
-            documentFormatConverter: (
-              await this.documentFormatConverter()
-            ).toMaybe(),
-            documentTextExtractor: (
-              await this.documentTextExtractor()
-            ).toMaybe(),
+            documentFormatConverter: await this.documentFormatConverter(),
+            documentTextExtractor: await this.documentTextExtractor(),
             mimeType,
           }),
         );
@@ -141,6 +135,7 @@ export class DocumentFactory {
         this.cachesDirectoryPath,
         "document-format-conversions",
       ),
+      logger: this.logger,
     });
   }
 
@@ -149,6 +144,7 @@ export class DocumentFactory {
   > {
     return DocumentTextExtractor.create({
       cacheDirectoryPath: path.resolve(this.cachesDirectoryPath, "textract"),
+      logger: this.logger,
     });
   }
 }

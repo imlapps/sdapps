@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import mime from "mime";
-import { Either, EitherAsync, Left, Maybe } from "purify-ts";
+import { Either, EitherAsync } from "purify-ts";
 import * as tmp from "tmp-promise";
 import { Memoize } from "typescript-memoize";
 import { Document } from "./Document.js";
@@ -11,8 +11,11 @@ import { PdfDocument } from "./PdfDocument.js";
 
 export class RichDocument implements Document {
   private readonly _buffer: Buffer;
-  private readonly documentFormatConverter: Maybe<DocumentFormatConverter>;
-  private readonly documentTextExtractor: Maybe<DocumentTextExtractor>;
+  private readonly documentFormatConverter: Either<
+    Error,
+    DocumentFormatConverter
+  >;
+  private readonly documentTextExtractor: Either<Error, DocumentTextExtractor>;
   readonly mimeType: string;
 
   constructor({
@@ -22,8 +25,8 @@ export class RichDocument implements Document {
     mimeType,
   }: {
     buffer: Buffer;
-    documentFormatConverter: Maybe<DocumentFormatConverter>;
-    documentTextExtractor: Maybe<DocumentTextExtractor>;
+    documentFormatConverter: Either<Error, DocumentFormatConverter>;
+    documentTextExtractor: Either<Error, DocumentTextExtractor>;
     mimeType: string;
   }) {
     this._buffer = buffer;
@@ -47,10 +50,6 @@ export class RichDocument implements Document {
 
   @Memoize()
   private async pdfDocument(): Promise<Either<Error, PdfDocument>> {
-    if (!this.documentFormatConverter.isJust()) {
-      return Left(new Error("no document format converter configured"));
-    }
-
     return await tmp.withDir(
       async ({ path: tempDirectoryPath }) => {
         const tempInputFilePath = path.resolve(

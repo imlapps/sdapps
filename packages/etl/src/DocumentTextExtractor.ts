@@ -1,3 +1,4 @@
+import { S3Client } from "@aws-sdk/client-s3";
 import {
   AnalyzeDocumentCommand,
   FeatureType,
@@ -14,31 +15,39 @@ import { fsEither } from "@kos-kit/next-utils/server";
 import * as envalid from "envalid";
 import { sha256 } from "js-sha256";
 import { Logger } from "pino";
-import { Either, Left, Right } from "purify-ts";
+import { Either, Left } from "purify-ts";
 import invariant from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 export class DocumentTextExtractor {
   private readonly cacheDirectoryPath: string;
-  private readonly features: readonly FeatureType[];
+  private readonly textractFeatures: readonly FeatureType[];
   private readonly logger: Logger | undefined;
+  private readonly s3BucketName: string;
+  private readonly s3Client: S3Client;
   private readonly textractClient: TextractClient;
 
   private constructor({
     cacheDirectoryPath,
     logger,
-    features,
+    s3BucketName,
+    s3Client,
     textractClient,
+    textractFeatures,
   }: {
     cacheDirectoryPath: string;
-    features: readonly FeatureType[];
     logger: Logger | undefined;
+    s3BucketName: string;
+    s3Client: S3Client;
     textractClient: TextractClient;
+    textractFeatures: readonly FeatureType[];
   }) {
     this.cacheDirectoryPath = cacheDirectoryPath;
-    this.features = features;
     this.logger = logger;
+    this.s3BucketName = s3BucketName;
+    this.s3Client = s3Client;
     this.textractClient = textractClient;
+    this.textractFeatures = textractFeatures;
   }
 
   static async create({
@@ -48,8 +57,12 @@ export class DocumentTextExtractor {
     cacheDirectoryPath: string;
     logger?: Logger;
   }): Promise<Either<Error, DocumentTextExtractor>> {
+    let s3Client: S3Client;
     let textractClient: TextractClient;
     try {
+      s3Client = new S3Client();
+      await s3Client.config.credentials();
+      await s3Client.config.region();
       textractClient = new TextractClient();
       await textractClient.config.credentials();
       await textractClient.config.region();
@@ -58,40 +71,58 @@ export class DocumentTextExtractor {
       return Left(e);
     }
 
-    const features = envalid.cleanEnv(process.env, {
-      AWS_TEXTRACT_FEATURES: envalid.makeExactValidator<readonly FeatureType[]>(
-        (value: string) => {
-          if (value.length === 0) {
-            return ["LAYOUT"];
-          }
+    return Either.encase(() => {
+      const env = envalid.cleanEnv(
+        process.env,
+        {
+          AWS_TEXTRACT_S3_BUCKET_NAME: envalid.str(),
+          AWS_TEXTRACT_FEATURES: envalid.makeExactValidator<
+            readonly FeatureType[]
+          >((value: string) => {
+            if (value.length === 0) {
+              return ["LAYOUT"];
+            }
 
-          return value
-            .toUpperCase()
-            .split(",")
-            .map((featureString) => {
-              switch (featureString) {
-                case "FORMS":
-                case "LAYOUT":
-                case "QUERIES":
-                case "SIGNATURES":
-                case "TABLES":
-                  return featureString;
-                default:
-                  throw new Error(`invalid Textract feature: ${featureString}`);
-              }
-            });
+            return value
+              .toUpperCase()
+              .split(",")
+              .map((featureString) => {
+                switch (featureString) {
+                  case "FORMS":
+                  case "LAYOUT":
+                  case "QUERIES":
+                  case "SIGNATURES":
+                  case "TABLES":
+                    return featureString;
+                  default:
+                    throw new Error(
+                      `invalid Textract feature: ${featureString}`,
+                    );
+                }
+              });
+          })({ default: ["LAYOUT"] }),
         },
-      )({ default: ["LAYOUT"] }),
-    }).AWS_TEXTRACT_FEATURES;
+        {
+          reporter: ({ errors }) => {
+            for (const [envVar, error] of Object.entries(errors)) {
+              if (error instanceof envalid.EnvMissingError) {
+                throw new Error(`missing environment variable ${envVar}`);
+              }
+              throw error;
+            }
+          },
+        },
+      );
 
-    return Right(
-      new DocumentTextExtractor({
+      return new DocumentTextExtractor({
         cacheDirectoryPath,
-        features,
         logger,
+        s3BucketName: env.AWS_TEXTRACT_S3_BUCKET_NAME,
+        s3Client,
         textractClient,
-      }),
-    );
+        textractFeatures: env.AWS_TEXTRACT_FEATURES,
+      });
+    });
   }
 
   async extractDocumentText(
@@ -102,7 +133,7 @@ export class DocumentTextExtractor {
     const documentCacheDirectoryPath = path.resolve(
       this.cacheDirectoryPath,
       documentSha256HashHexDigest,
-      this.features.concat().sort().join("-"),
+      this.textractFeatures.concat().sort().join("-"),
     );
     this.logger?.debug(
       "creating document cache directory %s",
@@ -149,13 +180,21 @@ export class DocumentTextExtractor {
           "utf-8",
         );
       } else {
+        this.logger?.debug(
+          `analyzing ${documentBuffer.length}-byte document with Textract`,
+        );
+        // Multipage document processing must be asynchronous. Always use the asynchronous API.
+
         const response = await this.textractClient.send(
           new AnalyzeDocumentCommand({
             Document: {
               Bytes: documentBuffer,
             },
-            FeatureTypes: this.features.concat(),
+            FeatureTypes: this.textractFeatures.concat(),
           }),
+        );
+        this.logger?.debug(
+          `analyzed ${documentBuffer.length}-byte document with Textract`,
         );
         resultJson = response;
 
