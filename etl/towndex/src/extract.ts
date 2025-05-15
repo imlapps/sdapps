@@ -117,6 +117,11 @@ async function extractTextObjectContent(
       `${fileNameCodec.encode(Buffer.from(contentUrl.value, "utf-8"))}.jsonld`,
     );
 
+    const contentGraph =
+      textObject.identifier.termType === "NamedNode"
+        ? textObject.identifier
+        : N3.DataFactory.defaultGraph();
+
     try {
       const stat = await fs.promises.stat(completionCacheFilePath);
       if (stat.isFile()) {
@@ -125,6 +130,7 @@ async function extractTextObjectContent(
         );
         return {
           dataset: await parseJsonLdString(
+            contentGraph,
             (await fs.promises.readFile(completionCacheFilePath)).toString(
               "utf-8",
             ),
@@ -189,9 +195,7 @@ ${contentHtml}
 
     logger.debug("parsing completion JSON-LD");
     const dataset = await parseJsonLdString(
-      textObject.identifier.termType === "NamedNode"
-        ? textObject.identifier
-        : N3.DataFactory.defaultGraph(),
+      contentGraph,
       cleanedCompletionText,
     );
     logger.debug(`parsed ${dataset.size} quads from completion JSON-LD`);

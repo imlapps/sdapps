@@ -368,7 +368,9 @@ function skolemize({
       .value(schema.name)
       .chain((value) => value.toString());
     if (!schemaName.isRight()) {
-      logger.warn("blank node has no schema:name");
+      logger.warn(
+        `blank node with rdf:type ${rdfType.value} has no schema:name`,
+      );
       continue;
     }
     const unqualifiedNameParts: string[] = [];
@@ -418,6 +420,7 @@ function propagateDates({
       actionPredicate: schema.startTime,
       creativeWorkPredicate: schema.datePublished,
       eventPredicate: schema.startDate,
+      invoicePredicate: schema.paymentDueDate,
     },
   ];
 
@@ -452,6 +455,7 @@ function propagateDates({
       actionPredicate,
       creativeWorkPredicate,
       eventPredicate,
+      invoicePredicate,
     } of predicates) {
       eventDateRecursive(eventResource, eventPredicate).ifJust(
         (eventDateLiteral) => {
@@ -470,9 +474,9 @@ function propagateDates({
             .values(schema.about)
             .flatMap((value) => value.toResource().toMaybe().toList())) {
             if (aboutResource.isInstanceOf(schema.Action)) {
-              logger.debug(
-                `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:Action ${Identifier.toString(aboutResource.identifier)} ${actionPredicate.value}`,
-              );
+              // logger.debug(
+              //   `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:Action ${Identifier.toString(aboutResource.identifier)} ${actionPredicate.value}`,
+              // );
               resultDataset.add(
                 N3.DataFactory.quad(
                   aboutResource.identifier,
@@ -482,9 +486,9 @@ function propagateDates({
                 ),
               );
             } else if (aboutResource.isInstanceOf(schema.CreativeWork)) {
-              logger.debug(
-                `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:CreativeWork ${Identifier.toString(aboutResource.identifier)} ${creativeWorkPredicate.value}`,
-              );
+              // logger.debug(
+              //   `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:CreativeWork ${Identifier.toString(aboutResource.identifier)} ${creativeWorkPredicate.value}`,
+              // );
               resultDataset.add(
                 N3.DataFactory.quad(
                   aboutResource.identifier,
@@ -493,9 +497,37 @@ function propagateDates({
                   mutateGraph,
                 ),
               );
+            } else if (aboutResource.isInstanceOf(schema.Invoice)) {
+              // logger.debug(
+              //   `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:Invoice ${Identifier.toString(aboutResource.identifier)} ${invoicePredicate.value}`,
+              // );
+              resultDataset.add(
+                N3.DataFactory.quad(
+                  aboutResource.identifier,
+                  invoicePredicate,
+                  eventDateLiteral,
+                  mutateGraph,
+                ),
+              );
+            } else if (
+              aboutResource.isInstanceOf(schema.Organization) ||
+              aboutResource.isInstanceOf(schema.Person) ||
+              aboutResource.isInstanceOf(schema.Thing, {
+                excludeSubclasses: true,
+              })
+            ) {
+              // logger.debug(
+              //   `event ${Identifier.toString(eventResource.identifier)} is about ${Identifier.toString(aboutResource.identifier)}`,
+              // );
             } else {
               logger.warn(
-                `event ${Identifier.toString(eventResource.identifier)} is schema:about an unknown type`,
+                `event ${Identifier.toString(eventResource.identifier)} is schema:about an unknown type: ${
+                  aboutResource
+                    .value(rdf.type)
+                    .chain((value) => value.toIri())
+                    .toMaybe()
+                    .extractNullable()?.value
+                }`,
               );
             }
           }
@@ -525,35 +557,59 @@ export async function* transform({
   for await (const textObject of textObjects) {
     // Order of transformations is important
     let transformedTextObjectContentDataset = textObject.content.dataset;
+    const textObjectIdentifierString = Identifier.toString(
+      textObject.identifier,
+    );
 
+    logger.debug(
+      `${textObjectIdentifierString}: normalizing schema.org namespaces`,
+    );
     transformedTextObjectContentDataset = normalizeSdoNamespace(
       transformedTextObjectContentDataset,
+    );
+
+    logger.debug(
+      `${textObjectIdentifierString}: replacing superseded predicates`,
     );
     transformedTextObjectContentDataset = replaceSupersededPredicates({
       instanceDataset: transformedTextObjectContentDataset,
       propertyOntologyDataset,
     });
+
+    logger.debug(`${textObjectIdentifierString}: fixing literal datatypes`);
     transformedTextObjectContentDataset = fixLiteralDatatypes(
       transformedTextObjectContentDataset,
+    );
+
+    logger.debug(
+      `${textObjectIdentifierString}: adding inverse property quads`,
     );
     transformedTextObjectContentDataset = addInversePropertyQuads({
       instanceDataset: transformedTextObjectContentDataset,
       propertyOntologyDataset: ontologyDataset,
     });
+
+    logger.debug(`${textObjectIdentifierString}: propagating dates`);
     transformedTextObjectContentDataset = propagateDates({
       classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
     });
+
+    logger.debug(`${textObjectIdentifierString}: skolemizing`);
     transformedTextObjectContentDataset = skolemize({
       classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
       uriSpace: textObject.uriSpace,
     });
+
+    logger.debug(`${textObjectIdentifierString}: inferring TextObject quads`);
     transformedTextObjectContentDataset = inferTextObjectQuads({
       classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
       textObject,
     });
+
+    logger.debug(`${textObjectIdentifierString}: done with transformation`);
 
     yield transformedTextObjectContentDataset;
   }
