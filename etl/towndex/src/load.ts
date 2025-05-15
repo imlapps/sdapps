@@ -1,5 +1,5 @@
 import { DatasetCore } from "@rdfjs/types";
-import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
+import { _void, rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import * as N3 from "n3";
 
 export async function load(
@@ -12,6 +12,7 @@ export async function load(
       rdf: rdf[""],
       schema: schema[""],
       xsd: xsd[""],
+      void: _void[""],
     },
   });
 

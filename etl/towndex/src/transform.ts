@@ -51,7 +51,7 @@ function addInversePropertyQuads({
   return resultDataset;
 }
 
-function addTextObjectAboutQuads({
+function inferTextObjectQuads({
   instanceDataset,
   ontologyDataset,
   textObject,
@@ -62,14 +62,16 @@ function addTextObjectAboutQuads({
 }): DatasetCore {
   const resultDataset = copyDataset(instanceDataset);
 
-  const mergedDatasetResourceSet = new ResourceSet({ dataset: resultDataset });
+  const mergedDatasetResourceSet = new ResourceSet({
+    dataset: mergeDatasets(instanceDataset, ontologyDataset),
+  });
 
   for (const eventResource of mergedDatasetResourceSet.instancesOf(
     schema.Event,
   )) {
     if (eventResource.value(schema.superEvent).isLeft()) {
-      // This is the root event
-      // Assume the TextObject is about it.
+      // This is the root schema:Event
+      // Assume the schema:TextObject is schema:about it.
       resultDataset.add(
         N3.DataFactory.quad(
           textObject.identifier,
@@ -77,6 +79,7 @@ function addTextObjectAboutQuads({
           eventResource.identifier,
         ),
       );
+      // Add the inverse schema:subjectOf from the schema:Event to the schema:TextObject
       resultDataset.add(
         N3.DataFactory.quad(
           eventResource.identifier,
@@ -85,9 +88,29 @@ function addTextObjectAboutQuads({
           textObject.identifier,
         ),
       );
-      return resultDataset;
+      break;
     }
   }
+
+  const textObjectResource = mergedDatasetResourceSet.resource(
+    textObject.identifier,
+  );
+  if (textObjectResource.value(schema.name).isLeft()) {
+    const contentUrlPath = new URL(textObject.content.url.value).pathname.split(
+      "/",
+    );
+    if (contentUrlPath.at(-1)!.length > 0) {
+      // Use the last non-empty path segment as the schema:name
+      resultDataset.add(
+        N3.DataFactory.quad(
+          textObject.identifier,
+          schema.name,
+          N3.DataFactory.literal(contentUrlPath.at(-1)!),
+        ),
+      );
+    }
+  }
+
   return resultDataset;
 }
 
@@ -479,7 +502,7 @@ export async function* transform({
       ontologyDataset,
       uriSpace: textObject.uriSpace,
     });
-    transformedTextObjectContentDataset = addTextObjectAboutQuads({
+    transformedTextObjectContentDataset = inferTextObjectQuads({
       instanceDataset: transformedTextObjectContentDataset,
       ontologyDataset,
       textObject,
