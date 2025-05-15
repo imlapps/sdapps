@@ -4,6 +4,7 @@ import type {
   DatasetCore,
   Literal,
   NamedNode,
+  Quad_Graph,
   Term,
 } from "@rdfjs/types";
 import { Identifier } from "@sdapps/models";
@@ -300,6 +301,14 @@ function replaceSupersededPredicates({
   return resultDataset;
 }
 
+function resourceGraph(resource: Resource): Quad_Graph {
+  const rdfTypeQuads = [
+    ...resource.dataset.match(resource.identifier, rdf.type, null),
+  ];
+  invariant(rdfTypeQuads.length > 0);
+  return rdfTypeQuads[0].graph;
+}
+
 function skolemize({
   instanceDataset,
   classOntologyDataset,
@@ -446,11 +455,6 @@ function propagateDates({
   };
 
   for (const eventResource of mergedResourceSet.instancesOf(schema.Event)) {
-    const eventRdfTypeQuads = [
-      ...instanceDataset.match(eventResource.identifier, rdf.type, null),
-    ];
-    invariant(eventRdfTypeQuads.length > 0);
-    const mutateGraph = eventRdfTypeQuads[0].graph;
     for (const {
       actionPredicate,
       creativeWorkPredicate,
@@ -465,7 +469,7 @@ function propagateDates({
               eventResource.identifier,
               eventPredicate,
               eventDateLiteral,
-              mutateGraph,
+              resourceGraph(eventResource),
             ),
           );
 
@@ -482,7 +486,7 @@ function propagateDates({
                   aboutResource.identifier,
                   actionPredicate,
                   eventDateLiteral,
-                  mutateGraph,
+                  resourceGraph(aboutResource),
                 ),
               );
             } else if (aboutResource.isInstanceOf(schema.CreativeWork)) {
@@ -494,7 +498,7 @@ function propagateDates({
                   aboutResource.identifier,
                   creativeWorkPredicate,
                   eventDateLiteral,
-                  mutateGraph,
+                  resourceGraph(aboutResource),
                 ),
               );
             } else if (aboutResource.isInstanceOf(schema.Invoice)) {
@@ -506,7 +510,7 @@ function propagateDates({
                   aboutResource.identifier,
                   invoicePredicate,
                   eventDateLiteral,
-                  mutateGraph,
+                  resourceGraph(aboutResource),
                 ),
               );
             } else if (
@@ -534,6 +538,68 @@ function propagateDates({
         },
       );
     }
+  }
+
+  return resultDataset;
+}
+
+function propagateNames({
+  classOntologyDataset,
+  instanceDataset,
+}: {
+  classOntologyDataset: DatasetCore;
+  instanceDataset: DatasetCore;
+}): DatasetCore {
+  const resultDataset = copyDataset(instanceDataset);
+
+  for (const orderResource of new ResourceSet({
+    dataset: mergeDatasets(classOntologyDataset, resultDataset),
+  }).instancesOf(schema.Order)) {
+    orderResource
+      .value(schema.name)
+      .chain((value) => value.toString())
+      .ifRight((orderName) => {
+        orderResource
+          .value(schema.partOfInvoice)
+          .chain((value) => value.toResource())
+          .ifRight((invoiceResource) => {
+            invoiceResource.value(schema.name).ifLeft(() => {
+              resultDataset.add(
+                N3.DataFactory.quad(
+                  invoiceResource.identifier,
+                  schema.name,
+                  N3.DataFactory.literal(`${orderName} Invoice`),
+                  resourceGraph(invoiceResource),
+                ),
+              );
+            });
+          });
+      });
+  }
+
+  for (const invoiceResource of new ResourceSet({
+    dataset: mergeDatasets(classOntologyDataset, resultDataset),
+  }).instancesOf(schema.Invoice)) {
+    invoiceResource
+      .value(schema.name)
+      .chain((value) => value.toString())
+      .ifRight((invoiceName) => {
+        invoiceResource
+          .value(schema.totalPaymentDue)
+          .chain((value) => value.toResource())
+          .ifRight((totalPaymentDueResource) => {
+            totalPaymentDueResource.value(schema.name).ifLeft(() => {
+              resultDataset.add(
+                N3.DataFactory.quad(
+                  totalPaymentDueResource.identifier,
+                  schema.name,
+                  N3.DataFactory.literal(`${invoiceName} Total Payment Due`),
+                  resourceGraph(totalPaymentDueResource),
+                ),
+              );
+            });
+          });
+      });
   }
 
   return resultDataset;
@@ -591,6 +657,12 @@ export async function* transform({
 
     logger.debug(`${textObjectIdentifierString}: propagating dates`);
     transformedTextObjectContentDataset = propagateDates({
+      classOntologyDataset,
+      instanceDataset: transformedTextObjectContentDataset,
+    });
+
+    logger.debug(`${textObjectIdentifierString}: propagating names`);
+    transformedTextObjectContentDataset = propagateNames({
       classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
     });

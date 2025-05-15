@@ -1189,7 +1189,7 @@ schema:VideoObjectSnapshot <http://www.w3.org/2000/01/rdf-schema#subClassOf> sch
     schema:name "Approval of Warrants";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/warrants-discussion>;
     schema:description "Approval of warrants for various funds.";
-    schema:totalPaymentDue _:n3-135;
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/approval-of-warrants-total-payment-due>;
     schema:provider <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
     schema:category "Government Expenses";
     schema:referencesOrder <http://purl.org/towndex/instance/us/ny/brunswick/order/general-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/order/highway-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/order/water-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/order/sewer-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/order/special-sewer-district-6>;
@@ -1216,8 +1216,6 @@ schema:VideoObjectSnapshot <http://www.w3.org/2000/01/rdf-schema#subClassOf> sch
     schema:name "Balistreri".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/herrington> a schema:Person;
     schema:name "Herrington".
-<http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
-    schema:name "Rebecca Del Gaizo".
 _:n3-17 a schema:MonetaryAmount;
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/report/town-clerk-report>;
     schema:value 7.45017E3.
@@ -1231,6 +1229,8 @@ _:n3-17 a schema:MonetaryAmount;
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/report/town-clerk-report>;
     schema:value 2;
     schema:unitText "events".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
+    schema:name "Rebecca Del Gaizo".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan> a schema:Person;
     schema:name "Sullivan".
 <http://purl.org/towndex/instance/us/ny/brunswick/quantitative-value/patching> a schema:QuantitativeValue;
@@ -1295,47 +1295,58 @@ _:n3-58 a schema:MonetaryAmount;
     schema:name "Sara Hopkins".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/mary-beth-bruno> a schema:Person;
     schema:name "Mary Beth Bruno".
-_:n3-135 a schema:MonetaryAmount;
+<http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/approval-of-warrants-total-payment-due> a schema:MonetaryAmount;
+    schema:name "Approval of Warrants Total Payment Due";
     schema:value 3.5652092E5;
     schema:currency "USD".
-_:n3-136 a schema:MonetaryAmount;
-    schema:value 2.5227475E5;
-    schema:currency "USD".
-_:n3-137 a schema:Invoice;
-    schema:totalPaymentDue _:n3-136.
 <http://purl.org/towndex/instance/us/ny/brunswick/order/general-fund> a schema:Order;
     schema:name "General Fund";
-    schema:partOfInvoice _:n3-137.
-_:n3-139 a schema:MonetaryAmount;
-    schema:value 7.440262E4;
-    schema:currency "USD".
-_:n3-140 a schema:Invoice;
-    schema:totalPaymentDue _:n3-139.
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/invoice/general-fund-invoice>.
 <http://purl.org/towndex/instance/us/ny/brunswick/order/highway-fund> a schema:Order;
     schema:name "Highway Fund";
-    schema:partOfInvoice _:n3-140.
-_:n3-142 a schema:MonetaryAmount;
-    schema:value 2.762301E4;
-    schema:currency "USD".
-_:n3-143 a schema:Invoice;
-    schema:totalPaymentDue _:n3-142.
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/invoice/highway-fund-invoice>.
 <http://purl.org/towndex/instance/us/ny/brunswick/order/water-fund> a schema:Order;
     schema:name "Water Fund";
-    schema:partOfInvoice _:n3-143.
-_:n3-145 a schema:MonetaryAmount;
-    schema:value 1.54004E3;
-    schema:currency "USD".
-_:n3-146 a schema:Invoice;
-    schema:totalPaymentDue _:n3-145.
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/invoice/water-fund-invoice>.
 <http://purl.org/towndex/instance/us/ny/brunswick/order/sewer-fund> a schema:Order;
     schema:name "Sewer Fund";
-    schema:partOfInvoice _:n3-146.
-_:n3-148 a schema:MonetaryAmount;
-    schema:value 6.805E2;
-    schema:currency "USD".
-_:n3-149 a schema:Invoice;
-    schema:totalPaymentDue _:n3-148.
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/invoice/sewer-fund-invoice>.
 <http://purl.org/towndex/instance/us/ny/brunswick/order/special-sewer-district-6> a schema:Order;
     schema:name "Special Sewer District #6";
-    schema:partOfInvoice _:n3-149
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/invoice/special-sewer-district-6-invoice>.
+<http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/general-fund-invoice-total-payment-due> a schema:MonetaryAmount;
+    schema:name "General Fund Invoice Total Payment Due";
+    schema:value 2.5227475E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/invoice/general-fund-invoice> a schema:Invoice;
+    schema:name "General Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/general-fund-invoice-total-payment-due>.
+<http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/highway-fund-invoice-total-payment-due> a schema:MonetaryAmount;
+    schema:name "Highway Fund Invoice Total Payment Due";
+    schema:value 7.440262E4;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/invoice/highway-fund-invoice> a schema:Invoice;
+    schema:name "Highway Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/highway-fund-invoice-total-payment-due>.
+<http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/water-fund-invoice-total-payment-due> a schema:MonetaryAmount;
+    schema:name "Water Fund Invoice Total Payment Due";
+    schema:value 2.762301E4;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/invoice/water-fund-invoice> a schema:Invoice;
+    schema:name "Water Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/water-fund-invoice-total-payment-due>.
+<http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/sewer-fund-invoice-total-payment-due> a schema:MonetaryAmount;
+    schema:name "Sewer Fund Invoice Total Payment Due";
+    schema:value 1.54004E3;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/invoice/sewer-fund-invoice> a schema:Invoice;
+    schema:name "Sewer Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/sewer-fund-invoice-total-payment-due>.
+<http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/special-sewer-district-6-invoice-total-payment-due> a schema:MonetaryAmount;
+    schema:name "Special Sewer District #6 Invoice Total Payment Due";
+    schema:value 6.805E2;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/invoice/special-sewer-district-6-invoice> a schema:Invoice;
+    schema:name "Special Sewer District #6 Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/monetary-amount/special-sewer-district-6-invoice-total-payment-due>
 }
