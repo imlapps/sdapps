@@ -6,11 +6,12 @@ import type {
   NamedNode,
   Term,
 } from "@rdfjs/types";
+import { Identifier } from "@sdapps/models";
 import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
 import { Maybe } from "purify-ts";
-import { MutableResourceSet, type Resource, ResourceSet } from "rdfjs-resource";
+import { type Resource, ResourceSet } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type { TextObject } from "./TextObject.js";
 import { logger } from "./logger.js";
@@ -50,13 +51,22 @@ function addInversePropertyQuads({
   return resultDataset;
 }
 
-function addTextObjectAboutQuads(
-  dataset: DatasetCore,
-  textObject: TextObject,
-): DatasetCore {
-  const resultDataset = copyDataset(dataset);
-  const resourceSet = new ResourceSet({ dataset: resultDataset });
-  for (const eventResource of resourceSet.instancesOf(schema.Event)) {
+function addTextObjectAboutQuads({
+  instanceDataset,
+  ontologyDataset,
+  textObject,
+}: {
+  instanceDataset: DatasetCore;
+  ontologyDataset: DatasetCore;
+  textObject: TextObject;
+}): DatasetCore {
+  const resultDataset = copyDataset(instanceDataset);
+
+  const mergedDatasetResourceSet = new ResourceSet({ dataset: resultDataset });
+
+  for (const eventResource of mergedDatasetResourceSet.instancesOf(
+    schema.Event,
+  )) {
     if (eventResource.value(schema.superEvent).isLeft()) {
       // This is the root event
       // Assume the TextObject is about it.
@@ -127,6 +137,14 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
     );
   }
   return resultDataset;
+}
+
+function mergeDatasets(left: DatasetCore, right: DatasetCore): DatasetCore {
+  const merged = copyDataset(left);
+  for (const quad of right) {
+    merged.add(quad);
+  }
+  return merged;
 }
 
 function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
@@ -226,16 +244,13 @@ function skolemize({
 }): DatasetCore {
   // Simple approach: one pass to construct the names and another pass to replace them
 
-  // Combine the instance and ontology datasets in order to do instance-of checks on subclasses
-  const combinedDataset = copyDataset(instanceDataset);
-  for (const quad of ontologyDataset) {
-    instanceDataset.add(quad);
-  }
+  // Merge the instance and ontology datasets in order to do instance-of checks on subclasses
+  const mergedDataset = mergeDatasets(instanceDataset, ontologyDataset);
+  const mergedResourceSet = new ResourceSet({ dataset: mergedDataset });
 
   const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
-  const resourceSet = new ResourceSet({ dataset: combinedDataset });
 
-  for (const rdfTypeQuad of combinedDataset.match(null, rdf.type, null, null)) {
+  for (const rdfTypeQuad of mergedDataset.match(null, rdf.type, null, null)) {
     if (rdfTypeQuad.subject.termType !== "BlankNode") {
       continue;
     }
@@ -250,7 +265,7 @@ function skolemize({
       continue;
     }
 
-    const resource = resourceSet.resource(rdfTypeQuad.subject);
+    const resource = mergedResourceSet.resource(rdfTypeQuad.subject);
 
     const nameQualifiers: string[] = [
       kebabCase(rdfType.value.substring(schema[""].value.length)),
@@ -320,13 +335,26 @@ function skolemize({
   return skolemizedInstanceDataset;
 }
 
-function propagateEventDates(dataset: DatasetCore): DatasetCore {
-  const resultDataset = copyDataset(dataset);
-
-  const resourceSet = new MutableResourceSet({
-    dataFactory: N3.DataFactory,
-    dataset: resultDataset,
+function propagateDates({
+  instanceDataset,
+  ontologyDataset,
+}: {
+  instanceDataset: DatasetCore;
+  ontologyDataset: DatasetCore;
+}): DatasetCore {
+  const mergedResourceSet = new ResourceSet({
+    dataset: mergeDatasets(instanceDataset, ontologyDataset),
   });
+
+  const predicates = [
+    {
+      actionPredicate: schema.startTime,
+      creativeWorkPredicate: schema.datePublished,
+      eventPredicate: schema.startDate,
+    },
+  ];
+
+  const resultDataset = copyDataset(instanceDataset);
 
   const eventDateRecursive = (
     eventResource: Resource,
@@ -347,23 +375,63 @@ function propagateEventDates(dataset: DatasetCore): DatasetCore {
     return Maybe.empty();
   };
 
-  for (const eventResource of resourceSet.instancesOf(schema.Event)) {
+  for (const eventResource of mergedResourceSet.instancesOf(schema.Event)) {
     const eventRdfTypeQuads = [
-      ...dataset.match(eventResource.identifier, rdf.type, null),
+      ...instanceDataset.match(eventResource.identifier, rdf.type, null),
     ];
     invariant(eventRdfTypeQuads.length > 0);
     const mutateGraph = eventRdfTypeQuads[0].graph;
-    for (const predicate of [schema.startDate]) {
-      eventDateRecursive(eventResource, predicate).ifJust(
+    for (const {
+      actionPredicate,
+      creativeWorkPredicate,
+      eventPredicate,
+    } of predicates) {
+      eventDateRecursive(eventResource, eventPredicate).ifJust(
         (eventDateLiteral) => {
+          // Propagate the date from the super event to this event
           resultDataset.add(
             N3.DataFactory.quad(
               eventResource.identifier,
-              predicate,
+              eventPredicate,
               eventDateLiteral,
               mutateGraph,
             ),
           );
+
+          // Propagate the date to the event's schema:about
+          for (const aboutResource of eventResource
+            .values(schema.about)
+            .flatMap((value) => value.toResource().toMaybe().toList())) {
+            if (aboutResource.isInstanceOf(schema.Action)) {
+              logger.debug(
+                `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:Action ${Identifier.toString(aboutResource.identifier)} ${actionPredicate.value}`,
+              );
+              resultDataset.add(
+                N3.DataFactory.quad(
+                  aboutResource.identifier,
+                  actionPredicate,
+                  eventDateLiteral,
+                  mutateGraph,
+                ),
+              );
+            } else if (aboutResource.isInstanceOf(schema.CreativeWork)) {
+              logger.debug(
+                `propagating schema:Event ${Identifier.toString(eventResource.identifier)} ${eventPredicate.value} to schema:CreativeWork ${Identifier.toString(aboutResource.identifier)} ${creativeWorkPredicate.value}`,
+              );
+              resultDataset.add(
+                N3.DataFactory.quad(
+                  aboutResource.identifier,
+                  creativeWorkPredicate,
+                  eventDateLiteral,
+                  mutateGraph,
+                ),
+              );
+            } else {
+              logger.warn(
+                `event ${Identifier.toString(eventResource.identifier)} is schema:about an unknown type`,
+              );
+            }
+          }
         },
       );
     }
@@ -402,18 +470,20 @@ export async function* transform({
       instanceDataset: transformedTextObjectContentDataset,
       ontologyDataset,
     });
-    transformedTextObjectContentDataset = propagateEventDates(
-      transformedTextObjectContentDataset,
-    );
+    transformedTextObjectContentDataset = propagateDates({
+      instanceDataset: transformedTextObjectContentDataset,
+      ontologyDataset,
+    });
     transformedTextObjectContentDataset = skolemize({
       instanceDataset: transformedTextObjectContentDataset,
       ontologyDataset,
       uriSpace: textObject.uriSpace,
     });
-    transformedTextObjectContentDataset = addTextObjectAboutQuads(
-      transformedTextObjectContentDataset,
+    transformedTextObjectContentDataset = addTextObjectAboutQuads({
+      instanceDataset: transformedTextObjectContentDataset,
+      ontologyDataset,
       textObject,
-    );
+    });
 
     yield transformedTextObjectContentDataset;
   }
