@@ -7,7 +7,7 @@ import type {
   Term,
 } from "@rdfjs/types";
 import { Identifier } from "@sdapps/models";
-import { rdf, schema, xsd } from "@tpluscode/rdf-ns-builders";
+import { rdf, rdfs, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
 import { Maybe } from "purify-ts";
@@ -18,14 +18,14 @@ import { logger } from "./logger.js";
 
 function addInversePropertyQuads({
   instanceDataset,
-  ontologyDataset,
+  propertyOntologyDataset,
 }: {
   instanceDataset: DatasetCore;
-  ontologyDataset: DatasetCore;
+  propertyOntologyDataset: DatasetCore;
 }): DatasetCore {
   const resultDataset = copyDataset(instanceDataset);
 
-  for (const propertyInverseOfQuad of ontologyDataset.match(
+  for (const propertyInverseOfQuad of propertyOntologyDataset.match(
     null,
     schema.inverseOf,
     null,
@@ -51,19 +51,59 @@ function addInversePropertyQuads({
   return resultDataset;
 }
 
+function getClassOntologyDataset(ontologyDataset: DatasetCore): DatasetCore {
+  const classOntologyDataset = new N3.Store();
+  // Add (s, rdfs:subClassOf, o) triples
+  for (const quad of ontologyDataset.match(null, rdfs.subClassOf, null)) {
+    invariant(quad.graph.termType === "DefaultGraph");
+    classOntologyDataset.add(quad);
+  }
+  return classOntologyDataset;
+}
+
+function getPropertyOntologyDataset(ontologyDataset: DatasetCore): DatasetCore {
+  const propertyOntologyDataset = new N3.Store();
+
+  // Add (s, rdf:type, rdf:Property) when there's also a (s, schema:inverseOf, o)
+  for (const propertyRdfTypeQuad of ontologyDataset.match(
+    null,
+    rdf.type,
+    rdf.Property,
+  )) {
+    for (const propertyInverseOfQuad of ontologyDataset.match(
+      propertyRdfTypeQuad.subject,
+      schema.inverseOf,
+      null,
+    )) {
+      propertyOntologyDataset.add(propertyRdfTypeQuad);
+      propertyOntologyDataset.add(propertyInverseOfQuad);
+    }
+    for (const propertySupersededByQuad of ontologyDataset.match(
+      propertyRdfTypeQuad.subject,
+      schema.supersededBy,
+      null,
+    )) {
+      propertyOntologyDataset.add(propertyRdfTypeQuad);
+      propertyOntologyDataset.add(propertySupersededByQuad);
+    }
+  }
+
+  return propertyOntologyDataset;
+}
+
 function inferTextObjectQuads({
+  classOntologyDataset,
   instanceDataset,
-  ontologyDataset,
   textObject,
 }: {
+  classOntologyDataset: DatasetCore;
   instanceDataset: DatasetCore;
-  ontologyDataset: DatasetCore;
   textObject: TextObject;
 }): DatasetCore {
   const resultDataset = copyDataset(instanceDataset);
 
   const mergedDatasetResourceSet = new ResourceSet({
-    dataset: mergeDatasets(instanceDataset, ontologyDataset),
+    dataset: mergeDatasets(classOntologyDataset, instanceDataset),
   });
 
   for (const eventResource of mergedDatasetResourceSet.instancesOf(
@@ -122,7 +162,7 @@ function copyDataset(dataset: DatasetCore): DatasetCore {
   return datasetCopy;
 }
 
-function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
+function fixLiteralDatatypes(instanceDataset: DatasetCore): DatasetCore {
   function fixLiteralDatatype(literal: Literal): Literal {
     invariant(literal.datatype);
     if (literal.datatype.value.startsWith(xsd[""].value)) {
@@ -145,7 +185,7 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
   }
 
   const resultDataset = new N3.Store();
-  for (const quad of dataset) {
+  for (const quad of instanceDataset) {
     if (quad.object.termType !== "Literal") {
       resultDataset.add(quad);
       continue;
@@ -162,15 +202,17 @@ function fixLiteralDatatypes(dataset: DatasetCore): DatasetCore {
   return resultDataset;
 }
 
-function mergeDatasets(left: DatasetCore, right: DatasetCore): DatasetCore {
-  const merged = copyDataset(left);
-  for (const quad of right) {
-    merged.add(quad);
+function mergeDatasets(...datasets: readonly DatasetCore[]): DatasetCore {
+  const mergedDataset = new N3.Store();
+  for (const dataset of datasets) {
+    for (const quad of dataset) {
+      mergedDataset.add(quad);
+    }
   }
-  return merged;
+  return mergedDataset;
 }
 
-function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
+function normalizeSdoNamespace(instanceDataset: DatasetCore): DatasetCore {
   invariant(schema[""].value === "http://schema.org/");
   const httpsSdoNamespace = "https://schema.org/";
 
@@ -205,7 +247,7 @@ function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
   }
 
   const resultDataset = new N3.Store();
-  for (const quad of dataset) {
+  for (const quad of instanceDataset) {
     resultDataset.add(
       N3.DataFactory.quad(
         normalizeTermSdoNamespace(quad.subject),
@@ -220,16 +262,16 @@ function normalizeSdoNamespace(dataset: DatasetCore): DatasetCore {
 
 function replaceSupersededPredicates({
   instanceDataset,
-  ontologyDataset,
+  propertyOntologyDataset,
 }: {
   instanceDataset: DatasetCore;
-  ontologyDataset: DatasetCore;
+  propertyOntologyDataset: DatasetCore;
 }): DatasetCore {
   const resultDataset = new N3.Store();
 
   for (const quad of instanceDataset) {
     let addQuad = true;
-    for (const supersededByQuad of ontologyDataset.match(
+    for (const supersededByQuad of propertyOntologyDataset.match(
       null,
       schema.supersededBy,
       null,
@@ -258,17 +300,17 @@ function replaceSupersededPredicates({
 
 function skolemize({
   instanceDataset,
-  ontologyDataset,
+  classOntologyDataset,
   uriSpace,
 }: {
+  classOntologyDataset: DatasetCore;
   instanceDataset: DatasetCore;
-  ontologyDataset: DatasetCore;
   uriSpace: string;
 }): DatasetCore {
   // Simple approach: one pass to construct the names and another pass to replace them
 
   // Merge the instance and ontology datasets in order to do instance-of checks on subclasses
-  const mergedDataset = mergeDatasets(instanceDataset, ontologyDataset);
+  const mergedDataset = mergeDatasets(classOntologyDataset, instanceDataset);
   const mergedResourceSet = new ResourceSet({ dataset: mergedDataset });
 
   const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
@@ -359,14 +401,14 @@ function skolemize({
 }
 
 function propagateDates({
+  classOntologyDataset,
   instanceDataset,
-  ontologyDataset,
 }: {
+  classOntologyDataset: DatasetCore;
   instanceDataset: DatasetCore;
-  ontologyDataset: DatasetCore;
 }): DatasetCore {
   const mergedResourceSet = new ResourceSet({
-    dataset: mergeDatasets(instanceDataset, ontologyDataset),
+    dataset: mergeDatasets(classOntologyDataset, instanceDataset),
   });
 
   const predicates = [
@@ -472,7 +514,10 @@ export async function* transform({
   ontologyDataset;
   textObjects: AsyncIterable<TextObject>;
 }): AsyncIterable<DatasetCore> {
-  yield ontologyDataset;
+  const classOntologyDataset = getClassOntologyDataset(ontologyDataset);
+  const propertyOntologyDataset = getPropertyOntologyDataset(ontologyDataset);
+
+  yield classOntologyDataset;
   yield inputDataset;
 
   for await (const textObject of textObjects) {
@@ -484,27 +529,27 @@ export async function* transform({
     );
     transformedTextObjectContentDataset = replaceSupersededPredicates({
       instanceDataset: transformedTextObjectContentDataset,
-      ontologyDataset,
+      propertyOntologyDataset,
     });
     transformedTextObjectContentDataset = fixLiteralDatatypes(
       transformedTextObjectContentDataset,
     );
     transformedTextObjectContentDataset = addInversePropertyQuads({
       instanceDataset: transformedTextObjectContentDataset,
-      ontologyDataset,
+      propertyOntologyDataset: ontologyDataset,
     });
     transformedTextObjectContentDataset = propagateDates({
+      classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
-      ontologyDataset,
     });
     transformedTextObjectContentDataset = skolemize({
+      classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
-      ontologyDataset,
       uriSpace: textObject.uriSpace,
     });
     transformedTextObjectContentDataset = inferTextObjectQuads({
+      classOntologyDataset,
       instanceDataset: transformedTextObjectContentDataset,
-      ontologyDataset,
       textObject,
     });
 
