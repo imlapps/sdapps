@@ -117,6 +117,7 @@ function inferTextObjectQuads({
           textObject.identifier,
           schema.about,
           eventResource.identifier,
+          textObject.identifier,
         ),
       );
       // Add the inverse schema:subjectOf from the schema:Event to the schema:TextObject
@@ -146,6 +147,7 @@ function inferTextObjectQuads({
           textObject.identifier,
           schema.name,
           N3.DataFactory.literal(contentUrlPath.at(-1)!),
+          textObject.identifier,
         ),
       );
     }
