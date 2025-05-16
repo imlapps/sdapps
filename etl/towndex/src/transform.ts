@@ -7,7 +7,7 @@ import type {
   Quad_Graph,
   Term,
 } from "@rdfjs/types";
-import { Identifier, Organization } from "@sdapps/models";
+import { Identifier } from "@sdapps/models";
 import { rdf, rdfs, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
@@ -171,16 +171,37 @@ function fixLiteralDatatypes(instanceDataset: DatasetCore): DatasetCore {
     if (literal.datatype.value.startsWith(xsd[""].value)) {
       return literal;
     }
-    if (literal.datatype.equals(schema.Date)) {
+    if (
+      literal.datatype.equals(schema.Date) ||
+      literal.datatype.equals(schema.DateTime)
+    ) {
       if (/^\d{4}-\d{2}-\d{2}$/.test(literal.value)) {
         // The JSON-LD -> RDF conversion with the schema.org context has a lot of Date | DateTime unions
         // Test whether it's only a date or also has a time.
         return N3.DataFactory.literal(literal.value, xsd.date);
       }
-      return N3.DataFactory.literal(literal.value, xsd.dateTime);
-    }
-    if (literal.datatype.equals(schema.DateTime)) {
-      return N3.DataFactory.literal(literal.value, xsd.dateTime);
+      const parsedDateNumber = Date.parse(literal.value);
+      if (Number.isNaN(parsedDateNumber)) {
+        logger.warn(`invalid date/date-time literal: ${literal.value}`);
+        return N3.DataFactory.literal(literal.value, xsd.dateTime);
+      }
+      const parsedDate = new Date(parsedDateNumber);
+      if (
+        parsedDate.getUTCHours() === 0 &&
+        parsedDate.getUTCMinutes() === 0 &&
+        parsedDate.getUTCSeconds() === 0 &&
+        parsedDate.getUTCMilliseconds() === 0
+      ) {
+        // Treat a date-time at UTC midnight as a date, which is probably the intention coming out of the LLM.
+        return N3.DataFactory.literal(
+          `${parsedDate.getFullYear().toString()}-${(parsedDate.getMonth() + 1).toString().padStart(2, "0")}-${parsedDate.getDate().toString().padStart(2, "0")}`,
+          xsd.date,
+        );
+      }
+      // Some of the date-time literals from the LLM don't have seconds, which are required by ISO 8601
+      // rdf-literal correctly refuses to validate those.
+      // JavaScript's Date is more lenient. Use it to write a correct ISO 8601 date-time.
+      return N3.DataFactory.literal(parsedDate.toISOString(), xsd.dateTime);
     }
     throw new Error(
       `unrecognized schema: literal datatype: ${literal.datatype.value}`,
@@ -356,8 +377,6 @@ function skolemize({
       datePredicate = schema.startDate;
     } else if (resource.isInstanceOf(schema.Invoice)) {
       datePredicate = schema.paymentDueDate;
-    } else if (resource.isInstanceOf(schema.MonetaryAmount)) {
-      datePredicate = schema.validFrom;
     } else if (resource.isInstanceOf(schema.Order)) {
       datePredicate = schema.orderDate;
     } else if (
@@ -378,7 +397,17 @@ function skolemize({
     if (datePredicate) {
       resource
         .value(datePredicate)
+        .ifLeft(() => {
+          logger.debug(
+            `resource ${Identifier.toString(resource.identifier)} with rdf:type ${rdfType.value} does not have a value for ${datePredicate.value}`,
+          );
+        })
         .chain((value) => value.toDate())
+        .ifLeft((error) => {
+          logger.debug(
+            `resource ${Identifier.toString(resource.identifier)} with rdf:type ${rdfType.value} does not have a valid value for ${datePredicate.value}: ${error.message}`,
+          );
+        })
         .ifRight((value) =>
           iriPath.push(
             value.getFullYear().toString(),
