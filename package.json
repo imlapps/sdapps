@@ -19,7 +19,9 @@
     "biome:check": "biome check",
     "biome:check:write": "biome check --write",
     "biome:check:write:unsafe": "biome check --write --unsafe",
-    "tsc:noEmit": "turbo run tsc:noEmit",
+    "check-types": "turbo run check-types",
+    "dev": "turbo run dev",
+    "dev:packages": "turbo run --filter \"./packages/*\" dev",
     "syncpack:fix-mismatches": "syncpack fix-mismatches",
     "test": "turbo run test",
     "test:packages": "turbo run --filter \"./packages/*\" test"

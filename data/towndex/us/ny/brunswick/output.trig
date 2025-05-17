@@ -1,0 +1,1318 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix schema: <http://schema.org/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix void: <http://rdfs.org/ns/void#>.
+
+schema:DataType rdfs:subClassOf rdfs:Class.
+schema:3DModel rdfs:subClassOf schema:MediaObject.
+schema:MediaObject rdfs:subClassOf schema:CreativeWork.
+schema:AmpStory rdfs:subClassOf schema:MediaObject, schema:CreativeWork.
+schema:AudioObject rdfs:subClassOf schema:MediaObject.
+schema:ImageObject rdfs:subClassOf schema:MediaObject.
+schema:DataDownload rdfs:subClassOf schema:MediaObject.
+schema:LegislationObject rdfs:subClassOf schema:MediaObject, schema:Legislation.
+schema:MusicVideoObject rdfs:subClassOf schema:MediaObject.
+schema:TextObject rdfs:subClassOf schema:MediaObject.
+schema:VideoObject rdfs:subClassOf schema:MediaObject.
+schema:AMRadioChannel rdfs:subClassOf schema:RadioChannel.
+schema:RadioChannel rdfs:subClassOf schema:BroadcastChannel.
+schema:FMRadioChannel rdfs:subClassOf schema:RadioChannel.
+schema:APIReference rdfs:subClassOf schema:TechArticle.
+schema:TechArticle rdfs:subClassOf schema:Article.
+schema:AboutPage rdfs:subClassOf schema:WebPage.
+schema:WebPage rdfs:subClassOf schema:CreativeWork.
+schema:CheckoutPage rdfs:subClassOf schema:WebPage.
+schema:CollectionPage rdfs:subClassOf schema:WebPage.
+schema:ContactPage rdfs:subClassOf schema:WebPage.
+schema:FAQPage rdfs:subClassOf schema:WebPage.
+schema:ItemPage rdfs:subClassOf schema:WebPage.
+schema:MedicalWebPage rdfs:subClassOf schema:WebPage.
+schema:ProfilePage rdfs:subClassOf schema:WebPage.
+schema:QAPage rdfs:subClassOf schema:WebPage.
+schema:RealEstateListing rdfs:subClassOf schema:WebPage.
+schema:SearchResultsPage rdfs:subClassOf schema:WebPage.
+schema:AcceptAction rdfs:subClassOf schema:AllocateAction.
+schema:AllocateAction rdfs:subClassOf schema:OrganizeAction.
+schema:AssignAction rdfs:subClassOf schema:AllocateAction.
+schema:AuthorizeAction rdfs:subClassOf schema:AllocateAction.
+schema:RejectAction rdfs:subClassOf schema:AllocateAction.
+schema:Apartment rdfs:subClassOf schema:Accommodation.
+schema:Accommodation rdfs:subClassOf schema:Place.
+schema:CampingPitch rdfs:subClassOf schema:Accommodation.
+schema:Room rdfs:subClassOf schema:Accommodation.
+schema:House rdfs:subClassOf schema:Accommodation.
+schema:Suite rdfs:subClassOf schema:Accommodation.
+schema:Place rdfs:subClassOf schema:Thing.
+schema:AdministrativeArea rdfs:subClassOf schema:Place.
+schema:CivicStructure rdfs:subClassOf schema:Place.
+schema:LocalBusiness rdfs:subClassOf schema:Place, schema:Organization.
+schema:Residence rdfs:subClassOf schema:Place.
+schema:Landform rdfs:subClassOf schema:Place.
+schema:LandmarksOrHistoricalBuildings rdfs:subClassOf schema:Place.
+schema:TouristAttraction rdfs:subClassOf schema:Place.
+schema:TouristDestination rdfs:subClassOf schema:Place.
+schema:AccountingService rdfs:subClassOf schema:FinancialService.
+schema:FinancialService rdfs:subClassOf schema:LocalBusiness.
+schema:AutomatedTeller rdfs:subClassOf schema:FinancialService.
+schema:BankOrCreditUnion rdfs:subClassOf schema:FinancialService.
+schema:InsuranceAgency rdfs:subClassOf schema:FinancialService.
+schema:LoseAction rdfs:subClassOf schema:AchieveAction.
+schema:AchieveAction rdfs:subClassOf schema:Action.
+schema:TieAction rdfs:subClassOf schema:AchieveAction.
+schema:WinAction rdfs:subClassOf schema:AchieveAction.
+schema:Action rdfs:subClassOf schema:Thing.
+schema:ControlAction rdfs:subClassOf schema:Action.
+schema:UpdateAction rdfs:subClassOf schema:Action.
+schema:OrganizeAction rdfs:subClassOf schema:Action.
+schema:MoveAction rdfs:subClassOf schema:Action.
+schema:AssessAction rdfs:subClassOf schema:Action.
+schema:InteractAction rdfs:subClassOf schema:Action.
+schema:TransferAction rdfs:subClassOf schema:Action.
+schema:TradeAction rdfs:subClassOf schema:Action.
+schema:FindAction rdfs:subClassOf schema:Action.
+schema:ConsumeAction rdfs:subClassOf schema:Action.
+schema:CreateAction rdfs:subClassOf schema:Action.
+schema:PlayAction rdfs:subClassOf schema:Action.
+schema:SearchAction rdfs:subClassOf schema:Action.
+schema:SeekToAction rdfs:subClassOf schema:Action.
+schema:SolveMathAction rdfs:subClassOf schema:Action.
+schema:Intangible rdfs:subClassOf schema:Thing.
+schema:Organization rdfs:subClassOf schema:Thing.
+schema:CreativeWork rdfs:subClassOf schema:Thing.
+schema:MedicalEntity rdfs:subClassOf schema:Thing.
+schema:BioChemEntity rdfs:subClassOf schema:Thing.
+schema:Event rdfs:subClassOf schema:Thing.
+schema:Product rdfs:subClassOf schema:Thing.
+schema:Person rdfs:subClassOf schema:Thing.
+schema:Taxon rdfs:subClassOf schema:Thing.
+schema:ActionAccessSpecification rdfs:subClassOf schema:Intangible.
+schema:Enumeration rdfs:subClassOf schema:Intangible.
+schema:Offer rdfs:subClassOf schema:Intangible.
+schema:Rating rdfs:subClassOf schema:Intangible.
+schema:AlignmentObject rdfs:subClassOf schema:Intangible.
+schema:Audience rdfs:subClassOf schema:Intangible.
+schema:BedDetails rdfs:subClassOf schema:Intangible.
+schema:Reservation rdfs:subClassOf schema:Intangible.
+schema:Trip rdfs:subClassOf schema:Intangible.
+schema:Brand rdfs:subClassOf schema:Intangible.
+schema:ItemList rdfs:subClassOf schema:Intangible.
+schema:BroadcastChannel rdfs:subClassOf schema:Intangible.
+schema:BroadcastFrequencySpecification rdfs:subClassOf schema:Intangible.
+schema:Service rdfs:subClassOf schema:Intangible.
+schema:StructuredValue rdfs:subClassOf schema:Intangible.
+schema:DefinedTerm rdfs:subClassOf schema:Intangible.
+schema:Class rdfs:subClassOf schema:Intangible.
+schema:ComputerLanguage rdfs:subClassOf schema:Intangible.
+schema:ConstraintNode rdfs:subClassOf schema:Intangible.
+schema:Series rdfs:subClassOf schema:Intangible.
+schema:DataFeedItem rdfs:subClassOf schema:Intangible.
+schema:Demand rdfs:subClassOf schema:Intangible.
+schema:DigitalDocumentPermission rdfs:subClassOf schema:Intangible.
+schema:Quantity rdfs:subClassOf schema:Intangible.
+schema:EducationalOccupationalProgram rdfs:subClassOf schema:Intangible.
+schema:EnergyConsumptionDetails rdfs:subClassOf schema:Intangible.
+schema:EntryPoint rdfs:subClassOf schema:Intangible.
+schema:FinancialIncentive rdfs:subClassOf schema:Intangible.
+schema:FloorPlan rdfs:subClassOf schema:Intangible.
+schema:GameServer rdfs:subClassOf schema:Intangible.
+schema:GeospatialGeometry rdfs:subClassOf schema:Intangible.
+schema:Permit rdfs:subClassOf schema:Intangible.
+schema:Grant rdfs:subClassOf schema:Intangible.
+schema:HealthInsurancePlan rdfs:subClassOf schema:Intangible.
+schema:HealthPlanCostSharingSpecification rdfs:subClassOf schema:Intangible.
+schema:HealthPlanFormulary rdfs:subClassOf schema:Intangible.
+schema:HealthPlanNetwork rdfs:subClassOf schema:Intangible.
+schema:ListItem rdfs:subClassOf schema:Intangible.
+schema:Invoice rdfs:subClassOf schema:Intangible.
+schema:JobPosting rdfs:subClassOf schema:Intangible.
+schema:Language rdfs:subClassOf schema:Intangible.
+schema:Role rdfs:subClassOf schema:Intangible.
+schema:MediaSubscription rdfs:subClassOf schema:Intangible.
+schema:MemberProgram rdfs:subClassOf schema:Intangible.
+schema:MemberProgramTier rdfs:subClassOf schema:Intangible.
+schema:MenuItem rdfs:subClassOf schema:Intangible.
+schema:MerchantReturnPolicy rdfs:subClassOf schema:Intangible.
+schema:MerchantReturnPolicySeasonalOverride rdfs:subClassOf schema:Intangible.
+schema:Observation rdfs:subClassOf schema:Intangible, schema:QuantitativeValue.
+schema:Occupation rdfs:subClassOf schema:Intangible.
+schema:OccupationalExperienceRequirements rdfs:subClassOf schema:Intangible.
+schema:Order rdfs:subClassOf schema:Intangible.
+schema:OrderItem rdfs:subClassOf schema:Intangible.
+schema:ParcelDelivery rdfs:subClassOf schema:Intangible.
+schema:PaymentMethod rdfs:subClassOf schema:Intangible.
+schema:ProgramMembership rdfs:subClassOf schema:Intangible.
+schema:Property rdfs:subClassOf schema:Intangible.
+schema:PropertyValueSpecification rdfs:subClassOf schema:Intangible.
+schema:Schedule rdfs:subClassOf schema:Intangible.
+schema:Seat rdfs:subClassOf schema:Intangible.
+schema:ServiceChannel rdfs:subClassOf schema:Intangible.
+schema:SpeakableSpecification rdfs:subClassOf schema:Intangible.
+schema:StatisticalPopulation rdfs:subClassOf schema:Intangible.
+schema:Ticket rdfs:subClassOf schema:Intangible.
+schema:VirtualLocation rdfs:subClassOf schema:Intangible.
+schema:ActionStatusType rdfs:subClassOf schema:StatusEnumeration.
+schema:StatusEnumeration rdfs:subClassOf schema:Enumeration.
+schema:EventStatusType rdfs:subClassOf schema:StatusEnumeration.
+schema:GameServerStatus rdfs:subClassOf schema:StatusEnumeration.
+schema:LegalForceStatus rdfs:subClassOf schema:StatusEnumeration.
+schema:OrderStatus rdfs:subClassOf schema:StatusEnumeration.
+schema:PaymentStatusType rdfs:subClassOf schema:StatusEnumeration.
+schema:ReservationStatusType rdfs:subClassOf schema:StatusEnumeration.
+schema:ActivateAction rdfs:subClassOf schema:ControlAction.
+schema:DeactivateAction rdfs:subClassOf schema:ControlAction.
+schema:ResumeAction rdfs:subClassOf schema:ControlAction.
+schema:SuspendAction rdfs:subClassOf schema:ControlAction.
+schema:InsertAction rdfs:subClassOf schema:AddAction.
+schema:AddAction rdfs:subClassOf schema:UpdateAction.
+schema:DeleteAction rdfs:subClassOf schema:UpdateAction.
+schema:ReplaceAction rdfs:subClassOf schema:UpdateAction.
+schema:City rdfs:subClassOf schema:AdministrativeArea.
+schema:Country rdfs:subClassOf schema:AdministrativeArea.
+schema:SchoolDistrict rdfs:subClassOf schema:AdministrativeArea.
+schema:State rdfs:subClassOf schema:AdministrativeArea.
+schema:AdultEntertainment rdfs:subClassOf schema:EntertainmentBusiness.
+schema:EntertainmentBusiness rdfs:subClassOf schema:LocalBusiness.
+schema:AmusementPark rdfs:subClassOf schema:EntertainmentBusiness.
+schema:ArtGallery rdfs:subClassOf schema:EntertainmentBusiness.
+schema:Casino rdfs:subClassOf schema:EntertainmentBusiness.
+schema:ComedyClub rdfs:subClassOf schema:EntertainmentBusiness.
+schema:MovieTheater rdfs:subClassOf schema:CivicStructure, schema:EntertainmentBusiness.
+schema:NightClub rdfs:subClassOf schema:EntertainmentBusiness.
+schema:AdultOrientedEnumeration rdfs:subClassOf schema:Enumeration.
+schema:QualitativeValue rdfs:subClassOf schema:Enumeration.
+schema:BoardingPolicyType rdfs:subClassOf schema:Enumeration.
+schema:MeasurementTypeEnumeration rdfs:subClassOf schema:Enumeration.
+schema:BookFormatType rdfs:subClassOf schema:Enumeration.
+schema:BusinessEntityType rdfs:subClassOf schema:Enumeration.
+schema:BusinessFunction rdfs:subClassOf schema:Enumeration.
+schema:CarUsageType rdfs:subClassOf schema:Enumeration.
+schema:CertificationStatusEnumeration rdfs:subClassOf schema:Enumeration.
+schema:ContactPointOption rdfs:subClassOf schema:Enumeration.
+schema:DayOfWeek rdfs:subClassOf schema:Enumeration.
+schema:DeliveryMethod rdfs:subClassOf schema:Enumeration.
+schema:DigitalDocumentPermissionType rdfs:subClassOf schema:Enumeration.
+schema:DigitalPlatformEnumeration rdfs:subClassOf schema:Enumeration.
+schema:MedicalEnumeration rdfs:subClassOf schema:Enumeration.
+schema:EnergyEfficiencyEnumeration rdfs:subClassOf schema:Enumeration.
+schema:EventAttendanceModeEnumeration rdfs:subClassOf schema:Enumeration.
+schema:FulfillmentTypeEnumeration rdfs:subClassOf schema:Enumeration.
+schema:GameAvailabilityEnumeration rdfs:subClassOf schema:Enumeration.
+schema:GamePlayMode rdfs:subClassOf schema:Enumeration.
+schema:GenderType rdfs:subClassOf schema:Enumeration.
+schema:GovernmentBenefitsType rdfs:subClassOf schema:Enumeration.
+schema:HealthAspectEnumeration rdfs:subClassOf schema:Enumeration.
+schema:MediaEnumeration rdfs:subClassOf schema:Enumeration.
+schema:IncentiveQualifiedExpenseType rdfs:subClassOf schema:Enumeration.
+schema:IncentiveStatus rdfs:subClassOf schema:Enumeration.
+schema:IncentiveType rdfs:subClassOf schema:Enumeration.
+schema:ItemAvailability rdfs:subClassOf schema:Enumeration.
+schema:ItemListOrderType rdfs:subClassOf schema:Enumeration.
+schema:LegalValueLevel rdfs:subClassOf schema:Enumeration.
+schema:MapCategoryType rdfs:subClassOf schema:Enumeration.
+schema:MeasurementMethodEnum rdfs:subClassOf schema:Enumeration.
+schema:MediaManipulationRatingEnumeration rdfs:subClassOf schema:Enumeration.
+schema:Specialty rdfs:subClassOf schema:Enumeration.
+schema:MerchantReturnEnumeration rdfs:subClassOf schema:Enumeration.
+schema:MusicAlbumProductionType rdfs:subClassOf schema:Enumeration.
+schema:MusicAlbumReleaseType rdfs:subClassOf schema:Enumeration.
+schema:MusicReleaseFormatType rdfs:subClassOf schema:Enumeration.
+schema:NonprofitType rdfs:subClassOf schema:Enumeration.
+schema:OfferItemCondition rdfs:subClassOf schema:Enumeration.
+schema:PaymentMethodType rdfs:subClassOf schema:Enumeration.
+schema:PhysicalActivityCategory rdfs:subClassOf schema:Enumeration.
+schema:PriceComponentTypeEnumeration rdfs:subClassOf schema:Enumeration.
+schema:PriceTypeEnumeration rdfs:subClassOf schema:Enumeration.
+schema:PurchaseType rdfs:subClassOf schema:Enumeration.
+schema:RefundTypeEnumeration rdfs:subClassOf schema:Enumeration.
+schema:RestrictedDiet rdfs:subClassOf schema:Enumeration.
+schema:ReturnFeesEnumeration rdfs:subClassOf schema:Enumeration.
+schema:ReturnLabelSourceEnumeration rdfs:subClassOf schema:Enumeration.
+schema:ReturnMethodEnumeration rdfs:subClassOf schema:Enumeration.
+schema:RsvpResponseType rdfs:subClassOf schema:Enumeration.
+schema:SizeGroupEnumeration rdfs:subClassOf schema:Enumeration.
+schema:SizeSystemEnumeration rdfs:subClassOf schema:Enumeration.
+schema:TierBenefitEnumeration rdfs:subClassOf schema:Enumeration.
+schema:WarrantyScope rdfs:subClassOf schema:Enumeration.
+schema:Article rdfs:subClassOf schema:CreativeWork.
+schema:AdvertiserContentArticle rdfs:subClassOf schema:Article.
+schema:NewsArticle rdfs:subClassOf schema:Article.
+schema:SocialMediaPosting rdfs:subClassOf schema:Article.
+schema:ScholarlyArticle rdfs:subClassOf schema:Article.
+schema:Report rdfs:subClassOf schema:Article.
+schema:SatiricalArticle rdfs:subClassOf schema:Article.
+schema:AggregateOffer rdfs:subClassOf schema:Offer.
+schema:OfferForLease rdfs:subClassOf schema:Offer.
+schema:OfferForPurchase rdfs:subClassOf schema:Offer.
+schema:EmployerAggregateRating rdfs:subClassOf schema:AggregateRating.
+schema:AggregateRating rdfs:subClassOf schema:Rating.
+schema:EndorsementRating rdfs:subClassOf schema:Rating.
+schema:AgreeAction rdfs:subClassOf schema:ReactAction.
+schema:ReactAction rdfs:subClassOf schema:AssessAction.
+schema:DisagreeAction rdfs:subClassOf schema:ReactAction.
+schema:DislikeAction rdfs:subClassOf schema:ReactAction.
+schema:EndorseAction rdfs:subClassOf schema:ReactAction.
+schema:LikeAction rdfs:subClassOf schema:ReactAction.
+schema:WantAction rdfs:subClassOf schema:ReactAction.
+schema:Airline rdfs:subClassOf schema:Organization.
+schema:EducationalOrganization rdfs:subClassOf schema:CivicStructure, schema:Organization.
+schema:Consortium rdfs:subClassOf schema:Organization.
+schema:Cooperative rdfs:subClassOf schema:Organization.
+schema:Corporation rdfs:subClassOf schema:Organization.
+schema:PerformingGroup rdfs:subClassOf schema:Organization.
+schema:MedicalOrganization rdfs:subClassOf schema:Organization.
+schema:Project rdfs:subClassOf schema:Organization.
+schema:FundingScheme rdfs:subClassOf schema:Organization.
+schema:GovernmentOrganization rdfs:subClassOf schema:Organization.
+schema:LibrarySystem rdfs:subClassOf schema:Organization.
+schema:NGO rdfs:subClassOf schema:Organization.
+schema:NewsMediaOrganization rdfs:subClassOf schema:Organization.
+schema:OnlineBusiness rdfs:subClassOf schema:Organization.
+schema:PoliticalParty rdfs:subClassOf schema:Organization.
+schema:ResearchOrganization rdfs:subClassOf schema:Organization.
+schema:SearchRescueOrganization rdfs:subClassOf schema:Organization.
+schema:SportsOrganization rdfs:subClassOf schema:Organization.
+schema:WorkersUnion rdfs:subClassOf schema:Organization.
+schema:Airport rdfs:subClassOf schema:CivicStructure.
+schema:Aquarium rdfs:subClassOf schema:CivicStructure.
+schema:Beach rdfs:subClassOf schema:CivicStructure.
+schema:BoatTerminal rdfs:subClassOf schema:CivicStructure.
+schema:Bridge rdfs:subClassOf schema:CivicStructure.
+schema:PlaceOfWorship rdfs:subClassOf schema:CivicStructure.
+schema:BusStation rdfs:subClassOf schema:CivicStructure.
+schema:BusStop rdfs:subClassOf schema:CivicStructure.
+schema:Campground rdfs:subClassOf schema:CivicStructure, schema:LodgingBusiness.
+schema:Cemetery rdfs:subClassOf schema:CivicStructure.
+schema:GovernmentBuilding rdfs:subClassOf schema:CivicStructure.
+schema:Crematorium rdfs:subClassOf schema:CivicStructure.
+schema:EventVenue rdfs:subClassOf schema:CivicStructure.
+schema:FireStation rdfs:subClassOf schema:CivicStructure, schema:EmergencyService.
+schema:Hospital rdfs:subClassOf schema:CivicStructure, schema:MedicalOrganization, schema:EmergencyService.
+schema:Museum rdfs:subClassOf schema:CivicStructure.
+schema:MusicVenue rdfs:subClassOf schema:CivicStructure.
+schema:Park rdfs:subClassOf schema:CivicStructure.
+schema:ParkingFacility rdfs:subClassOf schema:CivicStructure.
+schema:PerformingArtsTheater rdfs:subClassOf schema:CivicStructure.
+schema:Playground rdfs:subClassOf schema:CivicStructure.
+schema:PoliceStation rdfs:subClassOf schema:CivicStructure, schema:EmergencyService.
+schema:PublicToilet rdfs:subClassOf schema:CivicStructure.
+schema:RVPark rdfs:subClassOf schema:CivicStructure.
+schema:StadiumOrArena rdfs:subClassOf schema:CivicStructure, schema:SportsActivityLocation.
+schema:SubwayStation rdfs:subClassOf schema:CivicStructure.
+schema:TaxiStand rdfs:subClassOf schema:CivicStructure.
+schema:TrainStation rdfs:subClassOf schema:CivicStructure.
+schema:Zoo rdfs:subClassOf schema:CivicStructure.
+schema:ApplyAction rdfs:subClassOf schema:OrganizeAction.
+schema:BookmarkAction rdfs:subClassOf schema:OrganizeAction.
+schema:PlanAction rdfs:subClassOf schema:OrganizeAction.
+schema:Comment rdfs:subClassOf schema:CreativeWork.
+schema:ArchiveComponent rdfs:subClassOf schema:CreativeWork.
+schema:Atlas rdfs:subClassOf schema:CreativeWork.
+schema:Book rdfs:subClassOf schema:CreativeWork.
+schema:Blog rdfs:subClassOf schema:CreativeWork.
+schema:CreativeWorkSeries rdfs:subClassOf schema:CreativeWork, schema:Series.
+schema:DefinedTermSet rdfs:subClassOf schema:CreativeWork.
+schema:Certification rdfs:subClassOf schema:CreativeWork.
+schema:Chapter rdfs:subClassOf schema:CreativeWork.
+schema:Claim rdfs:subClassOf schema:CreativeWork.
+schema:Review rdfs:subClassOf schema:CreativeWork.
+schema:Clip rdfs:subClassOf schema:CreativeWork.
+schema:Code rdfs:subClassOf schema:CreativeWork.
+schema:SoftwareSourceCode rdfs:subClassOf schema:CreativeWork.
+schema:Collection rdfs:subClassOf schema:CreativeWork.
+schema:ComicStory rdfs:subClassOf schema:CreativeWork.
+schema:PublicationIssue rdfs:subClassOf schema:CreativeWork.
+schema:Conversation rdfs:subClassOf schema:CreativeWork.
+schema:Course rdfs:subClassOf schema:CreativeWork, schema:LearningResource.
+schema:LearningResource rdfs:subClassOf schema:CreativeWork.
+schema:VisualArtwork rdfs:subClassOf schema:CreativeWork.
+schema:CreativeWorkSeason rdfs:subClassOf schema:CreativeWork.
+schema:DataCatalog rdfs:subClassOf schema:CreativeWork.
+schema:Dataset rdfs:subClassOf schema:CreativeWork.
+schema:Diet rdfs:subClassOf schema:CreativeWork, schema:LifestyleModification.
+schema:DigitalDocument rdfs:subClassOf schema:CreativeWork.
+schema:Drawing rdfs:subClassOf schema:CreativeWork.
+schema:EducationalOccupationalCredential rdfs:subClassOf schema:CreativeWork.
+schema:Message rdfs:subClassOf schema:CreativeWork.
+schema:Episode rdfs:subClassOf schema:CreativeWork.
+schema:ExercisePlan rdfs:subClassOf schema:CreativeWork, schema:PhysicalActivity.
+schema:Game rdfs:subClassOf schema:CreativeWork.
+schema:Guide rdfs:subClassOf schema:CreativeWork.
+schema:WebContent rdfs:subClassOf schema:CreativeWork.
+schema:HowTo rdfs:subClassOf schema:CreativeWork.
+schema:HowToDirection rdfs:subClassOf schema:CreativeWork, schema:ListItem.
+schema:HowToSection rdfs:subClassOf schema:CreativeWork, schema:ItemList, schema:ListItem.
+schema:HowToStep rdfs:subClassOf schema:CreativeWork, schema:ItemList, schema:ListItem.
+schema:HowToTip rdfs:subClassOf schema:CreativeWork, schema:ListItem.
+schema:HyperToc rdfs:subClassOf schema:CreativeWork.
+schema:HyperTocEntry rdfs:subClassOf schema:CreativeWork.
+schema:Legislation rdfs:subClassOf schema:CreativeWork.
+schema:Manuscript rdfs:subClassOf schema:CreativeWork.
+schema:Map rdfs:subClassOf schema:CreativeWork.
+schema:MathSolver rdfs:subClassOf schema:CreativeWork.
+schema:MediaReviewItem rdfs:subClassOf schema:CreativeWork.
+schema:Menu rdfs:subClassOf schema:CreativeWork.
+schema:MenuSection rdfs:subClassOf schema:CreativeWork.
+schema:SoftwareApplication rdfs:subClassOf schema:CreativeWork.
+schema:Movie rdfs:subClassOf schema:CreativeWork.
+schema:MusicPlaylist rdfs:subClassOf schema:CreativeWork.
+schema:MusicComposition rdfs:subClassOf schema:CreativeWork.
+schema:MusicRecording rdfs:subClassOf schema:CreativeWork.
+schema:Painting rdfs:subClassOf schema:CreativeWork.
+schema:Photograph rdfs:subClassOf schema:CreativeWork.
+schema:Play rdfs:subClassOf schema:CreativeWork.
+schema:Poster rdfs:subClassOf schema:CreativeWork.
+schema:PublicationVolume rdfs:subClassOf schema:CreativeWork.
+schema:Quotation rdfs:subClassOf schema:CreativeWork.
+schema:Sculpture rdfs:subClassOf schema:CreativeWork.
+schema:Season rdfs:subClassOf schema:CreativeWork.
+schema:SheetMusic rdfs:subClassOf schema:CreativeWork.
+schema:ShortStory rdfs:subClassOf schema:CreativeWork.
+schema:WebPageElement rdfs:subClassOf schema:CreativeWork.
+schema:SpecialAnnouncement rdfs:subClassOf schema:CreativeWork.
+schema:Statement rdfs:subClassOf schema:CreativeWork.
+schema:TVSeason rdfs:subClassOf schema:CreativeWork, schema:CreativeWorkSeason.
+schema:TVSeries rdfs:subClassOf schema:CreativeWork, schema:CreativeWorkSeries.
+schema:Thesis rdfs:subClassOf schema:CreativeWork.
+schema:WebSite rdfs:subClassOf schema:CreativeWork.
+schema:AnalysisNewsArticle rdfs:subClassOf schema:NewsArticle.
+schema:AskPublicNewsArticle rdfs:subClassOf schema:NewsArticle.
+schema:BackgroundNewsArticle rdfs:subClassOf schema:NewsArticle.
+schema:OpinionNewsArticle rdfs:subClassOf schema:NewsArticle.
+schema:ReportageNewsArticle rdfs:subClassOf schema:NewsArticle.
+schema:ReviewNewsArticle rdfs:subClassOf schema:NewsArticle, schema:CriticReview.
+schema:Vessel rdfs:subClassOf schema:AnatomicalStructure.
+schema:AnatomicalStructure rdfs:subClassOf schema:MedicalEntity.
+schema:Bone rdfs:subClassOf schema:AnatomicalStructure.
+schema:BrainStructure rdfs:subClassOf schema:AnatomicalStructure.
+schema:Joint rdfs:subClassOf schema:AnatomicalStructure.
+schema:Ligament rdfs:subClassOf schema:AnatomicalStructure.
+schema:Muscle rdfs:subClassOf schema:AnatomicalStructure.
+schema:Nerve rdfs:subClassOf schema:AnatomicalStructure.
+schema:AnatomicalSystem rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalIndication rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalTest rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalIntangible rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalProcedure rdfs:subClassOf schema:MedicalEntity.
+schema:LifestyleModification rdfs:subClassOf schema:MedicalEntity.
+schema:Substance rdfs:subClassOf schema:MedicalEntity.
+schema:DrugClass rdfs:subClassOf schema:MedicalEntity.
+schema:DrugCost rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalCondition rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalCause rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalContraindication rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalDevice rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalGuideline rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalStudy rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalRiskEstimator rdfs:subClassOf schema:MedicalEntity.
+schema:MedicalRiskFactor rdfs:subClassOf schema:MedicalEntity.
+schema:SuperficialAnatomy rdfs:subClassOf schema:MedicalEntity.
+schema:AnimalShelter rdfs:subClassOf schema:LocalBusiness.
+schema:ArchiveOrganization rdfs:subClassOf schema:LocalBusiness.
+schema:LegalService rdfs:subClassOf schema:LocalBusiness.
+schema:AutomotiveBusiness rdfs:subClassOf schema:LocalBusiness.
+schema:Store rdfs:subClassOf schema:LocalBusiness.
+schema:FoodEstablishment rdfs:subClassOf schema:LocalBusiness.
+schema:HealthAndBeautyBusiness rdfs:subClassOf schema:LocalBusiness.
+schema:LodgingBusiness rdfs:subClassOf schema:LocalBusiness.
+schema:SportsActivityLocation rdfs:subClassOf schema:LocalBusiness.
+schema:ChildCare rdfs:subClassOf schema:LocalBusiness.
+schema:Dentist rdfs:subClassOf schema:LocalBusiness, schema:MedicalOrganization, schema:MedicalBusiness.
+schema:MedicalBusiness rdfs:subClassOf schema:LocalBusiness.
+schema:DryCleaningOrLaundry rdfs:subClassOf schema:LocalBusiness.
+schema:HomeAndConstructionBusiness rdfs:subClassOf schema:LocalBusiness.
+schema:EmergencyService rdfs:subClassOf schema:LocalBusiness.
+schema:EmploymentAgency rdfs:subClassOf schema:LocalBusiness.
+schema:GovernmentOffice rdfs:subClassOf schema:LocalBusiness.
+schema:InternetCafe rdfs:subClassOf schema:LocalBusiness.
+schema:Library rdfs:subClassOf schema:LocalBusiness.
+schema:ProfessionalService rdfs:subClassOf schema:LocalBusiness.
+schema:RadioStation rdfs:subClassOf schema:LocalBusiness.
+schema:RealEstateAgent rdfs:subClassOf schema:LocalBusiness.
+schema:RecyclingCenter rdfs:subClassOf schema:LocalBusiness.
+schema:SelfStorage rdfs:subClassOf schema:LocalBusiness.
+schema:ShoppingCenter rdfs:subClassOf schema:LocalBusiness.
+schema:TelevisionStation rdfs:subClassOf schema:LocalBusiness.
+schema:TouristInformationCenter rdfs:subClassOf schema:LocalBusiness.
+schema:TravelAgency rdfs:subClassOf schema:LocalBusiness.
+schema:Answer rdfs:subClassOf schema:Comment.
+schema:CorrectionComment rdfs:subClassOf schema:Comment.
+schema:Question rdfs:subClassOf schema:Comment.
+schema:ApartmentComplex rdfs:subClassOf schema:Residence.
+schema:GatedResidenceCommunity rdfs:subClassOf schema:Residence.
+schema:AppendAction rdfs:subClassOf schema:InsertAction.
+schema:PrependAction rdfs:subClassOf schema:InsertAction.
+schema:ApprovedIndication rdfs:subClassOf schema:MedicalIndication.
+schema:PreventionIndication rdfs:subClassOf schema:MedicalIndication.
+schema:TreatmentIndication rdfs:subClassOf schema:MedicalIndication.
+schema:ArriveAction rdfs:subClassOf schema:MoveAction.
+schema:DepartAction rdfs:subClassOf schema:MoveAction.
+schema:TravelAction rdfs:subClassOf schema:MoveAction.
+schema:Artery rdfs:subClassOf schema:Vessel.
+schema:LymphaticVessel rdfs:subClassOf schema:Vessel.
+schema:Vein rdfs:subClassOf schema:Vessel.
+schema:AskAction rdfs:subClassOf schema:CommunicateAction.
+schema:CommunicateAction rdfs:subClassOf schema:InteractAction.
+schema:CheckInAction rdfs:subClassOf schema:CommunicateAction.
+schema:CheckOutAction rdfs:subClassOf schema:CommunicateAction.
+schema:CommentAction rdfs:subClassOf schema:CommunicateAction.
+schema:InformAction rdfs:subClassOf schema:CommunicateAction.
+schema:InviteAction rdfs:subClassOf schema:CommunicateAction.
+schema:ReplyAction rdfs:subClassOf schema:CommunicateAction.
+schema:ShareAction rdfs:subClassOf schema:CommunicateAction.
+schema:ChooseAction rdfs:subClassOf schema:AssessAction.
+schema:IgnoreAction rdfs:subClassOf schema:AssessAction.
+schema:ReviewAction rdfs:subClassOf schema:AssessAction.
+schema:Attorney rdfs:subClassOf schema:LegalService.
+schema:Notary rdfs:subClassOf schema:LegalService.
+schema:BusinessAudience rdfs:subClassOf schema:Audience.
+schema:EducationalAudience rdfs:subClassOf schema:Audience.
+schema:MedicalAudience rdfs:subClassOf schema:Audience, schema:PeopleAudience.
+schema:PeopleAudience rdfs:subClassOf schema:Audience.
+schema:Researcher rdfs:subClassOf schema:Audience.
+schema:AudioObjectSnapshot rdfs:subClassOf schema:AudioObject.
+schema:Audiobook rdfs:subClassOf schema:AudioObject, schema:Book.
+schema:AutoBodyShop rdfs:subClassOf schema:AutomotiveBusiness.
+schema:AutoDealer rdfs:subClassOf schema:AutomotiveBusiness.
+schema:AutoPartsStore rdfs:subClassOf schema:AutomotiveBusiness, schema:Store.
+schema:AutoRental rdfs:subClassOf schema:AutomotiveBusiness.
+schema:AutoRepair rdfs:subClassOf schema:AutomotiveBusiness.
+schema:AutoWash rdfs:subClassOf schema:AutomotiveBusiness.
+schema:GasStation rdfs:subClassOf schema:AutomotiveBusiness.
+schema:MotorcycleDealer rdfs:subClassOf schema:AutomotiveBusiness.
+schema:MotorcycleRepair rdfs:subClassOf schema:AutomotiveBusiness.
+schema:BikeStore rdfs:subClassOf schema:Store.
+schema:BookStore rdfs:subClassOf schema:Store.
+schema:ClothingStore rdfs:subClassOf schema:Store.
+schema:ComputerStore rdfs:subClassOf schema:Store.
+schema:ConvenienceStore rdfs:subClassOf schema:Store.
+schema:DepartmentStore rdfs:subClassOf schema:Store.
+schema:ElectronicsStore rdfs:subClassOf schema:Store.
+schema:Florist rdfs:subClassOf schema:Store.
+schema:FurnitureStore rdfs:subClassOf schema:Store.
+schema:GardenStore rdfs:subClassOf schema:Store.
+schema:GroceryStore rdfs:subClassOf schema:Store.
+schema:HardwareStore rdfs:subClassOf schema:Store.
+schema:HobbyShop rdfs:subClassOf schema:Store.
+schema:HomeGoodsStore rdfs:subClassOf schema:Store.
+schema:JewelryStore rdfs:subClassOf schema:Store.
+schema:LiquorStore rdfs:subClassOf schema:Store.
+schema:MensClothingStore rdfs:subClassOf schema:Store.
+schema:MobilePhoneStore rdfs:subClassOf schema:Store.
+schema:MovieRentalStore rdfs:subClassOf schema:Store.
+schema:MusicStore rdfs:subClassOf schema:Store.
+schema:OfficeEquipmentStore rdfs:subClassOf schema:Store.
+schema:OutletStore rdfs:subClassOf schema:Store.
+schema:PawnShop rdfs:subClassOf schema:Store.
+schema:PetStore rdfs:subClassOf schema:Store.
+schema:ShoeStore rdfs:subClassOf schema:Store.
+schema:SportingGoodsStore rdfs:subClassOf schema:Store.
+schema:TireShop rdfs:subClassOf schema:Store.
+schema:ToyStore rdfs:subClassOf schema:Store.
+schema:WholesaleStore rdfs:subClassOf schema:Store.
+schema:Bakery rdfs:subClassOf schema:FoodEstablishment.
+schema:BarOrPub rdfs:subClassOf schema:FoodEstablishment.
+schema:Brewery rdfs:subClassOf schema:FoodEstablishment.
+schema:CafeOrCoffeeShop rdfs:subClassOf schema:FoodEstablishment.
+schema:Distillery rdfs:subClassOf schema:FoodEstablishment.
+schema:FastFoodRestaurant rdfs:subClassOf schema:FoodEstablishment.
+schema:IceCreamShop rdfs:subClassOf schema:FoodEstablishment.
+schema:Restaurant rdfs:subClassOf schema:FoodEstablishment.
+schema:Winery rdfs:subClassOf schema:FoodEstablishment.
+schema:DepositAccount rdfs:subClassOf schema:BankAccount, schema:InvestmentOrDeposit.
+schema:BankAccount rdfs:subClassOf schema:FinancialProduct.
+schema:FinancialProduct rdfs:subClassOf schema:Service.
+schema:InvestmentOrDeposit rdfs:subClassOf schema:FinancialProduct.
+schema:LoanOrCredit rdfs:subClassOf schema:FinancialProduct.
+schema:PaymentCard rdfs:subClassOf schema:PaymentMethod, schema:FinancialProduct.
+schema:CurrencyConversionService rdfs:subClassOf schema:FinancialProduct.
+schema:PaymentService rdfs:subClassOf schema:PaymentMethod, schema:FinancialProduct.
+schema:Barcode rdfs:subClassOf schema:ImageObject.
+schema:ImageObjectSnapshot rdfs:subClassOf schema:ImageObject.
+schema:BeautySalon rdfs:subClassOf schema:HealthAndBeautyBusiness.
+schema:DaySpa rdfs:subClassOf schema:HealthAndBeautyBusiness.
+schema:HairSalon rdfs:subClassOf schema:HealthAndBeautyBusiness.
+schema:HealthClub rdfs:subClassOf schema:HealthAndBeautyBusiness, schema:SportsActivityLocation.
+schema:NailSalon rdfs:subClassOf schema:HealthAndBeautyBusiness.
+schema:TattooParlor rdfs:subClassOf schema:HealthAndBeautyBusiness.
+schema:BedAndBreakfast rdfs:subClassOf schema:LodgingBusiness.
+schema:Hostel rdfs:subClassOf schema:LodgingBusiness.
+schema:Hotel rdfs:subClassOf schema:LodgingBusiness.
+schema:Motel rdfs:subClassOf schema:LodgingBusiness.
+schema:Resort rdfs:subClassOf schema:LodgingBusiness.
+schema:VacationRental rdfs:subClassOf schema:LodgingBusiness.
+schema:BedType rdfs:subClassOf schema:QualitativeValue.
+schema:DriveWheelConfigurationValue rdfs:subClassOf schema:QualitativeValue.
+schema:SizeSpecification rdfs:subClassOf schema:QualitativeValue.
+schema:SteeringPositionValue rdfs:subClassOf schema:QualitativeValue.
+schema:BefriendAction rdfs:subClassOf schema:InteractAction.
+schema:FollowAction rdfs:subClassOf schema:InteractAction.
+schema:JoinAction rdfs:subClassOf schema:InteractAction.
+schema:LeaveAction rdfs:subClassOf schema:InteractAction.
+schema:MarryAction rdfs:subClassOf schema:InteractAction.
+schema:RegisterAction rdfs:subClassOf schema:InteractAction.
+schema:SubscribeAction rdfs:subClassOf schema:InteractAction.
+schema:UnRegisterAction rdfs:subClassOf schema:InteractAction.
+schema:ChemicalSubstance rdfs:subClassOf schema:BioChemEntity.
+schema:Gene rdfs:subClassOf schema:BioChemEntity.
+schema:MolecularEntity rdfs:subClassOf schema:BioChemEntity.
+schema:Protein rdfs:subClassOf schema:BioChemEntity.
+schema:LiveBlogPosting rdfs:subClassOf schema:BlogPosting.
+schema:BlogPosting rdfs:subClassOf schema:SocialMediaPosting.
+schema:DiscussionForumPosting rdfs:subClassOf schema:SocialMediaPosting.
+schema:BloodTest rdfs:subClassOf schema:MedicalTest.
+schema:ImagingTest rdfs:subClassOf schema:MedicalTest.
+schema:MedicalTestPanel rdfs:subClassOf schema:MedicalTest.
+schema:PathologyTest rdfs:subClassOf schema:MedicalTest.
+schema:BoatReservation rdfs:subClassOf schema:Reservation.
+schema:BusReservation rdfs:subClassOf schema:Reservation.
+schema:EventReservation rdfs:subClassOf schema:Reservation.
+schema:FlightReservation rdfs:subClassOf schema:Reservation.
+schema:FoodEstablishmentReservation rdfs:subClassOf schema:Reservation.
+schema:LodgingReservation rdfs:subClassOf schema:Reservation.
+schema:RentalCarReservation rdfs:subClassOf schema:Reservation.
+schema:ReservationPackage rdfs:subClassOf schema:Reservation.
+schema:TaxiReservation rdfs:subClassOf schema:Reservation.
+schema:TrainReservation rdfs:subClassOf schema:Reservation.
+schema:BoatTrip rdfs:subClassOf schema:Trip.
+schema:BusTrip rdfs:subClassOf schema:Trip.
+schema:Flight rdfs:subClassOf schema:Trip.
+schema:TouristTrip rdfs:subClassOf schema:Trip.
+schema:TrainTrip rdfs:subClassOf schema:Trip.
+schema:BodyMeasurementTypeEnumeration rdfs:subClassOf schema:MeasurementTypeEnumeration.
+schema:WearableMeasurementTypeEnumeration rdfs:subClassOf schema:MeasurementTypeEnumeration.
+schema:Canal rdfs:subClassOf schema:BodyOfWater.
+schema:BodyOfWater rdfs:subClassOf schema:Landform.
+schema:LakeBodyOfWater rdfs:subClassOf schema:BodyOfWater.
+schema:OceanBodyOfWater rdfs:subClassOf schema:BodyOfWater.
+schema:Pond rdfs:subClassOf schema:BodyOfWater.
+schema:Reservoir rdfs:subClassOf schema:BodyOfWater.
+schema:RiverBodyOfWater rdfs:subClassOf schema:BodyOfWater.
+schema:SeaBodyOfWater rdfs:subClassOf schema:BodyOfWater.
+schema:Waterfall rdfs:subClassOf schema:BodyOfWater.
+schema:Continent rdfs:subClassOf schema:Landform.
+schema:Mountain rdfs:subClassOf schema:Landform.
+schema:Volcano rdfs:subClassOf schema:Landform.
+schema:BookSeries rdfs:subClassOf schema:CreativeWorkSeries.
+schema:Periodical rdfs:subClassOf schema:CreativeWorkSeries.
+schema:MovieSeries rdfs:subClassOf schema:CreativeWorkSeries.
+schema:PodcastSeries rdfs:subClassOf schema:CreativeWorkSeries.
+schema:RadioSeries rdfs:subClassOf schema:CreativeWorkSeries.
+schema:VideoGameSeries rdfs:subClassOf schema:CreativeWorkSeries.
+schema:BorrowAction rdfs:subClassOf schema:TransferAction.
+schema:DonateAction rdfs:subClassOf schema:TransferAction.
+schema:DownloadAction rdfs:subClassOf schema:TransferAction.
+schema:GiveAction rdfs:subClassOf schema:TransferAction.
+schema:LendAction rdfs:subClassOf schema:TransferAction.
+schema:MoneyTransfer rdfs:subClassOf schema:TransferAction.
+schema:ReceiveAction rdfs:subClassOf schema:TransferAction.
+schema:ReturnAction rdfs:subClassOf schema:TransferAction.
+schema:SendAction rdfs:subClassOf schema:TransferAction.
+schema:TakeAction rdfs:subClassOf schema:TransferAction.
+schema:BowlingAlley rdfs:subClassOf schema:SportsActivityLocation.
+schema:ExerciseGym rdfs:subClassOf schema:SportsActivityLocation.
+schema:GolfCourse rdfs:subClassOf schema:SportsActivityLocation.
+schema:PublicSwimmingPool rdfs:subClassOf schema:SportsActivityLocation.
+schema:SkiResort rdfs:subClassOf schema:SportsActivityLocation, schema:Resort.
+schema:SportsClub rdfs:subClassOf schema:SportsActivityLocation.
+schema:TennisComplex rdfs:subClassOf schema:SportsActivityLocation.
+schema:BreadcrumbList rdfs:subClassOf schema:ItemList.
+schema:OfferCatalog rdfs:subClassOf schema:ItemList.
+schema:TelevisionChannel rdfs:subClassOf schema:BroadcastChannel.
+schema:BroadcastEvent rdfs:subClassOf schema:PublicationEvent.
+schema:PublicationEvent rdfs:subClassOf schema:Event.
+schema:OnDemandEvent rdfs:subClassOf schema:PublicationEvent.
+schema:RadioBroadcastService rdfs:subClassOf schema:BroadcastService.
+schema:BroadcastService rdfs:subClassOf schema:Service.
+schema:CableOrSatelliteService rdfs:subClassOf schema:Service.
+schema:FoodService rdfs:subClassOf schema:Service.
+schema:GovernmentService rdfs:subClassOf schema:Service.
+schema:Taxi rdfs:subClassOf schema:Service.
+schema:TaxiService rdfs:subClassOf schema:Service.
+schema:WebAPI rdfs:subClassOf schema:Service.
+schema:BrokerageAccount rdfs:subClassOf schema:InvestmentOrDeposit.
+schema:InvestmentFund rdfs:subClassOf schema:InvestmentOrDeposit.
+schema:BuddhistTemple rdfs:subClassOf schema:PlaceOfWorship.
+schema:Church rdfs:subClassOf schema:PlaceOfWorship.
+schema:HinduTemple rdfs:subClassOf schema:PlaceOfWorship.
+schema:Mosque rdfs:subClassOf schema:PlaceOfWorship.
+schema:Synagogue rdfs:subClassOf schema:PlaceOfWorship.
+schema:BusOrCoach rdfs:subClassOf schema:Vehicle.
+schema:Vehicle rdfs:subClassOf schema:Product.
+schema:Car rdfs:subClassOf schema:Vehicle.
+schema:Motorcycle rdfs:subClassOf schema:Vehicle.
+schema:MotorizedBicycle rdfs:subClassOf schema:Vehicle.
+schema:BusinessEvent rdfs:subClassOf schema:Event.
+schema:ChildrensEvent rdfs:subClassOf schema:Event.
+schema:ComedyEvent rdfs:subClassOf schema:Event.
+schema:CourseInstance rdfs:subClassOf schema:Event.
+schema:DanceEvent rdfs:subClassOf schema:Event.
+schema:DeliveryEvent rdfs:subClassOf schema:Event.
+schema:EducationEvent rdfs:subClassOf schema:Event.
+schema:EventSeries rdfs:subClassOf schema:Event, schema:Series.
+schema:ExhibitionEvent rdfs:subClassOf schema:Event.
+schema:Festival rdfs:subClassOf schema:Event.
+schema:FoodEvent rdfs:subClassOf schema:Event.
+schema:Hackathon rdfs:subClassOf schema:Event.
+schema:LiteraryEvent rdfs:subClassOf schema:Event.
+schema:MusicEvent rdfs:subClassOf schema:Event.
+schema:SaleEvent rdfs:subClassOf schema:Event.
+schema:ScreeningEvent rdfs:subClassOf schema:Event.
+schema:SocialEvent rdfs:subClassOf schema:Event.
+schema:SportsEvent rdfs:subClassOf schema:Event.
+schema:TheaterEvent rdfs:subClassOf schema:Event.
+schema:UserInteraction rdfs:subClassOf schema:Event.
+schema:VisualArtsEvent rdfs:subClassOf schema:Event.
+schema:BuyAction rdfs:subClassOf schema:TradeAction.
+schema:OrderAction rdfs:subClassOf schema:TradeAction.
+schema:PayAction rdfs:subClassOf schema:TradeAction.
+schema:PreOrderAction rdfs:subClassOf schema:TradeAction.
+schema:QuoteAction rdfs:subClassOf schema:TradeAction.
+schema:RentAction rdfs:subClassOf schema:TradeAction.
+schema:SellAction rdfs:subClassOf schema:TradeAction.
+schema:TipAction rdfs:subClassOf schema:TradeAction.
+schema:CDCPMDRecord rdfs:subClassOf schema:StructuredValue.
+schema:PriceSpecification rdfs:subClassOf schema:StructuredValue.
+schema:ContactPoint rdfs:subClassOf schema:StructuredValue.
+schema:DatedMoneySpecification rdfs:subClassOf schema:StructuredValue.
+schema:MonetaryAmount rdfs:subClassOf schema:StructuredValue.
+schema:DefinedRegion rdfs:subClassOf schema:StructuredValue.
+schema:EngineSpecification rdfs:subClassOf schema:StructuredValue.
+schema:ExchangeRateSpecification rdfs:subClassOf schema:StructuredValue.
+schema:GeoShape rdfs:subClassOf schema:StructuredValue.
+schema:GeoCoordinates rdfs:subClassOf schema:StructuredValue.
+schema:InteractionCounter rdfs:subClassOf schema:StructuredValue.
+schema:PropertyValue rdfs:subClassOf schema:StructuredValue.
+schema:QuantitativeValueDistribution rdfs:subClassOf schema:StructuredValue.
+schema:NutritionInformation rdfs:subClassOf schema:StructuredValue.
+schema:QuantitativeValue rdfs:subClassOf schema:StructuredValue.
+schema:OfferShippingDetails rdfs:subClassOf schema:StructuredValue.
+schema:OpeningHoursSpecification rdfs:subClassOf schema:StructuredValue.
+schema:OwnershipInfo rdfs:subClassOf schema:StructuredValue.
+schema:PostalCodeRangeSpecification rdfs:subClassOf schema:StructuredValue.
+schema:RepaymentSpecification rdfs:subClassOf schema:StructuredValue.
+schema:ServicePeriod rdfs:subClassOf schema:StructuredValue.
+schema:ShippingConditions rdfs:subClassOf schema:StructuredValue.
+schema:ShippingDeliveryTime rdfs:subClassOf schema:StructuredValue.
+schema:ShippingRateSettings rdfs:subClassOf schema:StructuredValue.
+schema:ShippingService rdfs:subClassOf schema:StructuredValue.
+schema:TypeAndQuantityNode rdfs:subClassOf schema:StructuredValue.
+schema:WarrantyPromise rdfs:subClassOf schema:StructuredValue.
+schema:CancelAction rdfs:subClassOf schema:PlanAction.
+schema:ReserveAction rdfs:subClassOf schema:PlanAction.
+schema:ScheduleAction rdfs:subClassOf schema:PlanAction.
+schema:MedicalCode rdfs:subClassOf schema:MedicalIntangible, schema:CategoryCode.
+schema:CategoryCode rdfs:subClassOf schema:DefinedTerm.
+schema:CategoryCodeSet rdfs:subClassOf schema:DefinedTermSet.
+schema:CatholicChurch rdfs:subClassOf schema:Church.
+schema:CheckAction rdfs:subClassOf schema:FindAction.
+schema:DiscoverAction rdfs:subClassOf schema:FindAction.
+schema:TrackAction rdfs:subClassOf schema:FindAction.
+schema:VoteAction rdfs:subClassOf schema:ChooseAction.
+schema:CityHall rdfs:subClassOf schema:GovernmentBuilding.
+schema:Courthouse rdfs:subClassOf schema:GovernmentBuilding.
+schema:DefenceEstablishment rdfs:subClassOf schema:GovernmentBuilding.
+schema:Embassy rdfs:subClassOf schema:GovernmentBuilding.
+schema:LegislativeBuilding rdfs:subClassOf schema:GovernmentBuilding.
+schema:ClaimReview rdfs:subClassOf schema:Review.
+schema:CriticReview rdfs:subClassOf schema:Review.
+schema:EmployerReview rdfs:subClassOf schema:Review.
+schema:MediaReview rdfs:subClassOf schema:Review.
+schema:Recommendation rdfs:subClassOf schema:Review.
+schema:UserReview rdfs:subClassOf schema:Review.
+schema:MovieClip rdfs:subClassOf schema:Clip.
+schema:RadioClip rdfs:subClassOf schema:Clip.
+schema:TVClip rdfs:subClassOf schema:Clip.
+schema:VideoGameClip rdfs:subClassOf schema:Clip.
+schema:ProductCollection rdfs:subClassOf schema:Product, schema:Collection.
+schema:MediaGallery rdfs:subClassOf schema:CollectionPage.
+schema:CollegeOrUniversity rdfs:subClassOf schema:EducationalOrganization.
+schema:ElementarySchool rdfs:subClassOf schema:EducationalOrganization.
+schema:HighSchool rdfs:subClassOf schema:EducationalOrganization.
+schema:MiddleSchool rdfs:subClassOf schema:EducationalOrganization.
+schema:Preschool rdfs:subClassOf schema:EducationalOrganization.
+schema:School rdfs:subClassOf schema:EducationalOrganization.
+schema:ComicCoverArt rdfs:subClassOf schema:ComicStory, schema:CoverArt.
+schema:CoverArt rdfs:subClassOf schema:VisualArtwork.
+schema:ComicIssue rdfs:subClassOf schema:PublicationIssue.
+schema:ComicSeries rdfs:subClassOf schema:Periodical.
+schema:Newspaper rdfs:subClassOf schema:Periodical.
+schema:CompleteDataFeed rdfs:subClassOf schema:DataFeed.
+schema:DataFeed rdfs:subClassOf schema:Dataset.
+schema:CompoundPriceSpecification rdfs:subClassOf schema:PriceSpecification.
+schema:DeliveryChargeSpecification rdfs:subClassOf schema:PriceSpecification.
+schema:PaymentChargeSpecification rdfs:subClassOf schema:PriceSpecification.
+schema:UnitPriceSpecification rdfs:subClassOf schema:PriceSpecification.
+schema:ConfirmAction rdfs:subClassOf schema:InformAction.
+schema:RsvpAction rdfs:subClassOf schema:InformAction.
+schema:StatisticalVariable rdfs:subClassOf schema:ConstraintNode.
+schema:DrinkAction rdfs:subClassOf schema:ConsumeAction.
+schema:EatAction rdfs:subClassOf schema:ConsumeAction.
+schema:InstallAction rdfs:subClassOf schema:ConsumeAction.
+schema:ListenAction rdfs:subClassOf schema:ConsumeAction.
+schema:PlayGameAction rdfs:subClassOf schema:ConsumeAction.
+schema:ReadAction rdfs:subClassOf schema:ConsumeAction.
+schema:UseAction rdfs:subClassOf schema:ConsumeAction.
+schema:ViewAction rdfs:subClassOf schema:ConsumeAction.
+schema:WatchAction rdfs:subClassOf schema:ConsumeAction.
+schema:PostalAddress rdfs:subClassOf schema:ContactPoint.
+schema:CookAction rdfs:subClassOf schema:CreateAction.
+schema:DrawAction rdfs:subClassOf schema:CreateAction.
+schema:FilmAction rdfs:subClassOf schema:CreateAction.
+schema:PaintAction rdfs:subClassOf schema:CreateAction.
+schema:PhotographAction rdfs:subClassOf schema:CreateAction.
+schema:WriteAction rdfs:subClassOf schema:CreateAction.
+schema:Quiz rdfs:subClassOf schema:LearningResource.
+schema:Syllabus rdfs:subClassOf schema:LearningResource.
+schema:CovidTestingFacility rdfs:subClassOf schema:MedicalClinic.
+schema:MedicalClinic rdfs:subClassOf schema:MedicalOrganization, schema:MedicalBusiness.
+schema:PodcastSeason rdfs:subClassOf schema:CreativeWorkSeason.
+schema:RadioSeason rdfs:subClassOf schema:CreativeWorkSeason.
+schema:CreditCard rdfs:subClassOf schema:LoanOrCredit, schema:PaymentCard.
+schema:MortgageLoan rdfs:subClassOf schema:LoanOrCredit.
+schema:CssSelectorType rdfs:subClassOf schema:Text.
+schema:PronounceableText rdfs:subClassOf schema:Text.
+schema:URL rdfs:subClassOf schema:Text.
+schema:XPathType rdfs:subClassOf schema:Text.
+schema:DDxElement rdfs:subClassOf schema:MedicalIntangible.
+schema:DoseSchedule rdfs:subClassOf schema:MedicalIntangible.
+schema:DrugLegalStatus rdfs:subClassOf schema:MedicalIntangible.
+schema:DrugStrength rdfs:subClassOf schema:MedicalIntangible.
+schema:MedicalConditionStage rdfs:subClassOf schema:MedicalIntangible.
+schema:DanceGroup rdfs:subClassOf schema:PerformingGroup.
+schema:MusicGroup rdfs:subClassOf schema:PerformingGroup.
+schema:TheaterGroup rdfs:subClassOf schema:PerformingGroup.
+schema:Physician rdfs:subClassOf schema:MedicalOrganization, schema:MedicalBusiness.
+schema:Optician rdfs:subClassOf schema:MedicalBusiness.
+schema:Pharmacy rdfs:subClassOf schema:MedicalOrganization, schema:MedicalBusiness.
+schema:CommunityHealth rdfs:subClassOf schema:MedicalBusiness.
+schema:Dermatology rdfs:subClassOf schema:MedicalBusiness.
+schema:DietNutrition rdfs:subClassOf schema:MedicalBusiness.
+schema:Emergency rdfs:subClassOf schema:MedicalBusiness.
+schema:Geriatric rdfs:subClassOf schema:MedicalBusiness.
+schema:Gynecologic rdfs:subClassOf schema:MedicalBusiness.
+schema:Midwifery rdfs:subClassOf schema:MedicalBusiness.
+schema:Nursing rdfs:subClassOf schema:MedicalBusiness.
+schema:Obstetric rdfs:subClassOf schema:MedicalBusiness.
+schema:Oncologic rdfs:subClassOf schema:MedicalBusiness.
+schema:Optometric rdfs:subClassOf schema:MedicalBusiness.
+schema:Otolaryngologic rdfs:subClassOf schema:MedicalBusiness.
+schema:Pediatric rdfs:subClassOf schema:MedicalBusiness.
+schema:Physiotherapy rdfs:subClassOf schema:MedicalBusiness.
+schema:PlasticSurgery rdfs:subClassOf schema:MedicalBusiness.
+schema:Podiatric rdfs:subClassOf schema:MedicalBusiness.
+schema:PrimaryCare rdfs:subClassOf schema:MedicalBusiness.
+schema:Psychiatric rdfs:subClassOf schema:MedicalBusiness.
+schema:PublicHealth rdfs:subClassOf schema:MedicalBusiness.
+schema:DiagnosticLab rdfs:subClassOf schema:MedicalOrganization.
+schema:VeterinaryCare rdfs:subClassOf schema:MedicalOrganization.
+schema:DiagnosticProcedure rdfs:subClassOf schema:MedicalProcedure.
+schema:TherapeuticProcedure rdfs:subClassOf schema:MedicalProcedure.
+schema:PalliativeProcedure rdfs:subClassOf schema:MedicalProcedure, schema:MedicalTherapy.
+schema:PhysicalExam rdfs:subClassOf schema:MedicalEnumeration, schema:MedicalProcedure.
+schema:SurgicalProcedure rdfs:subClassOf schema:MedicalProcedure.
+schema:PhysicalActivity rdfs:subClassOf schema:LifestyleModification.
+schema:DietarySupplement rdfs:subClassOf schema:Product, schema:Substance.
+schema:Drug rdfs:subClassOf schema:Product, schema:Substance.
+schema:IndividualProduct rdfs:subClassOf schema:Product.
+schema:ProductGroup rdfs:subClassOf schema:Product.
+schema:ProductModel rdfs:subClassOf schema:Product.
+schema:SomeProducts rdfs:subClassOf schema:Product.
+schema:NoteDigitalDocument rdfs:subClassOf schema:DigitalDocument.
+schema:PresentationDigitalDocument rdfs:subClassOf schema:DigitalDocument.
+schema:SpreadsheetDigitalDocument rdfs:subClassOf schema:DigitalDocument.
+schema:TextDigitalDocument rdfs:subClassOf schema:DigitalDocument.
+schema:Distance rdfs:subClassOf schema:Quantity.
+schema:Duration rdfs:subClassOf schema:Quantity.
+schema:Energy rdfs:subClassOf schema:Quantity.
+schema:Mass rdfs:subClassOf schema:Quantity.
+schema:MaximumDoseSchedule rdfs:subClassOf schema:DoseSchedule.
+schema:RecommendedDoseSchedule rdfs:subClassOf schema:DoseSchedule.
+schema:ReportedDoseSchedule rdfs:subClassOf schema:DoseSchedule.
+schema:DrugCostCategory rdfs:subClassOf schema:MedicalEnumeration.
+schema:DrugPregnancyCategory rdfs:subClassOf schema:MedicalEnumeration.
+schema:DrugPrescriptionStatus rdfs:subClassOf schema:MedicalEnumeration.
+schema:InfectiousAgentClass rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalAudienceType rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalDevicePurpose rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalEvidenceLevel rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalImagingTechnique rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalObservationalStudyDesign rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalProcedureType rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalSpecialty rdfs:subClassOf schema:MedicalEnumeration, schema:Specialty.
+schema:MedicalStudyStatus rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicalTrialDesign rdfs:subClassOf schema:MedicalEnumeration.
+schema:MedicineSystem rdfs:subClassOf schema:MedicalEnumeration.
+schema:EUEnergyEfficiencyEnumeration rdfs:subClassOf schema:EnergyEfficiencyEnumeration.
+schema:EnergyStarEnergyEfficiencyEnumeration rdfs:subClassOf schema:EnergyEfficiencyEnumeration.
+schema:WorkBasedProgram rdfs:subClassOf schema:EducationalOccupationalProgram.
+schema:Electrician rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:GeneralContractor rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:HVACBusiness rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:HousePainter rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:Locksmith rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:MovingCompany rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:Plumber rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:RoofingContractor rdfs:subClassOf schema:HomeAndConstructionBusiness.
+schema:EmailMessage rdfs:subClassOf schema:Message.
+schema:EmployeeRole rdfs:subClassOf schema:OrganizationRole.
+schema:OrganizationRole rdfs:subClassOf schema:Role.
+schema:PodcastEpisode rdfs:subClassOf schema:Episode.
+schema:RadioEpisode rdfs:subClassOf schema:Episode.
+schema:TVEpisode rdfs:subClassOf schema:Episode.
+schema:ExerciseAction rdfs:subClassOf schema:PlayAction.
+schema:PerformAction rdfs:subClassOf schema:PlayAction.
+schema:Float rdfs:subClassOf schema:Number.
+schema:Integer rdfs:subClassOf schema:Number.
+schema:FundingAgency rdfs:subClassOf schema:Project.
+schema:ResearchProject rdfs:subClassOf schema:Project.
+schema:VideoGame rdfs:subClassOf schema:Game, schema:SoftwareApplication.
+schema:GeoCircle rdfs:subClassOf schema:GeoShape.
+schema:PostOffice rdfs:subClassOf schema:GovernmentOffice.
+schema:GovernmentPermit rdfs:subClassOf schema:Permit.
+schema:MonetaryGrant rdfs:subClassOf schema:Grant.
+schema:HealthTopicContent rdfs:subClassOf schema:WebContent.
+schema:HotelRoom rdfs:subClassOf schema:Room.
+schema:MeetingRoom rdfs:subClassOf schema:Room.
+schema:SingleFamilyResidence rdfs:subClassOf schema:House.
+schema:Recipe rdfs:subClassOf schema:HowTo.
+schema:HowToItem rdfs:subClassOf schema:ListItem.
+schema:HowToSupply rdfs:subClassOf schema:HowToItem.
+schema:HowToTool rdfs:subClassOf schema:HowToItem.
+schema:IPTCDigitalSourceEnumeration rdfs:subClassOf schema:MediaEnumeration.
+schema:ImageGallery rdfs:subClassOf schema:MediaGallery.
+schema:VideoGallery rdfs:subClassOf schema:MediaGallery.
+schema:IndividualPhysician rdfs:subClassOf schema:Physician.
+schema:PhysiciansOffice rdfs:subClassOf schema:Physician.
+schema:InfectiousDisease rdfs:subClassOf schema:MedicalCondition.
+schema:MedicalSignOrSymptom rdfs:subClassOf schema:MedicalCondition.
+schema:LinkRole rdfs:subClassOf schema:Role.
+schema:PerformanceRole rdfs:subClassOf schema:Role.
+schema:LocationFeatureSpecification rdfs:subClassOf schema:PropertyValue.
+schema:Patient rdfs:subClassOf schema:Person, schema:MedicalAudience.
+schema:ParentAudience rdfs:subClassOf schema:PeopleAudience.
+schema:MedicalGuidelineContraindication rdfs:subClassOf schema:MedicalGuideline.
+schema:MedicalGuidelineRecommendation rdfs:subClassOf schema:MedicalGuideline.
+schema:MedicalObservationalStudy rdfs:subClassOf schema:MedicalStudy.
+schema:MedicalTrial rdfs:subClassOf schema:MedicalStudy.
+schema:MedicalRiskCalculator rdfs:subClassOf schema:MedicalRiskEstimator.
+schema:MedicalRiskScore rdfs:subClassOf schema:MedicalRiskEstimator.
+schema:MedicalScholarlyArticle rdfs:subClassOf schema:ScholarlyArticle.
+schema:VitalSign rdfs:subClassOf schema:MedicalSign.
+schema:MedicalSign rdfs:subClassOf schema:MedicalSignOrSymptom.
+schema:MedicalSymptom rdfs:subClassOf schema:MedicalSignOrSymptom.
+schema:OccupationalTherapy rdfs:subClassOf schema:MedicalTherapy.
+schema:MedicalTherapy rdfs:subClassOf schema:TherapeuticProcedure.
+schema:PhysicalTherapy rdfs:subClassOf schema:MedicalTherapy.
+schema:RadiationTherapy rdfs:subClassOf schema:MedicalTherapy.
+schema:RespiratoryTherapy rdfs:subClassOf schema:MedicalTherapy.
+schema:PsychologicalTreatment rdfs:subClassOf schema:TherapeuticProcedure.
+schema:MobileApplication rdfs:subClassOf schema:SoftwareApplication.
+schema:WebApplication rdfs:subClassOf schema:SoftwareApplication.
+schema:MonetaryAmountDistribution rdfs:subClassOf schema:QuantitativeValueDistribution.
+schema:MusicAlbum rdfs:subClassOf schema:MusicPlaylist.
+schema:MusicRelease rdfs:subClassOf schema:MusicPlaylist.
+schema:NLNonprofitType rdfs:subClassOf schema:NonprofitType.
+schema:UKNonprofitType rdfs:subClassOf schema:NonprofitType.
+schema:USNonprofitType rdfs:subClassOf schema:NonprofitType.
+schema:OnlineStore rdfs:subClassOf schema:OnlineBusiness.
+schema:SiteNavigationElement rdfs:subClassOf schema:WebPageElement.
+schema:Table rdfs:subClassOf schema:WebPageElement.
+schema:WPAdBlock rdfs:subClassOf schema:WebPageElement.
+schema:WPFooter rdfs:subClassOf schema:WebPageElement.
+schema:WPHeader rdfs:subClassOf schema:WebPageElement.
+schema:WPSideBar rdfs:subClassOf schema:WebPageElement.
+schema:WearableSizeGroupEnumeration rdfs:subClassOf schema:SizeGroupEnumeration.
+schema:WearableSizeSystemEnumeration rdfs:subClassOf schema:SizeSystemEnumeration.
+schema:SportsTeam rdfs:subClassOf schema:SportsOrganization.
+schema:WearAction rdfs:subClassOf schema:UseAction.
+schema:UserBlocks rdfs:subClassOf schema:UserInteraction.
+schema:UserCheckins rdfs:subClassOf schema:UserInteraction.
+schema:UserComments rdfs:subClassOf schema:UserInteraction.
+schema:UserDownloads rdfs:subClassOf schema:UserInteraction.
+schema:UserLikes rdfs:subClassOf schema:UserInteraction.
+schema:UserPageVisits rdfs:subClassOf schema:UserInteraction.
+schema:UserPlays rdfs:subClassOf schema:UserInteraction.
+schema:UserPlusOnes rdfs:subClassOf schema:UserInteraction.
+schema:UserTweets rdfs:subClassOf schema:UserInteraction.
+schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
+<https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf> a schema:TextObject;
+    void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/".
+<https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf> {
+<https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf> schema:name "TBMeetingMinutes20250213.pdf";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall> a schema:Place;
+    schema:name "Town of Brunswick Town Hall".
+<http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick> a schema:GovernmentOrganization;
+    schema:name "Town of Brunswick";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting> a schema:Event;
+    schema:name "Town of Brunswick Regular Town Board Meeting";
+    schema:subjectOf <https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf>;
+    schema:description "Regular Town Board Meeting held at the Town Hall.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:startDate "2025-02-13"^^xsd:date;
+    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/correspondence>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/new-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington> a schema:Person;
+    schema:name "Herrington";
+    schema:jobTitle "Supervisor".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian> a schema:Person;
+    schema:name "Christian";
+    schema:jobTitle "Councilman".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri> a schema:Person;
+    schema:name "Balistreri";
+    schema:jobTitle "Councilman".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan> a schema:Person;
+    schema:name "Sullivan";
+    schema:jobTitle "Councilman".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/business-meeting> a schema:Event;
+    schema:name "Business Meeting";
+    schema:description "Business meeting including approval of previous meeting minutes.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports> a schema:Event;
+    schema:name "Reports";
+    schema:description "Reports from various departments for the month of January.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-water-sewer-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-community-library-report>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions> a schema:Event;
+    schema:name "Resolutions";
+    schema:description "A set of vote actions made by the town board.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-25-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-26-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-27-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-28-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-29-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-30-of-2025>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/correspondence> a schema:Event;
+    schema:name "Correspondence";
+    schema:description "Correspondence received from Mary Beth Bruno.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/correspondence/message/email-from-mary-beth-bruno>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/new-business> a schema:Event;
+    schema:name "New Business";
+    schema:description "Discussion on new sign on the clerk's office door and its purpose.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/new-business/thing/sign-on-clerk-s-office-door>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion> a schema:Event;
+    schema:name "Warrants Discussion";
+    schema:description "Discussion about current town warrants.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak> a schema:Event;
+    schema:name "Visitors Who Wish to Speak";
+    schema:description "Visitors expressed concerns and updates to the town board.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/luis-hutter>, <http://purl.org/towndex/instance/us/ny/brunswick/person/chris-fanning>, <http://purl.org/towndex/instance/us/ny/brunswick/person/patricia-rivera>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
+    schema:name "Adjournment of Meeting";
+    schema:description "The meeting was adjourned in honor of Jennifer Mann, a resident deeply committed to the community.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/jennifer-mann>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/herrington>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
+    schema:name "Approval of Minutes";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
+    schema:description "Approval of the minutes of the regular Town Board meeting on January 9th, 2025.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report> a schema:Report;
+    schema:name "Town Clerk Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Report for the month of January with various fees collected and reservations made.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/monetary-amount/7450-17>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/quantitative-value/community-center-reservations>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/quantitative-value/pavilion-events>;
+    schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-town-clerk-report> a schema:VoteAction;
+    schema:name "Acceptance of Town Clerk Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Motion to accept the Town Clerk's report.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report> a schema:Report;
+    schema:name "Highway Superintendent Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Report for the month of January detailing various maintenance activities.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report/quantitative-value/patching>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report/quantitative-value/recycle-pulls>;
+    schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-bayly>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-highway-superintendent-report> a schema:VoteAction;
+    schema:name "Acceptance of Highway Superintendent Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Motion to accept the Highway Superintendent's report.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report> a schema:Report;
+    schema:name "Water & Sewer Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Report for January detailing water usage and system maintenance.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report/quantitative-value/water-sold>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report/quantitative-value/water-purchased>;
+    schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/bill-bradley>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-water-sewer-report> a schema:VoteAction;
+    schema:name "Acceptance of Water & Sewer Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Motion to accept the Water & Sewer report.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report> a schema:Report;
+    schema:name "Code Enforcement Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Report for January detailing building permits and inspections.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report/quantitative-value/building-permits-issued>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report/quantitative-value/building-inspections>;
+    schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/kevin-mainello>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-code-enforcement-report> a schema:VoteAction;
+    schema:name "Acceptance of Code Enforcement Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Motion to accept the Code Enforcement report.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report> a schema:Report;
+    schema:name "Recycling Coordinator Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Report for January detailing recycling revenues and expenses.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report/monetary-amount/4142-2>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report/quantitative-value/recycled-materials>;
+    schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/thomas-engster>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-recycling-coordinator-report> a schema:VoteAction;
+    schema:name "Acceptance of Recycling Coordinator Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Motion to accept the Recycling Coordinator's report.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report> a schema:Report;
+    schema:name "Community Library Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Report for January detailing library usage and activities.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report/quantitative-value/physical-checkouts>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report/quantitative-value/digital-checkouts>;
+    schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/sara-hopkins>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-community-library-report> a schema:VoteAction;
+    schema:name "Acceptance of Community Library Report";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports>;
+    schema:description "Motion to accept the Community Library report.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-25-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 25 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    schema:description "RESOLUTION OF THE TOWN OF BRUNSWICK DECLARING NEED AND AUTHORIZING THE APPLICATION FOR A MUNICIPAL OPERATING CERTIFICATE FROM THE NEW YORK STATE BUREAU OF EMERGENCY MEDICAL SERVICES.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-26-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 26 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    schema:description "RESOLUTION AUTHORIZING THE SUPERVISOR TO PURCHASE ROCK SALT FOR ROAD MAINTENANCE ON AN EMERGENCY BASIS, WITHOUT COMPETITIVE BIDDING, PURSUANT TO THE PROVISIONS OF GENERAL MUNICIPAL LAW SECTION 103(4).";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-27-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 27 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    schema:description "RESOLUTION AUTHORIZING THE SUPERVISOR TO ENTER INTO A CONTRACT WITH SPECTRUM ENTERPRISE FOR INTERNET SERVICE IN THE BRUNSWICK TOWN HALL AND THREE TOWN BUILDING LOCATIONS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-28-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 28 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE BRUNSWICK FIRE COMPANY NO. 1, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-29-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 29 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE VOLUNTEER FIRE COMPANY OF CENTER BRUNSWICK, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-30-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 30 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE MOUNTAIN VIEW VOLUNTEER FIRE COMPANY, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/correspondence/message/email-from-mary-beth-bruno> a schema:Message;
+    schema:name "Email from Mary Beth Bruno";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/correspondence>;
+    schema:description "Email honoring Jennifer Mann, a well-known community advocate.";
+    schema:sender <http://purl.org/towndex/instance/us/ny/brunswick/person/mary-beth-bruno>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/new-business/thing/sign-on-clerk-s-office-door> a schema:Thing;
+    schema:name "Sign on Clerk's Office Door";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/new-business>;
+    schema:description "Sign reads 'Authorized Personnel Only' as a precaution against First Amendment Auditors.".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants> a schema:Invoice;
+    schema:name "Approval of Warrants";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
+    schema:description "Approval of warrants for various funds.";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/monetary-amount/356520-92-usd>;
+    schema:provider <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:category "Government Expenses";
+    schema:referencesOrder <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6>.
+<http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board> a schema:GovernmentOrganization;
+    schema:name "Town Board".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/luis-hutter> a schema:Person;
+    schema:name "Luis Hutter";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>;
+    schema:description "Expressed concerns about people hanging out in the cemetery behind the Brunswick Church.".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/chris-fanning> a schema:Person;
+    schema:name "Chris Fanning";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>;
+    schema:description "Provided a project update regarding obtaining a field lighting system for Brunswick Soccer Club.".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/patricia-rivera> a schema:Person;
+    schema:name "Patricia Rivera";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>;
+    schema:description "Raised issues with her neighbor regarding the stream behind their homes.".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/jennifer-mann> a schema:Person;
+    schema:name "Jennifer Mann";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>;
+    schema:description "A town resident who was deeply committed to the community.".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri> a schema:Person;
+    schema:name "Balistreri".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/herrington> a schema:Person;
+    schema:name "Herrington".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
+    schema:name "Rebecca Del Gaizo".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/monetary-amount/7450-17> a schema:MonetaryAmount;
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>;
+    schema:value 7.45017E3.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/quantitative-value/community-center-reservations> a schema:QuantitativeValue;
+    schema:name "Community Center Reservations";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>;
+    schema:value 22;
+    schema:unitText "reservations".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/quantitative-value/pavilion-events> a schema:QuantitativeValue;
+    schema:name "Pavilion Events";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>;
+    schema:value 2;
+    schema:unitText "events".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan> a schema:Person;
+    schema:name "Sullivan".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report/quantitative-value/patching> a schema:QuantitativeValue;
+    schema:name "Patching";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>;
+    schema:value 1;
+    schema:unitText "activity".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report/quantitative-value/recycle-pulls> a schema:QuantitativeValue;
+    schema:name "Recycle pulls";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>;
+    schema:value 1;
+    schema:unitText "activity".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/michael-bayly> a schema:Person;
+    schema:name "Michael Bayly".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/christian> a schema:Person;
+    schema:name "Christian".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report/quantitative-value/water-sold> a schema:QuantitativeValue;
+    schema:name "Water Sold";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report>;
+    schema:value 110;
+    schema:unitText "million gallons".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report/quantitative-value/water-purchased> a schema:QuantitativeValue;
+    schema:name "Water Purchased";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report>;
+    schema:value 147;
+    schema:unitText "million gallons".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/bill-bradley> a schema:Person;
+    schema:name "Bill Bradley".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report/quantitative-value/building-permits-issued> a schema:QuantitativeValue;
+    schema:name "Building Permits Issued";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>;
+    schema:value 13;
+    schema:unitText "permits".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report/quantitative-value/building-inspections> a schema:QuantitativeValue;
+    schema:name "Building Inspections";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>;
+    schema:value 67;
+    schema:unitText "inspections".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/kevin-mainello> a schema:Person;
+    schema:name "Kevin Mainello".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report/monetary-amount/4142-2> a schema:MonetaryAmount;
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>;
+    schema:value 4.1422E3.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report/quantitative-value/recycled-materials> a schema:QuantitativeValue;
+    schema:name "Recycled Materials";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>;
+    schema:value 4.206E1;
+    schema:unitText "tons".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/thomas-engster> a schema:Person;
+    schema:name "Thomas Engster".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report/quantitative-value/physical-checkouts> a schema:QuantitativeValue;
+    schema:name "Physical Checkouts";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>;
+    schema:value 3480;
+    schema:unitText "checkouts".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report/quantitative-value/digital-checkouts> a schema:QuantitativeValue;
+    schema:name "Digital Checkouts";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>;
+    schema:value 3347;
+    schema:unitText "checkouts".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/sara-hopkins> a schema:Person;
+    schema:name "Sara Hopkins".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/mary-beth-bruno> a schema:Person;
+    schema:name "Mary Beth Bruno".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/monetary-amount/356520-92-usd> a schema:MonetaryAmount;
+    schema:value 3.5652092E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/252274-75-usd> a schema:MonetaryAmount;
+    schema:value 2.5227475E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice> a schema:Invoice;
+    schema:name "General Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/252274-75-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund> a schema:Order;
+    schema:name "General Fund";
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/74402-62-usd> a schema:MonetaryAmount;
+    schema:value 7.440262E4;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice> a schema:Invoice;
+    schema:name "Highway Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/74402-62-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund> a schema:Order;
+    schema:name "Highway Fund";
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/27623-01-usd> a schema:MonetaryAmount;
+    schema:value 2.762301E4;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice> a schema:Invoice;
+    schema:name "Water Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/27623-01-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund> a schema:Order;
+    schema:name "Water Fund";
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1540-04-usd> a schema:MonetaryAmount;
+    schema:value 1.54004E3;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice> a schema:Invoice;
+    schema:name "Sewer Fund Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1540-04-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund> a schema:Order;
+    schema:name "Sewer Fund";
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/680-5-usd> a schema:MonetaryAmount;
+    schema:value 6.805E2;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice> a schema:Invoice;
+    schema:name "Special Sewer District #6 Invoice";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/680-5-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6> a schema:Order;
+    schema:name "Special Sewer District #6";
+    schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/12/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice>
+}

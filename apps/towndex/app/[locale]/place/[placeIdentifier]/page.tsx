@@ -6,7 +6,6 @@ import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import {} from "@mantine/core";
 import { Identifier, Place, PlaceStub, displayLabel } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";

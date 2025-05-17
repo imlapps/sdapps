@@ -1,0 +1,44 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.645.0",
+    "@aws-sdk/client-textract": "^3.645.0",
+    "amazon-textract-response-parser": "^0.4.2",
+    "base-x": "^3.0.9",
+    "html-to-text": "^9.0.5",
+    "mime": "^4.0.4",
+    "pino": "^9.1.0",
+    "purify-ts": "^2.1.0",
+    "tmp-promise": "^3.0.3",
+    "ts-invariant": "^0.10.3",
+    "typescript-memoize": "^1.1.1",
+    "which": "^4.0.0"
+  },
+  "devDependencies": {
+    "@sdapps/tsconfig": "0.0.0",
+    "@types/html-to-text": "^9.0.4",
+    "@types/node": "^22.13.9",
+    "@types/which": "^3.0.4",
+    "typescript": "5.8.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "name": "@sdapps/etl",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "dev": "tsc --watch",
+    "test": "vitest run"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "0.0.0"
+}
