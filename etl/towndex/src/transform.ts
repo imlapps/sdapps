@@ -407,279 +407,6 @@ function* rootResources(resourceSet: ResourceSet): Iterable<Resource> {
   }
 }
 
-function skolemize({
-  instanceDataset,
-  classOntologyDataset,
-  uriSpace,
-}: {
-  classOntologyDataset: DatasetCore;
-  instanceDataset: DatasetCore;
-  uriSpace: string;
-}): DatasetCore {
-  // Simple approach: one pass to construct the names and another pass to replace them
-
-  // Merge the instance and ontology datasets in order to do instance-of checks on subclasses
-  const mergedResourceSet = new ResourceSet({
-    dataset: mergeDatasets(classOntologyDataset, instanceDataset),
-  });
-
-  const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
-
-  // Organizations, people, et al. have "global" / context-independent identifiers across documents
-  const contextIndependentClasses = [
-    schema.Organization,
-    schema.Person,
-    schema.Place,
-  ];
-
-  const skolemizeContextIndependentResource = (resource: Resource): void => {
-    if (resource.identifier.termType !== "BlankNode") {
-      return;
-    }
-
-    resourceLabel(resource)
-      .ifJust((resourceLabel) => {
-        blankNodeToNamedNodeMap.set(
-          resource.identifier as BlankNode,
-          N3.DataFactory.namedNode(
-            `${uriSpace}${kebabCase(resourceType(resource).value.substring(schema[""].value.length))}/${kebabCase(resourceLabel)}`,
-          ),
-        );
-      })
-      .ifNothing(() => {
-        logger.warn(
-          `unable to skolemize blank node with rdf:type ${resourceType(resource)}`,
-        );
-      });
-  };
-
-  for (const contextIndependentResourceClass of contextIndependentClasses) {
-    for (const contextIndependentResource of mergedResourceSet.instancesOf(
-      contextIndependentResourceClass,
-    )) {
-      skolemizeContextIndependentResource(contextIndependentResource);
-    }
-  }
-
-  // Events, actions, et al. and similar resources are dependent on context -- the time of an event or its parent event, for example.
-  const skolemizeContextDependentResource = (
-    contextIdentifiers: readonly string[],
-    contextDependentResource: Resource,
-  ): void => {
-    if (contextDependentResource.identifier.termType !== "BlankNode") {
-      return;
-    }
-
-    if (
-      contextIndependentClasses.some((contextIndependentClass) =>
-        contextDependentResource.isInstanceOf(contextIndependentClass),
-      )
-    ) {
-      return;
-    }
-
-    if (blankNodeToNamedNodeMap.has(contextDependentResource.identifier)) {
-      logger.warn(
-        `resource ${Identifier.toString(contextDependentResource.identifier)} has already been skolemized as ${blankNodeToNamedNodeMap.get(contextDependentResource.identifier)}`,
-      );
-      return;
-    }
-
-    const contextDependentResourceType = resourceType(contextDependentResource);
-    invariant(contextDependentResourceType.value.startsWith(schema[""].value));
-
-    const newContextIdentifiers = contextIdentifiers.concat();
-    newContextIdentifiers.push(
-      kebabCase(
-        contextDependentResourceType.value.substring(schema[""].value.length),
-      ),
-    );
-    if (contextDependentResource.isInstanceOf(schema.Event)) {
-      contextDependentResource
-        .value(schema.startDate)
-        .chain((value) => value.toDate())
-        .ifRight((startDate) => {
-          newContextIdentifiers.push(
-            ...iso8601DateString(startDate).split("-"),
-          );
-        });
-      newContextIdentifiers.push(
-        ...resourceLabel(contextDependentResource).map(kebabCase).toList(),
-      );
-
-      for (const subEventResource of contextDependentResource
-        .values(schema.subEvent)
-        .flatMap((value) => value.toResource().toMaybe().toList())) {
-        skolemizeContextDependentResource(
-          newContextIdentifiers,
-          subEventResource,
-        );
-      }
-    } else {
-      logger.warn(
-        `unrecognized context-dependent resource rdf:type: ${resourceType(contextDependentResource).value}`,
-      );
-      return;
-    }
-
-    if (newContextIdentifiers.length <= contextIdentifiers.length) {
-      logger.warn(
-        `unable to infer context identifiers for resource with rdf:type: ${resourceType(contextDependentResource).value}`,
-      );
-      return;
-    }
-
-    const newContextDependentResourceIdentifier = N3.DataFactory.namedNode(
-      `${uriSpace}${newContextIdentifiers.join("/")})}`,
-    );
-    logger.debug(
-      `skolemizing ${Identifier.toString(contextDependentResource.identifier)} with rdf:type ${resourceType(contextDependentResource).value} as ${Identifier.toString(newContextDependentResourceIdentifier)}`,
-    );
-    blankNodeToNamedNodeMap.set(
-      contextDependentResource.identifier,
-      newContextDependentResourceIdentifier,
-    );
-  };
-
-  for (const rootResource of rootResources(mergedResourceSet)) {
-    skolemizeContextDependentResource([], rootResource);
-  }
-
-  // for (const rdfTypeQuad of mergedDataset.match(null, rdf.type, null, null)) {
-  //   if (rdfTypeQuad.subject.termType !== "BlankNode") {
-  //     continue;
-  //   }
-  //   const rdfType = rdfTypeQuad.object;
-  //   if (rdfType.termType !== "NamedNode") {
-  //     continue;
-  //   }
-  //   if (!rdfType.value.startsWith(schema[""].value)) {
-  //     logger.warn(
-  //       `blank node has non-schema.org rdf:type: $rdfTypeQuad.object.value`,
-  //     );
-  //     continue;
-  //   }
-
-  //   const resource = mergedResourceSet.resource(rdfTypeQuad.subject);
-
-  //   const iriPath: string[] = [
-  //     kebabCase(rdfType.value.substring(schema[""].value.length)),
-  //   ];
-
-  //   // Everything "below" an Event should be appended to that's IRI
-  //   // Event about Action
-  //   // Event about Report about QuantitativeValue etc.
-
-  //   let datePredicate: NamedNode | null;
-  //   if (resource.isInstanceOf(schema.Action)) {
-  //     datePredicate = schema.startTime;
-  //   } else if (resource.isInstanceOf(schema.CreativeWork)) {
-  //     datePredicate = schema.datePublished;
-  //   } else if (resource.isInstanceOf(schema.Event)) {
-  //     datePredicate = schema.startDate;
-  //   } else if (resource.isInstanceOf(schema.Invoice)) {
-  //     datePredicate = schema.paymentDueDate;
-  //   } else if (resource.isInstanceOf(schema.Order)) {
-  //     datePredicate = schema.orderDate;
-  //   } else if (
-  //   ) {
-  //     datePredicate = null;
-  //   } else {
-  //     logger.debug(
-  //       `resource with rdf:type ${rdfType.value} has no date predicate`,
-  //     );
-  //     datePredicate = null;
-  //   }
-  //   if (datePredicate) {
-  //     resource
-  //       .value(datePredicate)
-  //       .ifLeft(() => {
-  //         logger.debug(
-  //           `resource $Identifier.toString(resource.identifier)with rdf:type ${rdfType.value} does not have a value for ${datePredicate.value}`,
-  //         );
-  //       })
-  //       .chain((value) => value.toDate())
-  //       .ifLeft((error) => {
-  //         logger.debug(
-  //           `resource $Identifier.toString(resource.identifier)with rdf:type ${rdfType.value} does not have a valid value for ${datePredicate.value}: $error.message`,
-  //         );
-  //       })
-  //       .ifRight((value) =>
-  //         iriPath.push(
-  //           value.getFullYear().toString(),
-  //           (value.getMonth() + 1).toString().padStart(2, "0"),
-  //           value.getDate().toString().padStart(2, "0"),
-  //         ),
-  //       );
-  //   }
-
-  //   const name: string[] = [];
-
-  //   if (resource.isInstanceOf(schema.Person)) {
-  //     name.push(
-  //       ...resource
-  //         .value(schema.jobTitle)
-  //         .chain((value) => value.toString())
-  //         .toMaybe()
-  //         .toList(),
-  //     );
-  //   }
-
-  //   resource
-  //     .value(schema.name)
-  //     .chain((value) => value.toString())
-  //     .ifRight((schemaName) => {
-  //       name.push(schemaName);
-  //     })
-  //     .ifLeft(() => {
-  //       }
-  //     });
-
-  //   if (name.length === 0) {
-  //     logger.warn(
-  //       `could not reconstruct name for blank node with rdf:type ${rdfType.value}`,
-  //     );
-  //     continue;
-  //   }
-
-  //   blankNodeToNamedNodeMap.set(
-  //     rdfTypeQuad.subject,
-  //     N3.DataFactory.namedNode(
-  //       `$uriSpace$iriPath.join("/")/${kebabCase(name.join(" "))}`,
-  //     ),
-  //   );
-  // }
-
-  const skolemizedInstanceDataset = new N3.Store();
-
-  const mapBlankNodeToNamedNode = <NodeT extends Quad_Object | Quad_Subject>(
-    node: NodeT,
-  ): NodeT => {
-    if (node.termType === "BlankNode") {
-      const namedNode = blankNodeToNamedNodeMap.get(node);
-      if (namedNode) {
-        return namedNode as NodeT;
-      }
-      // logger.warn(
-      //   `no skolemization for resource with rdf:type ${resourceType(mergedResourceSet.resource(node)).value}`,
-      // );
-    }
-    return node;
-  };
-
-  for (const quad of instanceDataset) {
-    skolemizedInstanceDataset.add(
-      N3.DataFactory.quad(
-        mapBlankNodeToNamedNode(quad.subject),
-        quad.predicate,
-        mapBlankNodeToNamedNode(quad.object),
-        quad.graph,
-      ),
-    );
-  }
-  return skolemizedInstanceDataset;
-}
-
 function propagateNames({
   classOntologyDataset,
   instanceDataset,
@@ -715,6 +442,218 @@ function propagateNames({
   }
 
   return resultDataset;
+}
+
+function skolemize({
+  instanceDataset,
+  classOntologyDataset,
+  uriSpace,
+}: {
+  classOntologyDataset: DatasetCore;
+  instanceDataset: DatasetCore;
+  uriSpace: string;
+}): DatasetCore {
+  // Simple approach: one pass to construct the names and another pass to replace them
+
+  // Merge the instance and ontology datasets in order to do instance-of checks on subclasses
+  const mergedResourceSet = new ResourceSet({
+    dataset: mergeDatasets(classOntologyDataset, instanceDataset),
+  });
+
+  const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
+
+  // Organizations, people, et al. have "global" / context-independent identifiers across documents
+  const contextIndependentClasses = [
+    schema.Organization,
+    schema.Person,
+    schema.Place,
+  ];
+  for (const contextIndependentClass of contextIndependentClasses) {
+    for (const contextIndependentResource of mergedResourceSet.instancesOf(
+      contextIndependentClass,
+    )) {
+      if (contextIndependentResource.identifier.termType !== "BlankNode") {
+        continue;
+      }
+
+      resourceLabel(contextIndependentResource)
+        .ifJust((resourceLabel) => {
+          blankNodeToNamedNodeMap.set(
+            contextIndependentResource.identifier as BlankNode,
+            N3.DataFactory.namedNode(
+              `${uriSpace}${kebabCase(resourceType(contextIndependentResource).value.substring(schema[""].value.length))}/${kebabCase(resourceLabel)}`,
+            ),
+          );
+        })
+        .ifNothing(() => {
+          logger.warn(
+            `unable to skolemize blank node with rdf:type ${resourceType(contextIndependentResource)}`,
+          );
+        });
+    }
+  }
+
+  // Events, actions, et al. and similar resources are dependent on context -- the time of an event or its parent event, for example.
+  const skolemizeResource = (
+    contextIdentifiers: readonly string[],
+    resource: Resource,
+  ): void => {
+    if (resource.identifier.termType !== "BlankNode") {
+      return;
+    }
+
+    if (
+      contextIndependentClasses.some((contextIndependentClass) =>
+        resource.isInstanceOf(contextIndependentClass),
+      )
+    ) {
+      return;
+    }
+
+    if (blankNodeToNamedNodeMap.has(resource.identifier)) {
+      logger.warn(
+        `resource ${Identifier.toString(resource.identifier)} has already been skolemized as ${blankNodeToNamedNodeMap.get(resource.identifier)}`,
+      );
+      return;
+    }
+
+    // Infer identifiers for the resource
+    const resourceIdentifiers = contextIdentifiers.concat();
+    const resourceType_ = resourceType(resource);
+    invariant(resourceType_.value.startsWith(schema[""].value));
+    resourceIdentifiers.push(
+      kebabCase(resourceType_.value.substring(schema[""].value.length)),
+    );
+    let uniquelyIdentifiedResource = false;
+    if (
+      resource.isInstanceOf(schema.Action) ||
+      resource.isInstanceOf(schema.Invoice) ||
+      resource.isInstanceOf(schema.Message) ||
+      resource.isInstanceOf(schema.MonetaryAmount) ||
+      resource.isInstanceOf(schema.Order) ||
+      resource.isInstanceOf(schema.QuantitativeValue) ||
+      resource.isInstanceOf(schema.Report) ||
+      resource.isInstanceOf(schema.Thing, { excludeSubclasses: true })
+    ) {
+      resourceLabel(resource)
+        .map(kebabCase)
+        .ifJust((resourceLabel) => {
+          resourceIdentifiers.push(resourceLabel);
+          uniquelyIdentifiedResource = true;
+        });
+    } else if (resource.isInstanceOf(schema.Event)) {
+      resource
+        .value(schema.startDate)
+        .chain((value) => value.toDate())
+        .ifRight((startDate) => {
+          resourceIdentifiers.push(...iso8601DateString(startDate).split("-"));
+        });
+      resourceLabel(resource)
+        .map(kebabCase)
+        .ifJust((resourceLabel) => {
+          resourceIdentifiers.push(resourceLabel);
+          uniquelyIdentifiedResource = true;
+        });
+    } else {
+      logger.warn(
+        `unrecognized context-dependent resource rdf:type: ${resourceType_.value}`,
+      );
+      return;
+    }
+
+    if (!uniquelyIdentifiedResource) {
+      logger.warn(
+        `unable to infer identifiers for resource with rdf:type: ${resourceType_.value}`,
+      );
+      return;
+    }
+
+    if (
+      resource.isInstanceOf(schema.Event) ||
+      resource.isInstanceOf(schema.Report)
+    ) {
+      // Recurse into (resource, schema:about, ?)
+      for (const aboutResource of resource
+        .values(schema.about)
+        .flatMap((value) => value.toResource().toMaybe().toList())) {
+        skolemizeResource(resourceIdentifiers, aboutResource);
+      }
+    }
+
+    if (resource.isInstanceOf(schema.Event)) {
+      // Recurse into (resource, schema:subEvent, ?)
+      for (const subEventResource of resource
+        .values(schema.subEvent)
+        .flatMap((value) => value.toResource().toMaybe().toList())) {
+        skolemizeResource(resourceIdentifiers, subEventResource);
+      }
+    }
+
+    if (resource.isInstanceOf(schema.Invoice)) {
+      for (const orderResource of resource
+        .values(schema.referencesOrder)
+        .flatMap((value) => value.toResource().toMaybe().toList())) {
+        skolemizeResource(resourceIdentifiers, orderResource);
+      }
+
+      resource
+        .value(schema.totalPaymentDue)
+        .chain((value) => value.toResource())
+        .ifRight((totalPaymentDueResource) => {
+          skolemizeResource(resourceIdentifiers, totalPaymentDueResource);
+        });
+    }
+
+    if (resource.isInstanceOf(schema.Order)) {
+      resource
+        .value(schema.partOfInvoice)
+        .chain((value) => value.toResource())
+        .ifRight((invoiceResource) => {
+          skolemizeResource(resourceIdentifiers, invoiceResource);
+        });
+    }
+
+    const resourceIdentifier = N3.DataFactory.namedNode(
+      `${uriSpace}${resourceIdentifiers.join("/")}`,
+    );
+    // logger.debug(
+    //   `skolemizing ${Identifier.toString(resource.identifier)} with rdf:type ${resourceType_.value} as ${Identifier.toString(resourceIdentifier)}`,
+    // );
+    blankNodeToNamedNodeMap.set(resource.identifier, resourceIdentifier);
+  };
+
+  for (const rootResource of rootResources(mergedResourceSet)) {
+    skolemizeResource([], rootResource);
+  }
+
+  const skolemizedInstanceDataset = new N3.Store();
+
+  const mapBlankNodeToNamedNode = <NodeT extends Quad_Object | Quad_Subject>(
+    node: NodeT,
+  ): NodeT => {
+    if (node.termType === "BlankNode") {
+      const namedNode = blankNodeToNamedNodeMap.get(node);
+      if (namedNode) {
+        return namedNode as NodeT;
+      }
+      logger.warn(
+        `no skolemization for resource with rdf:type ${resourceType(mergedResourceSet.resource(node)).value}`,
+      );
+    }
+    return node;
+  };
+
+  for (const quad of instanceDataset) {
+    skolemizedInstanceDataset.add(
+      N3.DataFactory.quad(
+        mapBlankNodeToNamedNode(quad.subject),
+        quad.predicate,
+        mapBlankNodeToNamedNode(quad.object),
+        quad.graph,
+      ),
+    );
+  }
+  return skolemizedInstanceDataset;
 }
 
 export async function* transform({
