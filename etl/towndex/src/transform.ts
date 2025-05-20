@@ -524,44 +524,20 @@ function skolemize({
     resourceIdentifiers.push(
       kebabCase(resourceType_.value.substring(schema[""].value.length)),
     );
-    let uniquelyIdentifiedResource = false;
-    if (
-      resource.isInstanceOf(schema.Action) ||
-      resource.isInstanceOf(schema.Invoice) ||
-      resource.isInstanceOf(schema.Message) ||
-      resource.isInstanceOf(schema.MonetaryAmount) ||
-      resource.isInstanceOf(schema.Order) ||
-      resource.isInstanceOf(schema.QuantitativeValue) ||
-      resource.isInstanceOf(schema.Report) ||
-      resource.isInstanceOf(schema.Thing, { excludeSubclasses: true })
-    ) {
-      resourceLabel(resource)
-        .map(kebabCase)
-        .ifJust((resourceLabel) => {
-          resourceIdentifiers.push(resourceLabel);
-          uniquelyIdentifiedResource = true;
-        });
-    } else if (resource.isInstanceOf(schema.Event)) {
+
+    if (resource.isInstanceOf(schema.Event)) {
       resource
         .value(schema.startDate)
         .chain((value) => value.toDate())
         .ifRight((startDate) => {
           resourceIdentifiers.push(...iso8601DateString(startDate).split("-"));
         });
-      resourceLabel(resource)
-        .map(kebabCase)
-        .ifJust((resourceLabel) => {
-          resourceIdentifiers.push(resourceLabel);
-          uniquelyIdentifiedResource = true;
-        });
-    } else {
-      logger.warn(
-        `unrecognized context-dependent resource rdf:type: ${resourceType_.value}`,
-      );
-      return;
     }
 
-    if (!uniquelyIdentifiedResource) {
+    const resourceLabel_ = resourceLabel(resource);
+    if (resourceLabel_.isJust()) {
+      resourceIdentifiers.push(kebabCase(resourceLabel_.unsafeCoerce()));
+    } else {
       logger.warn(
         `unable to infer identifiers for resource with rdf:type: ${resourceType_.value}`,
       );

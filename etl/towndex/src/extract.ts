@@ -251,9 +251,9 @@ function parseJsonLdString(
       dataFactory: N3.DataFactory,
       documentLoader: new FetchDocumentLoader(fetch as any),
     });
-    parser.on("context", (context) => {
-      logger.debug(`JSON-LD context: ${context}`);
-    });
+    // parser.on("context", (context) => {
+    //   logger.debug(`JSON-LD context: ${context}`);
+    // });
     parser.on("data", (quad) => {
       if (
         quad.graph.termType === "DefaultGraph" &&

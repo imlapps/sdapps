@@ -1,3 +1,4 @@
+.cache/
 .caches/
 .DS_Store
 .env
@@ -7,7 +8,6 @@
 *.pyc
 build
 coverage
-data/congress/.cache
 dist/
 next-env.d.ts
 node_modules
