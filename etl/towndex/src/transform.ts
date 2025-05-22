@@ -1,4 +1,5 @@
 import TermMap from "@rdfjs/term-map";
+import TermSet from "@rdfjs/term-set";
 import type {
   BlankNode,
   DatasetCore,
@@ -461,6 +462,7 @@ function skolemize({
   });
 
   const blankNodeToNamedNodeMap = new TermMap<BlankNode, NamedNode>();
+  const subjectsInDefaultGraph = new TermSet<NamedNode>();
 
   // Organizations, people, et al. have "global" / context-independent identifiers across documents
   const contextIndependentClasses = [
@@ -478,12 +480,26 @@ function skolemize({
 
       resourceLabel(contextIndependentResource)
         .ifJust((resourceLabel) => {
+          let contextIndependentResourceNamedNode = blankNodeToNamedNodeMap.get(
+            contextIndependentResource.identifier,
+          );
+
+          if (contextIndependentResourceNamedNode) {
+            logger.debug(
+              `resource ${Identifier.toString(contextIndependentResource.identifier)} has already been skolemized as ${Identifier.toString(contextIndependentResourceNamedNode)}`,
+            );
+            return;
+          }
+
+          contextIndependentResourceNamedNode = N3.DataFactory.namedNode(
+            `${uriSpace}${kebabCase(resourceType(contextIndependentResource).value.substring(schema[""].value.length))}/${kebabCase(resourceLabel)}`,
+          );
+
           blankNodeToNamedNodeMap.set(
             contextIndependentResource.identifier as BlankNode,
-            N3.DataFactory.namedNode(
-              `${uriSpace}${kebabCase(resourceType(contextIndependentResource).value.substring(schema[""].value.length))}/${kebabCase(resourceLabel)}`,
-            ),
+            contextIndependentResourceNamedNode,
           );
+          subjectsInDefaultGraph.add(contextIndependentResourceNamedNode);
         })
         .ifNothing(() => {
           logger.warn(
@@ -524,44 +540,20 @@ function skolemize({
     resourceIdentifiers.push(
       kebabCase(resourceType_.value.substring(schema[""].value.length)),
     );
-    let uniquelyIdentifiedResource = false;
-    if (
-      resource.isInstanceOf(schema.Action) ||
-      resource.isInstanceOf(schema.Invoice) ||
-      resource.isInstanceOf(schema.Message) ||
-      resource.isInstanceOf(schema.MonetaryAmount) ||
-      resource.isInstanceOf(schema.Order) ||
-      resource.isInstanceOf(schema.QuantitativeValue) ||
-      resource.isInstanceOf(schema.Report) ||
-      resource.isInstanceOf(schema.Thing, { excludeSubclasses: true })
-    ) {
-      resourceLabel(resource)
-        .map(kebabCase)
-        .ifJust((resourceLabel) => {
-          resourceIdentifiers.push(resourceLabel);
-          uniquelyIdentifiedResource = true;
-        });
-    } else if (resource.isInstanceOf(schema.Event)) {
+
+    if (resource.isInstanceOf(schema.Event)) {
       resource
         .value(schema.startDate)
         .chain((value) => value.toDate())
         .ifRight((startDate) => {
           resourceIdentifiers.push(...iso8601DateString(startDate).split("-"));
         });
-      resourceLabel(resource)
-        .map(kebabCase)
-        .ifJust((resourceLabel) => {
-          resourceIdentifiers.push(resourceLabel);
-          uniquelyIdentifiedResource = true;
-        });
-    } else {
-      logger.warn(
-        `unrecognized context-dependent resource rdf:type: ${resourceType_.value}`,
-      );
-      return;
     }
 
-    if (!uniquelyIdentifiedResource) {
+    const resourceLabel_ = resourceLabel(resource);
+    if (resourceLabel_.isJust()) {
+      resourceIdentifiers.push(kebabCase(resourceLabel_.unsafeCoerce()));
+    } else {
       logger.warn(
         `unable to infer identifiers for resource with rdf:type: ${resourceType_.value}`,
       );
@@ -613,13 +605,13 @@ function skolemize({
         });
     }
 
-    const resourceIdentifier = N3.DataFactory.namedNode(
+    const resourceNamedNode = N3.DataFactory.namedNode(
       `${uriSpace}${resourceIdentifiers.join("/")}`,
     );
     // logger.debug(
     //   `skolemizing ${Identifier.toString(resource.identifier)} with rdf:type ${resourceType_.value} as ${Identifier.toString(resourceIdentifier)}`,
     // );
-    blankNodeToNamedNodeMap.set(resource.identifier, resourceIdentifier);
+    blankNodeToNamedNodeMap.set(resource.identifier, resourceNamedNode);
   };
 
   for (const rootResource of rootResources(mergedResourceSet)) {
@@ -644,12 +636,16 @@ function skolemize({
   };
 
   for (const quad of instanceDataset) {
+    const subject = mapBlankNodeToNamedNode(quad.subject);
+
     skolemizedInstanceDataset.add(
       N3.DataFactory.quad(
-        mapBlankNodeToNamedNode(quad.subject),
+        subject,
         quad.predicate,
         mapBlankNodeToNamedNode(quad.object),
-        quad.graph,
+        subjectsInDefaultGraph.has(subject)
+          ? N3.DataFactory.defaultGraph()
+          : quad.graph,
       ),
     );
   }
