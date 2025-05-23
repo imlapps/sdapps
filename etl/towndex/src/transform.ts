@@ -544,9 +544,14 @@ function skolemize({
     if (resource.isInstanceOf(schema.Event)) {
       resource
         .value(schema.startDate)
-        .chain((value) => value.toDate())
+        .chain((value) => value.toLiteral())
         .ifRight((startDate) => {
-          resourceIdentifiers.push(...iso8601DateString(startDate).split("-"));
+          const match = startDate.value.match(
+            /^([0-9]+)-([0-9][0-9])-([0-9][0-9])/,
+          );
+          if (match) {
+            resourceIdentifiers.push(match[1], match[2], match[3]);
+          }
         });
     }
 
