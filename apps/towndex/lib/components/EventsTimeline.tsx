@@ -13,16 +13,11 @@ export function EventsTimeline(json: {
   const events = useMemo(
     () =>
       json.events
-        .flatMap((json) =>
-          EventStub.fromJson(json)
-            .toMaybe()
-            .filter((event) => event.startDate.isJust())
-            .toList(),
-        )
+        .flatMap((json) => EventStub.fromJson(json).toMaybe().toList())
         .toSorted((left, right) => {
           const startDateDiff =
-            right.startDate.unsafeCoerce().getTime() -
-            left.startDate.unsafeCoerce().getTime();
+            right.startDate.map((date) => date.getTime()).orDefault(0) -
+            left.startDate.map((date) => date.getTime()).orDefault(0);
           if (startDateDiff !== 0) {
             return startDateDiff;
           }
@@ -40,9 +35,11 @@ export function EventsTimeline(json: {
             <Anchor href={hrefs.event(event)}>{displayLabel(event)}</Anchor>
           }
         >
-          <Text size="sm" mt={4}>
-            {event.startDate.unsafeCoerce().toLocaleString()}
-          </Text>
+          {event.startDate.isJust() ? (
+            <Text size="sm" mt={4}>
+              {event.startDate.unsafeCoerce().toLocaleString()}
+            </Text>
+          ) : null}
         </TimelineItem>
       ))}
     </Timeline>
