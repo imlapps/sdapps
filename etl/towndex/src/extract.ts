@@ -276,7 +276,7 @@ function parseJsonLdString(
       resolve(store);
     });
     parser.on("error", reject);
-    parser.write(jsonLdString);
+    parser.write(JSON.stringify(transformJsonLd(JSON.parse(jsonLdString))));
     parser.end();
   });
 }
@@ -549,3 +549,33 @@ Below are examples that can help you construct Schema.org graphs:
     }
   ]
 }`;
+
+/**
+ * Do minimal transformations on the raw JSON-LD extracted from the LLM in order to preserve array order information
+ * for downstream transformations.
+ *
+ * Most of the transformation work will be done in transform.ts on the RDF Dataset.
+ */
+function transformJsonLd(jsonLd: any): any {
+  if (typeof jsonLd === "object") {
+    if (Array.isArray(jsonLd)) {
+      return jsonLd.map((arrayElement, arrayElementIndex) => {
+        if (typeof arrayElement === "object" && !Array.isArray(arrayElement)) {
+          return {
+            ...transformJsonLd(arrayElement),
+            "http://www.w3.org/ns/shacl#order": arrayElementIndex,
+          };
+        }
+        return arrayElement;
+      });
+    }
+
+    const transformedObject: any = {};
+    for (const [key, value] of Object.entries(jsonLd)) {
+      transformedObject[key] = transformJsonLd(value);
+    }
+    return transformedObject;
+  }
+
+  return jsonLd;
+}
