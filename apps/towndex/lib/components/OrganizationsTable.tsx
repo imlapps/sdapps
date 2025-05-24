@@ -2,7 +2,7 @@
 
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor } from "@mantine/core";
-import { OrganizationStub } from "@sdapps/models";
+import { OrganizationStub, compare } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -22,9 +22,11 @@ export function OrganizationsTable(json: {
   const hrefs = useHrefs();
 
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const organizations = json.organizations.flatMap((organization) =>
-      OrganizationStub.fromJson(organization).toMaybe().toList(),
-    );
+    const organizations = json.organizations
+      .flatMap((organization) =>
+        OrganizationStub.fromJson(organization).toMaybe().toList(),
+      )
+      .toSorted(compare);
 
     const columns: DataTableColumn<Row>[] = [
       {

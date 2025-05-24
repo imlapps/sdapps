@@ -2,7 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { AgentStub, Report } from "@sdapps/models";
+import { AgentStub, Report, compare } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -23,9 +23,9 @@ export function ReportsTable(json: {
   const hrefs = useHrefs();
 
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const reports = json.reports.flatMap((report) =>
-      Report.fromJson(report).toMaybe().toList(),
-    );
+    const reports = json.reports
+      .flatMap((report) => Report.fromJson(report).toMaybe().toList())
+      .toSorted(compare);
 
     const columns: DataTableColumn<Row>[] = [
       {
@@ -51,7 +51,9 @@ export function ReportsTable(json: {
       ) {
         columns.push({
           accessor: "authors",
-          render: (row) => <AgentList agents={row.authors} hrefs={hrefs} />,
+          render: (row) => (
+            <AgentList agents={row.authors.toSorted(compare)} hrefs={hrefs} />
+          ),
         });
       }
 

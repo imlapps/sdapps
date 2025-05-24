@@ -227,6 +227,7 @@ export abstract class Thing {
   readonly description: purify.Maybe<string>;
   readonly identifiers: readonly string[];
   readonly name: purify.Maybe<string>;
+  readonly order: purify.Maybe<number>;
   readonly sameAs: readonly rdfjs.NamedNode[];
   readonly subjectOf: readonly (CreativeWorkStub | EventStub)[];
   readonly url: purify.Maybe<rdfjs.NamedNode>;
@@ -235,6 +236,7 @@ export abstract class Thing {
     readonly description?: purify.Maybe<string> | string;
     readonly identifiers?: readonly string[];
     readonly name?: purify.Maybe<string> | string;
+    readonly order?: number | purify.Maybe<number>;
     readonly sameAs?: readonly rdfjs.NamedNode[];
     readonly subjectOf?: readonly (CreativeWorkStub | EventStub)[];
     readonly url?: rdfjs.NamedNode | purify.Maybe<rdfjs.NamedNode> | string;
@@ -265,6 +267,16 @@ export abstract class Thing {
       this.name = purify.Maybe.empty();
     } else {
       this.name = parameters.name as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.order)) {
+      this.order = parameters.order;
+    } else if (typeof parameters.order === "number") {
+      this.order = purify.Maybe.of(parameters.order);
+    } else if (typeof parameters.order === "undefined") {
+      this.order = purify.Maybe.empty();
+    } else {
+      this.order = parameters.order as never;
     }
 
     if (typeof parameters.sameAs === "undefined") {
@@ -348,6 +360,18 @@ export abstract class Thing {
           left: this,
           right: other,
           propertyName: "name",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.order,
+          other.order,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "order",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -445,6 +469,9 @@ export abstract class Thing {
     this.name.ifJust((_value0) => {
       _hasher.update(_value0);
     });
+    this.order.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
     for (const _item0 of this.sameAs) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
@@ -493,6 +520,7 @@ export abstract class Thing {
     readonly description: string | undefined;
     readonly identifiers: readonly string[];
     readonly name: string | undefined;
+    readonly order: number | undefined;
     readonly sameAs: readonly { readonly "@id": string }[];
     readonly subjectOf: readonly (
       | ReturnType<CreativeWorkStub["toJson"]>
@@ -510,6 +538,7 @@ export abstract class Thing {
         description: this.description.map((_item) => _item).extract(),
         identifiers: this.identifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
+        order: this.order.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
         subjectOf: this.subjectOf.map((_item) =>
           _item.type === "EventStub" ? _item.toJson() : _item.toJson(),
@@ -539,6 +568,10 @@ export abstract class Thing {
       this.identifiers.map((_item) => _item),
     );
     _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+      this.order,
+    );
     _resource.add(
       dataFactory.namedNode("http://schema.org/sameAs"),
       this.sameAs.map((_item) => _item),
@@ -570,6 +603,7 @@ export namespace Thing {
       description: purify.Maybe<string>;
       identifiers: readonly string[];
       name: purify.Maybe<string>;
+      order: purify.Maybe<number>;
       sameAs: readonly rdfjs.NamedNode[];
       subjectOf: readonly (CreativeWorkStub | EventStub)[];
       url: purify.Maybe<rdfjs.NamedNode>;
@@ -587,6 +621,7 @@ export namespace Thing {
     const description = purify.Maybe.fromNullable(_jsonObject["description"]);
     const identifiers = _jsonObject["identifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
+    const order = purify.Maybe.fromNullable(_jsonObject["order"]);
     const sameAs = _jsonObject["sameAs"].map((_item) =>
       dataFactory.namedNode(_item["@id"]),
     );
@@ -603,6 +638,7 @@ export namespace Thing {
       description,
       identifiers,
       name,
+      order,
       sameAs,
       subjectOf,
       url,
@@ -645,6 +681,7 @@ export namespace Thing {
       description: purify.Maybe<string>;
       identifiers: readonly string[];
       name: purify.Maybe<string>;
+      order: purify.Maybe<number>;
       sameAs: readonly rdfjs.NamedNode[];
       subjectOf: readonly (CreativeWorkStub | EventStub)[];
       url: purify.Maybe<rdfjs.NamedNode>;
@@ -707,6 +744,23 @@ export namespace Thing {
     }
 
     const name = _nameEither.unsafeCoerce();
+    const _orderEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://www.w3.org/ns/shacl#order"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_orderEither.isLeft()) {
+      return _orderEither;
+    }
+
+    const order = _orderEither.unsafeCoerce();
     const _sameAsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode[]
@@ -802,6 +856,7 @@ export namespace Thing {
       description,
       identifiers,
       name,
+      order,
       sameAs,
       subjectOf,
       url,
@@ -889,6 +944,7 @@ export namespace Thing {
         { scope: `${scopePrefix}/properties/description`, type: "Control" },
         { scope: `${scopePrefix}/properties/identifiers`, type: "Control" },
         { scope: `${scopePrefix}/properties/name`, type: "Control" },
+        { scope: `${scopePrefix}/properties/order`, type: "Control" },
         { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
         { scope: `${scopePrefix}/properties/subjectOf`, type: "Control" },
         { scope: `${scopePrefix}/properties/url`, type: "Control" },
@@ -923,6 +979,7 @@ export namespace Thing {
       description: zod.string().optional(),
       identifiers: zod.string().array(),
       name: zod.string().optional(),
+      order: zod.number().optional(),
       sameAs: zod.object({ "@id": zod.string().min(1) }).array(),
       subjectOf: zod
         .discriminatedUnion("type", [

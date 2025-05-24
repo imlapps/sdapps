@@ -23,9 +23,9 @@ export function PeopleTable(json: {
   const hrefs = useHrefs();
 
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const people = json.people.flatMap((person) =>
-      PersonStub.fromJson(person).toMaybe().toList(),
-    );
+    const people = json.people
+      .flatMap((person) => PersonStub.fromJson(person).toMaybe().toList())
+      .toSorted(compare);
 
     const columns: DataTableColumn<Row>[] = [
       {
