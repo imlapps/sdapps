@@ -2,7 +2,7 @@
 
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor, Text, Timeline, TimelineItem } from "@mantine/core";
-import { EventStub, Identifier, displayLabel } from "@sdapps/models";
+import { EventStub, Identifier, compare, displayLabel } from "@sdapps/models";
 import { useMemo } from "react";
 
 export function EventsTimeline(json: {
@@ -14,15 +14,7 @@ export function EventsTimeline(json: {
     () =>
       json.events
         .flatMap((json) => EventStub.fromJson(json).toMaybe().toList())
-        .toSorted((left, right) => {
-          const startDateDiff =
-            right.startDate.map((date) => date.getTime()).orDefault(0) -
-            left.startDate.map((date) => date.getTime()).orDefault(0);
-          if (startDateDiff !== 0) {
-            return startDateDiff;
-          }
-          return displayLabel(left).localeCompare(displayLabel(right));
-        }),
+        .toSorted(compare),
     [json],
   );
 

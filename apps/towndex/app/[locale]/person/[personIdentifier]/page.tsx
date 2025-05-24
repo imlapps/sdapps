@@ -18,7 +18,13 @@ import {
   TableTd,
   TableTr,
 } from "@mantine/core";
-import { Identifier, Person, PersonStub, displayLabel } from "@sdapps/models";
+import {
+  Identifier,
+  Person,
+  PersonStub,
+  compare,
+  displayLabel,
+} from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -61,12 +67,7 @@ export default async function PersonPage({
   });
   const events = person.performerIn
     .concat(person.subjectOf.filter((_) => _.type === "EventStub"))
-    .filter((event) => event.name.isJust() && event.startDate.isJust())
-    .toSorted(
-      (left, right) =>
-        right.startDate.unsafeCoerce().getTime() -
-        left.startDate.unsafeCoerce().getTime(),
-    );
+    .toSorted(compare);
 
   return (
     <ClientProvidersServer>
@@ -104,13 +105,13 @@ export default async function PersonPage({
                   {events.map((event) => (
                     <TableTr key={Identifier.toString(event.identifier)}>
                       <TableTd>
-                        {event.startDate.unsafeCoerce().toLocaleDateString()}
+                        {event.startDate.isJust()
+                          ? event.startDate.unsafeCoerce().toLocaleDateString()
+                          : null}
                       </TableTd>
                       <TableTd>
                         <Anchor href={hrefs.event(event)}>
-                          {event.name.orDefault(
-                            Identifier.toString(event.identifier),
-                          )}
+                          {displayLabel(event)}
                         </Anchor>
                       </TableTd>
                     </TableTr>

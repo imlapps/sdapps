@@ -2,7 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { AgentStub, VoteAction } from "@sdapps/models";
+import { AgentStub, VoteAction, compare } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -24,9 +24,11 @@ export function VoteActionsTable(json: {
   const hrefs = useHrefs();
 
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const voteActions = json.voteActions.flatMap((voteAction) =>
-      VoteAction.fromJson(voteAction).toMaybe().toList(),
-    );
+    const voteActions = json.voteActions
+      .flatMap((voteAction) =>
+        VoteAction.fromJson(voteAction).toMaybe().toList(),
+      )
+      .toSorted(compare);
 
     const columns: DataTableColumn<Row>[] = [
       {

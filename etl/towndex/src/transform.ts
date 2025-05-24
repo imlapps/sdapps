@@ -11,11 +11,16 @@ import type {
   Term,
 } from "@rdfjs/types";
 import { Identifier } from "@sdapps/models";
-import { rdf, rdfs, schema, xsd } from "@tpluscode/rdf-ns-builders";
+import { rdf, rdfs, schema, sh, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
 import { Either, Left, Maybe } from "purify-ts";
-import { type Resource, ResourceSet } from "rdfjs-resource";
+import {
+  MutableResource,
+  MutableResourceSet,
+  type Resource,
+  ResourceSet,
+} from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type { TextObject } from "./TextObject.js";
 import { logger } from "./logger.js";
@@ -388,6 +393,53 @@ function resourceLabel(resource: Resource): Maybe<string> {
   return Maybe.of(label.join(" "));
 }
 
+function removeMultipleOrderQuads(instanceDataset: DatasetCore) {
+  const resultDataset = copyDataset(instanceDataset);
+  const resultResourceSet = new MutableResourceSet({
+    dataFactory: N3.DataFactory,
+    dataset: resultDataset,
+  });
+
+  const resourcesWithOrder = new TermMap<
+    Resource.Identifier,
+    MutableResource
+  >();
+
+  for (const orderQuad of resultDataset.match(null, sh.order, null)) {
+    invariant(
+      orderQuad.subject.termType === "BlankNode" ||
+        orderQuad.subject.termType === "NamedNode",
+    );
+    invariant(
+      orderQuad.graph.termType === "DefaultGraph" ||
+        orderQuad.graph.termType === "NamedNode",
+    );
+    resourcesWithOrder.set(
+      orderQuad.subject,
+      resultResourceSet.mutableResource(orderQuad.subject, {
+        mutateGraph: orderQuad.graph,
+      }),
+    );
+  }
+
+  for (const resource of resourcesWithOrder.values()) {
+    const orderTerms = resource
+      .values(sh.order)
+      .toArray()
+      .map((value) => value.toTerm());
+    if (orderTerms.length === 1) {
+      continue;
+    }
+    invariant(orderTerms.length > 1);
+    resource.delete(sh.order);
+    logger.debug(
+      `removed ${orderTerms.length} order quads from resource ${Identifier.toString(resource.identifier)} with rdf:type ${resourceType(resource).value}`,
+    );
+  }
+
+  return resultDataset;
+}
+
 function resourceType(resource: Resource): NamedNode {
   return resource
     .value(rdf.type)
@@ -654,6 +706,7 @@ function skolemize({
       ),
     );
   }
+
   return skolemizedInstanceDataset;
 }
 
@@ -719,6 +772,13 @@ export async function* transform({
       instanceDataset: transformedTextObjectContentDataset,
       uriSpace: textObject.uriSpace,
     });
+
+    logger.debug(
+      `${textObjectIdentifierString}: removing multiple order quads`,
+    );
+    transformedTextObjectContentDataset = removeMultipleOrderQuads(
+      transformedTextObjectContentDataset,
+    );
 
     logger.debug(`${textObjectIdentifierString}: inferring TextObject quads`);
     transformedTextObjectContentDataset = inferTextObjectQuads({

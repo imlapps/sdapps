@@ -227,6 +227,7 @@ export abstract class Thing {
   readonly description: purify.Maybe<string>;
   readonly identifiers: readonly string[];
   readonly name: purify.Maybe<string>;
+  readonly order: purify.Maybe<number>;
   readonly sameAs: readonly rdfjs.NamedNode[];
   readonly subjectOf: readonly (CreativeWorkStub | EventStub)[];
   readonly url: purify.Maybe<rdfjs.NamedNode>;
@@ -235,6 +236,7 @@ export abstract class Thing {
     readonly description?: purify.Maybe<string> | string;
     readonly identifiers?: readonly string[];
     readonly name?: purify.Maybe<string> | string;
+    readonly order?: number | purify.Maybe<number>;
     readonly sameAs?: readonly rdfjs.NamedNode[];
     readonly subjectOf?: readonly (CreativeWorkStub | EventStub)[];
     readonly url?: rdfjs.NamedNode | purify.Maybe<rdfjs.NamedNode> | string;
@@ -265,6 +267,16 @@ export abstract class Thing {
       this.name = purify.Maybe.empty();
     } else {
       this.name = parameters.name as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.order)) {
+      this.order = parameters.order;
+    } else if (typeof parameters.order === "number") {
+      this.order = purify.Maybe.of(parameters.order);
+    } else if (typeof parameters.order === "undefined") {
+      this.order = purify.Maybe.empty();
+    } else {
+      this.order = parameters.order as never;
     }
 
     if (typeof parameters.sameAs === "undefined") {
@@ -348,6 +360,18 @@ export abstract class Thing {
           left: this,
           right: other,
           propertyName: "name",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.order,
+          other.order,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "order",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -445,6 +469,9 @@ export abstract class Thing {
     this.name.ifJust((_value0) => {
       _hasher.update(_value0);
     });
+    this.order.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
     for (const _item0 of this.sameAs) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
@@ -493,6 +520,7 @@ export abstract class Thing {
     readonly description: string | undefined;
     readonly identifiers: readonly string[];
     readonly name: string | undefined;
+    readonly order: number | undefined;
     readonly sameAs: readonly { readonly "@id": string }[];
     readonly subjectOf: readonly (
       | ReturnType<CreativeWorkStub["toJson"]>
@@ -510,6 +538,7 @@ export abstract class Thing {
         description: this.description.map((_item) => _item).extract(),
         identifiers: this.identifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
+        order: this.order.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
         subjectOf: this.subjectOf.map((_item) =>
           _item.type === "EventStub" ? _item.toJson() : _item.toJson(),
@@ -540,6 +569,10 @@ export abstract class Thing {
     );
     _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
     _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+      this.order,
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/sameAs"),
       this.sameAs.map((_item) => _item),
     );
@@ -561,13 +594,16 @@ export abstract class Thing {
 }
 
 export namespace Thing {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       description: purify.Maybe<string>;
       identifiers: readonly string[];
       name: purify.Maybe<string>;
+      order: purify.Maybe<number>;
       sameAs: readonly rdfjs.NamedNode[];
       subjectOf: readonly (CreativeWorkStub | EventStub)[];
       url: purify.Maybe<rdfjs.NamedNode>;
@@ -585,6 +621,7 @@ export namespace Thing {
     const description = purify.Maybe.fromNullable(_jsonObject["description"]);
     const identifiers = _jsonObject["identifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
+    const order = purify.Maybe.fromNullable(_jsonObject["order"]);
     const sameAs = _jsonObject["sameAs"].map((_item) =>
       dataFactory.namedNode(_item["@id"]),
     );
@@ -601,6 +638,7 @@ export namespace Thing {
       description,
       identifiers,
       name,
+      order,
       sameAs,
       subjectOf,
       url,
@@ -643,6 +681,7 @@ export namespace Thing {
       description: purify.Maybe<string>;
       identifiers: readonly string[];
       name: purify.Maybe<string>;
+      order: purify.Maybe<number>;
       sameAs: readonly rdfjs.NamedNode[];
       subjectOf: readonly (CreativeWorkStub | EventStub)[];
       url: purify.Maybe<rdfjs.NamedNode>;
@@ -705,6 +744,23 @@ export namespace Thing {
     }
 
     const name = _nameEither.unsafeCoerce();
+    const _orderEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://www.w3.org/ns/shacl#order"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_orderEither.isLeft()) {
+      return _orderEither;
+    }
+
+    const order = _orderEither.unsafeCoerce();
     const _sameAsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode[]
@@ -800,6 +856,7 @@ export namespace Thing {
       description,
       identifiers,
       name,
+      order,
       sameAs,
       subjectOf,
       url,
@@ -887,6 +944,7 @@ export namespace Thing {
         { scope: `${scopePrefix}/properties/description`, type: "Control" },
         { scope: `${scopePrefix}/properties/identifiers`, type: "Control" },
         { scope: `${scopePrefix}/properties/name`, type: "Control" },
+        { scope: `${scopePrefix}/properties/order`, type: "Control" },
         { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
         { scope: `${scopePrefix}/properties/subjectOf`, type: "Control" },
         { scope: `${scopePrefix}/properties/url`, type: "Control" },
@@ -921,6 +979,7 @@ export namespace Thing {
       description: zod.string().optional(),
       identifiers: zod.string().array(),
       name: zod.string().optional(),
+      order: zod.number().optional(),
       sameAs: zod.object({ "@id": zod.string().min(1) }).array(),
       subjectOf: zod
         .discriminatedUnion("type", [
@@ -1471,7 +1530,9 @@ export class Role extends Intangible {
 }
 
 export namespace Role {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1882,18 +1943,20 @@ export class QuantitiveValue extends StructuredValue {
   }
 
   override equals(other: QuantitiveValue): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => maybeEquals(left, right, strictEquals))(
-        this.value,
-        other.value,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "value",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.value,
+          other.value,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "value",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -1961,7 +2024,9 @@ export class QuantitiveValue extends StructuredValue {
 }
 
 export namespace QuantitiveValue {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2322,7 +2387,9 @@ export abstract class CreativeWork extends Thing {
 }
 
 export namespace CreativeWork {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2813,7 +2880,9 @@ export abstract class MediaObject extends CreativeWork {
 }
 
 export namespace MediaObject {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3420,7 +3489,9 @@ export class GenderType extends Enumeration {
 }
 
 export namespace GenderType {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -3815,7 +3886,9 @@ export class Action extends Thing {
 }
 
 export namespace Action {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4624,8 +4697,12 @@ export abstract class ThingStub {
     | "TextObjectStub"
     | "VoteActionStub";
   readonly name: purify.Maybe<string>;
+  readonly order: purify.Maybe<number>;
 
-  constructor(parameters: { readonly name?: purify.Maybe<string> | string }) {
+  constructor(parameters: {
+    readonly name?: purify.Maybe<string> | string;
+    readonly order?: number | purify.Maybe<number>;
+  }) {
     if (purify.Maybe.isMaybe(parameters.name)) {
       this.name = parameters.name;
     } else if (typeof parameters.name === "string") {
@@ -4634,6 +4711,16 @@ export abstract class ThingStub {
       this.name = purify.Maybe.empty();
     } else {
       this.name = parameters.name as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.order)) {
+      this.order = parameters.order;
+    } else if (typeof parameters.order === "number") {
+      this.order = purify.Maybe.of(parameters.order);
+    } else if (typeof parameters.order === "undefined") {
+      this.order = purify.Maybe.empty();
+    } else {
+      this.order = parameters.order as never;
     }
   }
 
@@ -4668,6 +4755,18 @@ export abstract class ThingStub {
           propertyValuesUnequal,
           type: "Property" as const,
         })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.order,
+          other.order,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "order",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
@@ -4690,6 +4789,9 @@ export abstract class ThingStub {
     this.name.ifJust((_value0) => {
       _hasher.update(_value0);
     });
+    this.order.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
     return _hasher;
   }
 
@@ -4711,6 +4813,7 @@ export abstract class ThingStub {
       | "TextObjectStub"
       | "VoteActionStub";
     readonly name: string | undefined;
+    readonly order: number | undefined;
   } {
     return JSON.parse(
       JSON.stringify({
@@ -4720,6 +4823,7 @@ export abstract class ThingStub {
             : this.identifier.value,
         type: this.type,
         name: this.name.map((_item) => _item).extract(),
+        order: this.order.map((_item) => _item).extract(),
       } satisfies ReturnType<ThingStub["toJson"]>),
     );
   }
@@ -4736,6 +4840,10 @@ export abstract class ThingStub {
       mutateGraph,
     });
     _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+      this.order,
+    );
     return _resource;
   }
 
@@ -4745,11 +4853,14 @@ export abstract class ThingStub {
 }
 
 export namespace ThingStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       name: purify.Maybe<string>;
+      order: purify.Maybe<number>;
     }
   > {
     const _jsonSafeParseResult = thingStubJsonZodSchema().safeParse(_json);
@@ -4762,7 +4873,8 @@ export namespace ThingStub {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
-    return purify.Either.of({ identifier, name });
+    const order = purify.Maybe.fromNullable(_jsonObject["order"]);
+    return purify.Either.of({ identifier, name, order });
   }
 
   export function fromJson(
@@ -4813,6 +4925,7 @@ export namespace ThingStub {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       name: purify.Maybe<string>;
+      order: purify.Maybe<number>;
     }
   > {
     const identifier = _resource.identifier;
@@ -4833,7 +4946,24 @@ export namespace ThingStub {
     }
 
     const name = _nameEither.unsafeCoerce();
-    return purify.Either.of({ identifier, name });
+    const _orderEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://www.w3.org/ns/shacl#order"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_orderEither.isLeft()) {
+      return _orderEither;
+    }
+
+    const order = _orderEither.unsafeCoerce();
+    return purify.Either.of({ identifier, name, order });
   }
 
   export function fromRdf(
@@ -4908,6 +5038,7 @@ export namespace ThingStub {
           type: "Control",
         },
         { scope: `${scopePrefix}/properties/name`, type: "Control" },
+        { scope: `${scopePrefix}/properties/order`, type: "Control" },
       ],
       label: "ThingStub",
       type: "Group",
@@ -4934,6 +5065,7 @@ export namespace ThingStub {
         "VoteActionStub",
       ]),
       name: zod.string().optional(),
+      order: zod.number().optional(),
     });
   }
 
@@ -4988,6 +5120,11 @@ export namespace ThingStub {
         predicate: dataFactory.namedNode("http://schema.org/name"),
         subject,
       },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Order`),
+        predicate: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+        subject,
+      },
     ];
   }
 
@@ -5008,6 +5145,23 @@ export namespace ThingStub {
               {
                 object: dataFactory.variable!(`${variablePrefix}Name`),
                 predicate: dataFactory.namedNode("http://schema.org/name"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Order`),
+                predicate: dataFactory.namedNode(
+                  "http://www.w3.org/ns/shacl#order",
+                ),
                 subject,
               },
             ],
@@ -9211,7 +9365,9 @@ export class Person extends Thing {
 }
 
 export namespace Person {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9875,7 +10031,9 @@ export class Organization extends Thing {
 }
 
 export namespace Organization {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10160,18 +10318,20 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => maybeEquals(left, right, AgentStub.equals))(
-        this.sender,
-        other.sender,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "sender",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, AgentStub.equals))(
+          this.sender,
+          other.sender,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "sender",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -10249,7 +10409,9 @@ export class Message extends CreativeWork {
 }
 
 export namespace Message {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11075,7 +11237,9 @@ export class Event extends Thing {
 }
 
 export namespace Event {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11655,7 +11819,9 @@ export class EventStub extends ThingStub {
 }
 
 export namespace EventStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12012,18 +12178,20 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => maybeEquals(left, right, strictEquals))(
-        this.jobTitle,
-        other.jobTitle,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "jobTitle",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -12094,7 +12262,9 @@ export class PersonStub extends ThingStub {
 }
 
 export namespace PersonStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;

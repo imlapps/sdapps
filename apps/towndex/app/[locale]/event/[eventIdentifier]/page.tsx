@@ -36,6 +36,7 @@ import {
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Maybe } from "purify-ts";
 import { ReactNode } from "react";
 
 interface EventPageParams {
@@ -95,16 +96,24 @@ export default async function EventPage({
           type: "TextObject",
         })
       ).ifRight((textObject) => {
-        textObject.url.ifJust((url) => {
-          properties.push({
-            label: translations("Minutes"),
-            value: (
-              <Anchor href={url.value}>
-                {textObject.name.orDefault(url.value)}
-              </Anchor>
-            ),
+        textObject.url
+          .altLazy(() =>
+            textObject.identifier.termType === "NamedNode" &&
+            (textObject.identifier.value.startsWith("http://") ||
+              textObject.identifier.value.startsWith("https://"))
+              ? Maybe.of(textObject.identifier)
+              : Maybe.empty(),
+          )
+          .ifJust((url) => {
+            properties.push({
+              label: translations("Minutes"),
+              value: (
+                <Anchor href={url.value}>
+                  {textObject.name.orDefault(url.value)}
+                </Anchor>
+              ),
+            });
           });
-        });
       });
     }
   }

@@ -1,7 +1,7 @@
 "use client";
 import { AgentAnchor } from "@/lib/components/AgentAnchor";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { AgentStub, Message } from "@sdapps/models";
+import { AgentStub, Message, compare } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -21,9 +21,9 @@ export function MessagesTable(json: {
   const hrefs = useHrefs();
 
   const { columns, rows: unsortedRows } = useMemo(() => {
-    const messages = json.messages.flatMap((message) =>
-      Message.fromJson(message).toMaybe().toList(),
-    );
+    const messages = json.messages
+      .flatMap((message) => Message.fromJson(message).toMaybe().toList())
+      .toSorted(compare);
 
     const columns: DataTableColumn<Row>[] = [
       {
