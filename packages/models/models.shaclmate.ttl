@@ -107,7 +107,14 @@ sdapps:ThingStub
     shaclmate:abstract true ;
     shaclmate:name "ThingStub" ;
     a owl:Class, sh:NodeShape ;
-    sh:property schema:Thing-name .
+    sh:property sdapps:ThingStub-order, schema:Thing-name .
+
+sdapps:ThingStub-order
+    a sh:PropertyShape ;
+    sh:datatype xsd:decimal ;
+    sh:maxCount 1 ;
+    sh:name "order" ;
+    sh:path sh:order .
 
 sdapps:VoteActionStub
     shaclmate:fromRdfType schema:VoteAction ;

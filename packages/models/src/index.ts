@@ -1,3 +1,4 @@
+export * from "./compare.js";
 export * from "./displayLabel.js";
 export * from "./Identifier.js";
 export * from "./generated.js";
