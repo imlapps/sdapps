@@ -132,27 +132,36 @@ function inferTextObjectQuads({
     dataset: mergeDatasets(classOntologyDataset, instanceDataset),
   });
 
-  for (const rootResource of rootResources(mergedDatasetResourceSet)) {
-    // (textObject, schema:about, rootResource)
-    resultDataset.add(
-      N3.DataFactory.quad(
-        textObject.identifier,
-        schema.about,
-        rootResource.identifier,
-        textObject.identifier,
-      ),
-    );
-    // (rootResource, schema:subjectOf, textObject)
-    resultDataset.add(
-      N3.DataFactory.quad(
-        rootResource.identifier,
-        schema.subjectOf,
-        textObject.identifier,
-        textObject.identifier,
-      ),
-    );
+  // Add schema:about and inverse schema:subjectOf to the TextObject
+  for (const class_ of [
+    schema.Event,
+    schema.Organization,
+    schema.Person,
+    schema.Report,
+  ]) {
+    for (const resource of mergedDatasetResourceSet.instancesOf(class_)) {
+      // (textObject, schema:about, resource)
+      resultDataset.add(
+        N3.DataFactory.quad(
+          textObject.identifier,
+          schema.about,
+          resource.identifier,
+          textObject.identifier,
+        ),
+      );
+      // (resource, schema:subjectOf, textObject)
+      resultDataset.add(
+        N3.DataFactory.quad(
+          resource.identifier,
+          schema.subjectOf,
+          textObject.identifier,
+          resourceGraph(resource),
+        ),
+      );
+    }
   }
 
+  // Add a schema:name to the TextObject
   const textObjectResource = mergedDatasetResourceSet.resource(
     textObject.identifier,
   );
@@ -469,14 +478,6 @@ function resourceType(resource: Resource): NamedNode {
     .unsafeCoerce();
 }
 
-function* rootResources(resourceSet: ResourceSet): Iterable<Resource> {
-  for (const eventResource of resourceSet.instancesOf(schema.Event)) {
-    if (eventResource.value(schema.superEvent).isLeft()) {
-      yield eventResource;
-    }
-  }
-}
-
 function propagateNames({
   classOntologyDataset,
   instanceDataset,
@@ -688,8 +689,10 @@ function skolemize({
     blankNodeToNamedNodeMap.set(resource.identifier, resourceNamedNode);
   };
 
-  for (const rootResource of rootResources(mergedResourceSet)) {
-    skolemizeResource([], rootResource);
+  for (const eventResource of mergedResourceSet.instancesOf(schema.Event)) {
+    if (eventResource.value(schema.superEvent).isLeft()) {
+      skolemizeResource([], eventResource);
+    }
   }
 
   const skolemizedInstanceDataset = new N3.Store();
