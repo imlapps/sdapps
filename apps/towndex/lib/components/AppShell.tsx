@@ -8,12 +8,14 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { SearchEngine } from "@sdapps/search";
 import { PropsWithChildren } from "react";
 
 export function AppShell({
   children,
+  searchEngineJson,
   title,
-}: PropsWithChildren<{ title: string }>) {
+}: PropsWithChildren<{ searchEngineJson: SearchEngine.Json; title: string }>) {
   const [opened, { toggle }] = useDisclosure(false);
 
   return (
@@ -27,7 +29,11 @@ export function AppShell({
       padding="md"
     >
       <MantineAppShell.Header>
-        <Header opened={opened} toggle={toggle} />
+        <Header
+          opened={opened}
+          searchEngineJson={searchEngineJson}
+          toggle={toggle}
+        />
       </MantineAppShell.Header>
 
       <MantineAppShell.Main>

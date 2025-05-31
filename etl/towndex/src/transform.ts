@@ -10,7 +10,7 @@ import type {
   Quad_Subject,
   Term,
 } from "@rdfjs/types";
-import { Identifier } from "@sdapps/models";
+import { Identifier, iso8601DateString } from "@sdapps/models";
 import { rdf, rdfs, schema, sh, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
@@ -34,6 +34,8 @@ function addInversePropertyQuads({
 }): DatasetCore {
   const resultDataset = copyDataset(instanceDataset);
 
+  const directToInversePropertyMap = new TermMap<NamedNode, NamedNode>();
+
   for (const propertyInverseOfQuad of propertyOntologyDataset.match(
     null,
     schema.inverseOf,
@@ -43,7 +45,22 @@ function addInversePropertyQuads({
     invariant(directProperty.termType === "NamedNode");
     const inverseProperty = propertyInverseOfQuad.object;
     invariant(inverseProperty.termType === "NamedNode");
+    invariant(!directToInversePropertyMap.has(directProperty));
+    directToInversePropertyMap.set(directProperty, inverseProperty);
+  }
 
+  // Add some manually
+  for (const [directProperty, inverseProperty] of [
+    [schema.performer, schema.performerIn],
+  ]) {
+    invariant(!directToInversePropertyMap.has(directProperty));
+    directToInversePropertyMap.set(directProperty, inverseProperty);
+  }
+
+  for (const [
+    directProperty,
+    inverseProperty,
+  ] of directToInversePropertyMap.entries()) {
     for (const quad of instanceDataset.match(null, directProperty, null)) {
       invariant(quad.object.termType !== "Literal");
       resultDataset.add(
@@ -115,27 +132,36 @@ function inferTextObjectQuads({
     dataset: mergeDatasets(classOntologyDataset, instanceDataset),
   });
 
-  for (const rootResource of rootResources(mergedDatasetResourceSet)) {
-    // (textObject, schema:about, rootResource)
-    resultDataset.add(
-      N3.DataFactory.quad(
-        textObject.identifier,
-        schema.about,
-        rootResource.identifier,
-        textObject.identifier,
-      ),
-    );
-    // (rootResource, schema:subjectOf, textObject)
-    resultDataset.add(
-      N3.DataFactory.quad(
-        rootResource.identifier,
-        schema.subjectOf,
-        textObject.identifier,
-        textObject.identifier,
-      ),
-    );
+  // Add schema:about and inverse schema:subjectOf to the TextObject
+  for (const class_ of [
+    schema.Event,
+    schema.Organization,
+    schema.Person,
+    schema.Report,
+  ]) {
+    for (const resource of mergedDatasetResourceSet.instancesOf(class_)) {
+      // (textObject, schema:about, resource)
+      resultDataset.add(
+        N3.DataFactory.quad(
+          textObject.identifier,
+          schema.about,
+          resource.identifier,
+          textObject.identifier,
+        ),
+      );
+      // (resource, schema:subjectOf, textObject)
+      resultDataset.add(
+        N3.DataFactory.quad(
+          resource.identifier,
+          schema.subjectOf,
+          textObject.identifier,
+          resourceGraph(resource),
+        ),
+      );
+    }
   }
 
+  // Add a schema:name to the TextObject
   const textObjectResource = mergedDatasetResourceSet.resource(
     textObject.identifier,
   );
@@ -223,10 +249,6 @@ function fixLiteralDatatypes(instanceDataset: DatasetCore): DatasetCore {
     );
   }
   return resultDataset;
-}
-
-function iso8601DateString(date: Date): string {
-  return `${date.getFullYear().toString()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 }
 
 function mergeDatasets(...datasets: readonly DatasetCore[]): DatasetCore {
@@ -452,14 +474,6 @@ function resourceType(resource: Resource): NamedNode {
     .unsafeCoerce();
 }
 
-function* rootResources(resourceSet: ResourceSet): Iterable<Resource> {
-  for (const eventResource of resourceSet.instancesOf(schema.Event)) {
-    if (eventResource.value(schema.superEvent).isLeft()) {
-      yield eventResource;
-    }
-  }
-}
-
 function propagateNames({
   classOntologyDataset,
   instanceDataset,
@@ -671,8 +685,10 @@ function skolemize({
     blankNodeToNamedNodeMap.set(resource.identifier, resourceNamedNode);
   };
 
-  for (const rootResource of rootResources(mergedResourceSet)) {
-    skolemizeResource([], rootResource);
+  for (const eventResource of mergedResourceSet.instancesOf(schema.Event)) {
+    if (eventResource.value(schema.superEvent).isLeft()) {
+      skolemizeResource([], eventResource);
+    }
   }
 
   const skolemizedInstanceDataset = new N3.Store();

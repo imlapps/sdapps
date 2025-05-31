@@ -2,7 +2,7 @@
 
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor } from "@mantine/core";
-import { PersonStub } from "@sdapps/models";
+import { PersonStub, compare } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,

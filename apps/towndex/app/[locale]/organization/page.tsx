@@ -2,6 +2,7 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { OrganizationsTable } from "@/lib/components/OrganizationsTable";
+import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
@@ -26,7 +27,10 @@ export default async function OrganizationsPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell title={translations("Organizations")}>
+      <AppShell
+        searchEngineJson={await getSearchEngineJson()}
+        title={translations("Organizations")}
+      >
         <OrganizationsTable
           organizations={organizations.map((organization) =>
             organization.toJson(),
