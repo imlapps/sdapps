@@ -59,5 +59,9 @@
   },
   "PlacePage": {
     "Place": "Place"
+  },
+  "SearchBox": {
+    "No results": "No results",
+    "Search": "Search"
   }
 }

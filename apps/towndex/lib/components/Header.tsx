@@ -1,15 +1,22 @@
 "use client";
+import { SearchBox } from "@/lib/components/SearchBox";
 import { useClientConfiguration } from "@/lib/hooks/useClientConfiguration";
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor, Burger, Group } from "@mantine/core";
+import { SearchEngine } from "@sdapps/search";
 import { IconBinaryTree2Filled } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import classes from "./Header.module.css";
 
 export function Header({
   opened,
+  searchEngineJson,
   toggle,
-}: { opened: boolean; toggle: () => void }) {
+}: {
+  opened: boolean;
+  searchEngineJson: SearchEngine.Json;
+  toggle: () => void;
+}) {
   const configuration = useClientConfiguration();
   const hrefs = useHrefs();
   const translations = useTranslations("Header");
@@ -40,6 +47,7 @@ export function Header({
               </a>
             ))}
           </Group>
+          <SearchBox searchEngineJson={searchEngineJson} />
         </Group>
       </div>
     </header>
