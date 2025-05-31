@@ -1,6 +1,4 @@
-import { PageMetadata } from "@/lib/PageMetadata";
-import { getHrefs } from "@/lib/getHrefs";
-import { Locale } from "@/lib/models/Locale";
+import { PageMetadata } from "@/lib/PageMetadata";e";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
@@ -16,9 +14,8 @@ export default async function LocalePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const hrefs = await getHrefs();
-
-  redirect(hrefs.events);
+  // Don't use Hrefs here, since they prepend basePath explicitly and redirect does that implicitly.
+  redirect(`/${locale}/event`);
 }
 
 export async function generateMetadata({
