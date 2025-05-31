@@ -4,7 +4,9 @@ import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
 import { MessagesTable } from "@/lib/components/MessagesTable";
+import { PropertiesTable } from "@/lib/components/PropertiesTable";
 import { ReportsTable } from "@/lib/components/ReportsTable";
+import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { VoteActionsTable } from "@/lib/components/VoteActionsTable";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
@@ -12,16 +14,7 @@ import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import {
-  Anchor,
-  Fieldset,
-  Group,
-  Stack,
-  Table,
-  TableTbody,
-  TableTd,
-  TableTr,
-} from "@mantine/core";
+import { Anchor, Fieldset, Group, Stack } from "@mantine/core";
 import {
   Event,
   EventStub,
@@ -29,14 +22,12 @@ import {
   Message,
   PersonStub,
   Report,
-  TextObject,
   VoteAction,
   displayLabel,
 } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Maybe } from "purify-ts";
 import { ReactNode } from "react";
 
 interface EventPageParams {
@@ -88,35 +79,6 @@ export default async function EventPage({
       value: startDate.toLocaleString(),
     });
   });
-  for (const subjectOf of event.subjectOf) {
-    if (subjectOf.type === "TextObjectStub") {
-      (
-        await modelSet.model<TextObject>({
-          identifier: subjectOf.identifier,
-          type: "TextObject",
-        })
-      ).ifRight((textObject) => {
-        textObject.url
-          .altLazy(() =>
-            textObject.identifier.termType === "NamedNode" &&
-            (textObject.identifier.value.startsWith("http://") ||
-              textObject.identifier.value.startsWith("https://"))
-              ? Maybe.of(textObject.identifier)
-              : Maybe.empty(),
-          )
-          .ifJust((url) => {
-            properties.push({
-              label: translations("Minutes"),
-              value: (
-                <Anchor href={url.value}>
-                  {textObject.name.orDefault(url.value)}
-                </Anchor>
-              ),
-            });
-          });
-      });
-    }
-  }
 
   const participants = event.performers.concat();
   const messages: Message[] = [];
@@ -158,16 +120,12 @@ export default async function EventPage({
     <ClientProvidersServer>
       <AppShell title={`${translations("Event")}: ${displayLabel(event)}`}>
         <Stack>
-          <Table withColumnBorders withRowBorders withTableBorder>
-            <TableTbody>
-              {properties.map((property) => (
-                <TableTr key={property.label}>
-                  <TableTd>{property.label}</TableTd>
-                  <TableTd>{property.value}</TableTd>
-                </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
+          <PropertiesTable properties={properties} />
+          {event.subjectOf.length > 0 ? (
+            <Fieldset legend={translations("Subject of")}>
+              <SubjectOfList modelSet={modelSet} thing={event} />
+            </Fieldset>
+          ) : null}
           {event.organizers.length > 0 || participants.length > 0 ? (
             <Group>
               {event.organizers.length > 0 ? (

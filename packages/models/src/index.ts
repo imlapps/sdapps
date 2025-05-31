@@ -5,3 +5,4 @@ export * from "./generated.js";
 export * from "./ModelSet.js";
 export * from "./RdfjsDatasetModelSet.js";
 export * from "./stubify.js";
+export * from "./url.js";

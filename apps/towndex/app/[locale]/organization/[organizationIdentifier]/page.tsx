@@ -2,6 +2,7 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
+import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
@@ -53,6 +54,11 @@ export default async function OrganizationPage({
         title={`${translations("Organization")}: ${displayLabel(organization)}`}
       >
         <Stack>
+          {organization.subjectOf.length > 0 ? (
+            <Fieldset legend={translations("Subject of")}>
+              <SubjectOfList modelSet={modelSet} thing={organization} />
+            </Fieldset>
+          ) : null}
           {organization.members.length > 0 ? (
             <Fieldset legend={translations("Members")}>
               <AgentList agents={organization.members} hrefs={hrefs} />

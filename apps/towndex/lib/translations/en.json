@@ -4,7 +4,6 @@
     "Event": "Event",
     "Location": "Location",
     "Messages": "Messages",
-    "Minutes": "Minutes",
     "Name": "Name",
     "Organizers": "Organizers",
     "Parent event": "Parent event",
@@ -12,6 +11,7 @@
     "Reports": "Reports",
     "Start date": "Start date",
     "Sub-events": "Sub-events",
+    "Subject of": "Subject of",
     "Votes": "Votes"
   },
   "EventsPage": {
@@ -34,7 +34,8 @@
     "Organization": "Organization"
   },
   "OrganizationsPage": {
-    "Organizations": "Organizations"
+    "Organizations": "Organizations",
+    "Subject of": "Subject of"
   },
   "PageMetadata": {
     "Event": "Event",
@@ -50,7 +51,8 @@
     "Member of organizations": "Member of organizations",
     "Name": "Name",
     "Participant in events": "Participant in events",
-    "Person": "Person"
+    "Person": "Person",
+    "Subject of": "Subject of"
   },
   "PeoplePage": {
     "People": "People"

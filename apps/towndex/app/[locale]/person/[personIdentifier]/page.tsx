@@ -1,23 +1,17 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
+import { EventsTimeline } from "@/lib/components/EventsTimeline";
+import { PropertiesTable } from "@/lib/components/PropertiesTable";
+import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import {
-  Anchor,
-  Fieldset,
-  List,
-  ListItem,
-  Stack,
-  Table,
-  TableTbody,
-  TableTd,
-  TableTr,
-} from "@mantine/core";
+import { Fieldset, Stack } from "@mantine/core";
 import {
   Identifier,
   Person,
@@ -73,51 +67,20 @@ export default async function PersonPage({
     <ClientProvidersServer>
       <AppShell title={`${translations("Person")}: ${displayLabel(person)}`}>
         <Stack>
-          <Table withColumnBorders withRowBorders withTableBorder>
-            <TableTbody>
-              {properties.map((property) => (
-                <TableTr key={property.label}>
-                  <TableTd>{property.label}</TableTd>
-                  <TableTd>{property.value}</TableTd>
-                </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
+          <PropertiesTable properties={properties} />
           {person.memberOf.length > 0 ? (
             <Fieldset legend={translations("Member of organizations")}>
-              <List listStyleType="none">
-                {person.memberOf.map((organization) => (
-                  <ListItem key={Identifier.toString(organization.identifier)}>
-                    <Anchor href={hrefs.organization(organization)}>
-                      {organization.name.orDefault(
-                        Identifier.toString(organization.identifier),
-                      )}
-                    </Anchor>
-                  </ListItem>
-                ))}
-              </List>
+              <AgentList agents={person.memberOf} hrefs={hrefs} />
             </Fieldset>
           ) : null}
           {events.length > 0 ? (
             <Fieldset legend={translations("Participant in events")}>
-              <Table>
-                <TableTbody>
-                  {events.map((event) => (
-                    <TableTr key={Identifier.toString(event.identifier)}>
-                      <TableTd>
-                        {event.startDate.isJust()
-                          ? event.startDate.unsafeCoerce().toLocaleDateString()
-                          : null}
-                      </TableTd>
-                      <TableTd>
-                        <Anchor href={hrefs.event(event)}>
-                          {displayLabel(event)}
-                        </Anchor>
-                      </TableTd>
-                    </TableTr>
-                  ))}
-                </TableTbody>
-              </Table>
+              <EventsTimeline events={events.map((event) => event.toJson())} />
+            </Fieldset>
+          ) : null}
+          {person.subjectOf.length > 0 ? (
+            <Fieldset legend={translations("Subject of")}>
+              <SubjectOfList modelSet={modelSet} thing={person} />
             </Fieldset>
           ) : null}
         </Stack>
