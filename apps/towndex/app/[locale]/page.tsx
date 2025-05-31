@@ -1,4 +1,5 @@
-import { PageMetadata } from "@/lib/PageMetadata";e";
+import { PageMetadata } from "@/lib/PageMetadata";
+import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
