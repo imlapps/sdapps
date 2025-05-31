@@ -37,6 +37,9 @@
   "OrganizationsPage": {
     "Organizations": "Organizations"
   },
+  "OrganizationsTable": {
+    "Name": "Name"
+  },
   "PageMetadata": {
     "Event": "Event",
     "Events": "Events",
@@ -56,6 +59,9 @@
   },
   "PeoplePage": {
     "People": "People"
+  },
+  "PeopleTable": {
+    "Name": "Name"
   },
   "PlacePage": {
     "Place": "Place"

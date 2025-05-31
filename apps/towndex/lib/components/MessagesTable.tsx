@@ -57,7 +57,7 @@ export function MessagesTable(json: {
   const [rows, setRows] = useState<Row[] | null>(null);
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Row>>({
-    columnAccessor: "name",
+    columnAccessor: "description",
     direction: "asc",
   });
 
