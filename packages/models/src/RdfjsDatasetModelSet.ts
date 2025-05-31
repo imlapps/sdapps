@@ -14,6 +14,7 @@ import {
   Place,
   PlaceStub,
   Report,
+  ReportStub,
   TextObject,
   Thing,
   VoteAction,
@@ -120,6 +121,8 @@ export class RdfjsDatasetModelSet implements ModelSet {
         return PlaceStub.fromRdf as any;
       case "Report":
         return Report.fromRdf as any;
+      case "ReportStub":
+        return ReportStub.fromRdf as any;
       case "TextObject":
         return TextObject.fromRdf as any;
       case "Thing":
@@ -148,6 +151,7 @@ export class RdfjsDatasetModelSet implements ModelSet {
       case "PlaceStub":
         return Place.fromRdfType;
       case "Report":
+      case "ReportStub":
         return Report.fromRdfType;
       case "TextObject":
         return TextObject.fromRdfType;

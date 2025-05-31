@@ -2,6 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
+import { Anchor } from "@mantine/core";
 import { AgentStub, Report, compare, displayLabel } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
@@ -31,6 +32,7 @@ export function ReportsTable(json: {
     const columns: DataTableColumn<Row>[] = [
       {
         accessor: "label",
+        render: (row) => <Anchor href={row.href}>{row.label}</Anchor>,
         sortable: true,
       },
     ];

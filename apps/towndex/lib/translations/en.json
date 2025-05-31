@@ -47,7 +47,8 @@
     "Organizations": "Organizations",
     "Place": "Place",
     "People": "People",
-    "Person": "Person"
+    "Person": "Person",
+    "Report": "Report"
   },
   "PersonPage": {
     "Job title": "Job title",
@@ -65,6 +66,13 @@
   },
   "PlacePage": {
     "Place": "Place"
+  },
+  "ReportPage": {
+    "Authors": "Authors",
+    "Description": "Description",
+    "Name": "Name",
+    "Report": "Report",
+    "Subject of": "Subject of"
   },
   "SearchBox": {
     "No results": "No results",
