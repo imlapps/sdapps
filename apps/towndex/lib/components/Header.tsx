@@ -40,6 +40,7 @@ export function Header({
         </Group>
 
         <Group>
+          <SearchBox searchEngineJson={searchEngineJson} />
           <Group ml={50} gap={5} className={classes["links"]} visibleFrom="sm">
             {links.map((link) => (
               <a key={link.label} href={link.link} className={classes["link"]}>
@@ -47,7 +48,6 @@ export function Header({
               </a>
             ))}
           </Group>
-          <SearchBox searchEngineJson={searchEngineJson} />
         </Group>
       </div>
     </header>

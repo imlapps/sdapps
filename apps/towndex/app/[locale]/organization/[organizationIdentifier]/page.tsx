@@ -4,6 +4,7 @@ import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
+import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
@@ -51,6 +52,7 @@ export default async function OrganizationPage({
   return (
     <ClientProvidersServer>
       <AppShell
+        searchEngineJson={await getSearchEngineJson()}
         title={`${translations("Organization")}: ${displayLabel(organization)}`}
       >
         <Stack>

@@ -2,6 +2,7 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { PeopleTable } from "@/lib/components/PeopleTable";
+import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { serverConfiguration } from "@/lib/serverConfiguration";
@@ -26,7 +27,10 @@ export default async function PeoplePage({
 
   return (
     <ClientProvidersServer>
-      <AppShell title={translations("People")}>
+      <AppShell
+        searchEngineJson={await getSearchEngineJson()}
+        title={translations("People")}
+      >
         <PeopleTable people={people.map((person) => person.toJson())} />
       </AppShell>
     </ClientProvidersServer>

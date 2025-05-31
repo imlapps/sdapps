@@ -6,6 +6,7 @@ import { EventsTimeline } from "@/lib/components/EventsTimeline";
 import { PropertiesTable } from "@/lib/components/PropertiesTable";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
+import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
@@ -65,7 +66,10 @@ export default async function PersonPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell title={`${translations("Person")}: ${displayLabel(person)}`}>
+      <AppShell
+        searchEngineJson={await getSearchEngineJson()}
+        title={`${translations("Person")}: ${displayLabel(person)}`}
+      >
         <Stack>
           <PropertiesTable properties={properties} />
           {person.memberOf.length > 0 ? (

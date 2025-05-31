@@ -9,6 +9,7 @@ import { ReportsTable } from "@/lib/components/ReportsTable";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { VoteActionsTable } from "@/lib/components/VoteActionsTable";
 import { getHrefs } from "@/lib/getHrefs";
+import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
 import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
@@ -118,7 +119,10 @@ export default async function EventPage({
 
   return (
     <ClientProvidersServer>
-      <AppShell title={`${translations("Event")}: ${displayLabel(event)}`}>
+      <AppShell
+        searchEngineJson={await getSearchEngineJson()}
+        title={`${translations("Event")}: ${displayLabel(event)}`}
+      >
         <Stack>
           <PropertiesTable properties={properties} />
           {event.subjectOf.length > 0 ? (
