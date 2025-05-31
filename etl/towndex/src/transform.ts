@@ -34,6 +34,8 @@ function addInversePropertyQuads({
 }): DatasetCore {
   const resultDataset = copyDataset(instanceDataset);
 
+  const directToInversePropertyMap = new TermMap<NamedNode, NamedNode>();
+
   for (const propertyInverseOfQuad of propertyOntologyDataset.match(
     null,
     schema.inverseOf,
@@ -43,7 +45,22 @@ function addInversePropertyQuads({
     invariant(directProperty.termType === "NamedNode");
     const inverseProperty = propertyInverseOfQuad.object;
     invariant(inverseProperty.termType === "NamedNode");
+    invariant(!directToInversePropertyMap.has(directProperty));
+    directToInversePropertyMap.set(directProperty, inverseProperty);
+  }
 
+  // Add some manually
+  for (const [directProperty, inverseProperty] of [
+    [schema.performer, schema.performerIn],
+  ]) {
+    invariant(!directToInversePropertyMap.has(directProperty));
+    directToInversePropertyMap.set(directProperty, inverseProperty);
+  }
+
+  for (const [
+    directProperty,
+    inverseProperty,
+  ] of directToInversePropertyMap.entries()) {
     for (const quad of instanceDataset.match(null, directProperty, null)) {
       invariant(quad.object.termType !== "Literal");
       resultDataset.add(

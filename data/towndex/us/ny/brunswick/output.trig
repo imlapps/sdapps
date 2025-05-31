@@ -958,25 +958,31 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:name "Christian".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington> a schema:Person;
     schema:name "Herrington";
-    schema:jobTitle "Supervisor".
+    schema:jobTitle "Supervisor";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly> a schema:Person;
     schema:name "Cipperly";
-    schema:jobTitle "Councilman".
+    schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian> a schema:Person;
     schema:name "Christian";
-    schema:jobTitle "Councilman".
+    schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri> a schema:Person;
     schema:name "Balistreri";
     schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
     sh:order 3.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan> a schema:Person;
     schema:name "Sullivan";
     schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
     sh:order 4.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
     schema:name "Rebecca Del Gaizo".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan> a schema:Person;
     schema:name "Sullivan";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>;
     sh:order 0.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-bayly> a schema:Person;
     schema:name "Michael Bayly".
@@ -994,6 +1000,7 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:name "Cipperly".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri> a schema:Person;
     schema:name "Balistreri";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>;
     sh:order 1.
 <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board> a schema:GovernmentOrganization;
     schema:name "Town Board".
@@ -1018,7 +1025,25 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
     schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
     schema:startDate "2025-04-10T23:00:00.000Z"^^xsd:dateTime;
-    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>.
+    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions> a schema:Event;
+    schema:name "Resolutions";
+    sh:order 2;
+    schema:description "A set of vote actions made by the town board.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-33-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-34-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-35-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-36-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-37-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-38-of-2025>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion> a schema:Event;
+    schema:name "Warrants Discussion";
+    sh:order 4;
+    schema:description "Discussion about current town warrants.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
     schema:name "Adjournment of Meeting";
     sh:order 6;
@@ -1044,15 +1069,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-historian-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-town-historian-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-community-library-report>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions> a schema:Event;
-    schema:name "Resolutions";
-    sh:order 2;
-    schema:description "A set of vote actions made by the town board.";
-    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-33-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-34-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-35-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-36-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-37-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-38-of-2025>;
-    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>;
-    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business> a schema:Event;
     schema:name "Old Business";
     sh:order 3;
@@ -1060,15 +1076,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business/message/financial-audit>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business/message/ambulance-services>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion> a schema:Event;
-    schema:name "Warrants Discussion";
-    sh:order 4;
-    schema:description "Discussion about current town warrants.";
-    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants>;
-    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>;
-    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak> a schema:Event;
     schema:name "Visitors Who Wish to Speak";
     sh:order 5;
@@ -1076,6 +1083,63 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/mary-ellen-adams>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/mary-beth-bruno>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/jim-tkacik>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/josh-briggs>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-33-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 33 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 0;
+    schema:description "Resolution approving amended certified list of volunteer firefighters of the Mountain View Volunteer Fire Company, Inc.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-34-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 34 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 1;
+    schema:description "Resolution accepting the bid of T & C Auto Sales & Service Inc., d/b/a Crossroads Ford to provide a 2024-2025 4 x 4 regular cab and chassis truck.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-35-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 35 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 2;
+    schema:description "Resolution accepting the bid of J & J Equipment, LLC to provide a street sweeper to the town.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-36-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 36 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 3;
+    schema:description "Resolution appointing member to Board of Assessment Review of the Town of Brunswick.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-37-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 37 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 4;
+    schema:description "Resolution making an appointment to fill position in the Assessment Department.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-38-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 38 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 5;
+    schema:description "Resolution authorizing the execution of a change order on the Vanderheyden Reservoir Dam property.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants> a schema:Invoice;
+    schema:name "Approval of Warrants";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
+    sh:order 0;
+    schema:description "Approval of warrants for various funds.";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/monetary-amount/1359732-71-usd>;
+    schema:provider <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:category "Government Expenses";
+    schema:referencesOrder <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
     schema:name "Approval of Minutes";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
@@ -1171,54 +1235,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/cipperly>;
     schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
     schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-33-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 33 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 0;
-    schema:description "Resolution approving amended certified list of volunteer firefighters of the Mountain View Volunteer Fire Company, Inc.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-34-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 34 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 1;
-    schema:description "Resolution accepting the bid of T & C Auto Sales & Service Inc., d/b/a Crossroads Ford to provide a 2024-2025 4 x 4 regular cab and chassis truck.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-35-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 35 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 2;
-    schema:description "Resolution accepting the bid of J & J Equipment, LLC to provide a street sweeper to the town.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-36-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 36 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 3;
-    schema:description "Resolution appointing member to Board of Assessment Review of the Town of Brunswick.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-37-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 37 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 4;
-    schema:description "Resolution making an appointment to fill position in the Assessment Department.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-38-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 38 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 5;
-    schema:description "Resolution authorizing the execution of a change order on the Vanderheyden Reservoir Dam property.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business/message/financial-audit> a schema:Message;
     schema:name "Financial Audit";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/old-business>;
@@ -1231,15 +1247,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     sh:order 1;
     schema:description "Discussion on ambulance services and mutual aid from surrounding areas.";
     schema:sender <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants> a schema:Invoice;
-    schema:name "Approval of Warrants";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
-    sh:order 0;
-    schema:description "Approval of warrants for various funds.";
-    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/monetary-amount/1359732-71-usd>;
-    schema:provider <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
-    schema:category "Government Expenses";
-    schema:referencesOrder <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/mary-ellen-adams> a schema:Message;
     schema:name "Mary Ellen Adams";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>;
@@ -1441,36 +1448,36 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:name "Special Sewer District #6";
     sh:order 4;
     schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/221803-67-usd> a schema:MonetaryAmount;
-    schema:value 2.2180367E5;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice> a schema:Invoice;
     schema:name "General Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/221803-67-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/444489-31-usd> a schema:MonetaryAmount;
-    schema:value 4.4448931E5;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice> a schema:Invoice;
     schema:name "Highway Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/444489-31-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/681500-89-usd> a schema:MonetaryAmount;
-    schema:value 6.8150089E5;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice> a schema:Invoice;
     schema:name "Water Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/681500-89-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1164-24-usd> a schema:MonetaryAmount;
-    schema:value 1.16424E3;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice> a schema:Invoice;
     schema:name "Sewer Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1164-24-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/774-6-usd> a schema:MonetaryAmount;
-    schema:value 7.746E2;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice> a schema:Invoice;
     schema:name "Special Sewer District #6 Invoice";
-    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/774-6-usd>
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/774-6-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/221803-67-usd> a schema:MonetaryAmount;
+    schema:value 2.2180367E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/444489-31-usd> a schema:MonetaryAmount;
+    schema:value 4.4448931E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/681500-89-usd> a schema:MonetaryAmount;
+    schema:value 6.8150089E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1164-24-usd> a schema:MonetaryAmount;
+    schema:value 1.16424E3;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/04/10/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/774-6-usd> a schema:MonetaryAmount;
+    schema:value 7.746E2;
+    schema:currency "USD"
 }
 <http://purl.org/towndex/instance/us/ny/brunswick/place/town-hall> a schema:Place;
     schema:name "Town Hall".
@@ -1479,19 +1486,23 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington> a schema:Person;
     schema:name "Herrington";
     schema:jobTitle "Supervisor";
-    sh:order 0.
+    sh:order 0;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly> a schema:Person;
     schema:name "Cipperly";
     schema:jobTitle "Councilman";
-    sh:order 1.
+    sh:order 1;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian> a schema:Person;
     schema:name "Christian";
     schema:jobTitle "Councilman";
-    sh:order 2.
+    sh:order 2;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan> a schema:Person;
     schema:name "Sullivan";
     schema:jobTitle "Councilman";
-    sh:order 3.
+    sh:order 3;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan> a schema:Person;
     schema:name "Sullivan".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
@@ -1525,14 +1536,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/jack-melsom> a schema:Person;
     schema:name "Jack Melsom".
 <https://townofbrunswick.org/files/TBMeetingMinutes20250313.pdf> {
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
-    schema:name "Adjournment of Meeting";
-    sh:order 5;
-    schema:description "The meeting was adjourned.";
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
-<https://townofbrunswick.org/files/TBMeetingMinutes20250313.pdf> schema:name "TBMeetingMinutes20250313.pdf";
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting> a schema:Event;
     schema:name "Town of Brunswick Regular Town Board Meeting";
     schema:description "Regular Town Board Meeting for the Town of Brunswick held on March 13, 2025.";
@@ -1542,13 +1545,14 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
     schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
     schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
-    schema:name "Approval of Minutes";
-    schema:description "Approval of the minutes of the regular Town Board meeting on February 13th, 2025.";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
+    schema:name "Adjournment of Meeting";
+    sh:order 5;
+    schema:description "The meeting was adjourned.";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
+<https://townofbrunswick.org/files/TBMeetingMinutes20250313.pdf> schema:name "TBMeetingMinutes20250313.pdf";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting> a schema:Event;
     schema:name "Business Meeting";
     sh:order 0;
@@ -1579,6 +1583,13 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:description "Public comments and questions from visitors.";
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/justin-bounds-comment>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/jp-mc-farland-comment>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/brittney-dwyer-comment>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/kim-jensen-comment>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak/message/jack-melsom-comment>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
+    schema:name "Approval of Minutes";
+    schema:description "Approval of the minutes of the regular Town Board meeting on February 13th, 2025.";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/03/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report> a schema:Report;
     schema:name "Town Clerk Report";
     sh:order 0;
@@ -1770,20 +1781,25 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington> a schema:Person;
     schema:name "Herrington";
-    schema:jobTitle "Supervisor".
+    schema:jobTitle "Supervisor";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian> a schema:Person;
     schema:name "Christian";
     schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
     sh:order 1.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri> a schema:Person;
     schema:name "Balistreri";
-    schema:jobTitle "Councilman".
+    schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan> a schema:Person;
     schema:name "Sullivan";
     schema:jobTitle "Councilman";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
     sh:order 3.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri> a schema:Person;
     schema:name "Balistreri";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>;
     sh:order 0.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
     schema:name "Rebecca Del Gaizo".
@@ -1820,13 +1836,14 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>;
     sh:order 2;
     schema:description "Raised issues with her neighbor regarding the stream behind their homes.".
-<http://purl.org/towndex/instance/us/ny/brunswick/person/herrington> a schema:Person;
-    schema:name "Herrington";
-    sh:order 1.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/jennifer-mann> a schema:Person;
     schema:name "Jennifer Mann";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>;
     schema:description "A town resident who was deeply committed to the community.".
+<http://purl.org/towndex/instance/us/ny/brunswick/person/herrington> a schema:Person;
+    schema:name "Herrington";
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>;
+    sh:order 1.
 <https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf> {
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting> a schema:Event;
     schema:name "Town of Brunswick Regular Town Board Meeting";
@@ -1837,13 +1854,24 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
     schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
     schema:startDate "2025-02-13"^^xsd:date;
-    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/correspondence>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/new-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak> a schema:Event;
-    schema:name "Visitors Who Wish to Speak";
-    sh:order 6;
-    schema:description "Visitors expressed concerns and updates to the town board.";
+    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/correspondence>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/new-business>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions> a schema:Event;
+    schema:name "Resolutions";
+    sh:order 2;
+    schema:description "A set of vote actions made by the town board.";
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/luis-hutter>, <http://purl.org/towndex/instance/us/ny/brunswick/person/chris-fanning>, <http://purl.org/towndex/instance/us/ny/brunswick/person/patricia-rivera>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-25-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-26-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-27-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-28-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-29-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-30-of-2025>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion> a schema:Event;
+    schema:name "Warrants Discussion";
+    sh:order 5;
+    schema:description "Discussion about current town warrants.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants>;
+    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board>;
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
     schema:name "Adjournment of Meeting";
@@ -1853,6 +1881,13 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/jennifer-mann>;
     schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
     schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/herrington>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak> a schema:Event;
+    schema:name "Visitors Who Wish to Speak";
+    sh:order 6;
+    schema:description "Visitors expressed concerns and updates to the town board.";
+    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/luis-hutter>, <http://purl.org/towndex/instance/us/ny/brunswick/person/chris-fanning>, <http://purl.org/towndex/instance/us/ny/brunswick/person/patricia-rivera>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
 <https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf> schema:name "TBMeetingMinutes20250213.pdf";
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
@@ -1870,15 +1905,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/water-sewer-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-water-sewer-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/vote-action/acceptance-of-community-library-report>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions> a schema:Event;
-    schema:name "Resolutions";
-    sh:order 2;
-    schema:description "A set of vote actions made by the town board.";
-    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-25-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-26-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-27-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-28-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-29-of-2025>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-30-of-2025>;
-    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
-    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/correspondence> a schema:Event;
     schema:name "Correspondence";
     sh:order 3;
@@ -1893,15 +1919,63 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/new-business/thing/sign-on-clerk-s-office-door>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion> a schema:Event;
-    schema:name "Warrants Discussion";
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-25-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 25 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 0;
+    schema:description "RESOLUTION OF THE TOWN OF BRUNSWICK DECLARING NEED AND AUTHORIZING THE APPLICATION FOR A MUNICIPAL OPERATING CERTIFICATE FROM THE NEW YORK STATE BUREAU OF EMERGENCY MEDICAL SERVICES.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-26-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 26 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 1;
+    schema:description "RESOLUTION AUTHORIZING THE SUPERVISOR TO PURCHASE ROCK SALT FOR ROAD MAINTENANCE ON AN EMERGENCY BASIS, WITHOUT COMPETITIVE BIDDING, PURSUANT TO THE PROVISIONS OF GENERAL MUNICIPAL LAW SECTION 103(4).";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-27-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 27 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 2;
+    schema:description "RESOLUTION AUTHORIZING THE SUPERVISOR TO ENTER INTO A CONTRACT WITH SPECTRUM ENTERPRISE FOR INTERNET SERVICE IN THE BRUNSWICK TOWN HALL AND THREE TOWN BUILDING LOCATIONS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-28-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 28 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 3;
+    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE BRUNSWICK FIRE COMPANY NO. 1, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-29-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 29 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
+    sh:order 4;
+    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE VOLUNTEER FIRE COMPANY OF CENTER BRUNSWICK, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-30-of-2025> a schema:VoteAction;
+    schema:name "Resolution No. 30 of 2025";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
     sh:order 5;
-    schema:description "Discussion about current town warrants.";
-    schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants>;
-    schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-board>;
-    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting>.
+    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE MOUNTAIN VIEW VOLUNTEER FIRE COMPANY, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants> a schema:Invoice;
+    schema:name "Approval of Warrants";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
+    sh:order 0;
+    schema:description "Approval of warrants for various funds.";
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/monetary-amount/356520-92-usd>;
+    schema:provider <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
+    schema:category "Government Expenses";
+    schema:referencesOrder <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
     schema:name "Approval of Minutes";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
@@ -1999,54 +2073,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
     schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
     schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-25-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 25 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 0;
-    schema:description "RESOLUTION OF THE TOWN OF BRUNSWICK DECLARING NEED AND AUTHORIZING THE APPLICATION FOR A MUNICIPAL OPERATING CERTIFICATE FROM THE NEW YORK STATE BUREAU OF EMERGENCY MEDICAL SERVICES.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-26-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 26 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 1;
-    schema:description "RESOLUTION AUTHORIZING THE SUPERVISOR TO PURCHASE ROCK SALT FOR ROAD MAINTENANCE ON AN EMERGENCY BASIS, WITHOUT COMPETITIVE BIDDING, PURSUANT TO THE PROVISIONS OF GENERAL MUNICIPAL LAW SECTION 103(4).";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-27-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 27 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 2;
-    schema:description "RESOLUTION AUTHORIZING THE SUPERVISOR TO ENTER INTO A CONTRACT WITH SPECTRUM ENTERPRISE FOR INTERNET SERVICE IN THE BRUNSWICK TOWN HALL AND THREE TOWN BUILDING LOCATIONS.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/christian>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-28-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 28 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 3;
-    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE BRUNSWICK FIRE COMPANY NO. 1, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-29-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 29 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 4;
-    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE VOLUNTEER FIRE COMPANY OF CENTER BRUNSWICK, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-30-of-2025> a schema:VoteAction;
-    schema:name "Resolution No. 30 of 2025";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/resolutions>;
-    sh:order 5;
-    schema:description "RESOLUTION APPROVING CERTIFIED LIST OF VOLUNTEER FIREFIGHTERS OF THE MOUNTAIN VIEW VOLUNTEER FIRE COMPANY, INC. WHO HAVE EARNED AT LEAST FIFTY (50) POINTS DURING THE CALENDAR YEAR 2024 UNDER THE LENGTH OF SERVICE AWARD PROGRAM (LOSAP) SPONSORED BY THE TOWN OF BRUNSWICK FOR THE SAID FIRE COMPANY, THEREBY QUALIFYING THEM FOR A YEAR OF SERVICE CREDIT, AND DIRECTING THAT THE SAID CERTIFIED LIST BE RETURNED TO THE FIRE COMPANY FOR POSTING FOR A MINIMUM PERIOD OF THIRTY (30) DAYS.";
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/correspondence/message/email-from-mary-beth-bruno> a schema:Message;
     schema:name "Email from Mary Beth Bruno";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/correspondence>;
@@ -2056,15 +2082,6 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:name "Sign on Clerk's Office Door";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/new-business>;
     schema:description "Sign reads 'Authorized Personnel Only' as a precaution against First Amendment Auditors.".
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants> a schema:Invoice;
-    schema:name "Approval of Warrants";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>;
-    sh:order 0;
-    schema:description "Approval of warrants for various funds.";
-    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/monetary-amount/356520-92-usd>;
-    schema:provider <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
-    schema:category "Government Expenses";
-    schema:referencesOrder <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report/monetary-amount/7450-17> a schema:MonetaryAmount;
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>;
     sh:order 0;
@@ -2162,36 +2179,36 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:name "Special Sewer District #6";
     sh:order 4;
     schema:partOfInvoice <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/252274-75-usd> a schema:MonetaryAmount;
-    schema:value 2.5227475E5;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice> a schema:Invoice;
     schema:name "General Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/252274-75-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/74402-62-usd> a schema:MonetaryAmount;
-    schema:value 7.440262E4;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice> a schema:Invoice;
     schema:name "Highway Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/74402-62-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/27623-01-usd> a schema:MonetaryAmount;
-    schema:value 2.762301E4;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice> a schema:Invoice;
     schema:name "Water Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/27623-01-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1540-04-usd> a schema:MonetaryAmount;
-    schema:value 1.54004E3;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice> a schema:Invoice;
     schema:name "Sewer Fund Invoice";
     schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1540-04-usd>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/680-5-usd> a schema:MonetaryAmount;
-    schema:value 6.805E2;
-    schema:currency "USD".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice> a schema:Invoice;
     schema:name "Special Sewer District #6 Invoice";
-    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/680-5-usd>
+    schema:totalPaymentDue <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/680-5-usd>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/general-fund/invoice/general-fund-invoice/monetary-amount/252274-75-usd> a schema:MonetaryAmount;
+    schema:value 2.5227475E5;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/highway-fund/invoice/highway-fund-invoice/monetary-amount/74402-62-usd> a schema:MonetaryAmount;
+    schema:value 7.440262E4;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/water-fund/invoice/water-fund-invoice/monetary-amount/27623-01-usd> a schema:MonetaryAmount;
+    schema:value 2.762301E4;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/sewer-fund/invoice/sewer-fund-invoice/monetary-amount/1540-04-usd> a schema:MonetaryAmount;
+    schema:value 1.54004E3;
+    schema:currency "USD".
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/02/13/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion/invoice/approval-of-warrants/order/special-sewer-district-6/invoice/special-sewer-district-6-invoice/monetary-amount/680-5-usd> a schema:MonetaryAmount;
+    schema:value 6.805E2;
+    schema:currency "USD"
 }
 <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall> a schema:Place;
     schema:name "Town of Brunswick Town Hall".
@@ -2200,43 +2217,54 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington> a schema:Person;
     schema:name "Herrington";
     schema:jobTitle "Supervisor";
-    sh:order 0.
+    sh:order 0;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian> a schema:Person;
     schema:name "Christian";
     schema:jobTitle "Councilman";
-    sh:order 1.
+    sh:order 1;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly> a schema:Person;
     schema:name "Cipperly";
     schema:jobTitle "Councilman";
-    sh:order 2.
+    sh:order 2;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri> a schema:Person;
     schema:name "Balistreri";
     schema:jobTitle "Councilman";
-    sh:order 3.
+    sh:order 3;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan> a schema:Person;
     schema:name "Sullivan";
     schema:jobTitle "Councilman";
-    sh:order 4.
+    sh:order 4;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan> a schema:Person;
     schema:name "Sullivan".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo> a schema:Person;
     schema:name "Rebecca Del Gaizo";
-    sh:order 0.
+    sh:order 0;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-bayly> a schema:Person;
     schema:name "Michael Bayly";
-    sh:order 1.
+    sh:order 1;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-mc-donald> a schema:Person;
     schema:name "Michael McDonald";
-    sh:order 2.
+    sh:order 2;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/tracy-broderick> a schema:Person;
     schema:name "Tracy Broderick";
-    sh:order 3.
+    sh:order 3;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/thomas-engster> a schema:Person;
     schema:name "Thomas Engster";
-    sh:order 4.
+    sh:order 4;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/sara-hopkins> a schema:Person;
     schema:name "Sara Hopkins";
-    sh:order 5.
+    sh:order 5;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/christian> a schema:Person;
     schema:name "Christian".
 <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-shaw> a schema:Person;
@@ -2259,20 +2287,13 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/herrington> a schema:Person;
     schema:name "Herrington";
-    sh:order 0.
+    sh:order 0;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri> a schema:Person;
     schema:name "Balistreri";
-    sh:order 1.
+    sh:order 1;
+    schema:performerIn <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>.
 <https://townofbrunswick.org/files/TBMeetingMinutes20250109.pdf> {
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
-    schema:name "Adjournment of Meeting";
-    sh:order 8;
-    schema:description "The meeting was adjourned in honor of Tom Walsh and Bob Duncan.";
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/tom-walsh>, <http://purl.org/towndex/instance/us/ny/brunswick/person/bob-duncan>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>;
-    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>.
-<https://townofbrunswick.org/files/TBMeetingMinutes20250109.pdf> schema:name "TBMeetingMinutes20250109.pdf";
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting> a schema:Event;
     schema:name "Town of Brunswick Regular Town Board Meeting";
     schema:description "Regular Town Board Meeting held on January 9, 2025.";
@@ -2281,27 +2302,29 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:startDate "2025-01-09"^^xsd:date;
     schema:location <http://purl.org/towndex/instance/us/ny/brunswick/place/town-of-brunswick-town-hall>;
     schema:organizer <http://purl.org/towndex/instance/us/ny/brunswick/government-organization/town-of-brunswick>;
-    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/correspondence>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/old-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/new-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
-    schema:name "Approval of Minutes";
-    schema:description "Approval of minutes from December 12, 2024, December 30, 2024, and January 2, 2025 meetings.";
-    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
-    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
-    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
-    schema:actionStatus "CompletedActionStatus".
+    schema:subEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/resolutions>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/correspondence>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/old-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/new-business>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/warrants-discussion>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/visitors-who-wish-to-speak>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports> a schema:Event;
+    schema:name "Reports";
+    sh:order 1;
+    schema:description "Reports from various departments.";
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo>, <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-bayly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-mc-donald>, <http://purl.org/towndex/instance/us/ny/brunswick/person/tracy-broderick>, <http://purl.org/towndex/instance/us/ny/brunswick/person/thomas-engster>, <http://purl.org/towndex/instance/us/ny/brunswick/person/sara-hopkins>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-historian-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/adjournment-of-meeting> a schema:Event;
+    schema:name "Adjournment of Meeting";
+    sh:order 8;
+    schema:description "The meeting was adjourned in honor of Tom Walsh and Bob Duncan.";
+    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/balistreri>;
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/person/tom-walsh>, <http://purl.org/towndex/instance/us/ny/brunswick/person/bob-duncan>;
+    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
+<https://townofbrunswick.org/files/TBMeetingMinutes20250109.pdf> schema:name "TBMeetingMinutes20250109.pdf";
+    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting> a schema:Event;
     schema:name "Business Meeting";
     sh:order 0;
     schema:description "Approval of minutes from previous meetings.";
     schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes>;
     schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>.
-<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports> a schema:Event;
-    schema:name "Reports";
-    sh:order 1;
-    schema:description "Reports from various departments.";
-    schema:about <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-clerk-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/highway-superintendent-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/code-enforcement-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/town-historian-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/recycling-coordinator-report>, <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports/report/community-library-report>;
-    schema:superEvent <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting>;
-    schema:performer <http://purl.org/towndex/instance/us/ny/brunswick/person/rebecca-del-gaizo>, <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-bayly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/michael-mc-donald>, <http://purl.org/towndex/instance/us/ny/brunswick/person/tracy-broderick>, <http://purl.org/towndex/instance/us/ny/brunswick/person/thomas-engster>, <http://purl.org/towndex/instance/us/ny/brunswick/person/sara-hopkins>.
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/resolutions> a schema:Event;
     schema:name "Resolutions";
     sh:order 2;
@@ -2375,6 +2398,13 @@ schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
     schema:description "Report for December with 2,905 physical checkouts and 3,216 digital checkouts.";
     schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/reports>;
     schema:author <http://purl.org/towndex/instance/us/ny/brunswick/person/sara-hopkins>.
+<http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting/vote-action/approval-of-minutes> a schema:VoteAction;
+    schema:name "Approval of Minutes";
+    schema:description "Approval of minutes from December 12, 2024, December 30, 2024, and January 2, 2025 meetings.";
+    schema:subjectOf <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/business-meeting>;
+    schema:agent <http://purl.org/towndex/instance/us/ny/brunswick/person/sullivan>;
+    schema:participant <http://purl.org/towndex/instance/us/ny/brunswick/person/supervisor-herrington>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-christian>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-cipperly>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-balistreri>, <http://purl.org/towndex/instance/us/ny/brunswick/person/councilman-sullivan>;
+    schema:actionStatus "CompletedActionStatus".
 <http://purl.org/towndex/instance/us/ny/brunswick/event/2025/01/09/town-of-brunswick-regular-town-board-meeting/event/resolutions/vote-action/resolution-no-23-of-2025> a schema:VoteAction;
     schema:name "Resolution No. 23 of 2025";
     sh:order 0;
