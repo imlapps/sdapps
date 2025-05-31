@@ -1,8 +1,12 @@
+import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Locale } from "@/lib/models/Locale";
 import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
+import { Identifier } from "@sdapps/models";
 import { SearchEngine, SearchResults } from "@sdapps/search";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { invariant } from "ts-invariant";
 
 /**
  * Search box adapted from https://mantine.dev/combobox/?e=AsyncAutocomplete
@@ -13,8 +17,10 @@ export function SearchBox({
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
+  const hrefs = useHrefs();
   const locale = useLocale() as Locale;
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const searchEngine = useMemo(
     () => SearchEngine.fromJson(searchEngineJson),
     [searchEngineJson],
@@ -53,7 +59,26 @@ export function SearchBox({
   return (
     <Combobox
       onOptionSubmit={(optionValue) => {
-        setValue(optionValue);
+        invariant(searchResults !== null);
+        const searchResult = searchResults.page.find(
+          (searchResult) => searchResult.identifier === optionValue,
+        );
+        invariant(searchResult);
+        const identifier = Identifier.fromString(searchResult.identifier);
+        let href: string;
+        switch (searchResult.type) {
+          case "Event":
+            href = hrefs.event({ identifier });
+            break;
+          case "Organization":
+            href = hrefs.organization({ identifier });
+            break;
+          case "Person":
+            href = hrefs.person({ identifier });
+            break;
+        }
+        router.push(href);
+        setValue(searchResult.label);
         combobox.closeDropdown();
       }}
       store={combobox}
@@ -88,9 +113,9 @@ export function SearchBox({
             ? searchResults.page.map((searchResult) => (
                 <Combobox.Option
                   key={searchResult.identifier}
-                  value={searchResult.label}
+                  value={searchResult.identifier}
                 >
-                  {searchResult.label}
+                  {searchResult.type}: {searchResult.label}
                 </Combobox.Option>
               ))
             : null}

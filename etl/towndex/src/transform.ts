@@ -10,7 +10,7 @@ import type {
   Quad_Subject,
   Term,
 } from "@rdfjs/types";
-import { Identifier } from "@sdapps/models";
+import { Identifier, iso8601DateString } from "@sdapps/models";
 import { rdf, rdfs, schema, sh, xsd } from "@tpluscode/rdf-ns-builders";
 import { kebabCase } from "change-case";
 import * as N3 from "n3";
@@ -249,10 +249,6 @@ function fixLiteralDatatypes(instanceDataset: DatasetCore): DatasetCore {
     );
   }
   return resultDataset;
-}
-
-function iso8601DateString(date: Date): string {
-  return `${date.getFullYear().toString()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 }
 
 function mergeDatasets(...datasets: readonly DatasetCore[]): DatasetCore {

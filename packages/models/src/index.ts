@@ -2,6 +2,7 @@ export * from "./compare.js";
 export * from "./displayLabel.js";
 export * from "./Identifier.js";
 export * from "./generated.js";
+export * from "./iso8601DateString.js";
 export * from "./LanguageTag.js";
 export * from "./ModelSet.js";
 export * from "./RdfjsDatasetModelSet.js";

@@ -6,12 +6,37 @@ import {
   OrganizationStub,
   PersonStub,
   displayLabel,
+  iso8601DateString,
 } from "@sdapps/models";
 import lunr, { Index } from "lunr";
 import { LunrIndexCompactor } from "./LunrIndexCompactor.js";
 import { SearchEngine } from "./SearchEngine.js";
 import { SearchResult } from "./SearchResult.js";
 import { SearchResults } from "./SearchResults.js";
+
+async function eventLabel(
+  event: EventStub,
+  modelSet: ModelSet,
+): Promise<string> {
+  const eventLabelParts: string[] = [];
+  if (event.startDate.isJust()) {
+    eventLabelParts.push(iso8601DateString(event.startDate.unsafeCoerce()));
+  }
+  eventLabelParts.push(displayLabel(event));
+  const eventLabelString = eventLabelParts.join(" ");
+
+  if (event.superEvent.isNothing()) {
+    return eventLabelString;
+  }
+  const superEventEither = await modelSet.model<EventStub>({
+    identifier: event.superEvent.unsafeCoerce(),
+    type: "EventStub",
+  });
+  if (superEventEither.isLeft()) {
+    return eventLabelString;
+  }
+  return `${await eventLabel(superEventEither.unsafeCoerce(), modelSet)} > ${eventLabelString}`;
+}
 
 /**
  * A SearchEngine implementation built with Lunr.js, so it can be used in the browser.
@@ -52,6 +77,7 @@ export class LunrSearchEngine implements SearchEngine {
         if (!model.name.isJust()) {
           continue;
         }
+
         let indexDocumentType: SearchResult["type"];
         switch (model.type) {
           case "EventStub":
@@ -65,9 +91,20 @@ export class LunrSearchEngine implements SearchEngine {
             break;
         }
 
+        let label: string;
+        switch (model.type) {
+          case "EventStub": {
+            label = await eventLabel(model, modelSet);
+            break;
+          }
+          default:
+            label = displayLabel(model);
+            break;
+        }
+
         indexDocuments.push({
           identifier: Identifier.toString(model.identifier),
-          label: displayLabel(model),
+          label,
           type: indexDocumentType,
         });
       }
