@@ -31,11 +31,11 @@
   },
   "OrganizationPage": {
     "Members": "Members",
-    "Organization": "Organization"
+    "Organization": "Organization",
+    "Subject of": "Subject of"
   },
   "OrganizationsPage": {
-    "Organizations": "Organizations",
-    "Subject of": "Subject of"
+    "Organizations": "Organizations"
   },
   "PageMetadata": {
     "Event": "Event",
