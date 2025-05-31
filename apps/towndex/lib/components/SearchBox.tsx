@@ -1,4 +1,4 @@
-import { useHrefs } from "@/lib/hooks/useHrefs";
+import { Hrefs } from "@/lib/Hrefs";
 import { Locale } from "@/lib/models/Locale";
 import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
 import { Identifier } from "@sdapps/models";
@@ -17,7 +17,6 @@ export function SearchBox({
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
-  const hrefs = useHrefs();
   const locale = useLocale() as Locale;
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -65,6 +64,7 @@ export function SearchBox({
         );
         invariant(searchResult);
         const identifier = Identifier.fromString(searchResult.identifier);
+        const hrefs = new Hrefs({ basePath: "", locale });
         let href: string;
         switch (searchResult.type) {
           case "Event":
