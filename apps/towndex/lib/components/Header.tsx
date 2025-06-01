@@ -1,15 +1,13 @@
 "use client";
+import { EventIcon } from "@/lib/components/EventIcon";
+import { OrganizationIcon } from "@/lib/components/OrganizationIcon";
+import { PersonIcon } from "@/lib/components/PersonIcon";
 import { SearchBox } from "@/lib/components/SearchBox";
 import { useClientConfiguration } from "@/lib/hooks/useClientConfiguration";
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor, Burger, Group, Text } from "@mantine/core";
 import { SearchEngine } from "@sdapps/search";
-import {
-  IconBinaryTree2Filled,
-  IconBuilding,
-  IconCalendar,
-  IconUser,
-} from "@tabler/icons-react";
+import { IconBinaryTree2Filled } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import classes from "./Header.module.css";
 
@@ -27,16 +25,16 @@ export function Header({
   const translations = useTranslations("Header");
   const links = [
     {
-      icon: <IconCalendar />,
+      icon: <EventIcon />,
       link: hrefs.events,
       label: translations("Events"),
     },
     {
-      icon: <IconBuilding />,
+      icon: <OrganizationIcon />,
       link: hrefs.organizations,
       label: translations("Organizations"),
     },
-    { icon: <IconUser />, link: hrefs.people, label: translations("People") },
+    { icon: <PersonIcon />, link: hrefs.people, label: translations("People") },
   ];
 
   return (

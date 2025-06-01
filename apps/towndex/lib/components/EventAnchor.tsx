@@ -1,7 +1,7 @@
 import { Hrefs } from "@/lib/Hrefs";
+import { EventIcon } from "@/lib/components/EventIcon";
 import { Anchor, Group, Text } from "@mantine/core";
 import { EventStub, displayLabel } from "@sdapps/models";
-import { IconCalendar } from "@tabler/icons-react";
 
 export function EventAnchor({
   event,
@@ -10,7 +10,7 @@ export function EventAnchor({
   return (
     <Anchor href={hrefs.event(event)}>
       <Group gap={2}>
-        <IconCalendar />
+        <EventIcon />
         <Text>{displayLabel(event)}</Text>
       </Group>
     </Anchor>

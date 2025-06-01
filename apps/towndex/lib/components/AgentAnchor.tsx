@@ -1,7 +1,8 @@
 import { Hrefs } from "@/lib/Hrefs";
+import { OrganizationIcon } from "@/lib/components/OrganizationIcon";
+import { PersonIcon } from "@/lib/components/PersonIcon";
 import { Anchor, Group, Text } from "@mantine/core";
 import { AgentStub, displayLabel } from "@sdapps/models";
-import { IconBuilding, IconUser } from "@tabler/icons-react";
 
 export function AgentAnchor({
   agent,
@@ -16,7 +17,11 @@ export function AgentAnchor({
       }
     >
       <Group gap={2}>
-        {agent.type === "OrganizationStub" ? <IconBuilding /> : <IconUser />}
+        {agent.type === "OrganizationStub" ? (
+          <OrganizationIcon />
+        ) : (
+          <PersonIcon />
+        )}
         <Text>{displayLabel(agent)}</Text>
       </Group>
     </Anchor>

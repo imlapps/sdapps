@@ -1,7 +1,7 @@
 import { Hrefs } from "@/lib/Hrefs";
+import { PlaceIcon } from "@/lib/components/PlaceIcon";
 import { Anchor, Group, Text } from "@mantine/core";
 import { PlaceStub, displayLabel } from "@sdapps/models";
-import { IconMap } from "@tabler/icons-react";
 
 export function PlaceAnchor({
   place,
@@ -10,7 +10,7 @@ export function PlaceAnchor({
   return (
     <Anchor href={hrefs.place(place)}>
       <Group gap={2}>
-        <IconMap />
+        <PlaceIcon />
         <Text>{displayLabel(place)}</Text>
       </Group>
     </Anchor>

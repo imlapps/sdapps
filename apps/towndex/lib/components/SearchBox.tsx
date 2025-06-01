@@ -1,12 +1,33 @@
 import { Hrefs } from "@/lib/Hrefs";
+import { EventIcon } from "@/lib/components/EventIcon";
+import { OrganizationIcon } from "@/lib/components/OrganizationIcon";
+import { PersonIcon } from "@/lib/components/PersonIcon";
 import { Locale } from "@/lib/models/Locale";
-import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
+import {
+  Combobox,
+  Group,
+  Loader,
+  Text,
+  TextInput,
+  useCombobox,
+} from "@mantine/core";
 import { Identifier } from "@sdapps/models";
-import { SearchEngine, SearchResults } from "@sdapps/search";
+import { SearchEngine, SearchResult, SearchResults } from "@sdapps/search";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { ReactElement, useCallback, useMemo, useRef, useState } from "react";
 import { invariant } from "ts-invariant";
+
+function searchResultIcon(searchResult: SearchResult): ReactElement {
+  switch (searchResult.type) {
+    case "Event":
+      return <EventIcon />;
+    case "Organization":
+      return <OrganizationIcon />;
+    case "Person":
+      return <PersonIcon />;
+  }
+}
 
 /**
  * Search box adapted from https://mantine.dev/combobox/?e=AsyncAutocomplete
@@ -104,6 +125,7 @@ export function SearchBox({
           }}
           onBlur={() => combobox.closeDropdown()}
           rightSection={loading && <Loader size={18} />}
+          style={{ width: "24rem" }}
         />
       </Combobox.Target>
 
@@ -115,7 +137,10 @@ export function SearchBox({
                   key={searchResult.identifier}
                   value={searchResult.identifier}
                 >
-                  {searchResult.type}: {searchResult.label}
+                  <Group gap={2}>
+                    {searchResultIcon(searchResult)}
+                    <Text>{searchResult.label}</Text>
+                  </Group>
                 </Combobox.Option>
               ))
             : null}
