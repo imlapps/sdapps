@@ -215,11 +215,12 @@ export abstract class Thing {
     | "GenderType"
     | "ImageObject"
     | "Message"
+    | "MonetaryAmount"
     | "Occupation"
     | "Organization"
     | "Person"
     | "Place"
-    | "QuantitiveValue"
+    | "QuantitativeValue"
     | "Report"
     | "Role"
     | "TextObject"
@@ -508,11 +509,12 @@ export abstract class Thing {
       | "GenderType"
       | "ImageObject"
       | "Message"
+      | "MonetaryAmount"
       | "Occupation"
       | "Organization"
       | "Person"
       | "Place"
-      | "QuantitiveValue"
+      | "QuantitativeValue"
       | "Report"
       | "Role"
       | "TextObject"
@@ -966,11 +968,12 @@ export namespace Thing {
         "GenderType",
         "ImageObject",
         "Message",
+        "MonetaryAmount",
         "Occupation",
         "Organization",
         "Person",
         "Place",
-        "QuantitiveValue",
+        "QuantitativeValue",
         "Report",
         "Role",
         "TextObject",
@@ -995,8 +998,9 @@ export abstract class Intangible extends Thing {
   abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   abstract override readonly type:
     | "GenderType"
+    | "MonetaryAmount"
     | "Occupation"
-    | "QuantitiveValue"
+    | "QuantitativeValue"
     | "Role";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
@@ -1060,17 +1064,17 @@ export namespace Intangible {
     )
       .altLazy(
         () =>
-          Occupation.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
-      )
-      .altLazy(
-        () => Role.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
-      )
-      .altLazy(
-        () =>
           StructuredValue.fromJson(json) as purify.Either<
             zod.ZodError,
             Intangible
           >,
+      )
+      .altLazy(
+        () =>
+          Occupation.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
+      )
+      .altLazy(
+        () => Role.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
       );
   }
 
@@ -1118,6 +1122,13 @@ export namespace Intangible {
     )
       .altLazy(
         () =>
+          StructuredValue.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            Intangible
+          >,
+      )
+      .altLazy(
+        () =>
           Occupation.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
@@ -1126,13 +1137,6 @@ export namespace Intangible {
       .altLazy(
         () =>
           Role.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Intangible
-          >,
-      )
-      .altLazy(
-        () =>
-          StructuredValue.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
           >,
@@ -1158,140 +1162,13 @@ export namespace Intangible {
     return Thing.thingJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["GenderType", "Occupation", "QuantitiveValue", "Role"]),
-      }),
-    );
-  }
-}
-export abstract class StructuredValue extends Intangible {
-  abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-  abstract override readonly type: "QuantitiveValue";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(parameters: ConstructorParameters<typeof Intangible>[0]) {
-    super(parameters);
-  }
-
-  override toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace StructuredValue {
-  export function _propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromJson>
-    >
-  > {
-    const _jsonSafeParseResult =
-      structuredValueJsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, StructuredValue> {
-    return QuantitiveValue.fromJson(json) as purify.Either<
-      zod.ZodError,
-      StructuredValue
-    >;
-  }
-
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromRdf>
-    >
-  > {
-    const _super0Either = Intangible._propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof StructuredValue._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValue> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return QuantitiveValue.fromRdf(otherParameters) as purify.Either<
-      rdfjsResource.Resource.ValueError,
-      StructuredValue
-    >;
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(structuredValueJsonZodSchema());
-  }
-
-  export function structuredValueJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
-      label: "StructuredValue",
-      type: "Group",
-    };
-  }
-
-  export function structuredValueJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("QuantitiveValue"),
+        type: zod.enum([
+          "GenderType",
+          "MonetaryAmount",
+          "Occupation",
+          "QuantitativeValue",
+          "Role",
+        ]),
       }),
     );
   }
@@ -1903,96 +1780,16 @@ export namespace Occupation {
     );
   }
 }
-export class QuantitiveValue extends StructuredValue {
-  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  override readonly type = "QuantitiveValue";
-  readonly value: purify.Maybe<number>;
+export abstract class StructuredValue extends Intangible {
+  abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+  abstract override readonly type: "MonetaryAmount" | "QuantitativeValue";
 
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly value?: number | purify.Maybe<number>;
-    } & ConstructorParameters<typeof StructuredValue>[0],
-  ) {
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(parameters: ConstructorParameters<typeof Intangible>[0]) {
     super(parameters);
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier as never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.value)) {
-      this.value = parameters.value;
-    } else if (typeof parameters.value === "number") {
-      this.value = purify.Maybe.of(parameters.value);
-    } else if (typeof parameters.value === "undefined") {
-      this.value = purify.Maybe.empty();
-    } else {
-      this.value = parameters.value as never;
-    }
-  }
-
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override equals(other: QuantitiveValue): EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
-          this.value,
-          other.value,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "value",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected override hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hashShaclProperties(_hasher);
-    this.value.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
-    });
-    return _hasher;
-  }
-
-  override toJson(): { readonly value: number | undefined } & ReturnType<
-    StructuredValue["toJson"]
-  > {
-    return JSON.parse(
-      JSON.stringify({
-        ...super.toJson(),
-        value: this.value.map((_item) => _item).extract(),
-      } satisfies ReturnType<QuantitiveValue["toJson"]>),
-    );
   }
 
   override toRdf({
-    ignoreRdfType,
     mutateGraph,
     resourceSet,
   }: {
@@ -2005,16 +1802,6 @@ export class QuantitiveValue extends StructuredValue {
       mutateGraph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/QuantitativeValue"),
-      );
-    }
-
-    _resource.add(dataFactory.namedNode("http://schema.org/value"), this.value);
     return _resource;
   }
 
@@ -2023,24 +1810,23 @@ export class QuantitiveValue extends StructuredValue {
   }
 }
 
-export namespace QuantitiveValue {
+export namespace StructuredValue {
   export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromJson>>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof Intangible._propertiesFromJson>
+    >
   > {
     const _jsonSafeParseResult =
-      quantitiveValueJsonZodSchema().safeParse(_json);
+      structuredValueJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = StructuredValue._propertiesFromJson(_jsonObject);
+    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2049,15 +1835,23 @@ export namespace QuantitiveValue {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
-    return purify.Either.of({ ..._super0, identifier, value });
+    return purify.Either.of({ ..._super0, identifier });
   }
 
   export function fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, QuantitiveValue> {
-    return QuantitiveValue._propertiesFromJson(json).map(
-      (properties) => new QuantitiveValue(properties),
+  ): purify.Either<zod.ZodError, StructuredValue> {
+    return (
+      MonetaryAmount.fromJson(json) as purify.Either<
+        zod.ZodError,
+        StructuredValue
+      >
+    ).altLazy(
+      () =>
+        QuantitativeValue.fromJson(json) as purify.Either<
+          zod.ZodError,
+          StructuredValue
+        >,
     );
   }
 
@@ -2074,12 +1868,11 @@ export namespace QuantitiveValue {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromRdf>>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof Intangible._propertiesFromRdf>
+    >
   > {
-    const _super0Either = StructuredValue._propertiesFromRdf({
+    const _super0Either = Intangible._propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2090,80 +1883,48 @@ export namespace QuantitiveValue {
     }
 
     const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/QuantitativeValue"),
-      )
-    ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/QuantitativeValue)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/QuantitativeValue",
-          ),
-        }),
-      );
-    }
-
     const identifier = _resource.identifier;
-    const _valueEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/value"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
-    if (_valueEither.isLeft()) {
-      return _valueEither;
-    }
-
-    const value = _valueEither.unsafeCoerce();
-    return purify.Either.of({ ..._super0, identifier, value });
+    return purify.Either.of({ ..._super0, identifier });
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof QuantitiveValue._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, QuantitiveValue> {
-    return QuantitiveValue._propertiesFromRdf(parameters).map(
-      (properties) => new QuantitiveValue(properties),
+    parameters: Parameters<typeof StructuredValue._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValue> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      MonetaryAmount.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        StructuredValue
+      >
+    ).altLazy(
+      () =>
+        QuantitativeValue.fromRdf(otherParameters) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          StructuredValue
+        >,
     );
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/QuantitativeValue",
-  );
-
   export function jsonSchema() {
-    return zodToJsonSchema(quantitiveValueJsonZodSchema());
+    return zodToJsonSchema(structuredValueJsonZodSchema());
   }
 
-  export function quantitiveValueJsonUiSchema(parameters?: {
+  export function structuredValueJsonUiSchema(parameters?: {
     scopePrefix?: string;
   }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [
-        StructuredValue.structuredValueJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/value`, type: "Control" },
-      ],
-      label: "QuantitiveValue",
+      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
+      label: "StructuredValue",
       type: "Group",
     };
   }
 
-  export function quantitiveValueJsonZodSchema() {
-    return StructuredValue.structuredValueJsonZodSchema().merge(
+  export function structuredValueJsonZodSchema() {
+    return Intangible.intangibleJsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.literal("QuantitiveValue"),
-        value: zod.number().optional(),
+        type: zod.enum(["MonetaryAmount", "QuantitativeValue"]),
       }),
     );
   }
@@ -2667,8 +2428,8 @@ export abstract class MediaObject extends CreativeWork {
   abstract override readonly type: "ImageObject" | "TextObject";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
-  readonly height: purify.Maybe<QuantitiveValue>;
-  readonly width: purify.Maybe<QuantitiveValue>;
+  readonly height: purify.Maybe<QuantitativeValue>;
+  readonly width: purify.Maybe<QuantitativeValue>;
 
   constructor(
     parameters: {
@@ -2677,8 +2438,8 @@ export abstract class MediaObject extends CreativeWork {
         | purify.Maybe<rdfjs.NamedNode>
         | string;
       readonly encodingFormat?: purify.Maybe<string> | string;
-      readonly height?: QuantitiveValue | purify.Maybe<QuantitiveValue>;
-      readonly width?: QuantitiveValue | purify.Maybe<QuantitiveValue>;
+      readonly height?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
+      readonly width?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
@@ -2710,7 +2471,7 @@ export abstract class MediaObject extends CreativeWork {
       this.height = parameters.height;
     } else if (
       typeof parameters.height === "object" &&
-      parameters.height instanceof QuantitiveValue
+      parameters.height instanceof QuantitativeValue
     ) {
       this.height = purify.Maybe.of(parameters.height);
     } else if (typeof parameters.height === "undefined") {
@@ -2723,7 +2484,7 @@ export abstract class MediaObject extends CreativeWork {
       this.width = parameters.width;
     } else if (
       typeof parameters.width === "object" &&
-      parameters.width instanceof QuantitiveValue
+      parameters.width instanceof QuantitativeValue
     ) {
       this.width = purify.Maybe.of(parameters.width);
     } else if (typeof parameters.width === "undefined") {
@@ -2822,8 +2583,8 @@ export abstract class MediaObject extends CreativeWork {
   override toJson(): {
     readonly contentUrl: { readonly "@id": string } | undefined;
     readonly encodingFormat: string | undefined;
-    readonly height: ReturnType<QuantitiveValue["toJson"]> | undefined;
-    readonly width: ReturnType<QuantitiveValue["toJson"]> | undefined;
+    readonly height: ReturnType<QuantitativeValue["toJson"]> | undefined;
+    readonly width: ReturnType<QuantitativeValue["toJson"]> | undefined;
   } & ReturnType<CreativeWork["toJson"]> {
     return JSON.parse(
       JSON.stringify({
@@ -2888,8 +2649,8 @@ export namespace MediaObject {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitiveValue>;
-      width: purify.Maybe<QuantitiveValue>;
+      height: purify.Maybe<QuantitativeValue>;
+      width: purify.Maybe<QuantitativeValue>;
     } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = mediaObjectJsonZodSchema().safeParse(_json);
@@ -2914,10 +2675,10 @@ export namespace MediaObject {
       _jsonObject["encodingFormat"],
     );
     const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => QuantitiveValue.fromJson(_item).unsafeCoerce(),
+      (_item) => QuantitativeValue.fromJson(_item).unsafeCoerce(),
     );
     const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      QuantitiveValue.fromJson(_item).unsafeCoerce(),
+      QuantitativeValue.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -2957,8 +2718,8 @@ export namespace MediaObject {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitiveValue>;
-      width: purify.Maybe<QuantitiveValue>;
+      height: purify.Maybe<QuantitativeValue>;
+      width: purify.Maybe<QuantitativeValue>;
     } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromRdf>>
   > {
     const _super0Either = CreativeWork._propertiesFromRdf({
@@ -3009,7 +2770,7 @@ export namespace MediaObject {
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitiveValue>
+      purify.Maybe<QuantitativeValue>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/height"), {
@@ -3018,7 +2779,7 @@ export namespace MediaObject {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          QuantitiveValue.fromRdf({
+          QuantitativeValue.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -3034,7 +2795,7 @@ export namespace MediaObject {
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitiveValue>
+      purify.Maybe<QuantitativeValue>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/width"), {
@@ -3043,7 +2804,7 @@ export namespace MediaObject {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          QuantitiveValue.fromRdf({
+          QuantitativeValue.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -3098,10 +2859,10 @@ export namespace MediaObject {
         CreativeWork.creativeWorkJsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
         { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        QuantitiveValue.quantitiveValueJsonUiSchema({
+        QuantitativeValue.quantitativeValueJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/height`,
         }),
-        QuantitiveValue.quantitiveValueJsonUiSchema({
+        QuantitativeValue.quantitativeValueJsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/width`,
         }),
       ],
@@ -3117,8 +2878,8 @@ export namespace MediaObject {
         type: zod.enum(["ImageObject", "TextObject"]),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
-        height: QuantitiveValue.quantitiveValueJsonZodSchema().optional(),
-        width: QuantitiveValue.quantitiveValueJsonZodSchema().optional(),
+        height: QuantitativeValue.quantitativeValueJsonZodSchema().optional(),
+        width: QuantitativeValue.quantitativeValueJsonZodSchema().optional(),
       }),
     );
   }
@@ -4690,9 +4451,11 @@ export abstract class ThingStub {
     | "EventStub"
     | "MediaObjectStub"
     | "MessageStub"
+    | "MonetaryAmountStub"
     | "OrganizationStub"
     | "PersonStub"
     | "PlaceStub"
+    | "QuantitativeValueStub"
     | "ReportStub"
     | "TextObjectStub"
     | "VoteActionStub";
@@ -4806,9 +4569,11 @@ export abstract class ThingStub {
       | "EventStub"
       | "MediaObjectStub"
       | "MessageStub"
+      | "MonetaryAmountStub"
       | "OrganizationStub"
       | "PersonStub"
       | "PlaceStub"
+      | "QuantitativeValueStub"
       | "ReportStub"
       | "TextObjectStub"
       | "VoteActionStub";
@@ -4902,6 +4667,13 @@ export namespace ThingStub {
       .altLazy(
         () =>
           EventStub.fromJson(json) as purify.Either<zod.ZodError, ThingStub>,
+      )
+      .altLazy(
+        () =>
+          IntangibleStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            ThingStub
+          >,
       )
       .altLazy(
         () =>
@@ -5006,6 +4778,13 @@ export namespace ThingStub {
       )
       .altLazy(
         () =>
+          IntangibleStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            ThingStub
+          >,
+      )
+      .altLazy(
+        () =>
           PlaceStub.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             ThingStub
@@ -5057,9 +4836,11 @@ export namespace ThingStub {
         "EventStub",
         "MediaObjectStub",
         "MessageStub",
+        "MonetaryAmountStub",
         "OrganizationStub",
         "PersonStub",
         "PlaceStub",
+        "QuantitativeValueStub",
         "ReportStub",
         "TextObjectStub",
         "VoteActionStub",
@@ -8412,6 +8193,1247 @@ export namespace ReportStub {
     ];
   }
 }
+export class QuantitativeValue extends StructuredValue {
+  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type = "QuantitativeValue";
+  readonly unitText: purify.Maybe<string>;
+  readonly value: purify.Maybe<number>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly unitText?: purify.Maybe<string> | string;
+      readonly value?: number | purify.Maybe<number>;
+    } & ConstructorParameters<typeof StructuredValue>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.unitText)) {
+      this.unitText = parameters.unitText;
+    } else if (typeof parameters.unitText === "string") {
+      this.unitText = purify.Maybe.of(parameters.unitText);
+    } else if (typeof parameters.unitText === "undefined") {
+      this.unitText = purify.Maybe.empty();
+    } else {
+      this.unitText = parameters.unitText as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.value)) {
+      this.value = parameters.value;
+    } else if (typeof parameters.value === "number") {
+      this.value = purify.Maybe.of(parameters.value);
+    } else if (typeof parameters.value === "undefined") {
+      this.value = purify.Maybe.empty();
+    } else {
+      this.value = parameters.value as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: QuantitativeValue): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.unitText,
+          other.unitText,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "unitText",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.value,
+          other.value,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "value",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.unitText.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    this.value.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
+    return _hasher;
+  }
+
+  override toJson(): {
+    readonly unitText: string | undefined;
+    readonly value: number | undefined;
+  } & ReturnType<StructuredValue["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        unitText: this.unitText.map((_item) => _item).extract(),
+        value: this.value.map((_item) => _item).extract(),
+      } satisfies ReturnType<QuantitativeValue["toJson"]>),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/QuantitativeValue"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/unitText"),
+      this.unitText,
+    );
+    _resource.add(dataFactory.namedNode("http://schema.org/value"), this.value);
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace QuantitativeValue {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      unitText: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult =
+      quantitativeValueJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = StructuredValue._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const unitText = purify.Maybe.fromNullable(_jsonObject["unitText"]);
+    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    return purify.Either.of({ ..._super0, identifier, unitText, value });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, QuantitativeValue> {
+    return QuantitativeValue._propertiesFromJson(json).map(
+      (properties) => new QuantitativeValue(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      unitText: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromRdf>>
+  > {
+    const _super0Either = StructuredValue._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/QuantitativeValue"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/QuantitativeValue)`,
+          predicate: dataFactory.namedNode(
+            "http://schema.org/QuantitativeValue",
+          ),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _unitTextEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/unitText"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_unitTextEither.isLeft()) {
+      return _unitTextEither;
+    }
+
+    const unitText = _unitTextEither.unsafeCoerce();
+    const _valueEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/value"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_valueEither.isLeft()) {
+      return _valueEither;
+    }
+
+    const value = _valueEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, unitText, value });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof QuantitativeValue._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, QuantitativeValue> {
+    return QuantitativeValue._propertiesFromRdf(parameters).map(
+      (properties) => new QuantitativeValue(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/QuantitativeValue",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(quantitativeValueJsonZodSchema());
+  }
+
+  export function quantitativeValueJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValue.structuredValueJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/unitText`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "QuantitativeValue",
+      type: "Group",
+    };
+  }
+
+  export function quantitativeValueJsonZodSchema() {
+    return StructuredValue.structuredValueJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("QuantitativeValue"),
+        unitText: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+}
+export abstract class IntangibleStub extends ThingStub {
+  abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+  abstract override readonly type:
+    | "MonetaryAmountStub"
+    | "QuantitativeValueStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(parameters: ConstructorParameters<typeof ThingStub>[0]) {
+    super(parameters);
+  }
+
+  override toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace IntangibleStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = intangibleStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IntangibleStub> {
+    return StructuredValueStub.fromJson(json) as purify.Either<
+      zod.ZodError,
+      IntangibleStub
+    >;
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof ThingStub._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = ThingStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof IntangibleStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, IntangibleStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return StructuredValueStub.fromRdf(otherParameters) as purify.Either<
+      rdfjsResource.Resource.ValueError,
+      IntangibleStub
+    >;
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(intangibleStubJsonZodSchema());
+  }
+
+  export function intangibleStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
+      label: "IntangibleStub",
+      type: "Group",
+    };
+  }
+
+  export function intangibleStubJsonZodSchema() {
+    return ThingStub.thingStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["MonetaryAmountStub", "QuantitativeValueStub"]),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IntangibleStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IntangibleStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IntangibleStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("intangibleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangibleStub");
+    return [
+      ...ThingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("intangibleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangibleStub");
+    return [
+      ...ThingStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    ];
+  }
+}
+export abstract class StructuredValueStub extends IntangibleStub {
+  abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+  abstract override readonly type:
+    | "MonetaryAmountStub"
+    | "QuantitativeValueStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(parameters: ConstructorParameters<typeof IntangibleStub>[0]) {
+    super(parameters);
+  }
+
+  override toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace StructuredValueStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof IntangibleStub._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult =
+      structuredValueStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = IntangibleStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, StructuredValueStub> {
+    return (
+      MonetaryAmountStub.fromJson(json) as purify.Either<
+        zod.ZodError,
+        StructuredValueStub
+      >
+    ).altLazy(
+      () =>
+        QuantitativeValueStub.fromJson(json) as purify.Either<
+          zod.ZodError,
+          StructuredValueStub
+        >,
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof IntangibleStub._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = IntangibleStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof StructuredValueStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValueStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      MonetaryAmountStub.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        StructuredValueStub
+      >
+    ).altLazy(
+      () =>
+        QuantitativeValueStub.fromRdf(otherParameters) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          StructuredValueStub
+        >,
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(structuredValueStubJsonZodSchema());
+  }
+
+  export function structuredValueStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStub.intangibleStubJsonUiSchema({ scopePrefix })],
+      label: "StructuredValueStub",
+      type: "Group",
+    };
+  }
+
+  export function structuredValueStubJsonZodSchema() {
+    return IntangibleStub.intangibleStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["MonetaryAmountStub", "QuantitativeValueStub"]),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructuredValueStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StructuredValueStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StructuredValueStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("structuredValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "structuredValueStub");
+    return [
+      ...IntangibleStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("structuredValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "structuredValueStub");
+    return [
+      ...IntangibleStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    ];
+  }
+}
+export class QuantitativeValueStub extends StructuredValueStub {
+  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type = "QuantitativeValueStub";
+  readonly unitText: purify.Maybe<string>;
+  readonly value: purify.Maybe<number>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly unitText?: purify.Maybe<string> | string;
+      readonly value?: number | purify.Maybe<number>;
+    } & ConstructorParameters<typeof StructuredValueStub>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.unitText)) {
+      this.unitText = parameters.unitText;
+    } else if (typeof parameters.unitText === "string") {
+      this.unitText = purify.Maybe.of(parameters.unitText);
+    } else if (typeof parameters.unitText === "undefined") {
+      this.unitText = purify.Maybe.empty();
+    } else {
+      this.unitText = parameters.unitText as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.value)) {
+      this.value = parameters.value;
+    } else if (typeof parameters.value === "number") {
+      this.value = purify.Maybe.of(parameters.value);
+    } else if (typeof parameters.value === "undefined") {
+      this.value = purify.Maybe.empty();
+    } else {
+      this.value = parameters.value as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: QuantitativeValueStub): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.unitText,
+          other.unitText,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "unitText",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.value,
+          other.value,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "value",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.unitText.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    this.value.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
+    return _hasher;
+  }
+
+  override toJson(): {
+    readonly unitText: string | undefined;
+    readonly value: number | undefined;
+  } & ReturnType<StructuredValueStub["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        unitText: this.unitText.map((_item) => _item).extract(),
+        value: this.value.map((_item) => _item).extract(),
+      } satisfies ReturnType<QuantitativeValueStub["toJson"]>),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/QuantitativeValue"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/unitText"),
+      this.unitText,
+    );
+    _resource.add(dataFactory.namedNode("http://schema.org/value"), this.value);
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace QuantitativeValueStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      unitText: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult =
+      quantitativeValueStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = StructuredValueStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const unitText = purify.Maybe.fromNullable(_jsonObject["unitText"]);
+    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    return purify.Either.of({ ..._super0, identifier, unitText, value });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, QuantitativeValueStub> {
+    return QuantitativeValueStub._propertiesFromJson(json).map(
+      (properties) => new QuantitativeValueStub(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      unitText: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromRdf>>
+  > {
+    const _super0Either = StructuredValueStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/QuantitativeValue"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/QuantitativeValue)`,
+          predicate: dataFactory.namedNode(
+            "http://schema.org/QuantitativeValue",
+          ),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _unitTextEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/unitText"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_unitTextEither.isLeft()) {
+      return _unitTextEither;
+    }
+
+    const unitText = _unitTextEither.unsafeCoerce();
+    const _valueEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/value"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_valueEither.isLeft()) {
+      return _valueEither;
+    }
+
+    const value = _valueEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, unitText, value });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof QuantitativeValueStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, QuantitativeValueStub> {
+    return QuantitativeValueStub._propertiesFromRdf(parameters).map(
+      (properties) => new QuantitativeValueStub(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/QuantitativeValue",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(quantitativeValueStubJsonZodSchema());
+  }
+
+  export function quantitativeValueStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValueStub.structuredValueStubJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/unitText`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "QuantitativeValueStub",
+      type: "Group",
+    };
+  }
+
+  export function quantitativeValueStubJsonZodSchema() {
+    return StructuredValueStub.structuredValueStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("QuantitativeValueStub"),
+        unitText: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        QuantitativeValueStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        QuantitativeValueStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      QuantitativeValueStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("quantitativeValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "quantitativeValueStub");
+    return [
+      ...StructuredValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}UnitText`),
+        predicate: dataFactory.namedNode("http://schema.org/unitText"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Value`),
+        predicate: dataFactory.namedNode("http://schema.org/value"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("quantitativeValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "quantitativeValueStub");
+    return [
+      ...StructuredValueStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/QuantitativeValue",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}UnitText`),
+                predicate: dataFactory.namedNode("http://schema.org/unitText"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Value`),
+                predicate: dataFactory.namedNode("http://schema.org/value"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
+}
 export class Place extends Thing {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type = "Place";
@@ -10276,6 +11298,799 @@ export namespace Organization {
           OrganizationStub.organizationStubJsonZodSchema().array(),
       }),
     );
+  }
+}
+export class MonetaryAmount extends StructuredValue {
+  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type = "MonetaryAmount";
+  readonly currency: purify.Maybe<string>;
+  readonly value: purify.Maybe<number>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly currency?: purify.Maybe<string> | string;
+      readonly value?: number | purify.Maybe<number>;
+    } & ConstructorParameters<typeof StructuredValue>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.currency)) {
+      this.currency = parameters.currency;
+    } else if (typeof parameters.currency === "string") {
+      this.currency = purify.Maybe.of(parameters.currency);
+    } else if (typeof parameters.currency === "undefined") {
+      this.currency = purify.Maybe.empty();
+    } else {
+      this.currency = parameters.currency as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.value)) {
+      this.value = parameters.value;
+    } else if (typeof parameters.value === "number") {
+      this.value = purify.Maybe.of(parameters.value);
+    } else if (typeof parameters.value === "undefined") {
+      this.value = purify.Maybe.empty();
+    } else {
+      this.value = parameters.value as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: MonetaryAmount): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.currency,
+          other.currency,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "currency",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.value,
+          other.value,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "value",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.currency.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    this.value.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
+    return _hasher;
+  }
+
+  override toJson(): {
+    readonly currency: string | undefined;
+    readonly value: number | undefined;
+  } & ReturnType<StructuredValue["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        currency: this.currency.map((_item) => _item).extract(),
+        value: this.value.map((_item) => _item).extract(),
+      } satisfies ReturnType<MonetaryAmount["toJson"]>),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MonetaryAmount"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/currency"),
+      this.currency,
+    );
+    _resource.add(dataFactory.namedNode("http://schema.org/value"), this.value);
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MonetaryAmount {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      currency: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = monetaryAmountJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = StructuredValue._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const currency = purify.Maybe.fromNullable(_jsonObject["currency"]);
+    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    return purify.Either.of({ ..._super0, identifier, currency, value });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MonetaryAmount> {
+    return MonetaryAmount._propertiesFromJson(json).map(
+      (properties) => new MonetaryAmount(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      currency: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromRdf>>
+  > {
+    const _super0Either = StructuredValue._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MonetaryAmount"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MonetaryAmount)`,
+          predicate: dataFactory.namedNode("http://schema.org/MonetaryAmount"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _currencyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/currency"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_currencyEither.isLeft()) {
+      return _currencyEither;
+    }
+
+    const currency = _currencyEither.unsafeCoerce();
+    const _valueEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/value"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_valueEither.isLeft()) {
+      return _valueEither;
+    }
+
+    const value = _valueEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, currency, value });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MonetaryAmount._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MonetaryAmount> {
+    return MonetaryAmount._propertiesFromRdf(parameters).map(
+      (properties) => new MonetaryAmount(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MonetaryAmount",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(monetaryAmountJsonZodSchema());
+  }
+
+  export function monetaryAmountJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValue.structuredValueJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/currency`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "MonetaryAmount",
+      type: "Group",
+    };
+  }
+
+  export function monetaryAmountJsonZodSchema() {
+    return StructuredValue.structuredValueJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MonetaryAmount"),
+        currency: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+}
+export class MonetaryAmountStub extends StructuredValueStub {
+  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type = "MonetaryAmountStub";
+  readonly currency: purify.Maybe<string>;
+  readonly value: purify.Maybe<number>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly currency?: purify.Maybe<string> | string;
+      readonly value?: number | purify.Maybe<number>;
+    } & ConstructorParameters<typeof StructuredValueStub>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.currency)) {
+      this.currency = parameters.currency;
+    } else if (typeof parameters.currency === "string") {
+      this.currency = purify.Maybe.of(parameters.currency);
+    } else if (typeof parameters.currency === "undefined") {
+      this.currency = purify.Maybe.empty();
+    } else {
+      this.currency = parameters.currency as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.value)) {
+      this.value = parameters.value;
+    } else if (typeof parameters.value === "number") {
+      this.value = purify.Maybe.of(parameters.value);
+    } else if (typeof parameters.value === "undefined") {
+      this.value = purify.Maybe.empty();
+    } else {
+      this.value = parameters.value as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: MonetaryAmountStub): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.currency,
+          other.currency,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "currency",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.value,
+          other.value,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "value",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.currency.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    this.value.ifJust((_value0) => {
+      _hasher.update(_value0.toString());
+    });
+    return _hasher;
+  }
+
+  override toJson(): {
+    readonly currency: string | undefined;
+    readonly value: number | undefined;
+  } & ReturnType<StructuredValueStub["toJson"]> {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        currency: this.currency.map((_item) => _item).extract(),
+        value: this.value.map((_item) => _item).extract(),
+      } satisfies ReturnType<MonetaryAmountStub["toJson"]>),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MonetaryAmount"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/currency"),
+      this.currency,
+    );
+    _resource.add(dataFactory.namedNode("http://schema.org/value"), this.value);
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MonetaryAmountStub {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      currency: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult =
+      monetaryAmountStubJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = StructuredValueStub._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const currency = purify.Maybe.fromNullable(_jsonObject["currency"]);
+    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    return purify.Either.of({ ..._super0, identifier, currency, value });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MonetaryAmountStub> {
+    return MonetaryAmountStub._propertiesFromJson(json).map(
+      (properties) => new MonetaryAmountStub(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      currency: purify.Maybe<string>;
+      value: purify.Maybe<number>;
+    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromRdf>>
+  > {
+    const _super0Either = StructuredValueStub._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MonetaryAmount"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MonetaryAmount)`,
+          predicate: dataFactory.namedNode("http://schema.org/MonetaryAmount"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _currencyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/currency"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_currencyEither.isLeft()) {
+      return _currencyEither;
+    }
+
+    const currency = _currencyEither.unsafeCoerce();
+    const _valueEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/value"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
+    );
+    if (_valueEither.isLeft()) {
+      return _valueEither;
+    }
+
+    const value = _valueEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, currency, value });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MonetaryAmountStub._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MonetaryAmountStub> {
+    return MonetaryAmountStub._propertiesFromRdf(parameters).map(
+      (properties) => new MonetaryAmountStub(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MonetaryAmount",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(monetaryAmountStubJsonZodSchema());
+  }
+
+  export function monetaryAmountStubJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValueStub.structuredValueStubJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/currency`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "MonetaryAmountStub",
+      type: "Group",
+    };
+  }
+
+  export function monetaryAmountStubJsonZodSchema() {
+    return StructuredValueStub.structuredValueStubJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MonetaryAmountStub"),
+        currency: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MonetaryAmountStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MonetaryAmountStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MonetaryAmountStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("monetaryAmountStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
+    return [
+      ...StructuredValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Currency`),
+        predicate: dataFactory.namedNode("http://schema.org/currency"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Value`),
+        predicate: dataFactory.namedNode("http://schema.org/value"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("monetaryAmountStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
+    return [
+      ...StructuredValueStub.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MonetaryAmount",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Currency`),
+                predicate: dataFactory.namedNode("http://schema.org/currency"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Value`),
+                predicate: dataFactory.namedNode("http://schema.org/value"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
   }
 }
 export class Message extends CreativeWork {

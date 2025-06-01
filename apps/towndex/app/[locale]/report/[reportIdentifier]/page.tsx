@@ -2,7 +2,9 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
+import { MonetaryAmountsTable } from "@/lib/components/MonetaryAmountsTable";
 import { PropertiesTable } from "@/lib/components/PropertiesTable";
+import { QuantitativeValuesTable } from "@/lib/components/QuantitativeValuesTable";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
@@ -12,7 +14,14 @@ import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Fieldset, Stack } from "@mantine/core";
-import { Identifier, Report, ReportStub, displayLabel } from "@sdapps/models";
+import {
+  Identifier,
+  MonetaryAmountStub,
+  QuantitativeValueStub,
+  Report,
+  ReportStub,
+  displayLabel,
+} from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -54,6 +63,19 @@ export default async function ReportPage({
     properties.push({ label: translations("Description"), value: description });
   });
 
+  const monetaryAmounts: MonetaryAmountStub[] = [];
+  const quantitativeValues: QuantitativeValueStub[] = [];
+  for (const about of report.about) {
+    switch (about.type) {
+      case "MonetaryAmountStub":
+        monetaryAmounts.push(about as MonetaryAmountStub);
+        break;
+      case "QuantitativeValueStub":
+        quantitativeValues.push(about as QuantitativeValueStub);
+        break;
+    }
+  }
+
   return (
     <ClientProvidersServer>
       <AppShell
@@ -70,6 +92,18 @@ export default async function ReportPage({
           {report.authors.length > 0 ? (
             <Fieldset legend={translations("Authors")}>
               <AgentList agents={report.authors} hrefs={hrefs} />
+            </Fieldset>
+          ) : null}
+          {monetaryAmounts.length > 0 ? (
+            <Fieldset legend={translations("Amounts")}>
+              <MonetaryAmountsTable monetaryAmounts={monetaryAmounts} />
+            </Fieldset>
+          ) : null}
+          {quantitativeValues.length > 0 ? (
+            <Fieldset legend={translations("Values")}>
+              <QuantitativeValuesTable
+                quantitativeValues={quantitativeValues}
+              />
             </Fieldset>
           ) : null}
         </Stack>

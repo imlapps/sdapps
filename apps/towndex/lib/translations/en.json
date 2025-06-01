@@ -67,12 +67,19 @@
   "PlacePage": {
     "Place": "Place"
   },
+  "QuantitativeValuesTable": {
+    "Name": "Name",
+    "Unit": "Unit",
+    "Value": "Value"
+  },
   "ReportPage": {
+    "Amounts": "Amounts",
     "Authors": "Authors",
     "Description": "Description",
     "Name": "Name",
     "Report": "Report",
-    "Subject of": "Subject of"
+    "Subject of": "Subject of",
+    "Values": "Values"
   },
   "SearchBox": {
     "No results": "No results",
