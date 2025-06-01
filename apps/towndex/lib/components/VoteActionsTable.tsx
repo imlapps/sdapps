@@ -2,7 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { AgentStub, VoteAction, compare } from "@sdapps/models";
+import { AgentStub, VoteAction, compare, displayLabel } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 interface Row {
   readonly agents: readonly AgentStub[];
   readonly description: string | null;
-  readonly name: string;
+  readonly label: string;
   readonly participants: readonly AgentStub[];
 }
 
@@ -32,20 +32,16 @@ export function VoteActionsTable(json: {
 
     const columns: DataTableColumn<Row>[] = [
       {
-        accessor: "name",
+        accessor: "label",
         sortable: true,
       },
     ];
     const rows: Row[] = [];
     for (const voteAction of voteActions) {
-      if (!voteAction.name.isJust()) {
-        continue;
-      }
-
       const row: Row = {
         agents: voteAction.agents,
         description: voteAction.description.extractNullable(),
-        name: voteAction.name.unsafeCoerce(),
+        label: displayLabel(voteAction),
         participants: voteAction.participants,
       };
 
@@ -92,7 +88,7 @@ export function VoteActionsTable(json: {
   const [rows, setRows] = useState<Row[] | null>(null);
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Row>>({
-    columnAccessor: "name",
+    columnAccessor: "label",
     direction: "asc",
   });
 

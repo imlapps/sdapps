@@ -3,6 +3,7 @@ import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
+import { InvoiceTable } from "@/lib/components/InvoiceTable";
 import { MessagesTable } from "@/lib/components/MessagesTable";
 import { PropertiesTable } from "@/lib/components/PropertiesTable";
 import { ReportsTable } from "@/lib/components/ReportsTable";
@@ -20,6 +21,7 @@ import {
   Event,
   EventStub,
   Identifier,
+  Invoice,
   Message,
   PersonStub,
   Report,
@@ -81,12 +83,21 @@ export default async function EventPage({
     });
   });
 
+  const invoices: Invoice[] = [];
   const participants = event.performers.concat();
   const messages: Message[] = [];
   const reports: Report[] = [];
   const voteActions: VoteAction[] = [];
   for (const about of event.about) {
     switch (about.type) {
+      case "InvoiceStub":
+        (
+          await modelSet.model<Invoice>({
+            identifier: about.identifier,
+            type: "Invoice",
+          })
+        ).ifRight((invoice) => invoices.push(invoice));
+        break;
       case "MessageStub":
         (
           await modelSet.model<Message>({
@@ -183,6 +194,14 @@ export default async function EventPage({
               />
             </Fieldset>
           ) : null}
+          {invoices.map((invoice) => (
+            <Fieldset
+              key={Identifier.toString(invoice.identifier)}
+              legend={displayLabel(invoice)}
+            >
+              <InvoiceTable invoice={invoice} modelSet={modelSet} />
+            </Fieldset>
+          ))}
         </Stack>
       </AppShell>
     </ClientProvidersServer>

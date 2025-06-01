@@ -2,7 +2,8 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { AgentStub, Report, compare } from "@sdapps/models";
+import { Anchor } from "@mantine/core";
+import { AgentStub, Report, compare, displayLabel } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
@@ -14,7 +15,8 @@ import { useEffect, useMemo, useState } from "react";
 interface Row {
   readonly authors: readonly AgentStub[];
   readonly description: string | null;
-  readonly name: string;
+  readonly href: string;
+  readonly label: string;
 }
 
 export function ReportsTable(json: {
@@ -29,20 +31,18 @@ export function ReportsTable(json: {
 
     const columns: DataTableColumn<Row>[] = [
       {
-        accessor: "name",
+        accessor: "label",
+        render: (row) => <Anchor href={row.href}>{row.label}</Anchor>,
         sortable: true,
       },
     ];
     const rows: Row[] = [];
     for (const report of reports) {
-      if (!report.name.isJust()) {
-        continue;
-      }
-
       const row: Row = {
         authors: report.authors,
         description: report.description.extractNullable(),
-        name: report.name.unsafeCoerce(),
+        href: hrefs.report(report),
+        label: displayLabel(report),
       };
 
       if (
@@ -78,7 +78,7 @@ export function ReportsTable(json: {
   const [rows, setRows] = useState<Row[] | null>(null);
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Row>>({
-    columnAccessor: "name",
+    columnAccessor: "label",
     direction: "asc",
   });
 

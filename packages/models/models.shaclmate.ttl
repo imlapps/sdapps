@@ -60,6 +60,18 @@ sdapps:EventStub-superEvent
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:superEvent .
 
+sdapps:IntangibleStub
+    shaclmate:abstract true ;
+    shaclmate:name "IntangibleStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ThingStub .
+
+sdapps:InvoiceStub
+    shaclmate:fromRdfType schema:Invoice ;
+    shaclmate:name "InvoiceStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub .
+
 sdapps:MediaObjectStub
     shaclmate:fromRdfType schema:MediaObject ;
     shaclmate:name "MediaObjectStub" ;
@@ -71,6 +83,19 @@ sdapps:MessageStub
     shaclmate:name "MessageStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MonetaryAmountStub
+    shaclmate:fromRdfType schema:MonetaryAmount ;
+    shaclmate:name "MonetaryAmountStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:StructuredValueStub ;
+    sh:property schema:MonetaryAmount-currency, schema:MonetaryAmount-value .
+
+sdapps:OrderStub
+    shaclmate:fromRdfType schema:Order ;
+    shaclmate:name "OrderStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:OrganizationStub
     shaclmate:fromRdfType schema:Organization ;
@@ -91,11 +116,24 @@ sdapps:PlaceStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
+sdapps:QuantitativeValueStub
+    shaclmate:fromRdfType schema:QuantitativeValue ;
+    shaclmate:name "QuantitativeValueStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:StructuredValueStub ;
+    sh:property schema:QuantitativeValue-unitText, schema:QuantitativeValue-value .
+
 sdapps:ReportStub
     shaclmate:fromRdfType schema:Report ;
     shaclmate:name "ReportStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ArticleStub .
+
+sdapps:StructuredValueStub
+    shaclmate:abstract true ;
+    shaclmate:name "StructuredValueStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:TextObjectStub
     shaclmate:fromRdfType schema:TextObject ;
@@ -294,6 +332,39 @@ schema:Intangible
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
 
+schema:Invoice
+    shaclmate:name "Invoice" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:property schema:Invoice-category, schema:Invoice-provider, schema:Invoice-referencesOrders, schema:Invoice-totalPaymentDue .
+
+schema:Invoice-category
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "category" ;
+    sh:path schema:category .
+
+schema:Invoice-provider
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "provider" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:provider .
+
+schema:Invoice-referencesOrders
+    a sh:PropertyShape ;
+    sh:name "referencesOrder" ;
+    sh:node sdapps:OrderStub ;
+    sh:path schema:referencesOrder .
+
+schema:Invoice-totalPaymentDue
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "totalPaymentDue" ;
+    sh:node sdapps:MonetaryAmountStub ;
+    sh:path schema:totalPaymentDue .
+
 schema:Male
     a schema:GenderType ;
     rdfs:label "Male" .
@@ -346,10 +417,43 @@ schema:Message-sender
     sh:node sdapps:AgentStub ;
     sh:path schema:sender .
 
+schema:MonetaryAmount
+    shaclmate:name "MonetaryAmount" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:StructuredValue ;
+    sh:property schema:MonetaryAmount-currency, schema:MonetaryAmount-value .
+
+schema:MonetaryAmount-currency
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "currency" ;
+    sh:path schema:currency .
+
+schema:MonetaryAmount-value
+    a sh:PropertyShape ;
+    sh:datatype xsd:decimal ;
+    sh:maxCount 1 ;
+    sh:name "value" ;
+    sh:path schema:value .
+
 schema:Occupation
     shaclmate:name "Occupation" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
+
+schema:Order
+    shaclmate:name "Order" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:property schema:Order-partOfInvoice .
+
+schema:Order-partOfInvoice
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "partOfInvoice" ;
+    sh:node sdapps:InvoiceStub ;
+    sh:path schema:partOfInvoice .
 
 schema:Organization
     shaclmate:name "Organization" ;
@@ -457,24 +561,17 @@ schema:Place
     rdfs:subClassOf schema:Thing .
 
 schema:QuantitativeValue
-    shaclmate:name "QuantitiveValue" ;
+    shaclmate:name "QuantitativeValue" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:StructuredValue ;
-    sh:property schema:QuantitativeValue-value .
+    sh:property schema:QuantitativeValue-unitText, schema:QuantitativeValue-value .
 
-schema:QuantitativeValue-maxValue
+schema:QuantitativeValue-unitText
     a sh:PropertyShape ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:name "maxValue" ;
-    sh:path schema:maxValue .
-
-schema:QuantitativeValue-minValue
-    a sh:PropertyShape ;
-    sh:datatype xsd:decimal ;
-    sh:maxCount 1 ;
-    sh:name "minValue" ;
-    sh:path schema:minValue .
+    sh:name "unitText" ;
+    sh:path schema:unitText .
 
 schema:QuantitativeValue-value
     a sh:PropertyShape ;

@@ -113,6 +113,19 @@ export class PageMetadata {
       ]),
     };
   }
+
+  report(report: {
+    identifier: Identifier;
+    name: Maybe<string>;
+  }): Metadata {
+    return {
+      title: titlePartsToString([
+        this.locale.title as string,
+        this.translations("Report"),
+        displayLabel(report),
+      ]),
+    };
+  }
 }
 
 function titlePartsToString(titleParts: readonly string[]): string {

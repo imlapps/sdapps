@@ -2,24 +2,26 @@
 
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor } from "@mantine/core";
-import { OrganizationStub, compare } from "@sdapps/models";
+import { OrganizationStub, compare, displayLabel } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
   DataTable,
   DataTableColumn,
   DataTableSortStatus,
 } from "mantine-datatable";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 interface Row {
   readonly href: string;
-  readonly name: string;
+  readonly label: string;
 }
 
 export function OrganizationsTable(json: {
   organizations: readonly ReturnType<OrganizationStub["toJson"]>[];
 }) {
   const hrefs = useHrefs();
+  const translations = useTranslations("OrganizationsTable");
 
   const { columns, rows: unsortedRows } = useMemo(() => {
     const organizations = json.organizations
@@ -30,19 +32,17 @@ export function OrganizationsTable(json: {
 
     const columns: DataTableColumn<Row>[] = [
       {
-        accessor: "name",
-        render: (row) => <Anchor href={row.href}>{row.name}</Anchor>,
+        accessor: "label",
+        render: (row) => <Anchor href={row.href}>{row.label}</Anchor>,
+        title: translations("Name"),
         sortable: true,
       },
     ];
     const rows: Row[] = [];
     for (const organization of organizations) {
-      if (!organization.name.isJust()) {
-        continue;
-      }
       const row: Row = {
         href: hrefs.organization(organization),
-        name: organization.name.unsafeCoerce(),
+        label: displayLabel(organization),
       };
       rows.push(row);
     }
@@ -50,12 +50,12 @@ export function OrganizationsTable(json: {
       columns,
       rows,
     };
-  }, [hrefs, json]);
+  }, [hrefs, json, translations]);
 
   const [rows, setRows] = useState<Row[] | null>(null);
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Row>>({
-    columnAccessor: "name",
+    columnAccessor: "label",
     direction: "asc",
   });
 

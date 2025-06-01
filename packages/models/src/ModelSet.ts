@@ -3,7 +3,11 @@ import type {
   Event,
   EventStub,
   Identifier,
+  Invoice,
+  InvoiceStub,
   Message,
+  Order,
+  OrderStub,
   Organization,
   OrganizationStub,
   Person,
@@ -11,6 +15,7 @@ import type {
   Place,
   PlaceStub,
   Report,
+  ReportStub,
   TextObject,
   VoteAction,
 } from "./index.js";
@@ -32,7 +37,11 @@ export namespace ModelSet {
   export type Model =
     | Event
     | EventStub
+    | Invoice
+    | InvoiceStub
     | Message
+    | Order
+    | OrderStub
     | Organization
     | OrganizationStub
     | Person
@@ -40,6 +49,7 @@ export namespace ModelSet {
     | Place
     | PlaceStub
     | Report
+    | ReportStub
     | TextObject
     | VoteAction;
 }
