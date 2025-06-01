@@ -1,4 +1,5 @@
-import { Table, TableTbody, TableTd, TableTr } from "@mantine/core";
+import { PropertiesTable } from "@/lib/components/PropertiesTable";
+import {} from "@mantine/core";
 import { Invoice, ModelSet, Order, displayLabel } from "@sdapps/models";
 import { getTranslations } from "next-intl/server";
 import { ReactNode } from "react";
@@ -59,16 +60,5 @@ export async function InvoiceTable({
     });
   }
 
-  return (
-    <Table withColumnBorders withRowBorders withTableBorder>
-      <TableTbody>
-        {properties.map((property) => (
-          <TableTr key={property.label}>
-            <TableTd>{property.label}</TableTd>
-            <TableTd>{property.value}</TableTd>
-          </TableTr>
-        ))}
-      </TableTbody>
-    </Table>
-  );
+  return <PropertiesTable properties={properties} />;
 }

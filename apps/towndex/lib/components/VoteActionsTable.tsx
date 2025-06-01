@@ -2,6 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
+import { Text } from "@mantine/core";
 import { AgentStub, VoteAction, compare, displayLabel } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
@@ -33,6 +34,7 @@ export function VoteActionsTable(json: {
     const columns: DataTableColumn<Row>[] = [
       {
         accessor: "label",
+        render: (row) => <Text>{row.label}</Text>,
         sortable: true,
       },
     ];
@@ -61,6 +63,7 @@ export function VoteActionsTable(json: {
       ) {
         columns.push({
           accessor: "description",
+          render: (row) => <Text>{row.description}</Text>,
           sortable: true,
         });
       }

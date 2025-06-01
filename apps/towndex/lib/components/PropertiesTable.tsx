@@ -1,4 +1,4 @@
-import { Table, TableTbody, TableTd, TableTr } from "@mantine/core";
+import { Table, TableTbody, TableTd, TableTr, Text } from "@mantine/core";
 import { ReactNode } from "react";
 
 export function PropertiesTable({
@@ -9,8 +9,16 @@ export function PropertiesTable({
       <TableTbody>
         {properties.map((property) => (
           <TableTr key={property.label}>
-            <TableTd>{property.label}</TableTd>
-            <TableTd>{property.value}</TableTd>
+            <TableTd>
+              <Text>{property.label}</Text>
+            </TableTd>
+            <TableTd>
+              {typeof property.value === "object" ? (
+                property.value
+              ) : (
+                <Text>{property.value}</Text>
+              )}
+            </TableTd>
           </TableTr>
         ))}
       </TableTbody>

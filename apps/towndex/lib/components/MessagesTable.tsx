@@ -1,6 +1,7 @@
 "use client";
 import { AgentAnchor } from "@/lib/components/AgentAnchor";
 import { useHrefs } from "@/lib/hooks/useHrefs";
+import { Text } from "@mantine/core";
 import { AgentStub, Message, compare } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
@@ -28,6 +29,7 @@ export function MessagesTable(json: {
     const columns: DataTableColumn<Row>[] = [
       {
         accessor: "description",
+        render: (row) => <Text>{row.description}</Text>,
         sortable: true,
       },
       {

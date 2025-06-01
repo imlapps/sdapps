@@ -5,6 +5,7 @@ import {
   TableTh,
   TableThead,
   TableTr,
+  Text,
 } from "@mantine/core";
 import { Identifier } from "@sdapps/models";
 import { getTranslations } from "next-intl/server";
@@ -33,9 +34,19 @@ export async function QuantitativeValuesTable({
       <TableThead>
         {includeName || includeUnitText ? (
           <TableTr>
-            {includeName ? <TableTh>{translations("Name")}</TableTh> : null}
-            <TableTh>{translations("Value")}</TableTh>
-            {includeUnitText ? <TableTh>{translations("Unit")}</TableTh> : null}
+            {includeName ? (
+              <TableTh>
+                <Text>{translations("Name")}</Text>
+              </TableTh>
+            ) : null}
+            <TableTh>
+              <Text>{translations("Value")}</Text>
+            </TableTh>
+            {includeUnitText ? (
+              <TableTh>
+                <Text>{translations("Unit")}</Text>
+              </TableTh>
+            ) : null}
           </TableTr>
         ) : null}
       </TableThead>
@@ -45,13 +56,17 @@ export async function QuantitativeValuesTable({
           .map((quantitativeValue) => (
             <TableTr key={Identifier.toString(quantitativeValue.identifier)}>
               {includeName ? (
-                <TableTd>{quantitativeValue.name.orDefault("")}</TableTd>
+                <TableTd>
+                  <Text>{quantitativeValue.name.orDefault("")}</Text>
+                </TableTd>
               ) : null}
               <TableTd>
-                {quantitativeValue.value.unsafeCoerce().toString()}
+                <Text>{quantitativeValue.value.unsafeCoerce().toString()}</Text>
               </TableTd>
               {includeUnitText ? (
-                <TableTd>{quantitativeValue.unitText.orDefault("")}</TableTd>
+                <TableTd>
+                  <Text>{quantitativeValue.unitText.orDefault("")}</Text>
+                </TableTd>
               ) : null}
             </TableTr>
           ))}

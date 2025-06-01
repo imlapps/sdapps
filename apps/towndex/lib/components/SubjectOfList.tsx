@@ -1,4 +1,4 @@
-import { Anchor, List, ListItem } from "@mantine/core";
+import { Anchor, Group, List, ListItem, Text } from "@mantine/core";
 import {
   url,
   CreativeWorkStub,
@@ -8,6 +8,7 @@ import {
   TextObject,
   displayLabel,
 } from "@sdapps/models";
+import { IconExternalLink } from "@tabler/icons-react";
 import { ReactElement } from "react";
 
 export async function SubjectOfList({
@@ -39,11 +40,14 @@ export async function SubjectOfList({
         {url(textObject)
           .map((url) => (
             <Anchor href={url.value} key={url.value}>
-              {displayLabel(textObject)}
+              <Group gap={2}>
+                <IconExternalLink />
+                <Text>{displayLabel(textObject)}</Text>
+              </Group>
             </Anchor>
           ))
           .orDefaultLazy(() => (
-            <span>{displayLabel(textObject)}</span>
+            <Text>{displayLabel(textObject)}</Text>
           ))}
       </ListItem>,
     );

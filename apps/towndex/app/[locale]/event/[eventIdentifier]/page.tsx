@@ -2,9 +2,11 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AgentList } from "@/lib/components/AgentList";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
+import { EventAnchor } from "@/lib/components/EventAnchor";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
 import { InvoiceTable } from "@/lib/components/InvoiceTable";
 import { MessagesTable } from "@/lib/components/MessagesTable";
+import { PlaceAnchor } from "@/lib/components/PlaceAnchor";
 import { PropertiesTable } from "@/lib/components/PropertiesTable";
 import { ReportsTable } from "@/lib/components/ReportsTable";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
@@ -16,7 +18,7 @@ import { Locale } from "@/lib/models/Locale";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import { Anchor, Fieldset, Group, Stack } from "@mantine/core";
+import { Fieldset, Group, Stack } from "@mantine/core";
 import {
   Event,
   EventStub,
@@ -71,9 +73,7 @@ export default async function EventPage({
   event.location.ifJust((location) => {
     properties.push({
       label: translations("Location"),
-      value: (
-        <Anchor href={hrefs.place(location)}>{displayLabel(location)}</Anchor>
-      ),
+      value: <PlaceAnchor hrefs={hrefs} place={location} />,
     });
   });
   event.startDate.ifJust((startDate) => {
@@ -158,9 +158,7 @@ export default async function EventPage({
           {event.superEvent
             .map((superEvent) => (
               <Fieldset key="superEvent" legend={translations("Parent event")}>
-                <Anchor href={hrefs.event(superEvent)}>
-                  {displayLabel(superEvent)}
-                </Anchor>
+                <EventAnchor event={superEvent} hrefs={hrefs} />
               </Fieldset>
             ))
             .extractNullable()}
