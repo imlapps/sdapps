@@ -80,7 +80,6 @@ export function ReportsTable(json: {
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Row>>({
     columnAccessor: "label",
-    render: (row) => <Text>{row.label}</Text>,
     direction: "asc",
   });
 
