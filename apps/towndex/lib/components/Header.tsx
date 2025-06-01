@@ -2,9 +2,14 @@
 import { SearchBox } from "@/lib/components/SearchBox";
 import { useClientConfiguration } from "@/lib/hooks/useClientConfiguration";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { Anchor, Burger, Group } from "@mantine/core";
+import { Anchor, Burger, Group, Text } from "@mantine/core";
 import { SearchEngine } from "@sdapps/search";
-import { IconBinaryTree2Filled } from "@tabler/icons-react";
+import {
+  IconBinaryTree2Filled,
+  IconBuilding,
+  IconCalendar,
+  IconUser,
+} from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import classes from "./Header.module.css";
 
@@ -21,9 +26,17 @@ export function Header({
   const hrefs = useHrefs();
   const translations = useTranslations("Header");
   const links = [
-    { link: hrefs.events, label: translations("Events") },
-    { link: hrefs.organizations, label: translations("Organizations") },
-    { link: hrefs.people, label: translations("People") },
+    {
+      icon: <IconCalendar />,
+      link: hrefs.events,
+      label: translations("Events"),
+    },
+    {
+      icon: <IconBuilding />,
+      link: hrefs.organizations,
+      label: translations("Organizations"),
+    },
+    { icon: <IconUser />, link: hrefs.people, label: translations("People") },
   ];
 
   return (
@@ -34,7 +47,7 @@ export function Header({
           <Anchor href={hrefs.locale}>
             <Group gap="sm">
               <IconBinaryTree2Filled size={28} stroke={1.5} />
-              <span>Towndex: {configuration.siteTitle}</span>
+              <Text>Towndex: {configuration.siteTitle}</Text>
             </Group>
           </Anchor>
         </Group>
@@ -44,7 +57,10 @@ export function Header({
           <Group ml={50} gap={5} className={classes["links"]} visibleFrom="sm">
             {links.map((link) => (
               <a key={link.label} href={link.link} className={classes["link"]}>
-                {link.label}
+                <Group gap={2}>
+                  {link.icon}
+                  <Text>{link.label}</Text>
+                </Group>
               </a>
             ))}
           </Group>

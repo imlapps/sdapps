@@ -2,7 +2,7 @@
 
 import { AgentList } from "@/lib/components/AgentList";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { Anchor } from "@mantine/core";
+import { Anchor, Text } from "@mantine/core";
 import { AgentStub, Report, compare, displayLabel } from "@sdapps/models";
 import sortBy from "lodash.sortby";
 import {
@@ -63,6 +63,7 @@ export function ReportsTable(json: {
       ) {
         columns.push({
           accessor: "description",
+          render: (row) => <Text>{row.description}</Text>,
           sortable: true,
         });
       }
@@ -79,6 +80,7 @@ export function ReportsTable(json: {
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Row>>({
     columnAccessor: "label",
+    render: (row) => <Text>{row.label}</Text>,
     direction: "asc",
   });
 

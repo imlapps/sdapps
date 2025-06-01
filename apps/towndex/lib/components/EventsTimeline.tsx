@@ -3,6 +3,7 @@
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor, Text, Timeline, TimelineItem } from "@mantine/core";
 import { EventStub, Identifier, compare, displayLabel } from "@sdapps/models";
+import { IconCalendar } from "@tabler/icons-react";
 import { useMemo } from "react";
 
 export function EventsTimeline(json: {
@@ -23,6 +24,7 @@ export function EventsTimeline(json: {
       {events.map((event) => (
         <TimelineItem
           key={Identifier.toString(event.identifier)}
+          bullet={<IconCalendar />}
           title={
             <Anchor href={hrefs.event(event)}>{displayLabel(event)}</Anchor>
           }

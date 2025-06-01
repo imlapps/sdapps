@@ -1,4 +1,4 @@
-import { Table, TableTbody, TableTd, TableTr } from "@mantine/core";
+import { Table, TableTbody, TableTd, TableTr, Text } from "@mantine/core";
 import { Identifier } from "@sdapps/models";
 import { Maybe } from "purify-ts";
 
@@ -23,10 +23,12 @@ export function MonetaryAmountsTable({
           .map((monetaryAmount) => (
             <TableTr key={Identifier.toString(monetaryAmount.identifier)}>
               <TableTd>
-                {monetaryAmount.value.unsafeCoerce().toString()}
+                <Text>{monetaryAmount.value.unsafeCoerce().toString()}</Text>
               </TableTd>
               {includeCurrency ? (
-                <TableTd>{monetaryAmount.currency.orDefault("")}</TableTd>
+                <TableTd>
+                  <Text>{monetaryAmount.currency.orDefault("")}</Text>
+                </TableTd>
               ) : null}
             </TableTr>
           ))}
