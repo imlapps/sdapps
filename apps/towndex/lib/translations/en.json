@@ -22,6 +22,12 @@
     "Organizations": "Organizations",
     "People": "People"
   },
+  "InvoiceTable": {
+    "Description": "Description",
+    "Item": "Item",
+    "Name": "Name",
+    "Total": "Total"
+  },
   "LocalePage": {
     "Dataset": "Dataset",
     "Events": "Events",

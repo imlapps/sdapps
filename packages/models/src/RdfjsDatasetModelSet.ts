@@ -6,7 +6,11 @@ import {
   Event,
   EventStub,
   type Identifier,
+  Invoice,
+  InvoiceStub,
   Message,
+  Order,
+  OrderStub,
   Organization,
   OrganizationStub,
   Person,
@@ -105,8 +109,16 @@ export class RdfjsDatasetModelSet implements ModelSet {
         return Event.fromRdf as any;
       case "EventStub":
         return EventStub.fromRdf as any;
+      case "Invoice":
+        return Invoice.fromRdf as any;
+      case "InvoiceStub":
+        return InvoiceStub.fromRdf as any;
       case "Message":
         return Message.fromRdf as any;
+      case "Order":
+        return Order.fromRdf as any;
+      case "OrderStub":
+        return OrderStub.fromRdf as any;
       case "Organization":
         return Organization.fromRdf as any;
       case "OrganizationStub":
@@ -139,8 +151,14 @@ export class RdfjsDatasetModelSet implements ModelSet {
       case "Event":
       case "EventStub":
         return Event.fromRdfType;
+      case "Invoice":
+      case "InvoiceStub":
+        return Invoice.fromRdfType;
       case "Message":
         return Message.fromRdfType;
+      case "Order":
+      case "OrderStub":
+        return Order.fromRdfType;
       case "Organization":
       case "OrganizationStub":
         return Organization.fromRdfType;
