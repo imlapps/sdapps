@@ -937,15 +937,3 @@ schema:UserPlays rdfs:subClassOf schema:UserInteraction.
 schema:UserPlusOnes rdfs:subClassOf schema:UserInteraction.
 schema:UserTweets rdfs:subClassOf schema:UserInteraction.
 schema:VideoObjectSnapshot rdfs:subClassOf schema:VideoObject.
-<https://townofbrunswick.org/files/TBMeetingMinutes20250410.pdf> a schema:TextObject;
-    schema:name "April 10, 2025 Town Board Meeting Minutes";
-    void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/".
-<https://townofbrunswick.org/files/TBMeetingMinutes20250313.pdf> a schema:TextObject;
-    schema:name "March 13, 2025 Town Board Meeting Minutes";
-    void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/".
-<https://townofbrunswick.org/files/TBMeetingMinutes20250213.pdf> a schema:TextObject;
-    schema:name "February 13, 2025 Town Board Meeting Minutes";
-    void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/".
-<https://townofbrunswick.org/files/TBMeetingMinutes20250109.pdf> a schema:TextObject;
-    schema:name "January 9, 2025 Town Board Meeting Minutes";
-    void:uriSpace "http://purl.org/towndex/instance/us/ny/brunswick/"

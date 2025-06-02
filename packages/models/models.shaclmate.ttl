@@ -7,6 +7,7 @@
 @prefix sdapps: <http://purl.org/sdapps/ontology#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix void: <http://rdfs.org/ns/void#> .
 
 sdapps:ActionStub
     shaclmate:fromRdfType schema:Action ;
@@ -623,6 +624,13 @@ schema:TextObject
     shaclmate:name "TextObject" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:MediaObject .
+
+schema:TextObject-uriSpace
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "uriSpace" ;
+    sh:nodeKind sh:IRI ;
+    sh:path void:uriSpace .
 
 schema:Thing
     shaclmate:abstract true ;
