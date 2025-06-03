@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { openai } from "@ai-sdk/openai";
 import { DatasetCore, DefaultGraph, NamedNode } from "@rdfjs/types";
-import { DocumentFactory, fileNameCodec } from "@sdapps/etl";
+import { DocumentFactory, fileNameCodec, readRdfInput } from "@sdapps/etl";
 import {
   TextObject as GeneratedTextObject,
   Identifier,
@@ -45,27 +45,17 @@ const documentFactory = new DocumentFactory({
   logger,
 });
 
-export async function extract(): Promise<{
+export async function extract(input: Maybe<string>): Promise<{
   inputDataset: DatasetCore;
   ontologyDataset: DatasetCore;
   textObjects: AsyncIterable<TextObject>;
 }> {
-  const inputDataset = extractInputDataset();
+  const inputDataset = (await readRdfInput(input, { logger })).unsafeCoerce();
   return {
     inputDataset,
     ontologyDataset: await extractOntologyDataset(),
     textObjects: extractTextObjects(inputDataset),
   };
-}
-
-function extractInputDataset(): DatasetCore {
-  const inputDataset = new N3.Store();
-  logger.debug("extracting input dataset from stdin");
-  inputDataset.addQuads(
-    new N3.Parser().parse(fs.readFileSync(process.stdin.fd, "utf-8")),
-  );
-  logger.debug(`extracted ${inputDataset.size} quads from stdin`);
-  return inputDataset;
 }
 
 async function extractOntologyDataset(): Promise<DatasetCore> {
