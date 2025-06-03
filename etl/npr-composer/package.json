@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@sdapps/models": "0.0.0",
+    "cmd-ts": "^0.13.0",
+    "node-fetch-cache": "^5.0.2",
+    "pino": "^9.1.0",
+    "tsx": "^4.19.3",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "name": "@sdapps/npr-composer-etl",
+  "packageManager": "npm@10.9.0",
+  "private": true,
+  "type": "module"
+}
