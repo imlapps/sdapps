@@ -623,13 +623,14 @@ schema:StructuredValue
 schema:TextObject
     shaclmate:name "TextObject" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:MediaObject .
+    rdfs:subClassOf schema:MediaObject ;
+    sh:property schema:TextObject-uriSpace .
 
 schema:TextObject-uriSpace
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:name "uriSpace" ;
-    sh:nodeKind sh:IRI ;
     sh:path void:uriSpace .
 
 schema:Thing

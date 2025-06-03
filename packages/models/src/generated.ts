@@ -986,16 +986,23 @@ export namespace Thing {
         "VoteAction",
       ]),
       description: zod.string().optional(),
-      identifiers: zod.string().array(),
+      identifiers: zod
+        .string()
+        .array()
+        .default(() => []),
       name: zod.string().optional(),
       order: zod.number().optional(),
-      sameAs: zod.object({ "@id": zod.string().min(1) }).array(),
+      sameAs: zod
+        .object({ "@id": zod.string().min(1) })
+        .array()
+        .default(() => []),
       subjectOf: zod
         .discriminatedUnion("type", [
           CreativeWorkStub.creativeWorkStubJsonZodSchema(),
           EventStub.eventStubJsonZodSchema(),
         ])
-        .array(),
+        .array()
+        .default(() => []),
       url: zod.object({ "@id": zod.string().min(1) }).optional(),
     });
   }
@@ -2444,10 +2451,17 @@ export namespace CreativeWork {
           "Report",
           "TextObject",
         ]),
-        about: ThingStub.thingStubJsonZodSchema().array(),
-        authors: AgentStub.jsonZodSchema().array(),
+        about: ThingStub.thingStubJsonZodSchema()
+          .array()
+          .default(() => []),
+        authors: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         datePublished: zod.string().datetime().optional(),
-        isBasedOn: zod.object({ "@id": zod.string().min(1) }).array(),
+        isBasedOn: zod
+          .object({ "@id": zod.string().min(1) })
+          .array()
+          .default(() => []),
       }),
     );
   }
@@ -3932,9 +3946,13 @@ export namespace Action {
           "ChooseAction",
           "VoteAction",
         ]),
-        agents: AgentStub.jsonZodSchema().array(),
+        agents: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         endTime: zod.string().datetime().optional(),
-        participants: AgentStub.jsonZodSchema().array(),
+        participants: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         startTime: zod.string().datetime().optional(),
       }),
     );
@@ -6198,10 +6216,12 @@ export namespace VoteActionStub {
 export class TextObject extends MediaObject {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type = "TextObject";
+  readonly uriSpace: purify.Maybe<string>;
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly uriSpace?: purify.Maybe<string> | string;
     } & ConstructorParameters<typeof MediaObject>[0],
   ) {
     super(parameters);
@@ -6213,6 +6233,16 @@ export class TextObject extends MediaObject {
     } else {
       this._identifier = parameters.identifier as never;
     }
+
+    if (purify.Maybe.isMaybe(parameters.uriSpace)) {
+      this.uriSpace = parameters.uriSpace;
+    } else if (typeof parameters.uriSpace === "string") {
+      this.uriSpace = purify.Maybe.of(parameters.uriSpace);
+    } else if (typeof parameters.uriSpace === "undefined") {
+      this.uriSpace = purify.Maybe.empty();
+    } else {
+      this.uriSpace = parameters.uriSpace as never;
+    }
   }
 
   override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
@@ -6220,6 +6250,55 @@ export class TextObject extends MediaObject {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
+  }
+
+  override equals(other: TextObject): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.uriSpace,
+          other.uriSpace,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "uriSpace",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.uriSpace.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    return _hasher;
+  }
+
+  override toJson(): { readonly uriSpace: string | undefined } & ReturnType<
+    MediaObject["toJson"]
+  > {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        uriSpace: this.uriSpace.map((_item) => _item).extract(),
+      } satisfies ReturnType<TextObject["toJson"]>),
+    );
   }
 
   override toRdf({
@@ -6245,6 +6324,10 @@ export class TextObject extends MediaObject {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://rdfs.org/ns/void#uriSpace"),
+      this.uriSpace,
+    );
     return _resource;
   }
 
@@ -6258,9 +6341,10 @@ export namespace TextObject {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObject._propertiesFromJson>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      uriSpace: purify.Maybe<string>;
+    } & UnwrapR<ReturnType<typeof MediaObject._propertiesFromJson>>
   > {
     const _jsonSafeParseResult = textObjectJsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -6277,7 +6361,8 @@ export namespace TextObject {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
+    const uriSpace = purify.Maybe.fromNullable(_jsonObject["uriSpace"]);
+    return purify.Either.of({ ..._super0, identifier, uriSpace });
   }
 
   export function fromJson(
@@ -6301,9 +6386,10 @@ export namespace TextObject {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObject._propertiesFromRdf>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      uriSpace: purify.Maybe<string>;
+    } & UnwrapR<ReturnType<typeof MediaObject._propertiesFromRdf>>
   > {
     const _super0Either = MediaObject._propertiesFromRdf({
       ..._context,
@@ -6332,7 +6418,24 @@ export namespace TextObject {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
+    const _uriSpaceEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://rdfs.org/ns/void#uriSpace"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_uriSpaceEither.isLeft()) {
+      return _uriSpaceEither;
+    }
+
+    const uriSpace = _uriSpaceEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, uriSpace });
   }
 
   export function fromRdf(
@@ -6356,7 +6459,10 @@ export namespace TextObject {
   }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [MediaObject.mediaObjectJsonUiSchema({ scopePrefix })],
+      elements: [
+        MediaObject.mediaObjectJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/uriSpace`, type: "Control" },
+      ],
       label: "TextObject",
       type: "Group",
     };
@@ -6367,6 +6473,7 @@ export namespace TextObject {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("TextObject"),
+        uriSpace: zod.string().optional(),
       }),
     );
   }
@@ -10911,11 +11018,18 @@ export namespace Person {
             Occupation.occupationJsonZodSchema(),
             Role.roleJsonZodSchema(),
           ])
-          .array(),
-        images: ImageObject.imageObjectJsonZodSchema().array(),
+          .array()
+          .default(() => []),
+        images: ImageObject.imageObjectJsonZodSchema()
+          .array()
+          .default(() => []),
         jobTitle: zod.string().optional(),
-        memberOf: OrganizationStub.organizationStubJsonZodSchema().array(),
-        performerIn: EventStub.eventStubJsonZodSchema().array(),
+        memberOf: OrganizationStub.organizationStubJsonZodSchema()
+          .array()
+          .default(() => []),
+        performerIn: EventStub.eventStubJsonZodSchema()
+          .array()
+          .default(() => []),
       }),
     );
   }
@@ -11362,11 +11476,15 @@ export namespace Organization {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("Organization"),
-        members: AgentStub.jsonZodSchema().array(),
-        parentOrganizations:
-          OrganizationStub.organizationStubJsonZodSchema().array(),
-        subOrganizations:
-          OrganizationStub.organizationStubJsonZodSchema().array(),
+        members: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        parentOrganizations: OrganizationStub.organizationStubJsonZodSchema()
+          .array()
+          .default(() => []),
+        subOrganizations: OrganizationStub.organizationStubJsonZodSchema()
+          .array()
+          .default(() => []),
       }),
     );
   }
@@ -13781,7 +13899,9 @@ export namespace Invoice {
         type: zod.literal("Invoice"),
         category: zod.string().optional(),
         provider: AgentStub.jsonZodSchema().optional(),
-        referencesOrder: OrderStub.orderStubJsonZodSchema().array(),
+        referencesOrder: OrderStub.orderStubJsonZodSchema()
+          .array()
+          .default(() => []),
         totalPaymentDue:
           MonetaryAmountStub.monetaryAmountStubJsonZodSchema().optional(),
       }),
@@ -14863,13 +14983,21 @@ export namespace Event {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("Event"),
-        about: ThingStub.thingStubJsonZodSchema().array(),
+        about: ThingStub.thingStubJsonZodSchema()
+          .array()
+          .default(() => []),
         endDate: zod.string().datetime().optional(),
         location: PlaceStub.placeStubJsonZodSchema().optional(),
-        organizers: AgentStub.jsonZodSchema().array(),
-        performers: AgentStub.jsonZodSchema().array(),
+        organizers: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        performers: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         startDate: zod.string().datetime().optional(),
-        subEvents: EventStub.eventStubJsonZodSchema().array(),
+        subEvents: EventStub.eventStubJsonZodSchema()
+          .array()
+          .default(() => []),
         superEvent: EventStub.eventStubJsonZodSchema().optional(),
       }),
     );
