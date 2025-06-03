@@ -9,6 +9,7 @@ import { Logger } from "pino";
 import { Either, EitherAsync, Left, Maybe } from "purify-ts";
 import { fromFile } from "rdf-utils-fs";
 import { MutableResourceSet } from "rdfjs-resource";
+import * as tmp from "tmp-promise";
 import { ZodError, z } from "zod";
 import { deepCopyRdfTerm } from "./deepCopyRdfTerm.js";
 
@@ -135,6 +136,36 @@ async function readExcelFile({
   });
 }
 
+async function readGoogleSheets({
+  logger,
+  spreadsheetId,
+}: { logger?: Logger; spreadsheetId: string }): Promise<
+  Either<Error, DatasetCore>
+> {
+  return await EitherAsync(async ({ liftEither }) => {
+    const exportUrl = `https://docs.google.com/spreadsheets/u/0/d/${spreadsheetId}/export?format=xlsx&id=${spreadsheetId}`;
+    logger?.debug(
+      `fetching Google Sheets spreadsheet ${spreadsheetId} from ${exportUrl}`,
+    );
+    return await tmp.withDir(
+      async ({ path: tmpDirPath }) => {
+        const response = await fetch(exportUrl);
+        const responseBuffer = await response.arrayBuffer();
+        logger?.debug(
+          `fetched Google Sheets spreadsheet ${spreadsheetId} from ${exportUrl}`,
+        );
+        const tmpXlsxFilePath = path.join(tmpDirPath, "temp.xlsx");
+        logger?.debug(`writing temp Excel file ${tmpXlsxFilePath}`);
+        await fs.writeFile(tmpXlsxFilePath, Buffer.from(responseBuffer));
+        return liftEither(
+          await readExcelFile({ filePath: tmpXlsxFilePath, logger }),
+        );
+      },
+      { unsafeCleanup: true },
+    );
+  });
+}
+
 async function readRdfFile({
   filePath,
   logger,
@@ -204,6 +235,26 @@ export async function readRdfInput(
 
       return readRdfFile({ filePath, logger });
     }
+  }
+
+  let url: URL | undefined;
+  try {
+    url = new URL(input.unsafeCoerce());
+  } catch (e) {}
+
+  if (url) {
+    // https://docs.google.com/spreadsheets/d/1sxHX7qNYheEle2E-FRYV24UUTLEfoE4eXTxGwx1XSWY/edit?usp=sharing
+    const urlString = input.unsafeCoerce();
+    const googleSheetsUrlMatch = urlString.match(
+      /^https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)(?:\/|$)/,
+    );
+    if (googleSheetsUrlMatch) {
+      return readGoogleSheets({
+        logger,
+        spreadsheetId: googleSheetsUrlMatch.at(1)!,
+      });
+    }
+    return Left(new Error(`unrecognized URL pattern: ${urlString}`));
   }
 
   return Left(new Error("unrecognized input"));
