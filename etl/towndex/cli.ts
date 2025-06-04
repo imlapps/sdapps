@@ -1,19 +1,36 @@
 #!/usr/bin/env npm exec tsx --
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { command, flag, option, optional, run, string } from "cmd-ts";
 import * as dotenv from "dotenv";
 import { Maybe } from "purify-ts";
 import { extract } from "./src/extract";
 import { load } from "./src/load";
 import { logger } from "./src/logger";
-import { cachesDirectoryPath } from "./src/paths";
 import { transform } from "./src/transform";
+
+const thisDirectoryPath = path.resolve(
+  path.join(path.dirname(fileURLToPath(import.meta.url))),
+);
 
 run(
   command({
     description: "extract, transform and load Towndex data",
     name: "cli",
     args: {
+      cachesDirectoryPath: option({
+        defaultValue: () =>
+          path.resolve(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "data",
+            "towndex",
+            ".caches",
+          ),
+        long: "caches-directory-path",
+      }),
       input: option({
         long: "input",
         short: "i",
@@ -23,7 +40,7 @@ run(
         long: "no-cache",
       }),
     },
-    handler: async ({ input, noCache }) => {
+    handler: async ({ cachesDirectoryPath, input, noCache }) => {
       dotenv.config();
 
       if (noCache) {
@@ -33,7 +50,14 @@ run(
       }
       logger.debug(`cache directory: ${cachesDirectoryPath}`);
 
-      await load(transform(await extract(Maybe.fromNullable(input))));
+      await load(
+        transform(
+          await extract({
+            cachesDirectoryPath,
+            input: Maybe.fromNullable(input),
+          }),
+        ),
+      );
     },
   }),
   process.argv.slice(2),
