@@ -7,6 +7,7 @@ import * as dates from "date-fns";
 import * as dotenv from "dotenv";
 import { extract } from "./src/extract";
 import { logger } from "./src/logger";
+import { transform } from "./src/transform";
 
 const thisDirectoryPath = path.resolve(
   path.join(path.dirname(fileURLToPath(import.meta.url))),
@@ -79,15 +80,14 @@ run(
         ? dates.parseISO(startDateString)
         : dates.subDays(endDate, 30);
 
-      for await (const _ of extract({
-        cachesDirectoryPath,
-        endDate,
-        startDate,
-        ucs,
-      })) {
-      }
-
-      // await load(transform(await extract(Maybe.fromNullable(input))));
+      await transform(
+        extract({
+          cachesDirectoryPath,
+          endDate,
+          startDate,
+          ucs,
+        }),
+      );
     },
   }),
   process.argv.slice(2),
