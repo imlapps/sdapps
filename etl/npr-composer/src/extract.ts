@@ -1,6 +1,7 @@
 import { Stats } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { iso8601DateString } from "@sdapps/models";
 import * as dates from "date-fns";
 import { invariant } from "ts-invariant";
 import { logger } from "./logger";
@@ -12,7 +13,7 @@ function ensureDateWithoutTime(date: Date): void {
   invariant(date.getUTCMilliseconds() === 0);
 }
 
-export async function extract({
+export async function* extract({
   cachesDirectoryPath,
   endDate,
   startDate,
@@ -22,12 +23,16 @@ export async function extract({
   endDate: Date;
   startDate: Date;
   ucs: string;
-}): Promise<void> {
+}): AsyncIterable<any> {
   ensureDateWithoutTime(endDate);
   ensureDateWithoutTime(startDate);
   invariant(startDate.getTime() <= endDate.getTime());
 
   const playlistCacheDirectoryPath = path.join(cachesDirectoryPath, "playlist");
+
+  logger.debug(
+    `extracting playlists for ${ucs} from ${iso8601DateString(startDate)} to ${iso8601DateString(endDate)}`,
+  );
 
   let date = endDate;
   while (date.getTime() > startDate.getTime()) {
@@ -54,15 +59,15 @@ export async function extract({
 
     let playlistJsonAny: any;
     if (stat) {
-      logger.debug(
-        `reading ${ucs} playlist for ${dateString} from ${playlistCacheFilePath}`,
-      );
+      // logger.debug(
+      //   `reading ${ucs} playlist for ${dateString} from ${playlistCacheFilePath}`,
+      // );
       playlistJsonAny = JSON.parse(
         (await fs.readFile(playlistCacheFilePath)).toString(),
       );
-      logger.debug(
-        `read ${ucs} playlist for ${dateString} from ${playlistCacheFilePath}`,
-      );
+      // logger.debug(
+      //   `read ${ucs} playlist for ${dateString} from ${playlistCacheFilePath}`,
+      // );
     } else {
       logger.debug(`fetching ${ucs} playlist for ${dateString}`);
       const response = await fetch(
@@ -89,6 +94,8 @@ export async function extract({
         `wrote ${ucs} playlist for ${dateString} to ${playlistCacheFilePath}`,
       );
     }
+
+    yield playlistJsonAny;
 
     date = dates.subDays(date, 1);
   }

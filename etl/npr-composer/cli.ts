@@ -65,23 +65,27 @@ run(
       const currentDate = new Date();
       const endDate = endDateString
         ? dates.parseISO(endDateString)
-        : new Date(
-            Date.UTC(
-              currentDate.getUTCFullYear(),
-              currentDate.getUTCMonth(),
-              currentDate.getUTCDay(),
+        : dates.subDays(
+            new Date(
+              Date.UTC(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                currentDate.getDate(),
+              ),
             ),
+            1,
           );
       const startDate = startDateString
         ? dates.parseISO(startDateString)
         : dates.subDays(endDate, 30);
 
-      await extract({
+      for await (const _ of extract({
         cachesDirectoryPath,
         endDate,
         startDate,
         ucs,
-      });
+      })) {
+      }
 
       // await load(transform(await extract(Maybe.fromNullable(input))));
     },
