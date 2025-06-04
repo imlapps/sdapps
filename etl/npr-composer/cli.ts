@@ -2,10 +2,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { command, flag, option, run } from "cmd-ts";
+import { command, flag, option, optional, run, string } from "cmd-ts";
 import * as dates from "date-fns";
 import * as dotenv from "dotenv";
+import { Maybe } from "purify-ts";
 import { extract } from "./src/extract";
+import { load } from "./src/load";
 import { logger } from "./src/logger";
 import { transform } from "./src/transform";
 
@@ -38,21 +40,23 @@ run(
       noCache: flag({
         long: "no-cache",
       }),
+      input: option({
+        long: "input",
+        short: "i",
+        type: optional(string),
+      }),
       startDate: option({
         defaultValue: () => "",
         long: "start-date",
         short: "s",
       }),
-      ucs: option({
-        long: "ucs",
-      }),
     },
     handler: async ({
       cachesDirectoryPath,
       endDate: endDateString,
+      input,
       noCache,
       startDate: startDateString,
-      ucs,
     }) => {
       dotenv.config();
 
@@ -80,13 +84,15 @@ run(
         ? dates.parseISO(startDateString)
         : dates.subDays(endDate, 30);
 
-      await transform(
-        extract({
-          cachesDirectoryPath,
-          endDate,
-          startDate,
-          ucs,
-        }),
+      await load(
+        transform(
+          await extract({
+            cachesDirectoryPath,
+            input: Maybe.fromNullable(input),
+            endDate,
+            startDate,
+          }),
+        ),
       );
     },
   }),

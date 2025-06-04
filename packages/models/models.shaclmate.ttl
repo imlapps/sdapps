@@ -207,6 +207,19 @@ schema:AssessAction
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Action .
 
+schema:BroadcastService
+    shaclmate:name "BroadcastService" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Service ;
+    sh:property schema:BroadcastService-callSign .
+
+schema:BroadcastService-callSign
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "callSign" ;
+    sh:path schema:callSign .
+
 schema:ChooseAction
     shaclmate:name "ChooseAction" ;
     a owl:Class, sh:NodeShape ;
@@ -581,6 +594,11 @@ schema:QuantitativeValue-value
     sh:name "value" ;
     sh:path schema:value .
 
+schema:RadioBroadcastService
+    shaclmate:name "RadioBroadcastService" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:BroadcastService .
+
 schema:Report
     shaclmate:name "Report" ;
     a owl:Class, sh:NodeShape ;
@@ -614,6 +632,11 @@ schema:Role-startDate
     sh:name "startDate" ;
     sh:path schema:startDate .
 
+schema:Service
+    shaclmate:name "Service" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible .
+
 schema:StructuredValue
     shaclmate:abstract true ;
     shaclmate:name "StructuredValue" ;
@@ -637,7 +660,7 @@ schema:Thing
     shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
+    sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -646,17 +669,17 @@ schema:Thing-description
     sh:name "description" ;
     sh:path schema:description .
 
-schema:Thing-identifiers
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:name "identifiers" ;
-    sh:path schema:identifier .
-
 schema:Thing-images
     a sh:PropertyShape ;
     sh:name "images" ;
     sh:node schema:ImageObject ;
     sh:path schema:image .
+
+schema:Thing-localIdentifiers
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "localIdentifiers" ;
+    sh:path schema:identifier .
 
 schema:Thing-name
     a sh:PropertyShape ;

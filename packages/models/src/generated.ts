@@ -210,6 +210,7 @@ export abstract class Thing {
     | "Action"
     | "Article"
     | "AssessAction"
+    | "BroadcastService"
     | "ChooseAction"
     | "Event"
     | "GenderType"
@@ -223,12 +224,14 @@ export abstract class Thing {
     | "Person"
     | "Place"
     | "QuantitativeValue"
+    | "RadioBroadcastService"
     | "Report"
     | "Role"
+    | "Service"
     | "TextObject"
     | "VoteAction";
   readonly description: purify.Maybe<string>;
-  readonly identifiers: readonly string[];
+  readonly localIdentifiers: readonly string[];
   readonly name: purify.Maybe<string>;
   readonly order: purify.Maybe<number>;
   readonly sameAs: readonly rdfjs.NamedNode[];
@@ -237,7 +240,7 @@ export abstract class Thing {
 
   constructor(parameters: {
     readonly description?: purify.Maybe<string> | string;
-    readonly identifiers?: readonly string[];
+    readonly localIdentifiers?: readonly string[];
     readonly name?: purify.Maybe<string> | string;
     readonly order?: number | purify.Maybe<number>;
     readonly sameAs?: readonly rdfjs.NamedNode[];
@@ -254,12 +257,12 @@ export abstract class Thing {
       this.description = parameters.description as never;
     }
 
-    if (typeof parameters.identifiers === "undefined") {
-      this.identifiers = [];
-    } else if (Array.isArray(parameters.identifiers)) {
-      this.identifiers = parameters.identifiers;
+    if (typeof parameters.localIdentifiers === "undefined") {
+      this.localIdentifiers = [];
+    } else if (Array.isArray(parameters.localIdentifiers)) {
+      this.localIdentifiers = parameters.localIdentifiers;
     } else {
-      this.identifiers = parameters.identifiers as never;
+      this.localIdentifiers = parameters.localIdentifiers as never;
     }
 
     if (purify.Maybe.isMaybe(parameters.name)) {
@@ -345,12 +348,12 @@ export abstract class Thing {
       )
       .chain(() =>
         ((left, right) => arrayEquals(left, right, strictEquals))(
-          this.identifiers,
-          other.identifiers,
+          this.localIdentifiers,
+          other.localIdentifiers,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "identifiers",
+          propertyName: "localIdentifiers",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -465,7 +468,7 @@ export abstract class Thing {
     this.description.ifJust((_value0) => {
       _hasher.update(_value0);
     });
-    for (const _item0 of this.identifiers) {
+    for (const _item0 of this.localIdentifiers) {
       _hasher.update(_item0);
     }
 
@@ -506,6 +509,7 @@ export abstract class Thing {
       | "Action"
       | "Article"
       | "AssessAction"
+      | "BroadcastService"
       | "ChooseAction"
       | "Event"
       | "GenderType"
@@ -519,12 +523,14 @@ export abstract class Thing {
       | "Person"
       | "Place"
       | "QuantitativeValue"
+      | "RadioBroadcastService"
       | "Report"
       | "Role"
+      | "Service"
       | "TextObject"
       | "VoteAction";
     readonly description: string | undefined;
-    readonly identifiers: readonly string[];
+    readonly localIdentifiers: readonly string[];
     readonly name: string | undefined;
     readonly order: number | undefined;
     readonly sameAs: readonly { readonly "@id": string }[];
@@ -542,7 +548,7 @@ export abstract class Thing {
             : this.identifier.value,
         type: this.type,
         description: this.description.map((_item) => _item).extract(),
-        identifiers: this.identifiers.map((_item) => _item),
+        localIdentifiers: this.localIdentifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
         order: this.order.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
@@ -571,7 +577,7 @@ export abstract class Thing {
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/identifier"),
-      this.identifiers.map((_item) => _item),
+      this.localIdentifiers.map((_item) => _item),
     );
     _resource.add(dataFactory.namedNode("http://schema.org/name"), this.name);
     _resource.add(
@@ -600,12 +606,14 @@ export abstract class Thing {
 }
 
 export namespace Thing {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       description: purify.Maybe<string>;
-      identifiers: readonly string[];
+      localIdentifiers: readonly string[];
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
       sameAs: readonly rdfjs.NamedNode[];
@@ -623,7 +631,7 @@ export namespace Thing {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const description = purify.Maybe.fromNullable(_jsonObject["description"]);
-    const identifiers = _jsonObject["identifiers"];
+    const localIdentifiers = _jsonObject["localIdentifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
     const order = purify.Maybe.fromNullable(_jsonObject["order"]);
     const sameAs = _jsonObject["sameAs"].map((_item) =>
@@ -640,7 +648,7 @@ export namespace Thing {
     return purify.Either.of({
       identifier,
       description,
-      identifiers,
+      localIdentifiers,
       name,
       order,
       sameAs,
@@ -683,7 +691,7 @@ export namespace Thing {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       description: purify.Maybe<string>;
-      identifiers: readonly string[];
+      localIdentifiers: readonly string[];
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
       sameAs: readonly rdfjs.NamedNode[];
@@ -709,7 +717,7 @@ export namespace Thing {
     }
 
     const description = _descriptionEither.unsafeCoerce();
-    const _identifiersEither: purify.Either<
+    const _localIdentifiersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly string[]
     > = purify.Either.of([
@@ -726,11 +734,11 @@ export namespace Thing {
             .toList(),
         ),
     ]);
-    if (_identifiersEither.isLeft()) {
-      return _identifiersEither;
+    if (_localIdentifiersEither.isLeft()) {
+      return _localIdentifiersEither;
     }
 
-    const identifiers = _identifiersEither.unsafeCoerce();
+    const localIdentifiers = _localIdentifiersEither.unsafeCoerce();
     const _nameEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -858,7 +866,7 @@ export namespace Thing {
     return purify.Either.of({
       identifier,
       description,
-      identifiers,
+      localIdentifiers,
       name,
       order,
       sameAs,
@@ -946,7 +954,10 @@ export namespace Thing {
           type: "Control",
         },
         { scope: `${scopePrefix}/properties/description`, type: "Control" },
-        { scope: `${scopePrefix}/properties/identifiers`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/localIdentifiers`,
+          type: "Control",
+        },
         { scope: `${scopePrefix}/properties/name`, type: "Control" },
         { scope: `${scopePrefix}/properties/order`, type: "Control" },
         { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
@@ -965,6 +976,7 @@ export namespace Thing {
         "Action",
         "Article",
         "AssessAction",
+        "BroadcastService",
         "ChooseAction",
         "Event",
         "GenderType",
@@ -978,13 +990,15 @@ export namespace Thing {
         "Person",
         "Place",
         "QuantitativeValue",
+        "RadioBroadcastService",
         "Report",
         "Role",
+        "Service",
         "TextObject",
         "VoteAction",
       ]),
       description: zod.string().optional(),
-      identifiers: zod
+      localIdentifiers: zod
         .string()
         .array()
         .default(() => []),
@@ -1008,13 +1022,16 @@ export namespace Thing {
 export abstract class Intangible extends Thing {
   abstract override readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   abstract override readonly type:
+    | "BroadcastService"
     | "GenderType"
     | "Invoice"
     | "MonetaryAmount"
     | "Occupation"
     | "Order"
     | "QuantitativeValue"
-    | "Role";
+    | "RadioBroadcastService"
+    | "Role"
+    | "Service";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(parameters: ConstructorParameters<typeof Thing>[0]) {
@@ -1075,6 +1092,9 @@ export namespace Intangible {
     return (Invoice.fromJson(json) as purify.Either<zod.ZodError, Intangible>)
       .altLazy(
         () => Order.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
+      )
+      .altLazy(
+        () => Service.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
       )
       .altLazy(
         () =>
@@ -1147,6 +1167,13 @@ export namespace Intangible {
       )
       .altLazy(
         () =>
+          Service.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            Intangible
+          >,
+      )
+      .altLazy(
+        () =>
           Enumeration.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
@@ -1195,14 +1222,659 @@ export namespace Intangible {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "BroadcastService",
           "GenderType",
           "Invoice",
           "MonetaryAmount",
           "Occupation",
           "Order",
           "QuantitativeValue",
+          "RadioBroadcastService",
           "Role",
+          "Service",
         ]),
+      }),
+    );
+  }
+}
+export class Service extends Intangible {
+  protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  override readonly type:
+    | "BroadcastService"
+    | "RadioBroadcastService"
+    | "Service" = "Service";
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof Intangible>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Service"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace Service {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof Intangible._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = serviceJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, Service> {
+    return (
+      BroadcastService.fromJson(json) as purify.Either<zod.ZodError, Service>
+    ).altLazy(() =>
+      Service._propertiesFromJson(json).map(
+        (properties) => new Service(properties),
+      ),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof Intangible._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = Intangible._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/Service"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Service)`,
+          predicate: dataFactory.namedNode("http://schema.org/Service"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof Service._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Service> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      BroadcastService.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        Service
+      >
+    ).altLazy(() =>
+      Service._propertiesFromRdf(parameters).map(
+        (properties) => new Service(properties),
+      ),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Service",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(serviceJsonZodSchema());
+  }
+
+  export function serviceJsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
+      label: "Service",
+      type: "Group",
+    };
+  }
+
+  export function serviceJsonZodSchema() {
+    return Intangible.intangibleJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "BroadcastService",
+          "RadioBroadcastService",
+          "Service",
+        ]),
+      }),
+    );
+  }
+}
+export class BroadcastService extends Service {
+  override readonly type: "BroadcastService" | "RadioBroadcastService" =
+    "BroadcastService";
+  readonly callSign: purify.Maybe<string>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly callSign?: purify.Maybe<string> | string;
+    } & ConstructorParameters<typeof Service>[0],
+  ) {
+    super(parameters);
+    if (purify.Maybe.isMaybe(parameters.callSign)) {
+      this.callSign = parameters.callSign;
+    } else if (typeof parameters.callSign === "string") {
+      this.callSign = purify.Maybe.of(parameters.callSign);
+    } else if (typeof parameters.callSign === "undefined") {
+      this.callSign = purify.Maybe.empty();
+    } else {
+      this.callSign = parameters.callSign as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: BroadcastService): EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.callSign,
+          other.callSign,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "callSign",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.callSign.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    return _hasher;
+  }
+
+  override toJson(): { readonly callSign: string | undefined } & ReturnType<
+    Service["toJson"]
+  > {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        callSign: this.callSign.map((_item) => _item).extract(),
+      } satisfies ReturnType<BroadcastService["toJson"]>),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/BroadcastService"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/callSign"),
+      this.callSign,
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace BroadcastService {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      callSign: purify.Maybe<string>;
+    } & UnwrapR<ReturnType<typeof Service._propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult =
+      broadcastServiceJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = Service._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const callSign = purify.Maybe.fromNullable(_jsonObject["callSign"]);
+    return purify.Either.of({ ..._super0, identifier, callSign });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BroadcastService> {
+    return (
+      RadioBroadcastService.fromJson(json) as purify.Either<
+        zod.ZodError,
+        BroadcastService
+      >
+    ).altLazy(() =>
+      BroadcastService._propertiesFromJson(json).map(
+        (properties) => new BroadcastService(properties),
+      ),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      callSign: purify.Maybe<string>;
+    } & UnwrapR<ReturnType<typeof Service._propertiesFromRdf>>
+  > {
+    const _super0Either = Service._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/BroadcastService"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/BroadcastService)`,
+          predicate: dataFactory.namedNode(
+            "http://schema.org/BroadcastService",
+          ),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _callSignEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/callSign"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_callSignEither.isLeft()) {
+      return _callSignEither;
+    }
+
+    const callSign = _callSignEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, callSign });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof BroadcastService._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastService> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      RadioBroadcastService.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        BroadcastService
+      >
+    ).altLazy(() =>
+      BroadcastService._propertiesFromRdf(parameters).map(
+        (properties) => new BroadcastService(properties),
+      ),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/BroadcastService",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(broadcastServiceJsonZodSchema());
+  }
+
+  export function broadcastServiceJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        Service.serviceJsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/callSign`, type: "Control" },
+      ],
+      label: "BroadcastService",
+      type: "Group",
+    };
+  }
+
+  export function broadcastServiceJsonZodSchema() {
+    return Service.serviceJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["BroadcastService", "RadioBroadcastService"]),
+        callSign: zod.string().optional(),
+      }),
+    );
+  }
+}
+export class RadioBroadcastService extends BroadcastService {
+  override readonly type = "RadioBroadcastService";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof BroadcastService>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://schema.org/RadioBroadcastService",
+        ),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace RadioBroadcastService {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof BroadcastService._propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult =
+      radioBroadcastServiceJsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = BroadcastService._propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, RadioBroadcastService> {
+    return RadioBroadcastService._propertiesFromJson(json).map(
+      (properties) => new RadioBroadcastService(properties),
+    );
+  }
+
+  export function _propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+      ReturnType<typeof BroadcastService._propertiesFromRdf>
+    >
+  > {
+    const _super0Either = BroadcastService._propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/RadioBroadcastService"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioBroadcastService)`,
+          predicate: dataFactory.namedNode(
+            "http://schema.org/RadioBroadcastService",
+          ),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof RadioBroadcastService._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, RadioBroadcastService> {
+    return RadioBroadcastService._propertiesFromRdf(parameters).map(
+      (properties) => new RadioBroadcastService(properties),
+    );
+  }
+
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/RadioBroadcastService",
+  );
+
+  export function jsonSchema() {
+    return zodToJsonSchema(radioBroadcastServiceJsonZodSchema());
+  }
+
+  export function radioBroadcastServiceJsonUiSchema(parameters?: {
+    scopePrefix?: string;
+  }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        BroadcastService.broadcastServiceJsonUiSchema({ scopePrefix }),
+      ],
+      label: "RadioBroadcastService",
+      type: "Group",
+    };
+  }
+
+  export function radioBroadcastServiceJsonZodSchema() {
+    return BroadcastService.broadcastServiceJsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("RadioBroadcastService"),
       }),
     );
   }
@@ -1441,7 +2113,9 @@ export class Role extends Intangible {
 }
 
 export namespace Role {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2180,7 +2854,9 @@ export abstract class CreativeWork extends Thing {
 }
 
 export namespace CreativeWork {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2678,7 +3354,9 @@ export abstract class MediaObject extends CreativeWork {
 }
 
 export namespace MediaObject {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3285,7 +3963,9 @@ export class GenderType extends Enumeration {
 }
 
 export namespace GenderType {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -3680,7 +4360,9 @@ export class Action extends Thing {
 }
 
 export namespace Action {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4657,7 +5339,9 @@ export abstract class ThingStub {
 }
 
 export namespace ThingStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6239,18 +6923,20 @@ export class TextObject extends MediaObject {
   }
 
   override equals(other: TextObject): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => maybeEquals(left, right, strictEquals))(
-        this.uriSpace,
-        other.uriSpace,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "uriSpace",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.uriSpace,
+          other.uriSpace,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "uriSpace",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -6321,7 +7007,9 @@ export class TextObject extends MediaObject {
 }
 
 export namespace TextObject {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8471,7 +9159,9 @@ export class QuantitativeValue extends StructuredValue {
 }
 
 export namespace QuantitativeValue {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9264,7 +9954,9 @@ export class QuantitativeValueStub extends StructuredValueStub {
 }
 
 export namespace QuantitativeValueStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10543,7 +11235,9 @@ export class Person extends Thing {
 }
 
 export namespace Person {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11214,7 +11908,9 @@ export class Organization extends Thing {
 }
 
 export namespace Organization {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11506,19 +12202,21 @@ export class Order extends Intangible {
   }
 
   override equals(other: Order): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfInvoice,
-        other.partOfInvoice,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfInvoice",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfInvoice,
+          other.partOfInvoice,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfInvoice",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -11593,7 +12291,9 @@ export class Order extends Intangible {
 }
 
 export namespace Order {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12175,7 +12875,9 @@ export class MonetaryAmount extends StructuredValue {
 }
 
 export namespace MonetaryAmount {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12490,7 +13192,9 @@ export class MonetaryAmountStub extends StructuredValueStub {
 }
 
 export namespace MonetaryAmountStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12850,18 +13554,20 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => maybeEquals(left, right, AgentStub.equals))(
-        this.sender,
-        other.sender,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "sender",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, AgentStub.equals))(
+          this.sender,
+          other.sender,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "sender",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -12939,7 +13645,9 @@ export class Message extends CreativeWork {
 }
 
 export namespace Message {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13610,7 +14318,9 @@ export class Invoice extends Intangible {
 }
 
 export namespace Invoice {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14554,7 +15264,9 @@ export class Event extends Thing {
 }
 
 export namespace Event {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15142,7 +15854,9 @@ export class EventStub extends ThingStub {
 }
 
 export namespace EventStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15499,18 +16213,20 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => maybeEquals(left, right, strictEquals))(
-        this.jobTitle,
-        other.jobTitle,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "jobTitle",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => maybeEquals(left, right, strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -15581,7 +16297,9 @@ export class PersonStub extends ThingStub {
 }
 
 export namespace PersonStub {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;

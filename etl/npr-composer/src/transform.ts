@@ -40,9 +40,15 @@ const playlistResponseJsonSchema = z.object({
   ucsNow: z.string(),
 });
 
-export async function* transform(
-  playlistResponsesJson: AsyncIterable<any>,
-): AsyncIterable<DatasetCore> {
+export async function* transform({
+  inputDataset,
+  playlistResponsesJson,
+}: {
+  inputDataset: DatasetCore;
+  playlistResponsesJson: AsyncIterable<any>;
+}): AsyncIterable<DatasetCore> {
+  yield inputDataset;
+
   for await (const playlistJson of transformPlaylistResponsesJson(
     playlistResponsesJson,
   )) {
