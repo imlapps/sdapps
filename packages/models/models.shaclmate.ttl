@@ -34,6 +34,11 @@ sdapps:AssessActionStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ActionStub .
 
+sdapps:BroadcastServiceStub
+    shaclmate:name "BroadcastServiceStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ServiceStub .
+
 sdapps:ChooseActionStub
     shaclmate:fromRdfType schema:ChooseAction ;
     shaclmate:name "ChooseActionStub" ;
@@ -45,6 +50,11 @@ sdapps:CreativeWorkStub
     shaclmate:name "CreativeWorkStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
+
+sdapps:EpisodeStub
+    shaclmate:name "EpisodeStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:EventStub
     shaclmate:fromRdfType schema:Event ;
@@ -62,7 +72,6 @@ sdapps:EventStub-superEvent
     sh:path schema:superEvent .
 
 sdapps:IntangibleStub
-    shaclmate:abstract true ;
     shaclmate:name "IntangibleStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
@@ -117,6 +126,11 @@ sdapps:PlaceStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
+sdapps:PublicationEventStub
+    shaclmate:name "PublicationEventStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:EventStub .
+
 sdapps:QuantitativeValueStub
     shaclmate:fromRdfType schema:QuantitativeValue ;
     shaclmate:name "QuantitativeValueStub" ;
@@ -124,14 +138,28 @@ sdapps:QuantitativeValueStub
     rdfs:subClassOf sdapps:StructuredValueStub ;
     sh:property schema:QuantitativeValue-unitText, schema:QuantitativeValue-value .
 
+sdapps:RadioBroadcastServiceStub
+    shaclmate:name "RadioBroadcastServiceStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:BroadcastServiceStub .
+
+sdapps:RadioEpisodeStub
+    shaclmate:name "RadioEpisodeStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:EpisodeStub .
+
 sdapps:ReportStub
     shaclmate:fromRdfType schema:Report ;
     shaclmate:name "ReportStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ArticleStub .
 
+sdapps:ServiceStub
+    shaclmate:name "ServiceStub" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub .
+
 sdapps:StructuredValueStub
-    shaclmate:abstract true ;
     shaclmate:name "StructuredValueStub" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
@@ -150,7 +178,6 @@ sdapps:Thing-order
     sh:path sh:order .
 
 sdapps:ThingStub
-    shaclmate:abstract true ;
     shaclmate:name "ThingStub" ;
     a owl:Class, sh:NodeShape ;
     sh:property sdapps:Thing-order, schema:Thing-name .
@@ -207,6 +234,11 @@ schema:AssessAction
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Action .
 
+schema:BroadcastEvent
+    shaclmate:name "BroadcastEvent" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:PublicationEvent .
+
 schema:BroadcastService
     shaclmate:name "BroadcastService" ;
     a owl:Class, sh:NodeShape ;
@@ -226,11 +258,10 @@ schema:ChooseAction
     rdfs:subClassOf schema:AssessAction .
 
 schema:CreativeWork
-    shaclmate:abstract true ;
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-isBasedOn .
+    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-isBasedOn, schema:CreativeWork-publication .
 
 schema:CreativeWork-about
     a sh:PropertyShape ;
@@ -257,11 +288,26 @@ schema:CreativeWork-isBasedOn
     sh:nodeKind sh:IRI ;
     sh:path schema:isBasedOn .
 
+schema:CreativeWork-publication
+    a sh:PropertyShape ;
+    sh:name "publication" ;
+    sh:node sdapps:PublicationEventStub ;
+    sh:path schema:publication .
+
+schema:CreativeWorkSeries
+    shaclmate:name "CreativeWorkSeries" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork .
+
 schema:Enumeration
-    shaclmate:abstract true ;
     shaclmate:name "Enumeration" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
+
+schema:Episode
+    shaclmate:name "Episode" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork .
 
 schema:Event
     shaclmate:name "Event" ;
@@ -341,7 +387,6 @@ schema:ImageObject
     rdfs:subClassOf schema:MediaObject .
 
 schema:Intangible
-    shaclmate:abstract true ;
     shaclmate:name "Intangible" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
@@ -384,7 +429,6 @@ schema:Male
     rdfs:label "Male" .
 
 schema:MediaObject
-    shaclmate:abstract true ;
     shaclmate:name "MediaObject" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:CreativeWork ;
@@ -574,6 +618,18 @@ schema:Place
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
 
+schema:PublicationEvent
+    shaclmate:name "PublicationEvent" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Event ;
+    sh:property schema:PublicationEvent-publishedOn .
+
+schema:PublicationEvent-publishedOn
+    a sh:PropertyShape ;
+    sh:name "publishedOn" ;
+    sh:node sdapps:BroadcastServiceStub ;
+    sh:path schema:publishedOn .
+
 schema:QuantitativeValue
     shaclmate:name "QuantitativeValue" ;
     a owl:Class, sh:NodeShape ;
@@ -598,6 +654,23 @@ schema:RadioBroadcastService
     shaclmate:name "RadioBroadcastService" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:BroadcastService .
+
+schema:RadioEpisode
+    shaclmate:name "RadioEpisode" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Episode .
+
+schema:RadioSeries
+    shaclmate:name "RadioSeries" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWorkSeries ;
+    sh:property schema:RadioSeries-episodes .
+
+schema:RadioSeries-episodes
+    a sh:PropertyShape ;
+    sh:name "episodes" ;
+    sh:node schema:RadioEpisodeStub ;
+    sh:path schema:episode .
 
 schema:Report
     shaclmate:name "Report" ;
@@ -638,7 +711,6 @@ schema:Service
     rdfs:subClassOf schema:Intangible .
 
 schema:StructuredValue
-    shaclmate:abstract true ;
     shaclmate:name "StructuredValue" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
@@ -657,7 +729,6 @@ schema:TextObject-uriSpace
     sh:path void:uriSpace .
 
 schema:Thing
-    shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
     sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .

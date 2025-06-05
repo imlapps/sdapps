@@ -1,8 +1,15 @@
 import { DatasetCore } from "@rdfjs/types";
-import { Thing } from "@sdapps/models";
+import {
+  BroadcastEvent,
+  RadioBroadcastService,
+  RadioEpisode,
+  RadioSeries,
+  Thing,
+} from "@sdapps/models";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { z } from "zod";
+import { ExtractResult } from "./ExtractResult";
 import { logger } from "./logger";
 
 const playlistJsonSchema = z.object({
@@ -41,45 +48,61 @@ const playlistResponseJsonSchema = z.object({
 });
 
 export async function* transform({
+  extractResults,
   inputDataset,
-  playlistResponsesJson,
 }: {
+  extractResults: AsyncIterable<ExtractResult>;
   inputDataset: DatasetCore;
-  playlistResponsesJson: AsyncIterable<any>;
 }): AsyncIterable<DatasetCore> {
   yield inputDataset;
 
-  for await (const playlistJson of transformPlaylistResponsesJson(
-    playlistResponsesJson,
-  )) {
-    for await (const model of transformPlaylistJson(playlistJson)) {
-      yield model.toRdf({
-        mutateGraph: N3.DataFactory.defaultGraph(),
-        resourceSet: new MutableResourceSet({
-          dataFactory: N3.DataFactory,
-          dataset: new N3.Store(),
-        }),
-      }).dataset;
-    }
-  }
-}
-
-async function* transformPlaylistResponsesJson(
-  playlistResponsesJson: AsyncIterable<any>,
-): AsyncIterable<PlaylistJson> {
-  for await (const playlistResponseJson of playlistResponsesJson) {
-    const parseResult =
-      await playlistResponseJsonSchema.safeParseAsync(playlistResponseJson);
+  for await (const extractResult of extractResults) {
+    const parseResult = await playlistResponseJsonSchema.safeParseAsync(
+      extractResult.playlistResponseJson,
+    );
     if (!parseResult.success) {
       logger.warn(
         `error parsing playlist response: ${parseResult.error.message}`,
       );
       continue;
     }
-    yield* playlistResponseJson.playlist;
+
+    for (const playlistJson of parseResult.data.playlist) {
+      for await (const model of transformPlaylistJson({
+        playlistJson,
+        radioBroadcastService: extractResult.radioBroadcastService,
+      })) {
+        yield model.toRdf({
+          mutateGraph: N3.DataFactory.defaultGraph(),
+          resourceSet: new MutableResourceSet({
+            dataFactory: N3.DataFactory,
+            dataset: new N3.Store(),
+          }),
+        }).dataset;
+      }
+    }
   }
 }
 
-async function* transformPlaylistJson(
-  playlistJson: PlaylistJson,
-): AsyncIterable<Thing> {}
+async function* transformPlaylistJson({
+  playlistJson,
+  radioBroadcastService,
+}: {
+  playlistJson: PlaylistJson;
+  radioBroadcastService: RadioBroadcastService;
+}): AsyncIterable<Thing> {
+  const radioEpisode = new RadioEpisode({
+    identifier: Iris.episode(playlistJson.episode_id),
+  });
+
+  const radioEpisodeBroadcastEvent = new BroadcastEvent({
+    publishedOn: stubify(radioBroadcastService),
+  });
+
+  const radioSeries = new RadioSeries({
+    episodes: [stubify(radioEpisode)],
+    identifier: Iris.program(playlistJson.program_id),
+  });
+
+  new Date(playlistJson.start_utc);
+}

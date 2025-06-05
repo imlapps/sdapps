@@ -12,6 +12,8 @@ import * as dates from "date-fns";
 import { Maybe } from "purify-ts";
 import { ResourceSet } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
+import { ExtractResult } from "./ExtractResult";
+import { Iris } from "./Iris";
 import { logger } from "./logger";
 
 function ensureDateWithoutTime(date: Date): void {
@@ -32,7 +34,10 @@ export async function extract({
   input: Maybe<string>;
   startDate: Date;
 }): Promise<{
-  playlistResponsesJson: AsyncIterable<any>;
+  playlistResponsesJson: AsyncIterable<{
+    playlistResponseJson: any;
+    radioBroadcastService: RadioBroadcastService;
+  }>;
   inputDataset: DatasetCore;
 }> {
   const inputDataset = (await readRdfInput(input, { logger })).unsafeCoerce();
@@ -57,15 +62,17 @@ async function* extractPlaylistResponsesJson({
   cachesDirectoryPath: string;
   endDate: Date;
   startDate: Date;
-  ucsIdentifiers: readonly string[];
-}): AsyncIterable<any> {
+  ucsIdentifiers: Record<string, RadioBroadcastService>;
+}): AsyncIterable<ExtractResult> {
   ensureDateWithoutTime(endDate);
   ensureDateWithoutTime(startDate);
   invariant(startDate.getTime() <= endDate.getTime());
 
   const playlistCacheDirectoryPath = path.join(cachesDirectoryPath, "playlist");
 
-  for (const ucsIdentifier of ucsIdentifiers) {
+  for (const [ucsIdentifier, radioBroadcastService] of Object.entries(
+    ucsIdentifiers,
+  )) {
     logger.debug(
       `extracting playlists for ${ucsIdentifier} from ${iso8601DateString(startDate)} to ${iso8601DateString(endDate)}`,
     );
@@ -94,12 +101,12 @@ async function* extractPlaylistResponsesJson({
         stat = await fs.stat(playlistCacheFilePath);
       } catch {}
 
-      let playlistJsonAny: any;
+      let playlistResponseJsonAny: any;
       if (stat) {
         // logger.debug(
         //   `reading ${ucs} playlist for ${dateString} from ${playlistCacheFilePath}`,
         // );
-        playlistJsonAny = JSON.parse(
+        playlistResponseJsonAny = JSON.parse(
           (await fs.readFile(playlistCacheFilePath)).toString(),
         );
         // logger.debug(
@@ -117,7 +124,7 @@ async function* extractPlaylistResponsesJson({
             },
           ).toString()}`,
         );
-        playlistJsonAny = await response.json();
+        playlistResponseJsonAny = await response.json();
         logger.debug(`fetched ${ucsIdentifier} playlist for ${dateString}`);
         await fs.mkdir(path.dirname(playlistCacheFilePath), {
           recursive: true,
@@ -127,14 +134,18 @@ async function* extractPlaylistResponsesJson({
         );
         await fs.writeFile(
           playlistCacheFilePath,
-          JSON.stringify(playlistJsonAny, undefined, 2),
+          JSON.stringify(playlistResponseJsonAny, undefined, 2),
         );
         logger.debug(
           `wrote ${ucsIdentifier} playlist for ${dateString} to ${playlistCacheFilePath}`,
         );
       }
 
-      yield playlistJsonAny;
+      yield {
+        playlistResponseJson: playlistResponseJsonAny,
+        radioBroadcastService,
+        ucsIdentifier,
+      };
       dayCount++;
 
       date = dates.subDays(date, 1);
@@ -146,9 +157,11 @@ async function* extractPlaylistResponsesJson({
   }
 }
 
-function extractUcsIdentifiers(inputDataset: DatasetCore): readonly string[] {
+function extractUcsIdentifiers(
+  inputDataset: DatasetCore,
+): Record<string, RadioBroadcastService> {
   const resourceSet = new ResourceSet({ dataset: inputDataset });
-  const ucsIdentifiers: string[] = [];
+  const ucsIdentifiers: Record<string, RadioBroadcastService> = {};
   for (const resource of resourceSet.instancesOf(
     RadioBroadcastService.fromRdfType,
   )) {
@@ -159,10 +172,9 @@ function extractUcsIdentifiers(inputDataset: DatasetCore): readonly string[] {
         );
       })
       .ifRight((model) => {
+        const nprComposerApiIriPrefix = Iris.ucs("").value;
         const nprComposerApiIri = model.sameAs.find((sameAs) =>
-          sameAs.value.startsWith(
-            "https://api.composer.nprstations.org/v1/ucs/",
-          ),
+          sameAs.value.startsWith(nprComposerApiIriPrefix),
         );
         if (!nprComposerApiIri) {
           logger.debug(
@@ -170,11 +182,11 @@ function extractUcsIdentifiers(inputDataset: DatasetCore): readonly string[] {
           );
           return;
         }
-        ucsIdentifiers.push(
-          nprComposerApiIri.value.substring(
-            "https://api.composer.nprstations.org/v1/ucs/".length,
-          ),
+        const ucsIdentifier = nprComposerApiIri.value.substring(
+          nprComposerApiIriPrefix.length,
         );
+        invariant(!ucsIdentifiers[ucsIdentifier]);
+        ucsIdentifiers[ucsIdentifier] = model;
       });
   }
   return ucsIdentifiers;
