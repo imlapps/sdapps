@@ -669,7 +669,7 @@ schema:RadioSeries
 schema:RadioSeries-episodes
     a sh:PropertyShape ;
     sh:name "episodes" ;
-    sh:node schema:RadioEpisodeStub ;
+    sh:node sdapps:RadioEpisodeStub ;
     sh:path schema:episode .
 
 schema:Report
