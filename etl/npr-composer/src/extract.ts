@@ -71,6 +71,7 @@ async function* extractPlaylistResponsesJson({
     );
 
     let date = endDate;
+    let dayCount = 0;
     while (date.getTime() > startDate.getTime()) {
       ensureDateWithoutTime(date);
 
@@ -134,9 +135,14 @@ async function* extractPlaylistResponsesJson({
       }
 
       yield playlistJsonAny;
+      dayCount++;
 
       date = dates.subDays(date, 1);
     }
+
+    logger.debug(
+      `extracted ${dayCount} playlists for ${ucsIdentifier} from ${iso8601DateString(startDate)} to ${iso8601DateString(endDate)}`,
+    );
   }
 }
 
