@@ -1,55 +1,15 @@
 import type { Either } from "purify-ts";
-import type {
-  Event,
-  EventStub,
-  Identifier,
-  Invoice,
-  InvoiceStub,
-  Message,
-  Order,
-  OrderStub,
-  Organization,
-  OrganizationStub,
-  Person,
-  PersonStub,
-  Place,
-  PlaceStub,
-  Report,
-  ReportStub,
-  TextObject,
-  VoteAction,
-} from "./index.js";
+import type { Identifier, Model } from "./index.js";
 
 export interface ModelSet {
-  model<ModelT extends ModelSet.Model>(kwds: {
+  model<ModelT extends Model>(kwds: {
     identifier: Identifier;
-    type: ModelT["type"] | "Thing";
+    type: ModelT["type"];
   }): Promise<Either<Error, ModelT>>;
 
-  modelCount(type: ModelSet.Model["type"]): Promise<Either<Error, number>>;
+  modelCount(type: Model["type"]): Promise<Either<Error, number>>;
 
-  models<ModelT extends ModelSet.Model>(
+  models<ModelT extends Model>(
     type: ModelT["type"],
   ): Promise<Either<Error, readonly ModelT[]>>;
-}
-
-export namespace ModelSet {
-  export type Model =
-    | Event
-    | EventStub
-    | Invoice
-    | InvoiceStub
-    | Message
-    | Order
-    | OrderStub
-    | Organization
-    | OrganizationStub
-    | Person
-    | PersonStub
-    | Place
-    | PlaceStub
-    | Report
-    | ReportStub
-    | TextObject
-    | VoteAction;
 }

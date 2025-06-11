@@ -1,28 +1,8 @@
-import type { DatasetCore, NamedNode } from "@rdfjs/types";
+import type { DatasetCore } from "@rdfjs/types";
 import { Either } from "purify-ts";
-import { type Resource, ResourceSet } from "rdfjs-resource";
+import { ResourceSet } from "rdfjs-resource";
 import type { ModelSet } from "./ModelSet.js";
-import {
-  Event,
-  EventStub,
-  type Identifier,
-  Invoice,
-  InvoiceStub,
-  Message,
-  Order,
-  OrderStub,
-  Organization,
-  OrganizationStub,
-  Person,
-  PersonStub,
-  Place,
-  PlaceStub,
-  Report,
-  ReportStub,
-  TextObject,
-  Thing,
-  VoteAction,
-} from "./index.js";
+import { $ObjectTypes, type Identifier, Model } from "./index.js";
 
 export class RdfjsDatasetModelSet implements ModelSet {
   readonly resourceSet: ResourceSet;
@@ -37,40 +17,43 @@ export class RdfjsDatasetModelSet implements ModelSet {
     });
   }
 
-  async model<ModelT extends ModelSet.Model>(kwds: {
+  async model<ModelT extends Model>(kwds: {
     identifier: Identifier;
     type: ModelT["type"];
   }): Promise<Either<Error, ModelT>> {
     return this.modelSync(kwds);
   }
 
-  modelSync<ModelT extends ModelSet.Model>({
+  modelSync<ModelT extends Model>({
     identifier,
     type,
   }: {
     identifier: Identifier;
-    type: ModelT["type"] | "Thing";
+    type: ModelT["type"];
   }): Either<Error, ModelT> {
-    const fromRdf = this.modelFromRdf(type);
+    const fromRdf = $ObjectTypes[type].fromRdf;
     const resource = this.resourceSet.resource(identifier);
-    return fromRdf({ resource });
+    return fromRdf({ resource }) as unknown as Either<Error, ModelT>;
   }
 
-  async models<ModelT extends ModelSet.Model>(
+  async models<ModelT extends Model>(
     type: ModelT["type"],
   ): Promise<Either<Error, readonly ModelT[]>> {
     return this.modelsSync(type);
   }
 
-  modelsSync<ModelT extends ModelSet.Model>(
+  modelsSync<ModelT extends Model>(
     type: ModelT["type"],
   ): Either<Error, readonly ModelT[]> {
-    const fromRdf = this.modelFromRdf(type);
+    const fromRdf = $ObjectTypes[type].fromRdf;
     const models: ModelT[] = [];
     for (const resource of this.resourceSet.instancesOf(
-      this.modelFromRdfType(type),
+      $ObjectTypes[type].fromRdfType,
     )) {
-      const modelEither = fromRdf({ resource });
+      const modelEither = fromRdf({ resource }) as unknown as Either<
+        Error,
+        ModelT
+      >;
       if (modelEither.isLeft()) {
         return modelEither;
       }
@@ -79,17 +62,15 @@ export class RdfjsDatasetModelSet implements ModelSet {
     return Either.of(models);
   }
 
-  async modelCount(
-    type: ModelSet.Model["type"],
-  ): Promise<Either<Error, number>> {
+  async modelCount(type: Model["type"]): Promise<Either<Error, number>> {
     return this.modelCountSync(type);
   }
 
-  modelCountSync(type: ModelSet.Model["type"]): Either<Error, number> {
-    const fromRdf = this.modelFromRdf(type);
+  modelCountSync(type: Model["type"]): Either<Error, number> {
+    const fromRdf = $ObjectTypes[type].fromRdf;
     let count = 0;
     for (const resource of this.resourceSet.instancesOf(
-      this.modelFromRdfType(type),
+      $ObjectTypes[type].fromRdfType,
     )) {
       const modelEither = fromRdf({ resource });
       if (modelEither.isRight()) {
@@ -98,92 +79,4 @@ export class RdfjsDatasetModelSet implements ModelSet {
     }
     return Either.of(count);
   }
-
-  private modelFromRdf<ModelT extends ModelSet.Model>(
-    modelType: ModelT["type"] | "Thing",
-  ): (parameters: {
-    resource: Resource;
-  }) => Either<Resource.ValueError, ModelT> {
-    switch (modelType) {
-      case "Event":
-        return Event.fromRdf as any;
-      case "EventStub":
-        return EventStub.fromRdf as any;
-      case "Invoice":
-        return Invoice.fromRdf as any;
-      case "InvoiceStub":
-        return InvoiceStub.fromRdf as any;
-      case "Message":
-        return Message.fromRdf as any;
-      case "Order":
-        return Order.fromRdf as any;
-      case "OrderStub":
-        return OrderStub.fromRdf as any;
-      case "Organization":
-        return Organization.fromRdf as any;
-      case "OrganizationStub":
-        return OrganizationStub.fromRdf as any;
-      case "Person":
-        return Person.fromRdf as any;
-      case "PersonStub":
-        return PersonStub.fromRdf as any;
-      case "Place":
-        return Place.fromRdf as any;
-      case "PlaceStub":
-        return PlaceStub.fromRdf as any;
-      case "Report":
-        return Report.fromRdf as any;
-      case "ReportStub":
-        return ReportStub.fromRdf as any;
-      case "TextObject":
-        return TextObject.fromRdf as any;
-      case "Thing":
-        return Thing.fromRdf as any;
-      case "VoteAction":
-        return VoteAction.fromRdf as any;
-    }
-  }
-
-  private modelFromRdfType<ModelT extends ModelSet.Model>(
-    modelType: ModelT["type"],
-  ): NamedNode {
-    switch (modelType) {
-      case "Event":
-      case "EventStub":
-        return Event.fromRdfType;
-      case "Invoice":
-      case "InvoiceStub":
-        return Invoice.fromRdfType;
-      case "Message":
-        return Message.fromRdfType;
-      case "Order":
-      case "OrderStub":
-        return Order.fromRdfType;
-      case "Organization":
-      case "OrganizationStub":
-        return Organization.fromRdfType;
-      case "Person":
-      case "PersonStub":
-        return Person.fromRdfType;
-      case "Place":
-      case "PlaceStub":
-        return Place.fromRdfType;
-      case "Report":
-      case "ReportStub":
-        return Report.fromRdfType;
-      case "TextObject":
-        return TextObject.fromRdfType;
-      case "VoteAction":
-        return VoteAction.fromRdfType;
-    }
-  }
-
-  // private modelsCountByRdfTypeSync<ModelT>({
-  //   modelFromRdf,
-  //   rdfType,
-  // }: {
-  //   modelFromRdf: (parameters: { resource: Resource }) => Either<Error, ModelT>;
-  //   rdfType: NamedNode;
-  // }): Either<Error, number> {
-  // }
 }

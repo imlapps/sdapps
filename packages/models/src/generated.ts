@@ -7,16 +7,16 @@ import * as rdfjsResource from "rdfjs-resource";
 import * as sparqljs from "sparqljs";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-export type EqualsResult = purify.Either<EqualsResult.Unequal, true>;
+export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
-export namespace EqualsResult {
-  export const Equal: EqualsResult = purify.Either.of<Unequal, true>(true);
+export namespace $EqualsResult {
+  export const Equal: $EqualsResult = purify.Either.of<Unequal, true>(true);
 
   export function fromBooleanEqualsResult(
     left: any,
     right: any,
-    equalsResult: boolean | EqualsResult,
-  ): EqualsResult {
+    equalsResult: boolean | $EqualsResult,
+  ): $EqualsResult {
     if (typeof equalsResult !== "boolean") {
       return equalsResult;
     }
@@ -24,11 +24,8 @@ export namespace EqualsResult {
     if (equalsResult) {
       return Equal;
     }
-    return purify.Left({
-      left,
-      right,
-      type: "BooleanEquals",
-    });
+
+    return purify.Left({ left, right, type: "BooleanEquals" });
   }
 
   export type Unequal =
@@ -86,31 +83,32 @@ export namespace EqualsResult {
       };
 }
 /**
- * Compare two objects with equals(other: T): boolean methods and return an EqualsResult.
+ * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
-export function booleanEquals<T extends { equals: (other: T) => boolean }>(
+export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
 /**
- * Compare two values for strict equality (===), returning an EqualsResult rather than a boolean.
+ * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
  */
-export function strictEquals<T extends bigint | boolean | number | string>(
+export function $strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
-export function maybeEquals<T>(
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
+export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return EqualsResult.fromBooleanEqualsResult(
+      return $EqualsResult.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -129,13 +127,13 @@ export function maybeEquals<T>(
     });
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
-export function arrayEquals<T>(
+export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftArray.length !== rightArray.length) {
     return purify.Left({
       left: leftArray,
@@ -151,7 +149,7 @@ export function arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: EqualsResult.Unequal[] = [];
+    const rightUnequals: $EqualsResult.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -160,7 +158,7 @@ export function arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        EqualsResult.fromBooleanEqualsResult(
+        $EqualsResult.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -169,7 +167,7 @@ export function arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as EqualsResult.Unequal,
+        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
       );
     }
 
@@ -191,45 +189,62 @@ export function arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
-type UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
- * Compare two Dates and return an EqualsResult.
+ * Compare two Dates and return an $EqualsResult.
  */
-export function dateEquals(left: Date, right: Date): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(
+export function $dateEquals(left: Date, right: Date): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(
     left,
     right,
     left.getTime() === right.getTime(),
   );
 }
-export class schema_RadioEpisodeStub {
-  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "schema_RadioEpisodeStub";
+export abstract class Model {
+  abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+  abstract readonly type:
+    | "Action"
+    | "Article"
+    | "AssessAction"
+    | "BroadcastEvent"
+    | "BroadcastService"
+    | "ChooseAction"
+    | "CreativeWork"
+    | "CreativeWorkSeries"
+    | "Enumeration"
+    | "Episode"
+    | "Event"
+    | "GenderType"
+    | "ImageObject"
+    | "Intangible"
+    | "Invoice"
+    | "MediaObject"
+    | "Message"
+    | "MonetaryAmount"
+    | "Occupation"
+    | "Order"
+    | "Organization"
+    | "Person"
+    | "Place"
+    | "PublicationEvent"
+    | "QuantitativeValue"
+    | "RadioBroadcastService"
+    | "RadioEpisode"
+    | "RadioSeries"
+    | "Report"
+    | "Role"
+    | "Service"
+    | "StructuredValue"
+    | "TextObject"
+    | "Thing"
+    | "VoteAction";
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier as never;
-    }
-  }
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(_parameters: object) {}
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  equals(other: schema_RadioEpisodeStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: Model): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -238,7 +253,7 @@ export class schema_RadioEpisodeStub {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -269,10 +284,7 @@ export class schema_RadioEpisodeStub {
     return _hasher;
   }
 
-  toJson(): {
-    readonly "@id": string;
-    readonly type: "schema_RadioEpisodeStub";
-  } {
+  toJson(): ModelStatic.Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -280,7 +292,7 @@ export class schema_RadioEpisodeStub {
             ? `_:${this.identifier.value}`
             : this.identifier.value,
         type: this.type,
-      } satisfies ReturnType<schema_RadioEpisodeStub["toJson"]>),
+      } satisfies ModelStatic.Json),
     );
   }
 
@@ -303,8 +315,48 @@ export class schema_RadioEpisodeStub {
   }
 }
 
-export namespace schema_RadioEpisodeStub {
-  export function _propertiesFromJson(
+export namespace ModelStatic {
+  export type Json = {
+    readonly "@id": string;
+    readonly type:
+      | "Action"
+      | "Article"
+      | "AssessAction"
+      | "BroadcastEvent"
+      | "BroadcastService"
+      | "ChooseAction"
+      | "CreativeWork"
+      | "CreativeWorkSeries"
+      | "Enumeration"
+      | "Episode"
+      | "Event"
+      | "GenderType"
+      | "ImageObject"
+      | "Intangible"
+      | "Invoice"
+      | "MediaObject"
+      | "Message"
+      | "MonetaryAmount"
+      | "Occupation"
+      | "Order"
+      | "Organization"
+      | "Person"
+      | "Place"
+      | "PublicationEvent"
+      | "QuantitativeValue"
+      | "RadioBroadcastService"
+      | "RadioEpisode"
+      | "RadioSeries"
+      | "Report"
+      | "Role"
+      | "Service"
+      | "StructuredValue"
+      | "TextObject"
+      | "Thing"
+      | "VoteAction";
+  };
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -322,15 +374,84 @@ export namespace schema_RadioEpisodeStub {
     return purify.Either.of({ identifier });
   }
 
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, schema_RadioEpisodeStub> {
-    return schema_RadioEpisodeStub
-      ._propertiesFromJson(json)
-      .map((properties) => new schema_RadioEpisodeStub(properties));
+  export function fromJson(json: unknown): purify.Either<zod.ZodError, Model> {
+    return ThingStatic.fromJson(json) as purify.Either<zod.ZodError, Model>;
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "Model" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+      ],
+      label: "Model",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.enum([
+        "Action",
+        "Article",
+        "AssessAction",
+        "BroadcastEvent",
+        "BroadcastService",
+        "ChooseAction",
+        "CreativeWork",
+        "CreativeWorkSeries",
+        "Enumeration",
+        "Episode",
+        "Event",
+        "GenderType",
+        "ImageObject",
+        "Intangible",
+        "Invoice",
+        "MediaObject",
+        "Message",
+        "MonetaryAmount",
+        "Occupation",
+        "Order",
+        "Organization",
+        "Person",
+        "Place",
+        "PublicationEvent",
+        "QuantitativeValue",
+        "RadioBroadcastService",
+        "RadioEpisode",
+        "RadioSeries",
+        "Report",
+        "Role",
+        "Service",
+        "StructuredValue",
+        "TextObject",
+        "Thing",
+        "VoteAction",
+      ]),
+    });
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -350,55 +471,70 @@ export namespace schema_RadioEpisodeStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<
-      typeof schema_RadioEpisodeStub._propertiesFromRdf
-    >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, schema_RadioEpisodeStub> {
-    return schema_RadioEpisodeStub
-      ._propertiesFromRdf(parameters)
-      .map((properties) => new schema_RadioEpisodeStub(properties));
+    parameters: Parameters<typeof ModelStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Model> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return ThingStatic.fromRdf(otherParameters) as purify.Either<
+      rdfjsResource.Resource.ValueError,
+      Model
+    >;
   }
 
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
 
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "schema_RadioEpisodeStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-      ],
-      label: "schema_RadioEpisodeStub",
-      type: "Group",
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ModelStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ModelStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
     };
   }
 
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("schema_RadioEpisodeStub"),
-    });
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ModelStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(_parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [];
+  }
+
+  export function sparqlWherePatterns(_parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [];
   }
 }
-export class Thing {
+export class Thing extends Model {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type:
+  override readonly type:
     | "Action"
     | "Article"
     | "AssessAction"
@@ -442,16 +578,19 @@ export class Thing {
   readonly subjectOf: readonly (CreativeWorkStub | EventStub)[];
   readonly url: purify.Maybe<rdfjs.NamedNode>;
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly description?: purify.Maybe<string> | string;
-    readonly localIdentifiers?: readonly string[];
-    readonly name?: purify.Maybe<string> | string;
-    readonly order?: number | purify.Maybe<number>;
-    readonly sameAs?: readonly rdfjs.NamedNode[];
-    readonly subjectOf?: readonly (CreativeWorkStub | EventStub)[];
-    readonly url?: rdfjs.NamedNode | purify.Maybe<rdfjs.NamedNode> | string;
-  }) {
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly description?: purify.Maybe<string> | string;
+      readonly localIdentifiers?: readonly string[];
+      readonly name?: purify.Maybe<string> | string;
+      readonly order?: number | purify.Maybe<number>;
+      readonly sameAs?: readonly rdfjs.NamedNode[];
+      readonly subjectOf?: readonly (CreativeWorkStub | EventStub)[];
+      readonly url?: rdfjs.NamedNode | purify.Maybe<rdfjs.NamedNode> | string;
+    } & ConstructorParameters<typeof Model>[0],
+  ) {
+    super(parameters);
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
     } else if (typeof parameters.identifier === "string") {
@@ -528,35 +667,18 @@ export class Thing {
     }
   }
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  equals(other: Thing): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
+  override equals(other: Thing): $EqualsResult {
+    return super
+      .equals(other)
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.description,
           other.description,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -568,7 +690,7 @@ export class Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, strictEquals))(
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
           this.localIdentifiers,
           other.localIdentifiers,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -580,7 +702,7 @@ export class Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.name,
           other.name,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -592,7 +714,7 @@ export class Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.order,
           other.order,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -604,7 +726,7 @@ export class Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, booleanEquals))(
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
           this.sameAs,
           other.sameAs,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -617,7 +739,7 @@ export class Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(
+          $arrayEquals(
             left,
             right,
             (
@@ -657,7 +779,7 @@ export class Thing {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.url,
           other.url,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -670,22 +792,21 @@ export class Thing {
       );
   }
 
-  hash<
+  override hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
     this.hashShaclProperties(_hasher);
     return _hasher;
   }
 
-  protected hashShaclProperties<
+  protected override hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     this.description.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -724,62 +845,10 @@ export class Thing {
     return _hasher;
   }
 
-  toJson(): {
-    readonly "@id": string;
-    readonly type:
-      | "Action"
-      | "Article"
-      | "AssessAction"
-      | "BroadcastEvent"
-      | "BroadcastService"
-      | "ChooseAction"
-      | "CreativeWork"
-      | "CreativeWorkSeries"
-      | "Enumeration"
-      | "Episode"
-      | "Event"
-      | "GenderType"
-      | "ImageObject"
-      | "Intangible"
-      | "Invoice"
-      | "MediaObject"
-      | "Message"
-      | "MonetaryAmount"
-      | "Occupation"
-      | "Order"
-      | "Organization"
-      | "Person"
-      | "Place"
-      | "PublicationEvent"
-      | "QuantitativeValue"
-      | "RadioBroadcastService"
-      | "RadioEpisode"
-      | "RadioSeries"
-      | "Report"
-      | "Role"
-      | "Service"
-      | "StructuredValue"
-      | "TextObject"
-      | "Thing"
-      | "VoteAction";
-    readonly description: string | undefined;
-    readonly localIdentifiers: readonly string[];
-    readonly name: string | undefined;
-    readonly order: number | undefined;
-    readonly sameAs: readonly { readonly "@id": string }[];
-    readonly subjectOf: readonly (
-      | ReturnType<CreativeWorkStub["toJson"]>
-      | ReturnType<EventStub["toJson"]>
-    )[];
-    readonly url: { readonly "@id": string } | undefined;
-  } {
+  override toJson(): ThingStatic.Json {
     return JSON.parse(
       JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
+        ...super.toJson(),
         description: this.description.map((_item) => _item).extract(),
         localIdentifiers: this.localIdentifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
@@ -789,11 +858,11 @@ export class Thing {
           _item.type === "EventStub" ? _item.toJson() : _item.toJson(),
         ),
         url: this.url.map((_item) => ({ "@id": _item.value })).extract(),
-      } satisfies ReturnType<Thing["toJson"]>),
+      } satisfies ThingStatic.Json),
     );
   }
 
-  toRdf({
+  override toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -802,8 +871,10 @@ export class Thing {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
       mutateGraph,
+      resourceSet,
     });
     if (!ignoreRdfType) {
       _resource.add(
@@ -843,13 +914,29 @@ export class Thing {
     return _resource;
   }
 
-  toString(): string {
+  override toString(): string {
     return JSON.stringify(this.toJson());
   }
 }
 
-export namespace Thing {
-  export function _propertiesFromJson(
+export namespace ThingStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Thing",
+  );
+  export type Json = {
+    readonly description: string | undefined;
+    readonly localIdentifiers: readonly string[];
+    readonly name: string | undefined;
+    readonly order: number | undefined;
+    readonly sameAs: readonly { readonly "@id": string }[];
+    readonly subjectOf: readonly (
+      | CreativeWorkStubStatic.Json
+      | EventStubStatic.Json
+    )[];
+    readonly url: { readonly "@id": string } | undefined;
+  } & ModelStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -862,14 +949,20 @@ export namespace Thing {
       sameAs: readonly rdfjs.NamedNode[];
       subjectOf: readonly (CreativeWorkStub | EventStub)[];
       url: purify.Maybe<rdfjs.NamedNode>;
-    }
+    } & $UnwrapR<ReturnType<typeof ModelStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = thingJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ModelStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
@@ -882,13 +975,14 @@ export namespace Thing {
     );
     const subjectOf = _jsonObject["subjectOf"].map((_item) =>
       _item.type === "EventStub"
-        ? EventStub.fromJson(_item).unsafeCoerce()
-        : CreativeWorkStub.fromJson(_item).unsafeCoerce(),
+        ? EventStubStatic.fromJson(_item).unsafeCoerce()
+        : CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const url = purify.Maybe.fromNullable(_jsonObject["url"]).map((_item) =>
       dataFactory.namedNode(_item["@id"]),
     );
     return purify.Either.of({
+      ..._super0,
       identifier,
       description,
       localIdentifiers,
@@ -901,11 +995,17 @@ export namespace Thing {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Thing> {
-    return (Action.fromJson(json) as purify.Either<zod.ZodError, Thing>)
+    return (ActionStatic.fromJson(json) as purify.Either<zod.ZodError, Thing>)
       .altLazy(
-        () => CreativeWork.fromJson(json) as purify.Either<zod.ZodError, Thing>,
+        () =>
+          CreativeWorkStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            Thing
+          >,
       )
-      .altLazy(() => Event.fromJson(json) as purify.Either<zod.ZodError, Thing>)
+      .altLazy(
+        () => EventStatic.fromJson(json) as purify.Either<zod.ZodError, Thing>,
+      )
       .altLazy(
         () => Organization.fromJson(json) as purify.Either<zod.ZodError, Thing>,
       )
@@ -914,16 +1014,104 @@ export namespace Thing {
       )
       .altLazy(() => Place.fromJson(json) as purify.Either<zod.ZodError, Thing>)
       .altLazy(
-        () => Intangible.fromJson(json) as purify.Either<zod.ZodError, Thing>,
+        () =>
+          IntangibleStatic.fromJson(json) as purify.Either<zod.ZodError, Thing>,
       )
       .altLazy(() =>
-        Thing._propertiesFromJson(json).map(
-          (properties) => new Thing(properties),
-        ),
+        propertiesFromJson(json).map((properties) => new Thing(properties)),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ModelStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/description`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/localIdentifiers`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/name`, type: "Control" },
+        { scope: `${scopePrefix}/properties/order`, type: "Control" },
+        { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
+        { scope: `${scopePrefix}/properties/subjectOf`, type: "Control" },
+        { scope: `${scopePrefix}/properties/url`, type: "Control" },
+      ],
+      label: "Thing",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ModelStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "Action",
+          "Article",
+          "AssessAction",
+          "BroadcastEvent",
+          "BroadcastService",
+          "ChooseAction",
+          "CreativeWork",
+          "CreativeWorkSeries",
+          "Enumeration",
+          "Episode",
+          "Event",
+          "GenderType",
+          "ImageObject",
+          "Intangible",
+          "Invoice",
+          "MediaObject",
+          "Message",
+          "MonetaryAmount",
+          "Occupation",
+          "Order",
+          "Organization",
+          "Person",
+          "Place",
+          "PublicationEvent",
+          "QuantitativeValue",
+          "RadioBroadcastService",
+          "RadioEpisode",
+          "RadioSeries",
+          "Report",
+          "Role",
+          "Service",
+          "StructuredValue",
+          "TextObject",
+          "Thing",
+          "VoteAction",
+        ]),
+        description: zod.string().optional(),
+        localIdentifiers: zod
+          .string()
+          .array()
+          .default(() => []),
+        name: zod.string().optional(),
+        order: zod.number().optional(),
+        sameAs: zod
+          .object({ "@id": zod.string().min(1) })
+          .array()
+          .default(() => []),
+        subjectOf: zod
+          .discriminatedUnion("type", [
+            CreativeWorkStubStatic.jsonZodSchema(),
+            EventStubStatic.jsonZodSchema(),
+          ])
+          .array()
+          .default(() => []),
+        url: zod.object({ "@id": zod.string().min(1) }).optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -945,8 +1133,19 @@ export namespace Thing {
       sameAs: readonly rdfjs.NamedNode[];
       subjectOf: readonly (CreativeWorkStub | EventStub)[];
       url: purify.Maybe<rdfjs.NamedNode>;
-    }
+    } & $UnwrapR<ReturnType<typeof ModelStatic.propertiesFromRdf>>
   > {
+    const _super0Either = ModelStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Thing"))
@@ -1071,7 +1270,7 @@ export namespace Thing {
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
-                CreativeWorkStub.fromRdf({
+                CreativeWorkStubStatic.fromRdf({
                   ..._context,
                   languageIn: _languageIn,
                   resource: _resource,
@@ -1088,7 +1287,7 @@ export namespace Thing {
                   .head()
                   .chain((value) => value.toResource())
                   .chain((_resource) =>
-                    EventStub.fromRdf({
+                    EventStubStatic.fromRdf({
                       ..._context,
                       languageIn: _languageIn,
                       resource: _resource,
@@ -1125,6 +1324,7 @@ export namespace Thing {
 
     const url = _urlEither.unsafeCoerce();
     return purify.Either.of({
+      ..._super0,
       identifier,
       description,
       localIdentifiers,
@@ -1137,25 +1337,25 @@ export namespace Thing {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Thing._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ThingStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Thing> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      Action.fromRdf(otherParameters) as purify.Either<
+      ActionStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         Thing
       >
     )
       .altLazy(
         () =>
-          CreativeWork.fromRdf(otherParameters) as purify.Either<
+          CreativeWorkStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Thing
           >,
       )
       .altLazy(
         () =>
-          Event.fromRdf(otherParameters) as purify.Either<
+          EventStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Thing
           >,
@@ -1183,122 +1383,16 @@ export namespace Thing {
       )
       .altLazy(
         () =>
-          Intangible.fromRdf(otherParameters) as purify.Either<
+          IntangibleStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Thing
           >,
       )
       .altLazy(() =>
-        Thing._propertiesFromRdf(parameters).map(
+        ThingStatic.propertiesFromRdf(parameters).map(
           (properties) => new Thing(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Thing",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(thingJsonZodSchema());
-  }
-
-  export function thingJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "Thing" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/description`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/localIdentifiers`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/name`, type: "Control" },
-        { scope: `${scopePrefix}/properties/order`, type: "Control" },
-        { scope: `${scopePrefix}/properties/sameAs`, type: "Control" },
-        { scope: `${scopePrefix}/properties/subjectOf`, type: "Control" },
-        { scope: `${scopePrefix}/properties/url`, type: "Control" },
-      ],
-      label: "Thing",
-      type: "Group",
-    };
-  }
-
-  export function thingJsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.enum([
-        "Action",
-        "Article",
-        "AssessAction",
-        "BroadcastEvent",
-        "BroadcastService",
-        "ChooseAction",
-        "CreativeWork",
-        "CreativeWorkSeries",
-        "Enumeration",
-        "Episode",
-        "Event",
-        "GenderType",
-        "ImageObject",
-        "Intangible",
-        "Invoice",
-        "MediaObject",
-        "Message",
-        "MonetaryAmount",
-        "Occupation",
-        "Order",
-        "Organization",
-        "Person",
-        "Place",
-        "PublicationEvent",
-        "QuantitativeValue",
-        "RadioBroadcastService",
-        "RadioEpisode",
-        "RadioSeries",
-        "Report",
-        "Role",
-        "Service",
-        "StructuredValue",
-        "TextObject",
-        "Thing",
-        "VoteAction",
-      ]),
-      description: zod.string().optional(),
-      localIdentifiers: zod
-        .string()
-        .array()
-        .default(() => []),
-      name: zod.string().optional(),
-      order: zod.number().optional(),
-      sameAs: zod
-        .object({ "@id": zod.string().min(1) })
-        .array()
-        .default(() => []),
-      subjectOf: zod
-        .discriminatedUnion("type", [
-          CreativeWorkStub.creativeWorkStubJsonZodSchema(),
-          EventStub.eventStubJsonZodSchema(),
-        ])
-        .array()
-        .default(() => []),
-      url: zod.object({ "@id": zod.string().min(1) }).optional(),
-    });
   }
 }
 export class CreativeWork extends Thing {
@@ -1384,12 +1478,12 @@ export class CreativeWork extends Thing {
     return this._identifier;
   }
 
-  override equals(other: CreativeWork): EqualsResult {
+  override equals(other: CreativeWork): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.about,
           other.about,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1401,7 +1495,7 @@ export class CreativeWork extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
           this.authors,
           other.authors,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1413,7 +1507,7 @@ export class CreativeWork extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.datePublished,
           other.datePublished,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1425,7 +1519,7 @@ export class CreativeWork extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, booleanEquals))(
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
           this.isBasedOn,
           other.isBasedOn,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1438,7 +1532,7 @@ export class CreativeWork extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.publication,
           other.publication,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1489,16 +1583,7 @@ export class CreativeWork extends Thing {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly about: readonly ReturnType<ThingStub["toJson"]>[];
-    readonly authors: readonly (
-      | ReturnType<OrganizationStub["toJson"]>
-      | ReturnType<PersonStub["toJson"]>
-    )[];
-    readonly datePublished: string | undefined;
-    readonly isBasedOn: readonly { readonly "@id": string }[];
-    readonly publication: readonly ReturnType<PublicationEventStub["toJson"]>[];
-  } & ReturnType<Thing["toJson"]> {
+  override toJson(): CreativeWorkStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -1509,7 +1594,7 @@ export class CreativeWork extends Thing {
           .extract(),
         isBasedOn: this.isBasedOn.map((_item) => ({ "@id": _item.value })),
         publication: this.publication.map((_item) => _item.toJson()),
-      } satisfies ReturnType<CreativeWork["toJson"]>),
+      } satisfies CreativeWorkStatic.Json),
     );
   }
 
@@ -1577,8 +1662,19 @@ export class CreativeWork extends Thing {
   }
 }
 
-export namespace CreativeWork {
-  export function _propertiesFromJson(
+export namespace CreativeWorkStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/CreativeWork",
+  );
+  export type Json = {
+    readonly about: readonly ThingStubStatic.Json[];
+    readonly authors: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly datePublished: string | undefined;
+    readonly isBasedOn: readonly { readonly "@id": string }[];
+    readonly publication: readonly PublicationEventStub.Json[];
+  } & ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -1589,15 +1685,15 @@ export namespace CreativeWork {
       datePublished: purify.Maybe<Date>;
       isBasedOn: readonly rdfjs.NamedNode[];
       publication: readonly PublicationEventStub[];
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = creativeWorkJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -1607,7 +1703,7 @@ export namespace CreativeWork {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const about = _jsonObject["about"].map((_item) =>
-      ThingStub.fromJson(_item).unsafeCoerce(),
+      ThingStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const authors = _jsonObject["authors"].map((_item) =>
       AgentStub.fromJson(_item).unsafeCoerce(),
@@ -1635,10 +1731,12 @@ export namespace CreativeWork {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, CreativeWork> {
-    return (Article.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>)
+    return (
+      ArticleStatic.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>
+    )
       .altLazy(
         () =>
-          MediaObject.fromJson(json) as purify.Either<
+          MediaObjectStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             CreativeWork
           >,
@@ -1649,23 +1747,85 @@ export namespace CreativeWork {
       )
       .altLazy(
         () =>
-          CreativeWorkSeries.fromJson(json) as purify.Either<
+          CreativeWorkSeriesStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
-          Episode.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
+          EpisodeStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
       )
       .altLazy(() =>
-        CreativeWork._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new CreativeWork(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        ThingStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/about`,
+        }),
+        { scope: `${scopePrefix}/properties/authors`, type: "Control" },
+        { scope: `${scopePrefix}/properties/datePublished`, type: "Control" },
+        { scope: `${scopePrefix}/properties/isBasedOn`, type: "Control" },
+        PublicationEventStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/publication`,
+        }),
+      ],
+      label: "CreativeWork",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "Article",
+          "CreativeWork",
+          "CreativeWorkSeries",
+          "Episode",
+          "ImageObject",
+          "MediaObject",
+          "Message",
+          "RadioEpisode",
+          "RadioSeries",
+          "Report",
+          "TextObject",
+        ]),
+        about: ThingStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        authors: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        datePublished: zod.string().datetime().optional(),
+        isBasedOn: zod
+          .object({ "@id": zod.string().min(1) })
+          .array()
+          .default(() => []),
+        publication: PublicationEventStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1685,9 +1845,9 @@ export namespace CreativeWork {
       datePublished: purify.Maybe<Date>;
       isBasedOn: readonly rdfjs.NamedNode[];
       publication: readonly PublicationEventStub[];
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -1728,7 +1888,7 @@ export namespace CreativeWork {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              ThingStub.fromRdf({
+              ThingStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -1854,18 +2014,18 @@ export namespace CreativeWork {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof CreativeWork._propertiesFromRdf>[0],
+    parameters: Parameters<typeof CreativeWorkStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWork> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      Article.fromRdf(otherParameters) as purify.Either<
+      ArticleStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         CreativeWork
       >
     )
       .altLazy(
         () =>
-          MediaObject.fromRdf(otherParameters) as purify.Either<
+          MediaObjectStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWork
           >,
@@ -1879,88 +2039,23 @@ export namespace CreativeWork {
       )
       .altLazy(
         () =>
-          CreativeWorkSeries.fromRdf(otherParameters) as purify.Either<
+          CreativeWorkSeriesStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
-          Episode.fromRdf(otherParameters) as purify.Either<
+          EpisodeStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWork
           >,
       )
       .altLazy(() =>
-        CreativeWork._propertiesFromRdf(parameters).map(
+        CreativeWorkStatic.propertiesFromRdf(parameters).map(
           (properties) => new CreativeWork(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/CreativeWork",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(creativeWorkJsonZodSchema());
-  }
-
-  export function creativeWorkJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Thing.thingJsonUiSchema({ scopePrefix }),
-        ThingStub.thingStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/about`,
-        }),
-        { scope: `${scopePrefix}/properties/authors`, type: "Control" },
-        { scope: `${scopePrefix}/properties/datePublished`, type: "Control" },
-        { scope: `${scopePrefix}/properties/isBasedOn`, type: "Control" },
-        PublicationEventStub.publicationEventStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/publication`,
-        }),
-      ],
-      label: "CreativeWork",
-      type: "Group",
-    };
-  }
-
-  export function creativeWorkJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "Article",
-          "CreativeWork",
-          "CreativeWorkSeries",
-          "Episode",
-          "ImageObject",
-          "MediaObject",
-          "Message",
-          "RadioEpisode",
-          "RadioSeries",
-          "Report",
-          "TextObject",
-        ]),
-        about: ThingStub.thingStubJsonZodSchema()
-          .array()
-          .default(() => []),
-        authors: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        datePublished: zod.string().datetime().optional(),
-        isBasedOn: zod
-          .object({ "@id": zod.string().min(1) })
-          .array()
-          .default(() => []),
-        publication: PublicationEventStub.publicationEventStubJsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
-    );
   }
 }
 export class CreativeWorkSeries extends CreativeWork {
@@ -2014,23 +2109,27 @@ export class CreativeWorkSeries extends CreativeWork {
   }
 }
 
-export namespace CreativeWorkSeries {
-  export function _propertiesFromJson(
+export namespace CreativeWorkSeriesStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/CreativeWorkSeries",
+  );
+  export type Json = CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWork._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      creativeWorkSeriesJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2051,13 +2150,35 @@ export namespace CreativeWorkSeries {
         CreativeWorkSeries
       >
     ).altLazy(() =>
-      CreativeWorkSeries._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new CreativeWorkSeries(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStatic.jsonUiSchema({ scopePrefix })],
+      label: "CreativeWorkSeries",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["CreativeWorkSeries", "RadioSeries"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2070,11 +2191,11 @@ export namespace CreativeWorkSeries {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWork._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWork._propertiesFromRdf({
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2107,7 +2228,9 @@ export namespace CreativeWorkSeries {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof CreativeWorkSeries._propertiesFromRdf>[0],
+    parameters: Parameters<
+      typeof CreativeWorkSeriesStatic.propertiesFromRdf
+    >[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkSeries> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -2116,48 +2239,20 @@ export namespace CreativeWorkSeries {
         CreativeWorkSeries
       >
     ).altLazy(() =>
-      CreativeWorkSeries._propertiesFromRdf(parameters).map(
+      CreativeWorkSeriesStatic.propertiesFromRdf(parameters).map(
         (properties) => new CreativeWorkSeries(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/CreativeWorkSeries",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(creativeWorkSeriesJsonZodSchema());
-  }
-
-  export function creativeWorkSeriesJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [CreativeWork.creativeWorkJsonUiSchema({ scopePrefix })],
-      label: "CreativeWorkSeries",
-      type: "Group",
-    };
-  }
-
-  export function creativeWorkSeriesJsonZodSchema() {
-    return CreativeWork.creativeWorkJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["CreativeWorkSeries", "RadioSeries"]),
-      }),
     );
   }
 }
 export class RadioSeries extends CreativeWorkSeries {
   override readonly type = "RadioSeries";
-  readonly episodes: readonly schema_RadioEpisodeStub[];
+  readonly episodes: readonly RadioEpisodeStub[];
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly episodes?: readonly schema_RadioEpisodeStub[];
+      readonly episodes?: readonly RadioEpisodeStub[];
     } & ConstructorParameters<typeof CreativeWorkSeries>[0],
   ) {
     super(parameters);
@@ -2177,12 +2272,12 @@ export class RadioSeries extends CreativeWorkSeries {
     return this._identifier;
   }
 
-  override equals(other: RadioSeries): EqualsResult {
+  override equals(other: RadioSeries): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.episodes,
           other.episodes,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2217,14 +2312,12 @@ export class RadioSeries extends CreativeWorkSeries {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly episodes: readonly ReturnType<schema_RadioEpisodeStub["toJson"]>[];
-  } & ReturnType<CreativeWorkSeries["toJson"]> {
+  override toJson(): RadioSeries.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         episodes: this.episodes.map((_item) => _item.toJson()),
-      } satisfies ReturnType<RadioSeries["toJson"]>),
+      } satisfies RadioSeries.Json),
     );
   }
 
@@ -2266,22 +2359,30 @@ export class RadioSeries extends CreativeWorkSeries {
 }
 
 export namespace RadioSeries {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/RadioSeries",
+  );
+  export type Json = {
+    readonly episodes: readonly RadioEpisodeStub.Json[];
+  } & CreativeWorkSeriesStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      episodes: readonly schema_RadioEpisodeStub[];
-    } & UnwrapR<ReturnType<typeof CreativeWorkSeries._propertiesFromJson>>
+      episodes: readonly RadioEpisodeStub[];
+    } & $UnwrapR<ReturnType<typeof CreativeWorkSeriesStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = radioSeriesJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWorkSeries._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      CreativeWorkSeriesStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2291,7 +2392,7 @@ export namespace RadioSeries {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const episodes = _jsonObject["episodes"].map((_item) =>
-      schema_RadioEpisodeStub.fromJson(_item).unsafeCoerce(),
+      RadioEpisodeStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({ ..._super0, identifier, episodes });
   }
@@ -2299,12 +2400,42 @@ export namespace RadioSeries {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RadioSeries> {
-    return RadioSeries._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new RadioSeries(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkSeriesStatic.jsonUiSchema({ scopePrefix }),
+        RadioEpisodeStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/episodes`,
+        }),
+      ],
+      label: "RadioSeries",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkSeriesStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("RadioSeries"),
+        episodes: RadioEpisodeStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2319,10 +2450,10 @@ export namespace RadioSeries {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      episodes: readonly schema_RadioEpisodeStub[];
-    } & UnwrapR<ReturnType<typeof CreativeWorkSeries._propertiesFromRdf>>
+      episodes: readonly RadioEpisodeStub[];
+    } & $UnwrapR<ReturnType<typeof CreativeWorkSeriesStatic.propertiesFromRdf>>
   > {
-    const _super0Either = CreativeWorkSeries._propertiesFromRdf({
+    const _super0Either = CreativeWorkSeriesStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2351,7 +2482,7 @@ export namespace RadioSeries {
     const identifier = _resource.identifier;
     const _episodesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly schema_RadioEpisodeStub[]
+      readonly RadioEpisodeStub[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/episode"), {
@@ -2363,7 +2494,7 @@ export namespace RadioSeries {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              schema_RadioEpisodeStub.fromRdf({
+              RadioEpisodeStub.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -2383,47 +2514,10 @@ export namespace RadioSeries {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof RadioSeries._propertiesFromRdf>[0],
+    parameters: Parameters<typeof RadioSeries.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, RadioSeries> {
-    return RadioSeries._propertiesFromRdf(parameters).map(
+    return RadioSeries.propertiesFromRdf(parameters).map(
       (properties) => new RadioSeries(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/RadioSeries",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(radioSeriesJsonZodSchema());
-  }
-
-  export function radioSeriesJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWorkSeries.creativeWorkSeriesJsonUiSchema({ scopePrefix }),
-        schema_RadioEpisodeStub.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/episodes`,
-        }),
-      ],
-      label: "RadioSeries",
-      type: "Group",
-    };
-  }
-
-  export function radioSeriesJsonZodSchema() {
-    return CreativeWorkSeries.creativeWorkSeriesJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("RadioSeries"),
-        episodes: schema_RadioEpisodeStub
-          .jsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
     );
   }
 }
@@ -2477,22 +2571,27 @@ export class Episode extends CreativeWork {
   }
 }
 
-export namespace Episode {
-  export function _propertiesFromJson(
+export namespace EpisodeStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Episode",
+  );
+  export type Json = CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWork._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = episodeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2510,13 +2609,33 @@ export namespace Episode {
     return (
       RadioEpisode.fromJson(json) as purify.Either<zod.ZodError, Episode>
     ).altLazy(() =>
-      Episode._propertiesFromJson(json).map(
-        (properties) => new Episode(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new Episode(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStatic.jsonUiSchema({ scopePrefix })],
+      label: "Episode",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["Episode", "RadioEpisode"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2529,11 +2648,11 @@ export namespace Episode {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWork._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWork._propertiesFromRdf({
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2564,7 +2683,7 @@ export namespace Episode {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Episode._propertiesFromRdf>[0],
+    parameters: Parameters<typeof EpisodeStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Episode> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -2573,35 +2692,9 @@ export namespace Episode {
         Episode
       >
     ).altLazy(() =>
-      Episode._propertiesFromRdf(parameters).map(
+      EpisodeStatic.propertiesFromRdf(parameters).map(
         (properties) => new Episode(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Episode",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(episodeJsonZodSchema());
-  }
-
-  export function episodeJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [CreativeWork.creativeWorkJsonUiSchema({ scopePrefix })],
-      label: "Episode",
-      type: "Group",
-    };
-  }
-
-  export function episodeJsonZodSchema() {
-    return CreativeWork.creativeWorkJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["Episode", "RadioEpisode"]),
-      }),
     );
   }
 }
@@ -2656,21 +2749,26 @@ export class RadioEpisode extends Episode {
 }
 
 export namespace RadioEpisode {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/RadioEpisode",
+  );
+  export type Json = EpisodeStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Episode._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EpisodeStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = radioEpisodeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Episode._propertiesFromJson(_jsonObject);
+    const _super0Either = EpisodeStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2685,12 +2783,34 @@ export namespace RadioEpisode {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RadioEpisode> {
-    return RadioEpisode._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new RadioEpisode(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [EpisodeStatic.jsonUiSchema({ scopePrefix })],
+      label: "RadioEpisode",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return EpisodeStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("RadioEpisode"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2703,11 +2823,11 @@ export namespace RadioEpisode {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Episode._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EpisodeStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Episode._propertiesFromRdf({
+    const _super0Either = EpisodeStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2738,38 +2858,10 @@ export namespace RadioEpisode {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof RadioEpisode._propertiesFromRdf>[0],
+    parameters: Parameters<typeof RadioEpisode.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, RadioEpisode> {
-    return RadioEpisode._propertiesFromRdf(parameters).map(
+    return RadioEpisode.propertiesFromRdf(parameters).map(
       (properties) => new RadioEpisode(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/RadioEpisode",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(radioEpisodeJsonZodSchema());
-  }
-
-  export function radioEpisodeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Episode.episodeJsonUiSchema({ scopePrefix })],
-      label: "RadioEpisode",
-      type: "Group",
-    };
-  }
-
-  export function radioEpisodeJsonZodSchema() {
-    return Episode.episodeJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("RadioEpisode"),
-      }),
     );
   }
 }
@@ -2836,22 +2928,27 @@ export class Intangible extends Thing {
   }
 }
 
-export namespace Intangible {
-  export function _propertiesFromJson(
+export namespace IntangibleStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Intangible",
+  );
+  export type Json = ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = intangibleJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -2871,15 +2968,22 @@ export namespace Intangible {
         () => Order.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
       )
       .altLazy(
-        () => Service.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
+        () =>
+          ServiceStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            Intangible
+          >,
       )
       .altLazy(
         () =>
-          Enumeration.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
+          EnumerationStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            Intangible
+          >,
       )
       .altLazy(
         () =>
-          StructuredValue.fromJson(json) as purify.Either<
+          StructuredValueStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             Intangible
           >,
@@ -2892,13 +2996,49 @@ export namespace Intangible {
         () => Role.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
       )
       .altLazy(() =>
-        Intangible._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new Intangible(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStatic.jsonUiSchema({ scopePrefix })],
+      label: "Intangible",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "BroadcastService",
+          "Enumeration",
+          "GenderType",
+          "Intangible",
+          "Invoice",
+          "MonetaryAmount",
+          "Occupation",
+          "Order",
+          "QuantitativeValue",
+          "RadioBroadcastService",
+          "Role",
+          "Service",
+          "StructuredValue",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2911,11 +3051,11 @@ export namespace Intangible {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2946,7 +3086,7 @@ export namespace Intangible {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Intangible._propertiesFromRdf>[0],
+    parameters: Parameters<typeof IntangibleStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Intangible> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -2964,21 +3104,21 @@ export namespace Intangible {
       )
       .altLazy(
         () =>
-          Service.fromRdf(otherParameters) as purify.Either<
+          ServiceStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
           >,
       )
       .altLazy(
         () =>
-          Enumeration.fromRdf(otherParameters) as purify.Either<
+          EnumerationStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
           >,
       )
       .altLazy(
         () =>
-          StructuredValue.fromRdf(otherParameters) as purify.Either<
+          StructuredValueStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
           >,
@@ -2998,52 +3138,10 @@ export namespace Intangible {
           >,
       )
       .altLazy(() =>
-        Intangible._propertiesFromRdf(parameters).map(
+        IntangibleStatic.propertiesFromRdf(parameters).map(
           (properties) => new Intangible(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Intangible",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(intangibleJsonZodSchema());
-  }
-
-  export function intangibleJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Thing.thingJsonUiSchema({ scopePrefix })],
-      label: "Intangible",
-      type: "Group",
-    };
-  }
-
-  export function intangibleJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "BroadcastService",
-          "Enumeration",
-          "GenderType",
-          "Intangible",
-          "Invoice",
-          "MonetaryAmount",
-          "Occupation",
-          "Order",
-          "QuantitativeValue",
-          "RadioBroadcastService",
-          "Role",
-          "Service",
-          "StructuredValue",
-        ]),
-      }),
-    );
   }
 }
 export class Service extends Intangible {
@@ -3099,22 +3197,27 @@ export class Service extends Intangible {
   }
 }
 
-export namespace Service {
-  export function _propertiesFromJson(
+export namespace ServiceStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Service",
+  );
+  export type Json = IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = serviceJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3130,15 +3233,42 @@ export namespace Service {
     json: unknown,
   ): purify.Either<zod.ZodError, Service> {
     return (
-      BroadcastService.fromJson(json) as purify.Either<zod.ZodError, Service>
+      BroadcastServiceStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        Service
+      >
     ).altLazy(() =>
-      Service._propertiesFromJson(json).map(
-        (properties) => new Service(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new Service(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStatic.jsonUiSchema({ scopePrefix })],
+      label: "Service",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "BroadcastService",
+          "RadioBroadcastService",
+          "Service",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3151,11 +3281,11 @@ export namespace Service {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3186,48 +3316,18 @@ export namespace Service {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Service._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ServiceStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Service> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      BroadcastService.fromRdf(otherParameters) as purify.Either<
+      BroadcastServiceStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         Service
       >
     ).altLazy(() =>
-      Service._propertiesFromRdf(parameters).map(
+      ServiceStatic.propertiesFromRdf(parameters).map(
         (properties) => new Service(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Service",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(serviceJsonZodSchema());
-  }
-
-  export function serviceJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
-      label: "Service",
-      type: "Group",
-    };
-  }
-
-  export function serviceJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "BroadcastService",
-          "RadioBroadcastService",
-          "Service",
-        ]),
-      }),
     );
   }
 }
@@ -3261,11 +3361,11 @@ export class BroadcastService extends Service {
     return this._identifier;
   }
 
-  override equals(other: BroadcastService): EqualsResult {
+  override equals(other: BroadcastService): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.callSign,
           other.callSign,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -3299,14 +3399,12 @@ export class BroadcastService extends Service {
     return _hasher;
   }
 
-  override toJson(): { readonly callSign: string | undefined } & ReturnType<
-    Service["toJson"]
-  > {
+  override toJson(): BroadcastServiceStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         callSign: this.callSign.map((_item) => _item).extract(),
-      } satisfies ReturnType<BroadcastService["toJson"]>),
+      } satisfies BroadcastServiceStatic.Json),
     );
   }
 
@@ -3345,24 +3443,30 @@ export class BroadcastService extends Service {
   }
 }
 
-export namespace BroadcastService {
-  export function _propertiesFromJson(
+export namespace BroadcastServiceStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/BroadcastService",
+  );
+  export type Json = {
+    readonly callSign: string | undefined;
+  } & ServiceStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       callSign: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof Service._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ServiceStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult =
-      broadcastServiceJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Service._propertiesFromJson(_jsonObject);
+    const _super0Either = ServiceStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3384,13 +3488,39 @@ export namespace BroadcastService {
         BroadcastService
       >
     ).altLazy(() =>
-      BroadcastService._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new BroadcastService(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ServiceStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/callSign`, type: "Control" },
+      ],
+      label: "BroadcastService",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ServiceStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["BroadcastService", "RadioBroadcastService"]),
+        callSign: zod.string().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3406,9 +3536,9 @@ export namespace BroadcastService {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       callSign: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof Service._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ServiceStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Service._propertiesFromRdf({
+    const _super0Either = ServiceStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3458,7 +3588,7 @@ export namespace BroadcastService {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof BroadcastService._propertiesFromRdf>[0],
+    parameters: Parameters<typeof BroadcastServiceStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastService> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -3467,41 +3597,9 @@ export namespace BroadcastService {
         BroadcastService
       >
     ).altLazy(() =>
-      BroadcastService._propertiesFromRdf(parameters).map(
+      BroadcastServiceStatic.propertiesFromRdf(parameters).map(
         (properties) => new BroadcastService(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/BroadcastService",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(broadcastServiceJsonZodSchema());
-  }
-
-  export function broadcastServiceJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Service.serviceJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/callSign`, type: "Control" },
-      ],
-      label: "BroadcastService",
-      type: "Group",
-    };
-  }
-
-  export function broadcastServiceJsonZodSchema() {
-    return Service.serviceJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["BroadcastService", "RadioBroadcastService"]),
-        callSign: zod.string().optional(),
-      }),
     );
   }
 }
@@ -3558,22 +3656,27 @@ export class RadioBroadcastService extends BroadcastService {
 }
 
 export namespace RadioBroadcastService {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/RadioBroadcastService",
+  );
+  export type Json = BroadcastServiceStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof BroadcastService._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof BroadcastServiceStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      radioBroadcastServiceJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = BroadcastService._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      BroadcastServiceStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3588,12 +3691,34 @@ export namespace RadioBroadcastService {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RadioBroadcastService> {
-    return RadioBroadcastService._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new RadioBroadcastService(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [BroadcastServiceStatic.jsonUiSchema({ scopePrefix })],
+      label: "RadioBroadcastService",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return BroadcastServiceStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("RadioBroadcastService"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3606,11 +3731,11 @@ export namespace RadioBroadcastService {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof BroadcastService._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof BroadcastServiceStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = BroadcastService._propertiesFromRdf({
+    const _super0Either = BroadcastServiceStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -3643,40 +3768,10 @@ export namespace RadioBroadcastService {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof RadioBroadcastService._propertiesFromRdf>[0],
+    parameters: Parameters<typeof RadioBroadcastService.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, RadioBroadcastService> {
-    return RadioBroadcastService._propertiesFromRdf(parameters).map(
+    return RadioBroadcastService.propertiesFromRdf(parameters).map(
       (properties) => new RadioBroadcastService(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/RadioBroadcastService",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(radioBroadcastServiceJsonZodSchema());
-  }
-
-  export function radioBroadcastServiceJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BroadcastService.broadcastServiceJsonUiSchema({ scopePrefix }),
-      ],
-      label: "RadioBroadcastService",
-      type: "Group",
-    };
-  }
-
-  export function radioBroadcastServiceJsonZodSchema() {
-    return BroadcastService.broadcastServiceJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("RadioBroadcastService"),
-      }),
     );
   }
 }
@@ -3756,11 +3851,11 @@ export class Role extends Intangible {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  override equals(other: Role): EqualsResult {
+  override equals(other: Role): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.endDate,
           other.endDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -3772,7 +3867,7 @@ export class Role extends Intangible {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.roleName,
           other.roleName,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -3784,7 +3879,7 @@ export class Role extends Intangible {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.startDate,
           other.startDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -3825,11 +3920,7 @@ export class Role extends Intangible {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly endDate: string | undefined;
-    readonly roleName: { readonly "@id": string } | undefined;
-    readonly startDate: string | undefined;
-  } & ReturnType<Intangible["toJson"]> {
+  override toJson(): Role.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -3842,7 +3933,7 @@ export class Role extends Intangible {
         startDate: this.startDate
           .map((_item) => _item.toISOString().replace(/T.*$/, ""))
           .extract(),
-      } satisfies ReturnType<Role["toJson"]>),
+      } satisfies Role.Json),
     );
   }
 
@@ -3904,7 +3995,16 @@ export class Role extends Intangible {
 }
 
 export namespace Role {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Role",
+  );
+  export type Json = {
+    readonly endDate: string | undefined;
+    readonly roleName: { readonly "@id": string } | undefined;
+    readonly startDate: string | undefined;
+  } & IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -3913,15 +4013,15 @@ export namespace Role {
       endDate: purify.Maybe<Date>;
       roleName: purify.Maybe<rdfjs.NamedNode>;
       startDate: purify.Maybe<Date>;
-    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = roleJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -3949,12 +4049,40 @@ export namespace Role {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Role> {
-    return Role._propertiesFromJson(json).map(
-      (properties) => new Role(properties),
+    return propertiesFromJson(json).map((properties) => new Role(properties));
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/roleName`, type: "Control" },
+        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
+      ],
+      label: "Role",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Role"),
+        endDate: zod.string().date().optional(),
+        roleName: zod.object({ "@id": zod.string().min(1) }).optional(),
+        startDate: zod.string().date().optional(),
+      }),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3972,9 +4100,9 @@ export namespace Role {
       endDate: purify.Maybe<Date>;
       roleName: purify.Maybe<rdfjs.NamedNode>;
       startDate: purify.Maybe<Date>;
-    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -4060,44 +4188,10 @@ export namespace Role {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Role._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Role.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Role> {
-    return Role._propertiesFromRdf(parameters).map(
+    return Role.propertiesFromRdf(parameters).map(
       (properties) => new Role(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Role",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(roleJsonZodSchema());
-  }
-
-  export function roleJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Intangible.intangibleJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
-        { scope: `${scopePrefix}/properties/roleName`, type: "Control" },
-        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-      ],
-      label: "Role",
-      type: "Group",
-    };
-  }
-
-  export function roleJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Role"),
-        endDate: zod.string().date().optional(),
-        roleName: zod.object({ "@id": zod.string().min(1) }).optional(),
-        startDate: zod.string().date().optional(),
-      }),
     );
   }
 }
@@ -4152,21 +4246,26 @@ export class Occupation extends Intangible {
 }
 
 export namespace Occupation {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Occupation",
+  );
+  export type Json = IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = occupationJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -4181,12 +4280,34 @@ export namespace Occupation {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Occupation> {
-    return Occupation._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new Occupation(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStatic.jsonUiSchema({ scopePrefix })],
+      label: "Occupation",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Occupation"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -4199,11 +4320,11 @@ export namespace Occupation {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -4234,38 +4355,10 @@ export namespace Occupation {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Occupation._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Occupation.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Occupation> {
-    return Occupation._propertiesFromRdf(parameters).map(
+    return Occupation.propertiesFromRdf(parameters).map(
       (properties) => new Occupation(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Occupation",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(occupationJsonZodSchema());
-  }
-
-  export function occupationJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
-      label: "Occupation",
-      type: "Group",
-    };
-  }
-
-  export function occupationJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Occupation"),
-      }),
     );
   }
 }
@@ -4322,23 +4415,27 @@ export class StructuredValue extends Intangible {
   }
 }
 
-export namespace StructuredValue {
-  export function _propertiesFromJson(
+export namespace StructuredValueStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/StructuredValue",
+  );
+  export type Json = IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      structuredValueJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -4367,13 +4464,39 @@ export namespace StructuredValue {
           >,
       )
       .altLazy(() =>
-        StructuredValue._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new StructuredValue(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStatic.jsonUiSchema({ scopePrefix })],
+      label: "StructuredValue",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "MonetaryAmount",
+          "QuantitativeValue",
+          "StructuredValue",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -4386,11 +4509,11 @@ export namespace StructuredValue {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -4421,7 +4544,7 @@ export namespace StructuredValue {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof StructuredValue._propertiesFromRdf>[0],
+    parameters: Parameters<typeof StructuredValueStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValue> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -4438,42 +4561,10 @@ export namespace StructuredValue {
           >,
       )
       .altLazy(() =>
-        StructuredValue._propertiesFromRdf(parameters).map(
+        StructuredValueStatic.propertiesFromRdf(parameters).map(
           (properties) => new StructuredValue(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/StructuredValue",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(structuredValueJsonZodSchema());
-  }
-
-  export function structuredValueJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
-      label: "StructuredValue",
-      type: "Group",
-    };
-  }
-
-  export function structuredValueJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "MonetaryAmount",
-          "QuantitativeValue",
-          "StructuredValue",
-        ]),
-      }),
-    );
   }
 }
 export class MediaObject extends CreativeWork {
@@ -4555,11 +4646,11 @@ export class MediaObject extends CreativeWork {
     return this._identifier;
   }
 
-  override equals(other: MediaObject): EqualsResult {
+  override equals(other: MediaObject): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.contentUrl,
           other.contentUrl,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4571,7 +4662,7 @@ export class MediaObject extends CreativeWork {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.encodingFormat,
           other.encodingFormat,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4584,7 +4675,7 @@ export class MediaObject extends CreativeWork {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.height,
           other.height,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4597,7 +4688,7 @@ export class MediaObject extends CreativeWork {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.width,
           other.width,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4641,12 +4732,7 @@ export class MediaObject extends CreativeWork {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly contentUrl: { readonly "@id": string } | undefined;
-    readonly encodingFormat: string | undefined;
-    readonly height: ReturnType<QuantitativeValue["toJson"]> | undefined;
-    readonly width: ReturnType<QuantitativeValue["toJson"]> | undefined;
-  } & ReturnType<CreativeWork["toJson"]> {
+  override toJson(): MediaObjectStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -4656,7 +4742,7 @@ export class MediaObject extends CreativeWork {
         encodingFormat: this.encodingFormat.map((_item) => _item).extract(),
         height: this.height.map((_item) => _item.toJson()).extract(),
         width: this.width.map((_item) => _item.toJson()).extract(),
-      } satisfies ReturnType<MediaObject["toJson"]>),
+      } satisfies MediaObjectStatic.Json),
     );
   }
 
@@ -4711,8 +4797,18 @@ export class MediaObject extends CreativeWork {
   }
 }
 
-export namespace MediaObject {
-  export function _propertiesFromJson(
+export namespace MediaObjectStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MediaObject",
+  );
+  export type Json = {
+    readonly contentUrl: { readonly "@id": string } | undefined;
+    readonly encodingFormat: string | undefined;
+    readonly height: QuantitativeValue.Json | undefined;
+    readonly width: QuantitativeValue.Json | undefined;
+  } & CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -4722,15 +4818,15 @@ export namespace MediaObject {
       encodingFormat: purify.Maybe<string>;
       height: purify.Maybe<QuantitativeValue>;
       width: purify.Maybe<QuantitativeValue>;
-    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = mediaObjectJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -4775,13 +4871,49 @@ export namespace MediaObject {
           >,
       )
       .altLazy(() =>
-        MediaObject._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new MediaObject(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
+        { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
+        QuantitativeValue.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/height`,
+        }),
+        QuantitativeValue.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/width`,
+        }),
+      ],
+      label: "MediaObject",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["ImageObject", "MediaObject", "TextObject"]),
+        contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
+        encodingFormat: zod.string().optional(),
+        height: QuantitativeValue.jsonZodSchema().optional(),
+        width: QuantitativeValue.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -4800,9 +4932,9 @@ export namespace MediaObject {
       encodingFormat: purify.Maybe<string>;
       height: purify.Maybe<QuantitativeValue>;
       width: purify.Maybe<QuantitativeValue>;
-    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
-    const _super0Either = CreativeWork._propertiesFromRdf({
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -4924,7 +5056,7 @@ export namespace MediaObject {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof MediaObject._propertiesFromRdf>[0],
+    parameters: Parameters<typeof MediaObjectStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, MediaObject> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -4941,52 +5073,10 @@ export namespace MediaObject {
           >,
       )
       .altLazy(() =>
-        MediaObject._propertiesFromRdf(parameters).map(
+        MediaObjectStatic.propertiesFromRdf(parameters).map(
           (properties) => new MediaObject(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/MediaObject",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(mediaObjectJsonZodSchema());
-  }
-
-  export function mediaObjectJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWork.creativeWorkJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
-        { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        QuantitativeValue.quantitativeValueJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/height`,
-        }),
-        QuantitativeValue.quantitativeValueJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/width`,
-        }),
-      ],
-      label: "MediaObject",
-      type: "Group",
-    };
-  }
-
-  export function mediaObjectJsonZodSchema() {
-    return CreativeWork.creativeWorkJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["ImageObject", "MediaObject", "TextObject"]),
-        contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
-        encodingFormat: zod.string().optional(),
-        height: QuantitativeValue.quantitativeValueJsonZodSchema().optional(),
-        width: QuantitativeValue.quantitativeValueJsonZodSchema().optional(),
-      }),
-    );
   }
 }
 export class ImageObject extends MediaObject {
@@ -5040,21 +5130,26 @@ export class ImageObject extends MediaObject {
 }
 
 export namespace ImageObject {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ImageObject",
+  );
+  export type Json = MediaObjectStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObject._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = imageObjectJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = MediaObject._propertiesFromJson(_jsonObject);
+    const _super0Either = MediaObjectStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -5069,12 +5164,34 @@ export namespace ImageObject {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ImageObject> {
-    return ImageObject._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ImageObject(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [MediaObjectStatic.jsonUiSchema({ scopePrefix })],
+      label: "ImageObject",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return MediaObjectStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ImageObject"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5087,11 +5204,11 @@ export namespace ImageObject {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObject._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = MediaObject._propertiesFromRdf({
+    const _super0Either = MediaObjectStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -5122,38 +5239,10 @@ export namespace ImageObject {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ImageObject._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ImageObject.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ImageObject> {
-    return ImageObject._propertiesFromRdf(parameters).map(
+    return ImageObject.propertiesFromRdf(parameters).map(
       (properties) => new ImageObject(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/ImageObject",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(imageObjectJsonZodSchema());
-  }
-
-  export function imageObjectJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [MediaObject.mediaObjectJsonUiSchema({ scopePrefix })],
-      label: "ImageObject",
-      type: "Group",
-    };
-  }
-
-  export function imageObjectJsonZodSchema() {
-    return MediaObject.mediaObjectJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("ImageObject"),
-      }),
     );
   }
 }
@@ -5207,22 +5296,27 @@ export class Enumeration extends Intangible {
   }
 }
 
-export namespace Enumeration {
-  export function _propertiesFromJson(
+export namespace EnumerationStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Enumeration",
+  );
+  export type Json = IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = enumerationJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -5240,13 +5334,33 @@ export namespace Enumeration {
     return (
       GenderType.fromJson(json) as purify.Either<zod.ZodError, Enumeration>
     ).altLazy(() =>
-      Enumeration._propertiesFromJson(json).map(
-        (properties) => new Enumeration(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new Enumeration(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStatic.jsonUiSchema({ scopePrefix })],
+      label: "Enumeration",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["Enumeration", "GenderType"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5259,11 +5373,11 @@ export namespace Enumeration {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Intangible._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -5294,7 +5408,7 @@ export namespace Enumeration {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Enumeration._propertiesFromRdf>[0],
+    parameters: Parameters<typeof EnumerationStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Enumeration> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -5303,37 +5417,9 @@ export namespace Enumeration {
         Enumeration
       >
     ).altLazy(() =>
-      Enumeration._propertiesFromRdf(parameters).map(
+      EnumerationStatic.propertiesFromRdf(parameters).map(
         (properties) => new Enumeration(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Enumeration",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(enumerationJsonZodSchema());
-  }
-
-  export function enumerationJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Intangible.intangibleJsonUiSchema({ scopePrefix })],
-      label: "Enumeration",
-      type: "Group",
-    };
-  }
-
-  export function enumerationJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["Enumeration", "GenderType"]),
-      }),
     );
   }
 }
@@ -5386,7 +5472,12 @@ export class GenderType extends Enumeration {
 }
 
 export namespace GenderType {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/GenderType",
+  );
+  export type Json = EnumerationStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -5394,15 +5485,15 @@ export namespace GenderType {
       identifier: rdfjs.NamedNode<
         "http://schema.org/Female" | "http://schema.org/Male"
       >;
-    } & UnwrapR<ReturnType<typeof Enumeration._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof EnumerationStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = genderTypeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Enumeration._propertiesFromJson(_jsonObject);
+    const _super0Either = EnumerationStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -5415,12 +5506,34 @@ export namespace GenderType {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, GenderType> {
-    return GenderType._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new GenderType(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [EnumerationStatic.jsonUiSchema({ scopePrefix })],
+      label: "GenderType",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return EnumerationStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.enum(["http://schema.org/Female", "http://schema.org/Male"]),
+        type: zod.literal("GenderType"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5437,9 +5550,9 @@ export namespace GenderType {
       identifier: rdfjs.NamedNode<
         "http://schema.org/Female" | "http://schema.org/Male"
       >;
-    } & UnwrapR<ReturnType<typeof Enumeration._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof EnumerationStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Enumeration._propertiesFromRdf({
+    const _super0Either = EnumerationStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -5493,38 +5606,10 @@ export namespace GenderType {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof GenderType._propertiesFromRdf>[0],
+    parameters: Parameters<typeof GenderType.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, GenderType> {
-    return GenderType._propertiesFromRdf(parameters).map(
+    return GenderType.propertiesFromRdf(parameters).map(
       (properties) => new GenderType(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/GenderType",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(genderTypeJsonZodSchema());
-  }
-
-  export function genderTypeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Enumeration.enumerationJsonUiSchema({ scopePrefix })],
-      label: "GenderType",
-      type: "Group",
-    };
-  }
-
-  export function genderTypeJsonZodSchema() {
-    return Enumeration.enumerationJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.enum(["http://schema.org/Female", "http://schema.org/Male"]),
-        type: zod.literal("GenderType"),
-      }),
     );
   }
 }
@@ -5646,12 +5731,12 @@ export class Event extends Thing {
     return this._identifier;
   }
 
-  override equals(other: Event): EqualsResult {
+  override equals(other: Event): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.about,
           other.about,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5663,7 +5748,7 @@ export class Event extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.endDate,
           other.endDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5676,7 +5761,7 @@ export class Event extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.location,
           other.location,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5688,7 +5773,7 @@ export class Event extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
           this.organizers,
           other.organizers,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5700,7 +5785,7 @@ export class Event extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
           this.performers,
           other.performers,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5712,7 +5797,7 @@ export class Event extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.startDate,
           other.startDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5725,7 +5810,7 @@ export class Event extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.subEvents,
           other.subEvents,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5738,7 +5823,7 @@ export class Event extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.superEvent,
           other.superEvent,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5797,22 +5882,7 @@ export class Event extends Thing {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly about: readonly ReturnType<ThingStub["toJson"]>[];
-    readonly endDate: string | undefined;
-    readonly location: ReturnType<PlaceStub["toJson"]> | undefined;
-    readonly organizers: readonly (
-      | ReturnType<OrganizationStub["toJson"]>
-      | ReturnType<PersonStub["toJson"]>
-    )[];
-    readonly performers: readonly (
-      | ReturnType<OrganizationStub["toJson"]>
-      | ReturnType<PersonStub["toJson"]>
-    )[];
-    readonly startDate: string | undefined;
-    readonly subEvents: readonly ReturnType<EventStub["toJson"]>[];
-    readonly superEvent: ReturnType<EventStub["toJson"]> | undefined;
-  } & ReturnType<Thing["toJson"]> {
+  override toJson(): EventStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -5824,7 +5894,7 @@ export class Event extends Thing {
         startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
         subEvents: this.subEvents.map((_item) => _item.toJson()),
         superEvent: this.superEvent.map((_item) => _item.toJson()).extract(),
-      } satisfies ReturnType<Event["toJson"]>),
+      } satisfies EventStatic.Json),
     );
   }
 
@@ -5917,8 +5987,22 @@ export class Event extends Thing {
   }
 }
 
-export namespace Event {
-  export function _propertiesFromJson(
+export namespace EventStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Event",
+  );
+  export type Json = {
+    readonly about: readonly ThingStubStatic.Json[];
+    readonly endDate: string | undefined;
+    readonly location: PlaceStub.Json | undefined;
+    readonly organizers: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly performers: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly startDate: string | undefined;
+    readonly subEvents: readonly EventStubStatic.Json[];
+    readonly superEvent: EventStubStatic.Json | undefined;
+  } & ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -5932,15 +6016,15 @@ export namespace Event {
       startDate: purify.Maybe<Date>;
       subEvents: EventStub[];
       superEvent: purify.Maybe<EventStub>;
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = eventJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -5950,7 +6034,7 @@ export namespace Event {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const about = _jsonObject["about"].map((_item) =>
-      ThingStub.fromJson(_item).unsafeCoerce(),
+      ThingStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
       (_item) => new Date(_item),
@@ -5968,10 +6052,10 @@ export namespace Event {
       (_item) => new Date(_item),
     );
     const subEvents = _jsonObject["subEvents"].map((_item) =>
-      EventStub.fromJson(_item).unsafeCoerce(),
+      EventStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
-      (_item) => EventStub.fromJson(_item).unsafeCoerce(),
+      (_item) => EventStubStatic.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -5989,15 +6073,72 @@ export namespace Event {
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Event> {
     return (
-      PublicationEvent.fromJson(json) as purify.Either<zod.ZodError, Event>
+      PublicationEventStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        Event
+      >
     ).altLazy(() =>
-      Event._propertiesFromJson(json).map(
-        (properties) => new Event(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new Event(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        ThingStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/about`,
+        }),
+        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
+        PlaceStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/location`,
+        }),
+        { scope: `${scopePrefix}/properties/organizers`, type: "Control" },
+        { scope: `${scopePrefix}/properties/performers`, type: "Control" },
+        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
+        EventStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/subEvents`,
+        }),
+        EventStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/superEvent`,
+        }),
+      ],
+      label: "Event",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["BroadcastEvent", "Event", "PublicationEvent"]),
+        about: ThingStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        endDate: zod.string().datetime().optional(),
+        location: PlaceStub.jsonZodSchema().optional(),
+        organizers: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        performers: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        startDate: zod.string().datetime().optional(),
+        subEvents: EventStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        superEvent: EventStubStatic.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -6020,9 +6161,9 @@ export namespace Event {
       startDate: purify.Maybe<Date>;
       subEvents: EventStub[];
       superEvent: purify.Maybe<EventStub>;
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -6061,7 +6202,7 @@ export namespace Event {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              ThingStub.fromRdf({
+              ThingStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -6208,7 +6349,7 @@ export namespace Event {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              EventStub.fromRdf({
+              EventStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -6235,7 +6376,7 @@ export namespace Event {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          EventStub.fromRdf({
+          EventStubStatic.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -6264,78 +6405,18 @@ export namespace Event {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Event._propertiesFromRdf>[0],
+    parameters: Parameters<typeof EventStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Event> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      PublicationEvent.fromRdf(otherParameters) as purify.Either<
+      PublicationEventStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         Event
       >
     ).altLazy(() =>
-      Event._propertiesFromRdf(parameters).map(
+      EventStatic.propertiesFromRdf(parameters).map(
         (properties) => new Event(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Event",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(eventJsonZodSchema());
-  }
-
-  export function eventJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Thing.thingJsonUiSchema({ scopePrefix }),
-        ThingStub.thingStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/about`,
-        }),
-        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
-        PlaceStub.placeStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/location`,
-        }),
-        { scope: `${scopePrefix}/properties/organizers`, type: "Control" },
-        { scope: `${scopePrefix}/properties/performers`, type: "Control" },
-        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-        EventStub.eventStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/subEvents`,
-        }),
-        EventStub.eventStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/superEvent`,
-        }),
-      ],
-      label: "Event",
-      type: "Group",
-    };
-  }
-
-  export function eventJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["BroadcastEvent", "Event", "PublicationEvent"]),
-        about: ThingStub.thingStubJsonZodSchema()
-          .array()
-          .default(() => []),
-        endDate: zod.string().datetime().optional(),
-        location: PlaceStub.placeStubJsonZodSchema().optional(),
-        organizers: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        performers: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        startDate: zod.string().datetime().optional(),
-        subEvents: EventStub.eventStubJsonZodSchema()
-          .array()
-          .default(() => []),
-        superEvent: EventStub.eventStubJsonZodSchema().optional(),
-      }),
     );
   }
 }
@@ -6367,12 +6448,12 @@ export class PublicationEvent extends Event {
     return this._identifier;
   }
 
-  override equals(other: PublicationEvent): EqualsResult {
+  override equals(other: PublicationEvent): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.publishedOn,
           other.publishedOn,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6407,14 +6488,12 @@ export class PublicationEvent extends Event {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly publishedOn: readonly ReturnType<BroadcastServiceStub["toJson"]>[];
-  } & ReturnType<Event["toJson"]> {
+  override toJson(): PublicationEventStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         publishedOn: this.publishedOn.map((_item) => _item.toJson()),
-      } satisfies ReturnType<PublicationEvent["toJson"]>),
+      } satisfies PublicationEventStatic.Json),
     );
   }
 
@@ -6455,24 +6534,30 @@ export class PublicationEvent extends Event {
   }
 }
 
-export namespace PublicationEvent {
-  export function _propertiesFromJson(
+export namespace PublicationEventStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/PublicationEvent",
+  );
+  export type Json = {
+    readonly publishedOn: readonly BroadcastServiceStubStatic.Json[];
+  } & EventStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       publishedOn: readonly BroadcastServiceStub[];
-    } & UnwrapR<ReturnType<typeof Event._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult =
-      publicationEventJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Event._propertiesFromJson(_jsonObject);
+    const _super0Either = EventStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -6482,7 +6567,7 @@ export namespace PublicationEvent {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const publishedOn = _jsonObject["publishedOn"].map((_item) =>
-      BroadcastServiceStub.fromJson(_item).unsafeCoerce(),
+      BroadcastServiceStubStatic.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({ ..._super0, identifier, publishedOn });
   }
@@ -6496,13 +6581,43 @@ export namespace PublicationEvent {
         PublicationEvent
       >
     ).altLazy(() =>
-      PublicationEvent._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new PublicationEvent(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        EventStatic.jsonUiSchema({ scopePrefix }),
+        BroadcastServiceStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/publishedOn`,
+        }),
+      ],
+      label: "PublicationEvent",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return EventStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["BroadcastEvent", "PublicationEvent"]),
+        publishedOn: BroadcastServiceStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -6518,9 +6633,9 @@ export namespace PublicationEvent {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       publishedOn: readonly BroadcastServiceStub[];
-    } & UnwrapR<ReturnType<typeof Event._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Event._propertiesFromRdf({
+    const _super0Either = EventStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -6563,7 +6678,7 @@ export namespace PublicationEvent {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              BroadcastServiceStub.fromRdf({
+              BroadcastServiceStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -6583,7 +6698,7 @@ export namespace PublicationEvent {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof PublicationEvent._propertiesFromRdf>[0],
+    parameters: Parameters<typeof PublicationEventStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEvent> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -6592,45 +6707,9 @@ export namespace PublicationEvent {
         PublicationEvent
       >
     ).altLazy(() =>
-      PublicationEvent._propertiesFromRdf(parameters).map(
+      PublicationEventStatic.propertiesFromRdf(parameters).map(
         (properties) => new PublicationEvent(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/PublicationEvent",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(publicationEventJsonZodSchema());
-  }
-
-  export function publicationEventJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Event.eventJsonUiSchema({ scopePrefix }),
-        BroadcastServiceStub.broadcastServiceStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/publishedOn`,
-        }),
-      ],
-      label: "PublicationEvent",
-      type: "Group",
-    };
-  }
-
-  export function publicationEventJsonZodSchema() {
-    return Event.eventJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["BroadcastEvent", "PublicationEvent"]),
-        publishedOn: BroadcastServiceStub.broadcastServiceStubJsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
     );
   }
 }
@@ -6685,21 +6764,27 @@ export class BroadcastEvent extends PublicationEvent {
 }
 
 export namespace BroadcastEvent {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/BroadcastEvent",
+  );
+  export type Json = PublicationEventStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof PublicationEvent._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PublicationEventStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = broadcastEventJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = PublicationEvent._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      PublicationEventStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -6714,12 +6799,34 @@ export namespace BroadcastEvent {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BroadcastEvent> {
-    return BroadcastEvent._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new BroadcastEvent(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [PublicationEventStatic.jsonUiSchema({ scopePrefix })],
+      label: "BroadcastEvent",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return PublicationEventStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("BroadcastEvent"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -6732,11 +6839,11 @@ export namespace BroadcastEvent {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof PublicationEvent._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PublicationEventStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = PublicationEvent._propertiesFromRdf({
+    const _super0Either = PublicationEventStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -6767,40 +6874,10 @@ export namespace BroadcastEvent {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof BroadcastEvent._propertiesFromRdf>[0],
+    parameters: Parameters<typeof BroadcastEvent.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastEvent> {
-    return BroadcastEvent._propertiesFromRdf(parameters).map(
+    return BroadcastEvent.propertiesFromRdf(parameters).map(
       (properties) => new BroadcastEvent(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/BroadcastEvent",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(broadcastEventJsonZodSchema());
-  }
-
-  export function broadcastEventJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        PublicationEvent.publicationEventJsonUiSchema({ scopePrefix }),
-      ],
-      label: "BroadcastEvent",
-      type: "Group",
-    };
-  }
-
-  export function broadcastEventJsonZodSchema() {
-    return PublicationEvent.publicationEventJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("BroadcastEvent"),
-      }),
     );
   }
 }
@@ -6875,11 +6952,11 @@ export class Action extends Thing {
     return this._identifier;
   }
 
-  override equals(other: Action): EqualsResult {
+  override equals(other: Action): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
           this.agents,
           other.agents,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6891,7 +6968,7 @@ export class Action extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.endTime,
           other.endTime,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6903,7 +6980,7 @@ export class Action extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
           this.participants,
           other.participants,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6915,7 +6992,7 @@ export class Action extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.startTime,
           other.startTime,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6960,18 +7037,7 @@ export class Action extends Thing {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly agents: readonly (
-      | ReturnType<OrganizationStub["toJson"]>
-      | ReturnType<PersonStub["toJson"]>
-    )[];
-    readonly endTime: string | undefined;
-    readonly participants: readonly (
-      | ReturnType<OrganizationStub["toJson"]>
-      | ReturnType<PersonStub["toJson"]>
-    )[];
-    readonly startTime: string | undefined;
-  } & ReturnType<Thing["toJson"]> {
+  override toJson(): ActionStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -6979,7 +7045,7 @@ export class Action extends Thing {
         endTime: this.endTime.map((_item) => _item.toISOString()).extract(),
         participants: this.participants.map((_item) => _item.toJson()),
         startTime: this.startTime.map((_item) => _item.toISOString()).extract(),
-      } satisfies ReturnType<Action["toJson"]>),
+      } satisfies ActionStatic.Json),
     );
   }
 
@@ -7048,8 +7114,18 @@ export class Action extends Thing {
   }
 }
 
-export namespace Action {
-  export function _propertiesFromJson(
+export namespace ActionStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Action",
+  );
+  export type Json = {
+    readonly agents: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly endTime: string | undefined;
+    readonly participants: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly startTime: string | undefined;
+  } & ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -7059,15 +7135,15 @@ export namespace Action {
       endTime: purify.Maybe<Date>;
       participants: readonly AgentStub[];
       startTime: purify.Maybe<Date>;
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = actionJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -7100,15 +7176,54 @@ export namespace Action {
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Action> {
     return (
-      AssessAction.fromJson(json) as purify.Either<zod.ZodError, Action>
+      AssessActionStatic.fromJson(json) as purify.Either<zod.ZodError, Action>
     ).altLazy(() =>
-      Action._propertiesFromJson(json).map(
-        (properties) => new Action(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new Action(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/agents`, type: "Control" },
+        { scope: `${scopePrefix}/properties/endTime`, type: "Control" },
+        { scope: `${scopePrefix}/properties/participants`, type: "Control" },
+        { scope: `${scopePrefix}/properties/startTime`, type: "Control" },
+      ],
+      label: "Action",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "Action",
+          "AssessAction",
+          "ChooseAction",
+          "VoteAction",
+        ]),
+        agents: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        endTime: zod.string().datetime().optional(),
+        participants: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        startTime: zod.string().datetime().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -7127,9 +7242,9 @@ export namespace Action {
       endTime: purify.Maybe<Date>;
       participants: readonly AgentStub[];
       startTime: purify.Maybe<Date>;
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -7257,63 +7372,18 @@ export namespace Action {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Action._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ActionStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Action> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      AssessAction.fromRdf(otherParameters) as purify.Either<
+      AssessActionStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         Action
       >
     ).altLazy(() =>
-      Action._propertiesFromRdf(parameters).map(
+      ActionStatic.propertiesFromRdf(parameters).map(
         (properties) => new Action(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Action",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(actionJsonZodSchema());
-  }
-
-  export function actionJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Thing.thingJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/agents`, type: "Control" },
-        { scope: `${scopePrefix}/properties/endTime`, type: "Control" },
-        { scope: `${scopePrefix}/properties/participants`, type: "Control" },
-        { scope: `${scopePrefix}/properties/startTime`, type: "Control" },
-      ],
-      label: "Action",
-      type: "Group",
-    };
-  }
-
-  export function actionJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "Action",
-          "AssessAction",
-          "ChooseAction",
-          "VoteAction",
-        ]),
-        agents: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        endTime: zod.string().datetime().optional(),
-        participants: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        startTime: zod.string().datetime().optional(),
-      }),
     );
   }
 }
@@ -7368,22 +7438,27 @@ export class AssessAction extends Action {
   }
 }
 
-export namespace AssessAction {
-  export function _propertiesFromJson(
+export namespace AssessActionStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/AssessAction",
+  );
+  export type Json = ActionStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Action._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ActionStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = assessActionJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Action._propertiesFromJson(_jsonObject);
+    const _super0Either = ActionStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -7399,15 +7474,40 @@ export namespace AssessAction {
     json: unknown,
   ): purify.Either<zod.ZodError, AssessAction> {
     return (
-      ChooseAction.fromJson(json) as purify.Either<zod.ZodError, AssessAction>
+      ChooseActionStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        AssessAction
+      >
     ).altLazy(() =>
-      AssessAction._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new AssessAction(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ActionStatic.jsonUiSchema({ scopePrefix })],
+      label: "AssessAction",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ActionStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["AssessAction", "ChooseAction", "VoteAction"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -7420,11 +7520,11 @@ export namespace AssessAction {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Action._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ActionStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Action._propertiesFromRdf({
+    const _super0Either = ActionStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -7455,46 +7555,18 @@ export namespace AssessAction {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof AssessAction._propertiesFromRdf>[0],
+    parameters: Parameters<typeof AssessActionStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, AssessAction> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ChooseAction.fromRdf(otherParameters) as purify.Either<
+      ChooseActionStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         AssessAction
       >
     ).altLazy(() =>
-      AssessAction._propertiesFromRdf(parameters).map(
+      AssessActionStatic.propertiesFromRdf(parameters).map(
         (properties) => new AssessAction(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/AssessAction",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(assessActionJsonZodSchema());
-  }
-
-  export function assessActionJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Action.actionJsonUiSchema({ scopePrefix })],
-      label: "AssessAction",
-      type: "Group",
-    };
-  }
-
-  export function assessActionJsonZodSchema() {
-    return Action.actionJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["AssessAction", "ChooseAction", "VoteAction"]),
-      }),
     );
   }
 }
@@ -7548,22 +7620,27 @@ export class ChooseAction extends AssessAction {
   }
 }
 
-export namespace ChooseAction {
-  export function _propertiesFromJson(
+export namespace ChooseActionStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ChooseAction",
+  );
+  export type Json = AssessActionStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof AssessAction._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof AssessActionStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = chooseActionJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = AssessAction._propertiesFromJson(_jsonObject);
+    const _super0Either = AssessActionStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -7581,13 +7658,35 @@ export namespace ChooseAction {
     return (
       VoteAction.fromJson(json) as purify.Either<zod.ZodError, ChooseAction>
     ).altLazy(() =>
-      ChooseAction._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new ChooseAction(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [AssessActionStatic.jsonUiSchema({ scopePrefix })],
+      label: "ChooseAction",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return AssessActionStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["ChooseAction", "VoteAction"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -7600,11 +7699,11 @@ export namespace ChooseAction {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof AssessAction._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof AssessActionStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = AssessAction._propertiesFromRdf({
+    const _super0Either = AssessActionStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -7635,7 +7734,7 @@ export namespace ChooseAction {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ChooseAction._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ChooseActionStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ChooseAction> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -7644,37 +7743,9 @@ export namespace ChooseAction {
         ChooseAction
       >
     ).altLazy(() =>
-      ChooseAction._propertiesFromRdf(parameters).map(
+      ChooseActionStatic.propertiesFromRdf(parameters).map(
         (properties) => new ChooseAction(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/ChooseAction",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(chooseActionJsonZodSchema());
-  }
-
-  export function chooseActionJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [AssessAction.assessActionJsonUiSchema({ scopePrefix })],
-      label: "ChooseAction",
-      type: "Group",
-    };
-  }
-
-  export function chooseActionJsonZodSchema() {
-    return AssessAction.assessActionJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["ChooseAction", "VoteAction"]),
-      }),
     );
   }
 }
@@ -7729,21 +7800,26 @@ export class VoteAction extends ChooseAction {
 }
 
 export namespace VoteAction {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/VoteAction",
+  );
+  export type Json = ChooseActionStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ChooseAction._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ChooseActionStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = voteActionJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ChooseAction._propertiesFromJson(_jsonObject);
+    const _super0Either = ChooseActionStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -7758,12 +7834,34 @@ export namespace VoteAction {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, VoteAction> {
-    return VoteAction._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new VoteAction(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ChooseActionStatic.jsonUiSchema({ scopePrefix })],
+      label: "VoteAction",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ChooseActionStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("VoteAction"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -7776,11 +7874,11 @@ export namespace VoteAction {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ChooseAction._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ChooseActionStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ChooseAction._propertiesFromRdf({
+    const _super0Either = ChooseActionStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -7811,38 +7909,10 @@ export namespace VoteAction {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof VoteAction._propertiesFromRdf>[0],
+    parameters: Parameters<typeof VoteAction.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, VoteAction> {
-    return VoteAction._propertiesFromRdf(parameters).map(
+    return VoteAction.propertiesFromRdf(parameters).map(
       (properties) => new VoteAction(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/VoteAction",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(voteActionJsonZodSchema());
-  }
-
-  export function voteActionJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ChooseAction.chooseActionJsonUiSchema({ scopePrefix })],
-      label: "VoteAction",
-      type: "Group",
-    };
-  }
-
-  export function voteActionJsonZodSchema() {
-    return ChooseAction.chooseActionJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("VoteAction"),
-      }),
     );
   }
 }
@@ -7921,8 +7991,8 @@ export class ThingStub {
     return this._identifier;
   }
 
-  equals(other: ThingStub): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: ThingStub): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -7931,7 +8001,7 @@ export class ThingStub {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -7942,7 +8012,7 @@ export class ThingStub {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.name,
           other.name,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -7954,7 +8024,7 @@ export class ThingStub {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.order,
           other.order,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -7992,39 +8062,7 @@ export class ThingStub {
     return _hasher;
   }
 
-  toJson(): {
-    readonly "@id": string;
-    readonly type:
-      | "ActionStub"
-      | "ArticleStub"
-      | "AssessActionStub"
-      | "BroadcastServiceStub"
-      | "ChooseActionStub"
-      | "CreativeWorkStub"
-      | "EpisodeStub"
-      | "EventStub"
-      | "IntangibleStub"
-      | "InvoiceStub"
-      | "MediaObjectStub"
-      | "MessageStub"
-      | "MonetaryAmountStub"
-      | "OrderStub"
-      | "OrganizationStub"
-      | "PersonStub"
-      | "PlaceStub"
-      | "PublicationEventStub"
-      | "QuantitativeValueStub"
-      | "RadioBroadcastServiceStub"
-      | "RadioEpisodeStub"
-      | "ReportStub"
-      | "ServiceStub"
-      | "StructuredValueStub"
-      | "TextObjectStub"
-      | "ThingStub"
-      | "VoteActionStub";
-    readonly name: string | undefined;
-    readonly order: number | undefined;
-  } {
+  toJson(): ThingStubStatic.Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -8034,7 +8072,7 @@ export class ThingStub {
         type: this.type,
         name: this.name.map((_item) => _item).extract(),
         order: this.order.map((_item) => _item).extract(),
-      } satisfies ReturnType<ThingStub["toJson"]>),
+      } satisfies ThingStubStatic.Json),
     );
   }
 
@@ -8074,8 +8112,45 @@ export class ThingStub {
   }
 }
 
-export namespace ThingStub {
-  export function _propertiesFromJson(
+export namespace ThingStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#ThingStub",
+  );
+  export type Json = {
+    readonly "@id": string;
+    readonly type:
+      | "ActionStub"
+      | "ArticleStub"
+      | "AssessActionStub"
+      | "BroadcastServiceStub"
+      | "ChooseActionStub"
+      | "CreativeWorkStub"
+      | "EpisodeStub"
+      | "EventStub"
+      | "IntangibleStub"
+      | "InvoiceStub"
+      | "MediaObjectStub"
+      | "MessageStub"
+      | "MonetaryAmountStub"
+      | "OrderStub"
+      | "OrganizationStub"
+      | "PersonStub"
+      | "PlaceStub"
+      | "PublicationEventStub"
+      | "QuantitativeValueStub"
+      | "RadioBroadcastServiceStub"
+      | "RadioEpisodeStub"
+      | "ReportStub"
+      | "ServiceStub"
+      | "StructuredValueStub"
+      | "TextObjectStub"
+      | "ThingStub"
+      | "VoteActionStub";
+    readonly name: string | undefined;
+    readonly order: number | undefined;
+  };
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -8085,7 +8160,7 @@ export namespace ThingStub {
       order: purify.Maybe<number>;
     }
   > {
-    const _jsonSafeParseResult = thingStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
@@ -8102,7 +8177,9 @@ export namespace ThingStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ThingStub> {
-    return (ActionStub.fromJson(json) as purify.Either<zod.ZodError, ThingStub>)
+    return (
+      ActionStubStatic.fromJson(json) as purify.Either<zod.ZodError, ThingStub>
+    )
       .altLazy(
         () =>
           OrganizationStub.fromJson(json) as purify.Either<
@@ -8116,18 +8193,21 @@ export namespace ThingStub {
       )
       .altLazy(
         () =>
-          CreativeWorkStub.fromJson(json) as purify.Either<
+          CreativeWorkStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             ThingStub
           >,
       )
       .altLazy(
         () =>
-          EventStub.fromJson(json) as purify.Either<zod.ZodError, ThingStub>,
+          EventStubStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            ThingStub
+          >,
       )
       .altLazy(
         () =>
-          IntangibleStub.fromJson(json) as purify.Either<
+          IntangibleStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             ThingStub
           >,
@@ -8137,13 +8217,80 @@ export namespace ThingStub {
           PlaceStub.fromJson(json) as purify.Either<zod.ZodError, ThingStub>,
       )
       .altLazy(() =>
-        ThingStub._propertiesFromJson(json).map(
-          (properties) => new ThingStub(properties),
-        ),
+        propertiesFromJson(json).map((properties) => new ThingStub(properties)),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ThingStub" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/name`, type: "Control" },
+        { scope: `${scopePrefix}/properties/order`, type: "Control" },
+      ],
+      label: "ThingStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.enum([
+        "ActionStub",
+        "ArticleStub",
+        "AssessActionStub",
+        "BroadcastServiceStub",
+        "ChooseActionStub",
+        "CreativeWorkStub",
+        "EpisodeStub",
+        "EventStub",
+        "IntangibleStub",
+        "InvoiceStub",
+        "MediaObjectStub",
+        "MessageStub",
+        "MonetaryAmountStub",
+        "OrderStub",
+        "OrganizationStub",
+        "PersonStub",
+        "PlaceStub",
+        "PublicationEventStub",
+        "QuantitativeValueStub",
+        "RadioBroadcastServiceStub",
+        "RadioEpisodeStub",
+        "ReportStub",
+        "ServiceStub",
+        "StructuredValueStub",
+        "TextObjectStub",
+        "ThingStub",
+        "VoteActionStub",
+      ]),
+      name: zod.string().optional(),
+      order: zod.number().optional(),
+    });
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -8218,11 +8365,11 @@ export namespace ThingStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ThingStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ThingStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ThingStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ActionStub.fromRdf(otherParameters) as purify.Either<
+      ActionStubStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         ThingStub
       >
@@ -8243,21 +8390,21 @@ export namespace ThingStub {
       )
       .altLazy(
         () =>
-          CreativeWorkStub.fromRdf(otherParameters) as purify.Either<
+          CreativeWorkStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             ThingStub
           >,
       )
       .altLazy(
         () =>
-          EventStub.fromRdf(otherParameters) as purify.Either<
+          EventStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             ThingStub
           >,
       )
       .altLazy(
         () =>
-          IntangibleStub.fromRdf(otherParameters) as purify.Either<
+          IntangibleStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             ThingStub
           >,
@@ -8270,83 +8417,10 @@ export namespace ThingStub {
           >,
       )
       .altLazy(() =>
-        ThingStub._propertiesFromRdf(parameters).map(
+        ThingStubStatic.propertiesFromRdf(parameters).map(
           (properties) => new ThingStub(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#ThingStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(thingStubJsonZodSchema());
-  }
-
-  export function thingStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ThingStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/name`, type: "Control" },
-        { scope: `${scopePrefix}/properties/order`, type: "Control" },
-      ],
-      label: "ThingStub",
-      type: "Group",
-    };
-  }
-
-  export function thingStubJsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.enum([
-        "ActionStub",
-        "ArticleStub",
-        "AssessActionStub",
-        "BroadcastServiceStub",
-        "ChooseActionStub",
-        "CreativeWorkStub",
-        "EpisodeStub",
-        "EventStub",
-        "IntangibleStub",
-        "InvoiceStub",
-        "MediaObjectStub",
-        "MessageStub",
-        "MonetaryAmountStub",
-        "OrderStub",
-        "OrganizationStub",
-        "PersonStub",
-        "PlaceStub",
-        "PublicationEventStub",
-        "QuantitativeValueStub",
-        "RadioBroadcastServiceStub",
-        "RadioEpisodeStub",
-        "ReportStub",
-        "ServiceStub",
-        "StructuredValueStub",
-        "TextObjectStub",
-        "ThingStub",
-        "VoteActionStub",
-      ]),
-      name: zod.string().optional(),
-      order: zod.number().optional(),
-    });
   }
 
   export function sparqlConstructQuery(
@@ -8363,11 +8437,14 @@ export namespace ThingStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ThingStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        ThingStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ThingStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ThingStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -8381,7 +8458,7 @@ export namespace ThingStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ThingStub.sparqlConstructQuery(parameters),
+      ThingStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -8548,22 +8625,27 @@ export class ActionStub extends ThingStub {
   }
 }
 
-export namespace ActionStub {
-  export function _propertiesFromJson(
+export namespace ActionStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Action",
+  );
+  export type Json = ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = actionStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -8579,15 +8661,43 @@ export namespace ActionStub {
     json: unknown,
   ): purify.Either<zod.ZodError, ActionStub> {
     return (
-      AssessActionStub.fromJson(json) as purify.Either<zod.ZodError, ActionStub>
+      AssessActionStubStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        ActionStub
+      >
     ).altLazy(() =>
-      ActionStub._propertiesFromJson(json).map(
-        (properties) => new ActionStub(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new ActionStub(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "ActionStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "ActionStub",
+          "AssessActionStub",
+          "ChooseActionStub",
+          "VoteActionStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -8600,11 +8710,11 @@ export namespace ActionStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -8633,51 +8743,18 @@ export namespace ActionStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ActionStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ActionStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ActionStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      AssessActionStub.fromRdf(otherParameters) as purify.Either<
+      AssessActionStubStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         ActionStub
       >
     ).altLazy(() =>
-      ActionStub._propertiesFromRdf(parameters).map(
+      ActionStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new ActionStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Action",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(actionStubJsonZodSchema());
-  }
-
-  export function actionStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
-      label: "ActionStub",
-      type: "Group",
-    };
-  }
-
-  export function actionStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "ActionStub",
-          "AssessActionStub",
-          "ChooseActionStub",
-          "VoteActionStub",
-        ]),
-      }),
     );
   }
 
@@ -8695,11 +8772,14 @@ export namespace ActionStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ActionStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        ActionStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ActionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -8713,7 +8793,7 @@ export namespace ActionStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ActionStub.sparqlConstructQuery(parameters),
+      ActionStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -8727,7 +8807,7 @@ export namespace ActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "actionStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -8756,7 +8836,7 @@ export namespace ActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "actionStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -8845,23 +8925,27 @@ export class AssessActionStub extends ActionStub {
   }
 }
 
-export namespace AssessActionStub {
-  export function _propertiesFromJson(
+export namespace AssessActionStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/AssessAction",
+  );
+  export type Json = ActionStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ActionStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ActionStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      assessActionStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ActionStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ActionStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -8877,18 +8961,44 @@ export namespace AssessActionStub {
     json: unknown,
   ): purify.Either<zod.ZodError, AssessActionStub> {
     return (
-      ChooseActionStub.fromJson(json) as purify.Either<
+      ChooseActionStubStatic.fromJson(json) as purify.Either<
         zod.ZodError,
         AssessActionStub
       >
     ).altLazy(() =>
-      AssessActionStub._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new AssessActionStub(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ActionStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "AssessActionStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ActionStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "AssessActionStub",
+          "ChooseActionStub",
+          "VoteActionStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -8901,11 +9011,11 @@ export namespace AssessActionStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ActionStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ActionStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ActionStub._propertiesFromRdf({
+    const _super0Either = ActionStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -8936,50 +9046,18 @@ export namespace AssessActionStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof AssessActionStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof AssessActionStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, AssessActionStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ChooseActionStub.fromRdf(otherParameters) as purify.Either<
+      ChooseActionStubStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         AssessActionStub
       >
     ).altLazy(() =>
-      AssessActionStub._propertiesFromRdf(parameters).map(
+      AssessActionStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new AssessActionStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/AssessAction",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(assessActionStubJsonZodSchema());
-  }
-
-  export function assessActionStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ActionStub.actionStubJsonUiSchema({ scopePrefix })],
-      label: "AssessActionStub",
-      type: "Group",
-    };
-  }
-
-  export function assessActionStubJsonZodSchema() {
-    return ActionStub.actionStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "AssessActionStub",
-          "ChooseActionStub",
-          "VoteActionStub",
-        ]),
-      }),
     );
   }
 
@@ -8997,14 +9075,14 @@ export namespace AssessActionStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AssessActionStub.sparqlConstructTemplateTriples({
+        AssessActionStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AssessActionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        AssessActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -9018,7 +9096,7 @@ export namespace AssessActionStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AssessActionStub.sparqlConstructQuery(parameters),
+      AssessActionStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -9033,7 +9111,7 @@ export namespace AssessActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "assessActionStub");
     return [
-      ...ActionStub.sparqlConstructTemplateTriples({
+      ...ActionStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -9063,7 +9141,7 @@ export namespace AssessActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "assessActionStub");
     return [
-      ...ActionStub.sparqlWherePatterns({
+      ...ActionStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -9152,23 +9230,28 @@ export class ChooseActionStub extends AssessActionStub {
   }
 }
 
-export namespace ChooseActionStub {
-  export function _propertiesFromJson(
+export namespace ChooseActionStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ChooseAction",
+  );
+  export type Json = AssessActionStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof AssessActionStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof AssessActionStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      chooseActionStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = AssessActionStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      AssessActionStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -9189,13 +9272,35 @@ export namespace ChooseActionStub {
         ChooseActionStub
       >
     ).altLazy(() =>
-      ChooseActionStub._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new ChooseActionStub(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [AssessActionStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "ChooseActionStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return AssessActionStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["ChooseActionStub", "VoteActionStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9208,11 +9313,11 @@ export namespace ChooseActionStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof AssessActionStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof AssessActionStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = AssessActionStub._propertiesFromRdf({
+    const _super0Either = AssessActionStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -9243,7 +9348,7 @@ export namespace ChooseActionStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ChooseActionStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ChooseActionStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ChooseActionStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -9252,39 +9357,9 @@ export namespace ChooseActionStub {
         ChooseActionStub
       >
     ).altLazy(() =>
-      ChooseActionStub._propertiesFromRdf(parameters).map(
+      ChooseActionStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new ChooseActionStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/ChooseAction",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(chooseActionStubJsonZodSchema());
-  }
-
-  export function chooseActionStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        AssessActionStub.assessActionStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "ChooseActionStub",
-      type: "Group",
-    };
-  }
-
-  export function chooseActionStubJsonZodSchema() {
-    return AssessActionStub.assessActionStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["ChooseActionStub", "VoteActionStub"]),
-      }),
     );
   }
 
@@ -9302,14 +9377,14 @@ export namespace ChooseActionStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ChooseActionStub.sparqlConstructTemplateTriples({
+        ChooseActionStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ChooseActionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ChooseActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -9323,7 +9398,7 @@ export namespace ChooseActionStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ChooseActionStub.sparqlConstructQuery(parameters),
+      ChooseActionStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -9338,7 +9413,7 @@ export namespace ChooseActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "chooseActionStub");
     return [
-      ...AssessActionStub.sparqlConstructTemplateTriples({
+      ...AssessActionStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -9368,7 +9443,7 @@ export namespace ChooseActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "chooseActionStub");
     return [
-      ...AssessActionStub.sparqlWherePatterns({
+      ...AssessActionStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -9457,21 +9532,27 @@ export class VoteActionStub extends ChooseActionStub {
 }
 
 export namespace VoteActionStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/VoteAction",
+  );
+  export type Json = ChooseActionStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ChooseActionStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ChooseActionStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = voteActionStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ChooseActionStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      ChooseActionStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -9486,12 +9567,34 @@ export namespace VoteActionStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, VoteActionStub> {
-    return VoteActionStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new VoteActionStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ChooseActionStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "VoteActionStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ChooseActionStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("VoteActionStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9504,11 +9607,11 @@ export namespace VoteActionStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ChooseActionStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ChooseActionStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ChooseActionStub._propertiesFromRdf({
+    const _super0Either = ChooseActionStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -9539,40 +9642,10 @@ export namespace VoteActionStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof VoteActionStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof VoteActionStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, VoteActionStub> {
-    return VoteActionStub._propertiesFromRdf(parameters).map(
+    return VoteActionStub.propertiesFromRdf(parameters).map(
       (properties) => new VoteActionStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/VoteAction",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(voteActionStubJsonZodSchema());
-  }
-
-  export function voteActionStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ChooseActionStub.chooseActionStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "VoteActionStub",
-      type: "Group",
-    };
-  }
-
-  export function voteActionStubJsonZodSchema() {
-    return ChooseActionStub.chooseActionStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("VoteActionStub"),
-      }),
     );
   }
 
@@ -9626,7 +9699,7 @@ export namespace VoteActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "voteActionStub");
     return [
-      ...ChooseActionStub.sparqlConstructTemplateTriples({
+      ...ChooseActionStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -9656,7 +9729,7 @@ export namespace VoteActionStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "voteActionStub");
     return [
-      ...ChooseActionStub.sparqlWherePatterns({
+      ...ChooseActionStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -9721,11 +9794,11 @@ export class TextObject extends MediaObject {
     return this._identifier;
   }
 
-  override equals(other: TextObject): EqualsResult {
+  override equals(other: TextObject): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.uriSpace,
           other.uriSpace,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -9759,14 +9832,12 @@ export class TextObject extends MediaObject {
     return _hasher;
   }
 
-  override toJson(): { readonly uriSpace: string | undefined } & ReturnType<
-    MediaObject["toJson"]
-  > {
+  override toJson(): TextObject.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         uriSpace: this.uriSpace.map((_item) => _item).extract(),
-      } satisfies ReturnType<TextObject["toJson"]>),
+      } satisfies TextObject.Json),
     );
   }
 
@@ -9806,22 +9877,29 @@ export class TextObject extends MediaObject {
 }
 
 export namespace TextObject {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/TextObject",
+  );
+  export type Json = {
+    readonly uriSpace: string | undefined;
+  } & MediaObjectStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       uriSpace: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof MediaObject._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof MediaObjectStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = textObjectJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = MediaObject._propertiesFromJson(_jsonObject);
+    const _super0Either = MediaObjectStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -9837,12 +9915,38 @@ export namespace TextObject {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, TextObject> {
-    return TextObject._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new TextObject(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        MediaObjectStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/uriSpace`, type: "Control" },
+      ],
+      label: "TextObject",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return MediaObjectStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("TextObject"),
+        uriSpace: zod.string().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9858,9 +9962,9 @@ export namespace TextObject {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       uriSpace: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof MediaObject._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof MediaObjectStatic.propertiesFromRdf>>
   > {
-    const _super0Either = MediaObject._propertiesFromRdf({
+    const _super0Either = MediaObjectStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -9908,42 +10012,10 @@ export namespace TextObject {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof TextObject._propertiesFromRdf>[0],
+    parameters: Parameters<typeof TextObject.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, TextObject> {
-    return TextObject._propertiesFromRdf(parameters).map(
+    return TextObject.propertiesFromRdf(parameters).map(
       (properties) => new TextObject(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/TextObject",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(textObjectJsonZodSchema());
-  }
-
-  export function textObjectJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        MediaObject.mediaObjectJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/uriSpace`, type: "Control" },
-      ],
-      label: "TextObject",
-      type: "Group",
-    };
-  }
-
-  export function textObjectJsonZodSchema() {
-    return MediaObject.mediaObjectJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("TextObject"),
-        uriSpace: zod.string().optional(),
-      }),
     );
   }
 }
@@ -10005,23 +10077,27 @@ export class CreativeWorkStub extends ThingStub {
   }
 }
 
-export namespace CreativeWorkStub {
-  export function _propertiesFromJson(
+export namespace CreativeWorkStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/CreativeWork",
+  );
+  export type Json = ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      creativeWorkStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -10037,21 +10113,21 @@ export namespace CreativeWorkStub {
     json: unknown,
   ): purify.Either<zod.ZodError, CreativeWorkStub> {
     return (
-      ArticleStub.fromJson(json) as purify.Either<
+      ArticleStubStatic.fromJson(json) as purify.Either<
         zod.ZodError,
         CreativeWorkStub
       >
     )
       .altLazy(
         () =>
-          EpisodeStub.fromJson(json) as purify.Either<
+          EpisodeStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
-          MediaObjectStub.fromJson(json) as purify.Either<
+          MediaObjectStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             CreativeWorkStub
           >,
@@ -10064,13 +10140,44 @@ export namespace CreativeWorkStub {
           >,
       )
       .altLazy(() =>
-        CreativeWorkStub._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new CreativeWorkStub(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "CreativeWorkStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "ArticleStub",
+          "CreativeWorkStub",
+          "EpisodeStub",
+          "MediaObjectStub",
+          "MessageStub",
+          "RadioEpisodeStub",
+          "ReportStub",
+          "TextObjectStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10083,11 +10190,11 @@ export namespace CreativeWorkStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -10118,25 +10225,25 @@ export namespace CreativeWorkStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof CreativeWorkStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof CreativeWorkStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ArticleStub.fromRdf(otherParameters) as purify.Either<
+      ArticleStubStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         CreativeWorkStub
       >
     )
       .altLazy(
         () =>
-          EpisodeStub.fromRdf(otherParameters) as purify.Either<
+          EpisodeStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
-          MediaObjectStub.fromRdf(otherParameters) as purify.Either<
+          MediaObjectStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWorkStub
           >,
@@ -10149,47 +10256,10 @@ export namespace CreativeWorkStub {
           >,
       )
       .altLazy(() =>
-        CreativeWorkStub._propertiesFromRdf(parameters).map(
+        CreativeWorkStubStatic.propertiesFromRdf(parameters).map(
           (properties) => new CreativeWorkStub(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/CreativeWork",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(creativeWorkStubJsonZodSchema());
-  }
-
-  export function creativeWorkStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
-      label: "CreativeWorkStub",
-      type: "Group",
-    };
-  }
-
-  export function creativeWorkStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "ArticleStub",
-          "CreativeWorkStub",
-          "EpisodeStub",
-          "MediaObjectStub",
-          "MessageStub",
-          "RadioEpisodeStub",
-          "ReportStub",
-          "TextObjectStub",
-        ]),
-      }),
-    );
   }
 
   export function sparqlConstructQuery(
@@ -10206,14 +10276,14 @@ export namespace CreativeWorkStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        CreativeWorkStub.sparqlConstructTemplateTriples({
+        CreativeWorkStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        CreativeWorkStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        CreativeWorkStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -10227,7 +10297,7 @@ export namespace CreativeWorkStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      CreativeWorkStub.sparqlConstructQuery(parameters),
+      CreativeWorkStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -10242,7 +10312,7 @@ export namespace CreativeWorkStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -10272,7 +10342,7 @@ export namespace CreativeWorkStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -10361,23 +10431,28 @@ export class MediaObjectStub extends CreativeWorkStub {
   }
 }
 
-export namespace MediaObjectStub {
-  export function _propertiesFromJson(
+export namespace MediaObjectStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MediaObject",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      mediaObjectStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWorkStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -10398,13 +10473,35 @@ export namespace MediaObjectStub {
         MediaObjectStub
       >
     ).altLazy(() =>
-      MediaObjectStub._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new MediaObjectStub(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MediaObjectStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["MediaObjectStub", "TextObjectStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10417,11 +10514,11 @@ export namespace MediaObjectStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWorkStub._propertiesFromRdf({
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -10452,7 +10549,7 @@ export namespace MediaObjectStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof MediaObjectStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof MediaObjectStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, MediaObjectStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -10461,39 +10558,9 @@ export namespace MediaObjectStub {
         MediaObjectStub
       >
     ).altLazy(() =>
-      MediaObjectStub._propertiesFromRdf(parameters).map(
+      MediaObjectStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new MediaObjectStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/MediaObject",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(mediaObjectStubJsonZodSchema());
-  }
-
-  export function mediaObjectStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWorkStub.creativeWorkStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "MediaObjectStub",
-      type: "Group",
-    };
-  }
-
-  export function mediaObjectStubJsonZodSchema() {
-    return CreativeWorkStub.creativeWorkStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["MediaObjectStub", "TextObjectStub"]),
-      }),
     );
   }
 
@@ -10511,14 +10578,14 @@ export namespace MediaObjectStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        MediaObjectStub.sparqlConstructTemplateTriples({
+        MediaObjectStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        MediaObjectStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        MediaObjectStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -10532,7 +10599,7 @@ export namespace MediaObjectStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      MediaObjectStub.sparqlConstructQuery(parameters),
+      MediaObjectStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -10547,7 +10614,7 @@ export namespace MediaObjectStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "mediaObjectStub");
     return [
-      ...CreativeWorkStub.sparqlConstructTemplateTriples({
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -10577,7 +10644,7 @@ export namespace MediaObjectStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "mediaObjectStub");
     return [
-      ...CreativeWorkStub.sparqlWherePatterns({
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -10666,21 +10733,26 @@ export class TextObjectStub extends MediaObjectStub {
 }
 
 export namespace TextObjectStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/TextObject",
+  );
+  export type Json = MediaObjectStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObjectStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = textObjectStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = MediaObjectStub._propertiesFromJson(_jsonObject);
+    const _super0Either = MediaObjectStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -10695,12 +10767,34 @@ export namespace TextObjectStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, TextObjectStub> {
-    return TextObjectStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new TextObjectStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [MediaObjectStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "TextObjectStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return MediaObjectStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("TextObjectStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10713,11 +10807,11 @@ export namespace TextObjectStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof MediaObjectStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = MediaObjectStub._propertiesFromRdf({
+    const _super0Either = MediaObjectStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -10748,38 +10842,10 @@ export namespace TextObjectStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof TextObjectStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof TextObjectStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, TextObjectStub> {
-    return TextObjectStub._propertiesFromRdf(parameters).map(
+    return TextObjectStub.propertiesFromRdf(parameters).map(
       (properties) => new TextObjectStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/TextObject",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(textObjectStubJsonZodSchema());
-  }
-
-  export function textObjectStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [MediaObjectStub.mediaObjectStubJsonUiSchema({ scopePrefix })],
-      label: "TextObjectStub",
-      type: "Group",
-    };
-  }
-
-  export function textObjectStubJsonZodSchema() {
-    return MediaObjectStub.mediaObjectStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("TextObjectStub"),
-      }),
     );
   }
 
@@ -10833,7 +10899,7 @@ export namespace TextObjectStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "textObjectStub");
     return [
-      ...MediaObjectStub.sparqlConstructTemplateTriples({
+      ...MediaObjectStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -10863,7 +10929,7 @@ export namespace TextObjectStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "textObjectStub");
     return [
-      ...MediaObjectStub.sparqlWherePatterns({
+      ...MediaObjectStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -10949,22 +11015,27 @@ export class Article extends CreativeWork {
   }
 }
 
-export namespace Article {
-  export function _propertiesFromJson(
+export namespace ArticleStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Article",
+  );
+  export type Json = CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWork._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = articleJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -10982,13 +11053,33 @@ export namespace Article {
     return (
       Report.fromJson(json) as purify.Either<zod.ZodError, Article>
     ).altLazy(() =>
-      Article._propertiesFromJson(json).map(
-        (properties) => new Article(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new Article(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStatic.jsonUiSchema({ scopePrefix })],
+      label: "Article",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["Article", "Report"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11001,11 +11092,11 @@ export namespace Article {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWork._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWork._propertiesFromRdf({
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -11036,7 +11127,7 @@ export namespace Article {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Article._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ArticleStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Article> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -11045,35 +11136,9 @@ export namespace Article {
         Article
       >
     ).altLazy(() =>
-      Article._propertiesFromRdf(parameters).map(
+      ArticleStatic.propertiesFromRdf(parameters).map(
         (properties) => new Article(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Article",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(articleJsonZodSchema());
-  }
-
-  export function articleJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [CreativeWork.creativeWorkJsonUiSchema({ scopePrefix })],
-      label: "Article",
-      type: "Group",
-    };
-  }
-
-  export function articleJsonZodSchema() {
-    return CreativeWork.creativeWorkJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["Article", "Report"]),
-      }),
     );
   }
 }
@@ -11128,21 +11193,26 @@ export class Report extends Article {
 }
 
 export namespace Report {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Report",
+  );
+  export type Json = ArticleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Article._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ArticleStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = reportJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Article._propertiesFromJson(_jsonObject);
+    const _super0Either = ArticleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -11155,12 +11225,29 @@ export namespace Report {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Report> {
-    return Report._propertiesFromJson(json).map(
-      (properties) => new Report(properties),
+    return propertiesFromJson(json).map((properties) => new Report(properties));
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ArticleStatic.jsonUiSchema({ scopePrefix })],
+      label: "Report",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ArticleStatic.jsonZodSchema().merge(
+      zod.object({ "@id": zod.string().min(1), type: zod.literal("Report") }),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11173,11 +11260,11 @@ export namespace Report {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Article._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ArticleStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Article._propertiesFromRdf({
+    const _super0Either = ArticleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -11206,33 +11293,10 @@ export namespace Report {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Report._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Report.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Report> {
-    return Report._propertiesFromRdf(parameters).map(
+    return Report.propertiesFromRdf(parameters).map(
       (properties) => new Report(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Report",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(reportJsonZodSchema());
-  }
-
-  export function reportJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Article.articleJsonUiSchema({ scopePrefix })],
-      label: "Report",
-      type: "Group",
-    };
-  }
-
-  export function reportJsonZodSchema() {
-    return Article.articleJsonZodSchema().merge(
-      zod.object({ "@id": zod.string().min(1), type: zod.literal("Report") }),
     );
   }
 }
@@ -11286,22 +11350,28 @@ export class ArticleStub extends CreativeWorkStub {
   }
 }
 
-export namespace ArticleStub {
-  export function _propertiesFromJson(
+export namespace ArticleStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Article",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = articleStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWorkStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -11319,13 +11389,33 @@ export namespace ArticleStub {
     return (
       ReportStub.fromJson(json) as purify.Either<zod.ZodError, ArticleStub>
     ).altLazy(() =>
-      ArticleStub._propertiesFromJson(json).map(
-        (properties) => new ArticleStub(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new ArticleStub(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "ArticleStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["ArticleStub", "ReportStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11338,11 +11428,11 @@ export namespace ArticleStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWorkStub._propertiesFromRdf({
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -11373,7 +11463,7 @@ export namespace ArticleStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ArticleStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ArticleStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ArticleStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -11382,39 +11472,9 @@ export namespace ArticleStub {
         ArticleStub
       >
     ).altLazy(() =>
-      ArticleStub._propertiesFromRdf(parameters).map(
+      ArticleStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new ArticleStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Article",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(articleStubJsonZodSchema());
-  }
-
-  export function articleStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWorkStub.creativeWorkStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "ArticleStub",
-      type: "Group",
-    };
-  }
-
-  export function articleStubJsonZodSchema() {
-    return CreativeWorkStub.creativeWorkStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["ArticleStub", "ReportStub"]),
-      }),
     );
   }
 
@@ -11432,11 +11492,14 @@ export namespace ArticleStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ArticleStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        ArticleStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ArticleStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ArticleStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -11450,7 +11513,7 @@ export namespace ArticleStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ArticleStub.sparqlConstructQuery(parameters),
+      ArticleStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -11464,7 +11527,7 @@ export namespace ArticleStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "articleStub");
     return [
-      ...CreativeWorkStub.sparqlConstructTemplateTriples({
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -11493,7 +11556,7 @@ export namespace ArticleStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "articleStub");
     return [
-      ...CreativeWorkStub.sparqlWherePatterns({
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -11580,21 +11643,26 @@ export class ReportStub extends ArticleStub {
 }
 
 export namespace ReportStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Report",
+  );
+  export type Json = ArticleStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ArticleStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ArticleStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = reportStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ArticleStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ArticleStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -11609,12 +11677,34 @@ export namespace ReportStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ReportStub> {
-    return ReportStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ReportStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ArticleStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "ReportStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ArticleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ReportStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11627,11 +11717,11 @@ export namespace ReportStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ArticleStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ArticleStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ArticleStub._propertiesFromRdf({
+    const _super0Either = ArticleStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -11660,38 +11750,10 @@ export namespace ReportStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ReportStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ReportStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ReportStub> {
-    return ReportStub._propertiesFromRdf(parameters).map(
+    return ReportStub.propertiesFromRdf(parameters).map(
       (properties) => new ReportStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Report",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(reportStubJsonZodSchema());
-  }
-
-  export function reportStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ArticleStub.articleStubJsonUiSchema({ scopePrefix })],
-      label: "ReportStub",
-      type: "Group",
-    };
-  }
-
-  export function reportStubJsonZodSchema() {
-    return ArticleStub.articleStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("ReportStub"),
-      }),
     );
   }
 
@@ -11741,7 +11803,7 @@ export namespace ReportStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "reportStub");
     return [
-      ...ArticleStub.sparqlConstructTemplateTriples({
+      ...ArticleStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -11770,7 +11832,7 @@ export namespace ReportStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "reportStub");
     return [
-      ...ArticleStub.sparqlWherePatterns({
+      ...ArticleStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -11858,22 +11920,28 @@ export class EpisodeStub extends CreativeWorkStub {
   }
 }
 
-export namespace EpisodeStub {
-  export function _propertiesFromJson(
+export namespace EpisodeStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#EpisodeStub",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = episodeStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWorkStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -11894,13 +11962,33 @@ export namespace EpisodeStub {
         EpisodeStub
       >
     ).altLazy(() =>
-      EpisodeStub._propertiesFromJson(json).map(
-        (properties) => new EpisodeStub(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new EpisodeStub(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "EpisodeStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["EpisodeStub", "RadioEpisodeStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11913,11 +12001,11 @@ export namespace EpisodeStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWorkStub._propertiesFromRdf({
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -11950,7 +12038,7 @@ export namespace EpisodeStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof EpisodeStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof EpisodeStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, EpisodeStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -11959,39 +12047,9 @@ export namespace EpisodeStub {
         EpisodeStub
       >
     ).altLazy(() =>
-      EpisodeStub._propertiesFromRdf(parameters).map(
+      EpisodeStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new EpisodeStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#EpisodeStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(episodeStubJsonZodSchema());
-  }
-
-  export function episodeStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWorkStub.creativeWorkStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "EpisodeStub",
-      type: "Group",
-    };
-  }
-
-  export function episodeStubJsonZodSchema() {
-    return CreativeWorkStub.creativeWorkStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["EpisodeStub", "RadioEpisodeStub"]),
-      }),
     );
   }
 
@@ -12009,11 +12067,14 @@ export namespace EpisodeStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        EpisodeStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        EpisodeStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        EpisodeStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        EpisodeStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -12027,7 +12088,7 @@ export namespace EpisodeStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      EpisodeStub.sparqlConstructQuery(parameters),
+      EpisodeStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -12041,7 +12102,7 @@ export namespace EpisodeStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "episodeStub");
     return [
-      ...CreativeWorkStub.sparqlConstructTemplateTriples({
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -12070,7 +12131,7 @@ export namespace EpisodeStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "episodeStub");
     return [
-      ...CreativeWorkStub.sparqlWherePatterns({
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -12161,22 +12222,26 @@ export class RadioEpisodeStub extends EpisodeStub {
 }
 
 export namespace RadioEpisodeStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#RadioEpisodeStub",
+  );
+  export type Json = EpisodeStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof EpisodeStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EpisodeStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      radioEpisodeStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = EpisodeStub._propertiesFromJson(_jsonObject);
+    const _super0Either = EpisodeStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -12191,12 +12256,34 @@ export namespace RadioEpisodeStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RadioEpisodeStub> {
-    return RadioEpisodeStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new RadioEpisodeStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [EpisodeStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "RadioEpisodeStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return EpisodeStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("RadioEpisodeStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -12209,11 +12296,11 @@ export namespace RadioEpisodeStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof EpisodeStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EpisodeStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = EpisodeStub._propertiesFromRdf({
+    const _super0Either = EpisodeStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -12248,38 +12335,10 @@ export namespace RadioEpisodeStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof RadioEpisodeStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof RadioEpisodeStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, RadioEpisodeStub> {
-    return RadioEpisodeStub._propertiesFromRdf(parameters).map(
+    return RadioEpisodeStub.propertiesFromRdf(parameters).map(
       (properties) => new RadioEpisodeStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#RadioEpisodeStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(radioEpisodeStubJsonZodSchema());
-  }
-
-  export function radioEpisodeStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [EpisodeStub.episodeStubJsonUiSchema({ scopePrefix })],
-      label: "RadioEpisodeStub",
-      type: "Group",
-    };
-  }
-
-  export function radioEpisodeStubJsonZodSchema() {
-    return EpisodeStub.episodeStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("RadioEpisodeStub"),
-      }),
     );
   }
 
@@ -12333,7 +12392,7 @@ export namespace RadioEpisodeStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "radioEpisodeStub");
     return [
-      ...EpisodeStub.sparqlConstructTemplateTriples({
+      ...EpisodeStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -12363,7 +12422,7 @@ export namespace RadioEpisodeStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "radioEpisodeStub");
     return [
-      ...EpisodeStub.sparqlWherePatterns({
+      ...EpisodeStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -12462,22 +12521,27 @@ export class IntangibleStub extends ThingStub {
   }
 }
 
-export namespace IntangibleStub {
-  export function _propertiesFromJson(
+export namespace IntangibleStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#IntangibleStub",
+  );
+  export type Json = ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = intangibleStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -12493,7 +12557,10 @@ export namespace IntangibleStub {
     json: unknown,
   ): purify.Either<zod.ZodError, IntangibleStub> {
     return (
-      ServiceStub.fromJson(json) as purify.Either<zod.ZodError, IntangibleStub>
+      ServiceStubStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        IntangibleStub
+      >
     )
       .altLazy(
         () =>
@@ -12504,7 +12571,7 @@ export namespace IntangibleStub {
       )
       .altLazy(
         () =>
-          StructuredValueStub.fromJson(json) as purify.Either<
+          StructuredValueStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             IntangibleStub
           >,
@@ -12517,13 +12584,45 @@ export namespace IntangibleStub {
           >,
       )
       .altLazy(() =>
-        IntangibleStub._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new IntangibleStub(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "IntangibleStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "BroadcastServiceStub",
+          "IntangibleStub",
+          "InvoiceStub",
+          "MonetaryAmountStub",
+          "OrderStub",
+          "QuantitativeValueStub",
+          "RadioBroadcastServiceStub",
+          "ServiceStub",
+          "StructuredValueStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -12536,11 +12635,11 @@ export namespace IntangibleStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -12573,11 +12672,11 @@ export namespace IntangibleStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof IntangibleStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof IntangibleStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, IntangibleStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ServiceStub.fromRdf(otherParameters) as purify.Either<
+      ServiceStubStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         IntangibleStub
       >
@@ -12591,7 +12690,7 @@ export namespace IntangibleStub {
       )
       .altLazy(
         () =>
-          StructuredValueStub.fromRdf(otherParameters) as purify.Either<
+          StructuredValueStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             IntangibleStub
           >,
@@ -12604,48 +12703,10 @@ export namespace IntangibleStub {
           >,
       )
       .altLazy(() =>
-        IntangibleStub._propertiesFromRdf(parameters).map(
+        IntangibleStubStatic.propertiesFromRdf(parameters).map(
           (properties) => new IntangibleStub(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#IntangibleStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(intangibleStubJsonZodSchema());
-  }
-
-  export function intangibleStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
-      label: "IntangibleStub",
-      type: "Group",
-    };
-  }
-
-  export function intangibleStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "BroadcastServiceStub",
-          "IntangibleStub",
-          "InvoiceStub",
-          "MonetaryAmountStub",
-          "OrderStub",
-          "QuantitativeValueStub",
-          "RadioBroadcastServiceStub",
-          "ServiceStub",
-          "StructuredValueStub",
-        ]),
-      }),
-    );
   }
 
   export function sparqlConstructQuery(
@@ -12662,14 +12723,14 @@ export namespace IntangibleStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IntangibleStub.sparqlConstructTemplateTriples({
+        IntangibleStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IntangibleStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        IntangibleStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -12683,7 +12744,7 @@ export namespace IntangibleStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      IntangibleStub.sparqlConstructQuery(parameters),
+      IntangibleStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -12698,7 +12759,7 @@ export namespace IntangibleStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "intangibleStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -12728,7 +12789,7 @@ export namespace IntangibleStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "intangibleStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -12821,22 +12882,27 @@ export class ServiceStub extends IntangibleStub {
   }
 }
 
-export namespace ServiceStub {
-  export function _propertiesFromJson(
+export namespace ServiceStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#ServiceStub",
+  );
+  export type Json = IntangibleStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = serviceStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = IntangibleStub._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -12852,18 +12918,42 @@ export namespace ServiceStub {
     json: unknown,
   ): purify.Either<zod.ZodError, ServiceStub> {
     return (
-      BroadcastServiceStub.fromJson(json) as purify.Either<
+      BroadcastServiceStubStatic.fromJson(json) as purify.Either<
         zod.ZodError,
         ServiceStub
       >
     ).altLazy(() =>
-      ServiceStub._propertiesFromJson(json).map(
-        (properties) => new ServiceStub(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new ServiceStub(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "ServiceStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "BroadcastServiceStub",
+          "RadioBroadcastServiceStub",
+          "ServiceStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -12876,11 +12966,11 @@ export namespace ServiceStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = IntangibleStub._propertiesFromRdf({
+    const _super0Either = IntangibleStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -12913,50 +13003,18 @@ export namespace ServiceStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ServiceStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ServiceStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ServiceStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      BroadcastServiceStub.fromRdf(otherParameters) as purify.Either<
+      BroadcastServiceStubStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         ServiceStub
       >
     ).altLazy(() =>
-      ServiceStub._propertiesFromRdf(parameters).map(
+      ServiceStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new ServiceStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#ServiceStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(serviceStubJsonZodSchema());
-  }
-
-  export function serviceStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IntangibleStub.intangibleStubJsonUiSchema({ scopePrefix })],
-      label: "ServiceStub",
-      type: "Group",
-    };
-  }
-
-  export function serviceStubJsonZodSchema() {
-    return IntangibleStub.intangibleStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "BroadcastServiceStub",
-          "RadioBroadcastServiceStub",
-          "ServiceStub",
-        ]),
-      }),
     );
   }
 
@@ -12974,11 +13032,14 @@ export namespace ServiceStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ServiceStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        ServiceStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ServiceStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ServiceStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -12992,7 +13053,7 @@ export namespace ServiceStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ServiceStub.sparqlConstructQuery(parameters),
+      ServiceStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -13006,7 +13067,7 @@ export namespace ServiceStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "serviceStub");
     return [
-      ...IntangibleStub.sparqlConstructTemplateTriples({
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -13035,7 +13096,7 @@ export namespace ServiceStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "serviceStub");
     return [
-      ...IntangibleStub.sparqlWherePatterns({
+      ...IntangibleStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -13126,23 +13187,27 @@ export class BroadcastServiceStub extends ServiceStub {
   }
 }
 
-export namespace BroadcastServiceStub {
-  export function _propertiesFromJson(
+export namespace BroadcastServiceStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#BroadcastServiceStub",
+  );
+  export type Json = ServiceStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ServiceStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ServiceStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      broadcastServiceStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ServiceStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ServiceStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -13163,13 +13228,35 @@ export namespace BroadcastServiceStub {
         BroadcastServiceStub
       >
     ).altLazy(() =>
-      BroadcastServiceStub._propertiesFromJson(json).map(
+      propertiesFromJson(json).map(
         (properties) => new BroadcastServiceStub(properties),
       ),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ServiceStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "BroadcastServiceStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ServiceStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["BroadcastServiceStub", "RadioBroadcastServiceStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -13182,11 +13269,11 @@ export namespace BroadcastServiceStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ServiceStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ServiceStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ServiceStub._propertiesFromRdf({
+    const _super0Either = ServiceStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -13221,7 +13308,9 @@ export namespace BroadcastServiceStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof BroadcastServiceStub._propertiesFromRdf>[0],
+    parameters: Parameters<
+      typeof BroadcastServiceStubStatic.propertiesFromRdf
+    >[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastServiceStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -13230,37 +13319,9 @@ export namespace BroadcastServiceStub {
         BroadcastServiceStub
       >
     ).altLazy(() =>
-      BroadcastServiceStub._propertiesFromRdf(parameters).map(
+      BroadcastServiceStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new BroadcastServiceStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#BroadcastServiceStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(broadcastServiceStubJsonZodSchema());
-  }
-
-  export function broadcastServiceStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ServiceStub.serviceStubJsonUiSchema({ scopePrefix })],
-      label: "BroadcastServiceStub",
-      type: "Group",
-    };
-  }
-
-  export function broadcastServiceStubJsonZodSchema() {
-    return ServiceStub.serviceStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["BroadcastServiceStub", "RadioBroadcastServiceStub"]),
-      }),
     );
   }
 
@@ -13278,14 +13339,17 @@ export namespace BroadcastServiceStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BroadcastServiceStub.sparqlConstructTemplateTriples({
+        BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BroadcastServiceStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        BroadcastServiceStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
       ),
     };
   }
@@ -13299,7 +13363,7 @@ export namespace BroadcastServiceStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BroadcastServiceStub.sparqlConstructQuery(parameters),
+      BroadcastServiceStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -13316,7 +13380,7 @@ export namespace BroadcastServiceStub {
         ? subject.value
         : "broadcastServiceStub");
     return [
-      ...ServiceStub.sparqlConstructTemplateTriples({
+      ...ServiceStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -13348,7 +13412,7 @@ export namespace BroadcastServiceStub {
         ? subject.value
         : "broadcastServiceStub");
     return [
-      ...ServiceStub.sparqlWherePatterns({
+      ...ServiceStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -13439,22 +13503,27 @@ export class RadioBroadcastServiceStub extends BroadcastServiceStub {
 }
 
 export namespace RadioBroadcastServiceStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#RadioBroadcastServiceStub",
+  );
+  export type Json = BroadcastServiceStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof BroadcastServiceStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof BroadcastServiceStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      radioBroadcastServiceStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = BroadcastServiceStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      BroadcastServiceStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -13469,12 +13538,34 @@ export namespace RadioBroadcastServiceStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RadioBroadcastServiceStub> {
-    return RadioBroadcastServiceStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new RadioBroadcastServiceStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [BroadcastServiceStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "RadioBroadcastServiceStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return BroadcastServiceStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("RadioBroadcastServiceStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -13487,11 +13578,11 @@ export namespace RadioBroadcastServiceStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof BroadcastServiceStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof BroadcastServiceStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = BroadcastServiceStub._propertiesFromRdf({
+    const _super0Either = BroadcastServiceStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -13527,44 +13618,14 @@ export namespace RadioBroadcastServiceStub {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof RadioBroadcastServiceStub._propertiesFromRdf
+      typeof RadioBroadcastServiceStub.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     RadioBroadcastServiceStub
   > {
-    return RadioBroadcastServiceStub._propertiesFromRdf(parameters).map(
+    return RadioBroadcastServiceStub.propertiesFromRdf(parameters).map(
       (properties) => new RadioBroadcastServiceStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#RadioBroadcastServiceStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(radioBroadcastServiceStubJsonZodSchema());
-  }
-
-  export function radioBroadcastServiceStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BroadcastServiceStub.broadcastServiceStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "RadioBroadcastServiceStub",
-      type: "Group",
-    };
-  }
-
-  export function radioBroadcastServiceStubJsonZodSchema() {
-    return BroadcastServiceStub.broadcastServiceStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("RadioBroadcastServiceStub"),
-      }),
     );
   }
 
@@ -13623,7 +13684,7 @@ export namespace RadioBroadcastServiceStub {
         ? subject.value
         : "radioBroadcastServiceStub");
     return [
-      ...BroadcastServiceStub.sparqlConstructTemplateTriples({
+      ...BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -13655,7 +13716,7 @@ export namespace RadioBroadcastServiceStub {
         ? subject.value
         : "radioBroadcastServiceStub");
     return [
-      ...BroadcastServiceStub.sparqlWherePatterns({
+      ...BroadcastServiceStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -13734,11 +13795,11 @@ export class QuantitativeValue extends StructuredValue {
     return this._identifier;
   }
 
-  override equals(other: QuantitativeValue): EqualsResult {
+  override equals(other: QuantitativeValue): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.unitText,
           other.unitText,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -13750,7 +13811,7 @@ export class QuantitativeValue extends StructuredValue {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.value,
           other.value,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -13787,16 +13848,13 @@ export class QuantitativeValue extends StructuredValue {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly unitText: string | undefined;
-    readonly value: number | undefined;
-  } & ReturnType<StructuredValue["toJson"]> {
+  override toJson(): QuantitativeValue.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         unitText: this.unitText.map((_item) => _item).extract(),
         value: this.value.map((_item) => _item).extract(),
-      } satisfies ReturnType<QuantitativeValue["toJson"]>),
+      } satisfies QuantitativeValue.Json),
     );
   }
 
@@ -13837,7 +13895,15 @@ export class QuantitativeValue extends StructuredValue {
 }
 
 export namespace QuantitativeValue {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/QuantitativeValue",
+  );
+  export type Json = {
+    readonly unitText: string | undefined;
+    readonly value: number | undefined;
+  } & StructuredValueStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -13845,16 +13911,15 @@ export namespace QuantitativeValue {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       unitText: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof StructuredValueStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult =
-      quantitativeValueJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = StructuredValue._propertiesFromJson(_jsonObject);
+    const _super0Either = StructuredValueStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -13871,12 +13936,40 @@ export namespace QuantitativeValue {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, QuantitativeValue> {
-    return QuantitativeValue._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new QuantitativeValue(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValueStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/unitText`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "QuantitativeValue",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return StructuredValueStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("QuantitativeValue"),
+        unitText: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -13893,9 +13986,9 @@ export namespace QuantitativeValue {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       unitText: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof StructuredValueStatic.propertiesFromRdf>>
   > {
-    const _super0Either = StructuredValue._propertiesFromRdf({
+    const _super0Either = StructuredValueStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -13962,44 +14055,10 @@ export namespace QuantitativeValue {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof QuantitativeValue._propertiesFromRdf>[0],
+    parameters: Parameters<typeof QuantitativeValue.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, QuantitativeValue> {
-    return QuantitativeValue._propertiesFromRdf(parameters).map(
+    return QuantitativeValue.propertiesFromRdf(parameters).map(
       (properties) => new QuantitativeValue(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/QuantitativeValue",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(quantitativeValueJsonZodSchema());
-  }
-
-  export function quantitativeValueJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        StructuredValue.structuredValueJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/unitText`, type: "Control" },
-        { scope: `${scopePrefix}/properties/value`, type: "Control" },
-      ],
-      label: "QuantitativeValue",
-      type: "Group",
-    };
-  }
-
-  export function quantitativeValueJsonZodSchema() {
-    return StructuredValue.structuredValueJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("QuantitativeValue"),
-        unitText: zod.string().optional(),
-        value: zod.number().optional(),
-      }),
     );
   }
 }
@@ -14058,23 +14117,27 @@ export class StructuredValueStub extends IntangibleStub {
   }
 }
 
-export namespace StructuredValueStub {
-  export function _propertiesFromJson(
+export namespace StructuredValueStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#StructuredValueStub",
+  );
+  export type Json = IntangibleStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      structuredValueStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = IntangibleStub._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -14103,13 +14166,39 @@ export namespace StructuredValueStub {
           >,
       )
       .altLazy(() =>
-        StructuredValueStub._propertiesFromJson(json).map(
+        propertiesFromJson(json).map(
           (properties) => new StructuredValueStub(properties),
         ),
       );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "StructuredValueStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "MonetaryAmountStub",
+          "QuantitativeValueStub",
+          "StructuredValueStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -14122,11 +14211,11 @@ export namespace StructuredValueStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = IntangibleStub._propertiesFromRdf({
+    const _super0Either = IntangibleStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -14161,7 +14250,9 @@ export namespace StructuredValueStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof StructuredValueStub._propertiesFromRdf>[0],
+    parameters: Parameters<
+      typeof StructuredValueStubStatic.propertiesFromRdf
+    >[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValueStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -14178,42 +14269,10 @@ export namespace StructuredValueStub {
           >,
       )
       .altLazy(() =>
-        StructuredValueStub._propertiesFromRdf(parameters).map(
+        StructuredValueStubStatic.propertiesFromRdf(parameters).map(
           (properties) => new StructuredValueStub(properties),
         ),
       );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#StructuredValueStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(structuredValueStubJsonZodSchema());
-  }
-
-  export function structuredValueStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IntangibleStub.intangibleStubJsonUiSchema({ scopePrefix })],
-      label: "StructuredValueStub",
-      type: "Group",
-    };
-  }
-
-  export function structuredValueStubJsonZodSchema() {
-    return IntangibleStub.intangibleStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "MonetaryAmountStub",
-          "QuantitativeValueStub",
-          "StructuredValueStub",
-        ]),
-      }),
-    );
   }
 
   export function sparqlConstructQuery(
@@ -14230,14 +14289,17 @@ export namespace StructuredValueStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        StructuredValueStub.sparqlConstructTemplateTriples({
+        StructuredValueStubStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StructuredValueStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        StructuredValueStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
       ),
     };
   }
@@ -14251,7 +14313,7 @@ export namespace StructuredValueStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      StructuredValueStub.sparqlConstructQuery(parameters),
+      StructuredValueStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -14266,7 +14328,7 @@ export namespace StructuredValueStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "structuredValueStub");
     return [
-      ...IntangibleStub.sparqlConstructTemplateTriples({
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14296,7 +14358,7 @@ export namespace StructuredValueStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "structuredValueStub");
     return [
-      ...IntangibleStub.sparqlWherePatterns({
+      ...IntangibleStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14375,11 +14437,11 @@ export class QuantitativeValueStub extends StructuredValueStub {
     return this._identifier;
   }
 
-  override equals(other: QuantitativeValueStub): EqualsResult {
+  override equals(other: QuantitativeValueStub): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.unitText,
           other.unitText,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -14391,7 +14453,7 @@ export class QuantitativeValueStub extends StructuredValueStub {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.value,
           other.value,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -14428,16 +14490,13 @@ export class QuantitativeValueStub extends StructuredValueStub {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly unitText: string | undefined;
-    readonly value: number | undefined;
-  } & ReturnType<StructuredValueStub["toJson"]> {
+  override toJson(): QuantitativeValueStub.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         unitText: this.unitText.map((_item) => _item).extract(),
         value: this.value.map((_item) => _item).extract(),
-      } satisfies ReturnType<QuantitativeValueStub["toJson"]>),
+      } satisfies QuantitativeValueStub.Json),
     );
   }
 
@@ -14478,7 +14537,15 @@ export class QuantitativeValueStub extends StructuredValueStub {
 }
 
 export namespace QuantitativeValueStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/QuantitativeValue",
+  );
+  export type Json = {
+    readonly unitText: string | undefined;
+    readonly value: number | undefined;
+  } & StructuredValueStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -14486,16 +14553,18 @@ export namespace QuantitativeValueStub {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       unitText: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromJson>>
+    } & $UnwrapR<
+      ReturnType<typeof StructuredValueStubStatic.propertiesFromJson>
+    >
   > {
-    const _jsonSafeParseResult =
-      quantitativeValueStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = StructuredValueStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      StructuredValueStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -14512,12 +14581,40 @@ export namespace QuantitativeValueStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, QuantitativeValueStub> {
-    return QuantitativeValueStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new QuantitativeValueStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValueStubStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/unitText`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "QuantitativeValueStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return StructuredValueStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("QuantitativeValueStub"),
+        unitText: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -14534,9 +14631,9 @@ export namespace QuantitativeValueStub {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       unitText: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof StructuredValueStubStatic.propertiesFromRdf>>
   > {
-    const _super0Either = StructuredValueStub._propertiesFromRdf({
+    const _super0Either = StructuredValueStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -14603,44 +14700,10 @@ export namespace QuantitativeValueStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof QuantitativeValueStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof QuantitativeValueStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, QuantitativeValueStub> {
-    return QuantitativeValueStub._propertiesFromRdf(parameters).map(
+    return QuantitativeValueStub.propertiesFromRdf(parameters).map(
       (properties) => new QuantitativeValueStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/QuantitativeValue",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(quantitativeValueStubJsonZodSchema());
-  }
-
-  export function quantitativeValueStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        StructuredValueStub.structuredValueStubJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/unitText`, type: "Control" },
-        { scope: `${scopePrefix}/properties/value`, type: "Control" },
-      ],
-      label: "QuantitativeValueStub",
-      type: "Group",
-    };
-  }
-
-  export function quantitativeValueStubJsonZodSchema() {
-    return StructuredValueStub.structuredValueStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("QuantitativeValueStub"),
-        unitText: zod.string().optional(),
-        value: zod.number().optional(),
-      }),
     );
   }
 
@@ -14696,7 +14759,7 @@ export namespace QuantitativeValueStub {
         ? subject.value
         : "quantitativeValueStub");
     return [
-      ...StructuredValueStub.sparqlConstructTemplateTriples({
+      ...StructuredValueStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14738,7 +14801,7 @@ export namespace QuantitativeValueStub {
         ? subject.value
         : "quantitativeValueStub");
     return [
-      ...StructuredValueStub.sparqlWherePatterns({
+      ...StructuredValueStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14857,11 +14920,11 @@ export class EventStub extends ThingStub {
     return this._identifier;
   }
 
-  override equals(other: EventStub): EqualsResult {
+  override equals(other: EventStub): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.startDate,
           other.startDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -14873,7 +14936,7 @@ export class EventStub extends ThingStub {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.superEvent,
           other.superEvent,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -14911,10 +14974,7 @@ export class EventStub extends ThingStub {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly startDate: string | undefined;
-    readonly superEvent: { readonly "@id": string } | undefined;
-  } & ReturnType<ThingStub["toJson"]> {
+  override toJson(): EventStubStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -14926,7 +14986,7 @@ export class EventStub extends ThingStub {
               : { "@id": _item.value },
           )
           .extract(),
-      } satisfies ReturnType<EventStub["toJson"]>),
+      } satisfies EventStubStatic.Json),
     );
   }
 
@@ -14976,8 +15036,16 @@ export class EventStub extends ThingStub {
   }
 }
 
-export namespace EventStub {
-  export function _propertiesFromJson(
+export namespace EventStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Event",
+  );
+  export type Json = {
+    readonly startDate: string | undefined;
+    readonly superEvent: { readonly "@id": string } | undefined;
+  } & ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -14985,15 +15053,15 @@ export namespace EventStub {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       startDate: purify.Maybe<Date>;
       superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = eventStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15023,13 +15091,39 @@ export namespace EventStub {
         EventStub
       >
     ).altLazy(() =>
-      EventStub._propertiesFromJson(json).map(
-        (properties) => new EventStub(properties),
-      ),
+      propertiesFromJson(json).map((properties) => new EventStub(properties)),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStubStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/superEvent`, type: "Control" },
+      ],
+      label: "EventStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["EventStub", "PublicationEventStub"]),
+        startDate: zod.string().datetime().optional(),
+        superEvent: zod.object({ "@id": zod.string().min(1) }).optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15046,9 +15140,9 @@ export namespace EventStub {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       startDate: purify.Maybe<Date>;
       superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromRdf>>
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -15111,7 +15205,7 @@ export namespace EventStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof EventStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof EventStubStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, EventStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
@@ -15120,41 +15214,9 @@ export namespace EventStub {
         EventStub
       >
     ).altLazy(() =>
-      EventStub._propertiesFromRdf(parameters).map(
+      EventStubStatic.propertiesFromRdf(parameters).map(
         (properties) => new EventStub(properties),
       ),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Event",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(eventStubJsonZodSchema());
-  }
-
-  export function eventStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ThingStub.thingStubJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-        { scope: `${scopePrefix}/properties/superEvent`, type: "Control" },
-      ],
-      label: "EventStub",
-      type: "Group",
-    };
-  }
-
-  export function eventStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["EventStub", "PublicationEventStub"]),
-        startDate: zod.string().datetime().optional(),
-        superEvent: zod.object({ "@id": zod.string().min(1) }).optional(),
-      }),
     );
   }
 
@@ -15172,11 +15234,14 @@ export namespace EventStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        EventStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        EventStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        EventStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        EventStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -15190,7 +15255,7 @@ export namespace EventStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      EventStub.sparqlConstructQuery(parameters),
+      EventStubStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -15204,7 +15269,7 @@ export namespace EventStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "eventStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15243,7 +15308,7 @@ export namespace EventStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "eventStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15364,22 +15429,26 @@ export class PublicationEventStub extends EventStub {
 }
 
 export namespace PublicationEventStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://purl.org/sdapps/ontology#PublicationEventStub",
+  );
+  export type Json = EventStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof EventStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EventStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      publicationEventStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = EventStub._propertiesFromJson(_jsonObject);
+    const _super0Either = EventStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15394,12 +15463,34 @@ export namespace PublicationEventStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PublicationEventStub> {
-    return PublicationEventStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new PublicationEventStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [EventStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "PublicationEventStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return EventStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("PublicationEventStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15412,11 +15503,11 @@ export namespace PublicationEventStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof EventStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EventStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = EventStub._propertiesFromRdf({
+    const _super0Either = EventStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -15451,38 +15542,10 @@ export namespace PublicationEventStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof PublicationEventStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof PublicationEventStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEventStub> {
-    return PublicationEventStub._propertiesFromRdf(parameters).map(
+    return PublicationEventStub.propertiesFromRdf(parameters).map(
       (properties) => new PublicationEventStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://purl.org/sdapps/ontology#PublicationEventStub",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(publicationEventStubJsonZodSchema());
-  }
-
-  export function publicationEventStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [EventStub.eventStubJsonUiSchema({ scopePrefix })],
-      label: "PublicationEventStub",
-      type: "Group",
-    };
-  }
-
-  export function publicationEventStubJsonZodSchema() {
-    return EventStub.eventStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("PublicationEventStub"),
-      }),
     );
   }
 
@@ -15538,7 +15601,7 @@ export namespace PublicationEventStub {
         ? subject.value
         : "publicationEventStub");
     return [
-      ...EventStub.sparqlConstructTemplateTriples({
+      ...EventStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15570,7 +15633,7 @@ export namespace PublicationEventStub {
         ? subject.value
         : "publicationEventStub");
     return [
-      ...EventStub.sparqlWherePatterns({
+      ...EventStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15659,21 +15722,26 @@ export class Place extends Thing {
 }
 
 export namespace Place {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Place",
+  );
+  export type Json = ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = placeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15686,12 +15754,29 @@ export namespace Place {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Place> {
-    return Place._propertiesFromJson(json).map(
-      (properties) => new Place(properties),
+    return propertiesFromJson(json).map((properties) => new Place(properties));
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStatic.jsonUiSchema({ scopePrefix })],
+      label: "Place",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({ "@id": zod.string().min(1), type: zod.literal("Place") }),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15704,11 +15789,11 @@ export namespace Place {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof Thing._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -15737,33 +15822,10 @@ export namespace Place {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Place._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Place.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Place> {
-    return Place._propertiesFromRdf(parameters).map(
+    return Place.propertiesFromRdf(parameters).map(
       (properties) => new Place(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Place",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(placeJsonZodSchema());
-  }
-
-  export function placeJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [Thing.thingJsonUiSchema({ scopePrefix })],
-      label: "Place",
-      type: "Group",
-    };
-  }
-
-  export function placeJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({ "@id": zod.string().min(1), type: zod.literal("Place") }),
     );
   }
 }
@@ -15818,21 +15880,26 @@ export class PlaceStub extends ThingStub {
 }
 
 export namespace PlaceStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Place",
+  );
+  export type Json = ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = placeStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15847,12 +15914,34 @@ export namespace PlaceStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PlaceStub> {
-    return PlaceStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new PlaceStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "PlaceStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("PlaceStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15865,11 +15954,11 @@ export namespace PlaceStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -15898,36 +15987,10 @@ export namespace PlaceStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof PlaceStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof PlaceStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, PlaceStub> {
-    return PlaceStub._propertiesFromRdf(parameters).map(
+    return PlaceStub.propertiesFromRdf(parameters).map(
       (properties) => new PlaceStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Place",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(placeStubJsonZodSchema());
-  }
-
-  export function placeStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
-      label: "PlaceStub",
-      type: "Group",
-    };
-  }
-
-  export function placeStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("PlaceStub"),
-      }),
     );
   }
 
@@ -15977,7 +16040,7 @@ export namespace PlaceStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "placeStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -16006,7 +16069,7 @@ export namespace PlaceStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "placeStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -16187,11 +16250,11 @@ export class Person extends Thing {
     return this._identifier;
   }
 
-  override equals(other: Person): EqualsResult {
+  override equals(other: Person): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.birthDate,
           other.birthDate,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16203,7 +16266,7 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.familyName,
           other.familyName,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16215,7 +16278,7 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.gender,
           other.gender,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16227,7 +16290,7 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.givenName,
           other.givenName,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16240,7 +16303,7 @@ export class Person extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(
+          $arrayEquals(
             left,
             right,
             (left: Occupation | Role, right: Occupation | Role) => {
@@ -16275,7 +16338,7 @@ export class Person extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.images,
           other.images,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16287,7 +16350,7 @@ export class Person extends Thing {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.jobTitle,
           other.jobTitle,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16300,7 +16363,7 @@ export class Person extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.memberOf,
           other.memberOf,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16313,7 +16376,7 @@ export class Person extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.performerIn,
           other.performerIn,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16385,33 +16448,7 @@ export class Person extends Thing {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly birthDate: string | undefined;
-    readonly familyName: string | undefined;
-    readonly gender:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
-    readonly givenName: string | undefined;
-    readonly hasOccupation: readonly (
-      | ReturnType<Occupation["toJson"]>
-      | ReturnType<Role["toJson"]>
-    )[];
-    readonly images: readonly ReturnType<ImageObject["toJson"]>[];
-    readonly jobTitle: string | undefined;
-    readonly memberOf: readonly ReturnType<OrganizationStub["toJson"]>[];
-    readonly performerIn: readonly ReturnType<EventStub["toJson"]>[];
-  } & ReturnType<Thing["toJson"]> {
+  override toJson(): Person.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -16446,7 +16483,7 @@ export class Person extends Thing {
         jobTitle: this.jobTitle.map((_item) => _item).extract(),
         memberOf: this.memberOf.map((_item) => _item.toJson()),
         performerIn: this.performerIn.map((_item) => _item.toJson()),
-      } satisfies ReturnType<Person["toJson"]>),
+      } satisfies Person.Json),
     );
   }
 
@@ -16535,7 +16572,35 @@ export class Person extends Thing {
 }
 
 export namespace Person {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Person",
+  );
+  export type Json = {
+    readonly birthDate: string | undefined;
+    readonly familyName: string | undefined;
+    readonly gender:
+      | (
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
+            }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
+    readonly givenName: string | undefined;
+    readonly hasOccupation: readonly (Occupation.Json | Role.Json)[];
+    readonly images: readonly ImageObject.Json[];
+    readonly jobTitle: string | undefined;
+    readonly memberOf: readonly OrganizationStub.Json[];
+    readonly performerIn: readonly EventStubStatic.Json[];
+  } & ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -16550,15 +16615,15 @@ export namespace Person {
       jobTitle: purify.Maybe<string>;
       memberOf: OrganizationStub[];
       performerIn: EventStub[];
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = personJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -16600,7 +16665,7 @@ export namespace Person {
       OrganizationStub.fromJson(_item).unsafeCoerce(),
     );
     const performerIn = _jsonObject["performerIn"].map((_item) =>
-      EventStub.fromJson(_item).unsafeCoerce(),
+      EventStubStatic.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -16618,12 +16683,87 @@ export namespace Person {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Person> {
-    return Person._propertiesFromJson(json).map(
-      (properties) => new Person(properties),
+    return propertiesFromJson(json).map((properties) => new Person(properties));
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/birthDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/familyName`, type: "Control" },
+        { scope: `${scopePrefix}/properties/gender`, type: "Control" },
+        { scope: `${scopePrefix}/properties/givenName`, type: "Control" },
+        { scope: `${scopePrefix}/properties/hasOccupation`, type: "Control" },
+        ImageObject.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/images`,
+        }),
+        { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
+        OrganizationStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/memberOf`,
+        }),
+        EventStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/performerIn`,
+        }),
+      ],
+      label: "Person",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Person"),
+        birthDate: zod.string().date().optional(),
+        familyName: zod.string().optional(),
+        gender: zod
+          .discriminatedUnion("termType", [
+            zod.object({
+              "@id": zod.string().min(1),
+              termType: zod.literal("BlankNode"),
+            }),
+            zod.object({
+              "@id": zod.string().min(1),
+              termType: zod.literal("NamedNode"),
+            }),
+            zod.object({
+              "@language": zod.string().optional(),
+              "@type": zod.string().optional(),
+              "@value": zod.string(),
+              termType: zod.literal("Literal"),
+            }),
+          ])
+          .optional(),
+        givenName: zod.string().optional(),
+        hasOccupation: zod
+          .discriminatedUnion("type", [
+            Occupation.jsonZodSchema(),
+            Role.jsonZodSchema(),
+          ])
+          .array()
+          .default(() => []),
+        images: ImageObject.jsonZodSchema()
+          .array()
+          .default(() => []),
+        jobTitle: zod.string().optional(),
+        memberOf: OrganizationStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        performerIn: EventStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -16647,9 +16787,9 @@ export namespace Person {
       jobTitle: purify.Maybe<string>;
       memberOf: OrganizationStub[];
       performerIn: EventStub[];
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -16884,7 +17024,7 @@ export namespace Person {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              EventStub.fromRdf({
+              EventStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -16916,91 +17056,10 @@ export namespace Person {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Person._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Person.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Person> {
-    return Person._propertiesFromRdf(parameters).map(
+    return Person.propertiesFromRdf(parameters).map(
       (properties) => new Person(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Person",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(personJsonZodSchema());
-  }
-
-  export function personJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Thing.thingJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/birthDate`, type: "Control" },
-        { scope: `${scopePrefix}/properties/familyName`, type: "Control" },
-        { scope: `${scopePrefix}/properties/gender`, type: "Control" },
-        { scope: `${scopePrefix}/properties/givenName`, type: "Control" },
-        { scope: `${scopePrefix}/properties/hasOccupation`, type: "Control" },
-        ImageObject.imageObjectJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/images`,
-        }),
-        { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
-        OrganizationStub.organizationStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/memberOf`,
-        }),
-        EventStub.eventStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/performerIn`,
-        }),
-      ],
-      label: "Person",
-      type: "Group",
-    };
-  }
-
-  export function personJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Person"),
-        birthDate: zod.string().date().optional(),
-        familyName: zod.string().optional(),
-        gender: zod
-          .discriminatedUnion("termType", [
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("BlankNode"),
-            }),
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("NamedNode"),
-            }),
-            zod.object({
-              "@language": zod.string().optional(),
-              "@type": zod.string().optional(),
-              "@value": zod.string(),
-              termType: zod.literal("Literal"),
-            }),
-          ])
-          .optional(),
-        givenName: zod.string().optional(),
-        hasOccupation: zod
-          .discriminatedUnion("type", [
-            Occupation.occupationJsonZodSchema(),
-            Role.roleJsonZodSchema(),
-          ])
-          .array()
-          .default(() => []),
-        images: ImageObject.imageObjectJsonZodSchema()
-          .array()
-          .default(() => []),
-        jobTitle: zod.string().optional(),
-        memberOf: OrganizationStub.organizationStubJsonZodSchema()
-          .array()
-          .default(() => []),
-        performerIn: EventStub.eventStubJsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
     );
   }
 }
@@ -17051,11 +17110,11 @@ export class Organization extends Thing {
     return this._identifier;
   }
 
-  override equals(other: Organization): EqualsResult {
+  override equals(other: Organization): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, AgentStub.equals))(
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
           this.members,
           other.members,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -17068,7 +17127,7 @@ export class Organization extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.parentOrganizations,
           other.parentOrganizations,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -17081,7 +17140,7 @@ export class Organization extends Thing {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.subOrganizations,
           other.subOrganizations,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -17124,18 +17183,7 @@ export class Organization extends Thing {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly members: readonly (
-      | ReturnType<OrganizationStub["toJson"]>
-      | ReturnType<PersonStub["toJson"]>
-    )[];
-    readonly parentOrganizations: readonly ReturnType<
-      OrganizationStub["toJson"]
-    >[];
-    readonly subOrganizations: readonly ReturnType<
-      OrganizationStub["toJson"]
-    >[];
-  } & ReturnType<Thing["toJson"]> {
+  override toJson(): Organization.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -17144,7 +17192,7 @@ export class Organization extends Thing {
           _item.toJson(),
         ),
         subOrganizations: this.subOrganizations.map((_item) => _item.toJson()),
-      } satisfies ReturnType<Organization["toJson"]>),
+      } satisfies Organization.Json),
     );
   }
 
@@ -17198,7 +17246,16 @@ export class Organization extends Thing {
 }
 
 export namespace Organization {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Organization",
+  );
+  export type Json = {
+    readonly members: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly parentOrganizations: readonly OrganizationStub.Json[];
+    readonly subOrganizations: readonly OrganizationStub.Json[];
+  } & ThingStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -17207,15 +17264,15 @@ export namespace Organization {
       members: AgentStub[];
       parentOrganizations: OrganizationStub[];
       subOrganizations: OrganizationStub[];
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = organizationJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Thing._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -17245,12 +17302,52 @@ export namespace Organization {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Organization> {
-    return Organization._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new Organization(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/members`, type: "Control" },
+        OrganizationStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/parentOrganizations`,
+        }),
+        OrganizationStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/subOrganizations`,
+        }),
+      ],
+      label: "Organization",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Organization"),
+        members: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        parentOrganizations: OrganizationStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        subOrganizations: OrganizationStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17268,9 +17365,9 @@ export namespace Organization {
       members: AgentStub[];
       parentOrganizations: OrganizationStub[];
       subOrganizations: OrganizationStub[];
-    } & UnwrapR<ReturnType<typeof Thing._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Thing._propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -17396,56 +17493,10 @@ export namespace Organization {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Organization._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Organization.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Organization> {
-    return Organization._propertiesFromRdf(parameters).map(
+    return Organization.propertiesFromRdf(parameters).map(
       (properties) => new Organization(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Organization",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(organizationJsonZodSchema());
-  }
-
-  export function organizationJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Thing.thingJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/members`, type: "Control" },
-        OrganizationStub.organizationStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/parentOrganizations`,
-        }),
-        OrganizationStub.organizationStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/subOrganizations`,
-        }),
-      ],
-      label: "Organization",
-      type: "Group",
-    };
-  }
-
-  export function organizationJsonZodSchema() {
-    return Thing.thingJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Organization"),
-        members: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        parentOrganizations: OrganizationStub.organizationStubJsonZodSchema()
-          .array()
-          .default(() => []),
-        subOrganizations: OrganizationStub.organizationStubJsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
     );
   }
 }
@@ -17481,12 +17532,12 @@ export class Order extends Intangible {
     return this._identifier;
   }
 
-  override equals(other: Order): EqualsResult {
+  override equals(other: Order): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.partOfInvoice,
           other.partOfInvoice,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -17520,16 +17571,14 @@ export class Order extends Intangible {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly partOfInvoice: ReturnType<InvoiceStub["toJson"]> | undefined;
-  } & ReturnType<Intangible["toJson"]> {
+  override toJson(): Order.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         partOfInvoice: this.partOfInvoice
           .map((_item) => _item.toJson())
           .extract(),
-      } satisfies ReturnType<Order["toJson"]>),
+      } satisfies Order.Json),
     );
   }
 
@@ -17571,22 +17620,29 @@ export class Order extends Intangible {
 }
 
 export namespace Order {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Order",
+  );
+  export type Json = {
+    readonly partOfInvoice: InvoiceStub.Json | undefined;
+  } & IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       partOfInvoice: purify.Maybe<InvoiceStub>;
-    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = orderJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -17602,12 +17658,38 @@ export namespace Order {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Order> {
-    return Order._propertiesFromJson(json).map(
-      (properties) => new Order(properties),
+    return propertiesFromJson(json).map((properties) => new Order(properties));
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStatic.jsonUiSchema({ scopePrefix }),
+        InvoiceStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/partOfInvoice`,
+        }),
+      ],
+      label: "Order",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Order"),
+        partOfInvoice: InvoiceStub.jsonZodSchema().optional(),
+      }),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17623,9 +17705,9 @@ export namespace Order {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       partOfInvoice: purify.Maybe<InvoiceStub>;
-    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -17679,42 +17761,10 @@ export namespace Order {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Order._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Order.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Order> {
-    return Order._propertiesFromRdf(parameters).map(
+    return Order.propertiesFromRdf(parameters).map(
       (properties) => new Order(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Order",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(orderJsonZodSchema());
-  }
-
-  export function orderJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Intangible.intangibleJsonUiSchema({ scopePrefix }),
-        InvoiceStub.invoiceStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/partOfInvoice`,
-        }),
-      ],
-      label: "Order",
-      type: "Group",
-    };
-  }
-
-  export function orderJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Order"),
-        partOfInvoice: InvoiceStub.invoiceStubJsonZodSchema().optional(),
-      }),
     );
   }
 }
@@ -17769,21 +17819,26 @@ export class OrderStub extends IntangibleStub {
 }
 
 export namespace OrderStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Order",
+  );
+  export type Json = IntangibleStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = orderStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = IntangibleStub._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -17798,12 +17853,34 @@ export namespace OrderStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, OrderStub> {
-    return OrderStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new OrderStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "OrderStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("OrderStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17816,11 +17893,11 @@ export namespace OrderStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = IntangibleStub._propertiesFromRdf({
+    const _super0Either = IntangibleStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -17849,36 +17926,10 @@ export namespace OrderStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof OrderStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof OrderStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, OrderStub> {
-    return OrderStub._propertiesFromRdf(parameters).map(
+    return OrderStub.propertiesFromRdf(parameters).map(
       (properties) => new OrderStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Order",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(orderStubJsonZodSchema());
-  }
-
-  export function orderStubJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IntangibleStub.intangibleStubJsonUiSchema({ scopePrefix })],
-      label: "OrderStub",
-      type: "Group",
-    };
-  }
-
-  export function orderStubJsonZodSchema() {
-    return IntangibleStub.intangibleStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("OrderStub"),
-      }),
     );
   }
 
@@ -17928,7 +17979,7 @@ export namespace OrderStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "orderStub");
     return [
-      ...IntangibleStub.sparqlConstructTemplateTriples({
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -17957,7 +18008,7 @@ export namespace OrderStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "orderStub");
     return [
-      ...IntangibleStub.sparqlWherePatterns({
+      ...IntangibleStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -18034,11 +18085,11 @@ export class MonetaryAmount extends StructuredValue {
     return this._identifier;
   }
 
-  override equals(other: MonetaryAmount): EqualsResult {
+  override equals(other: MonetaryAmount): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.currency,
           other.currency,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -18050,7 +18101,7 @@ export class MonetaryAmount extends StructuredValue {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.value,
           other.value,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -18087,16 +18138,13 @@ export class MonetaryAmount extends StructuredValue {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly currency: string | undefined;
-    readonly value: number | undefined;
-  } & ReturnType<StructuredValue["toJson"]> {
+  override toJson(): MonetaryAmount.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         currency: this.currency.map((_item) => _item).extract(),
         value: this.value.map((_item) => _item).extract(),
-      } satisfies ReturnType<MonetaryAmount["toJson"]>),
+      } satisfies MonetaryAmount.Json),
     );
   }
 
@@ -18137,7 +18185,15 @@ export class MonetaryAmount extends StructuredValue {
 }
 
 export namespace MonetaryAmount {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MonetaryAmount",
+  );
+  export type Json = {
+    readonly currency: string | undefined;
+    readonly value: number | undefined;
+  } & StructuredValueStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -18145,15 +18201,15 @@ export namespace MonetaryAmount {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       currency: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof StructuredValueStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = monetaryAmountJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = StructuredValue._propertiesFromJson(_jsonObject);
+    const _super0Either = StructuredValueStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -18170,12 +18226,40 @@ export namespace MonetaryAmount {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, MonetaryAmount> {
-    return MonetaryAmount._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new MonetaryAmount(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValueStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/currency`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "MonetaryAmount",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return StructuredValueStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MonetaryAmount"),
+        currency: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -18192,9 +18276,9 @@ export namespace MonetaryAmount {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       currency: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValue._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof StructuredValueStatic.propertiesFromRdf>>
   > {
-    const _super0Either = StructuredValue._propertiesFromRdf({
+    const _super0Either = StructuredValueStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -18259,44 +18343,10 @@ export namespace MonetaryAmount {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof MonetaryAmount._propertiesFromRdf>[0],
+    parameters: Parameters<typeof MonetaryAmount.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, MonetaryAmount> {
-    return MonetaryAmount._propertiesFromRdf(parameters).map(
+    return MonetaryAmount.propertiesFromRdf(parameters).map(
       (properties) => new MonetaryAmount(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/MonetaryAmount",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(monetaryAmountJsonZodSchema());
-  }
-
-  export function monetaryAmountJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        StructuredValue.structuredValueJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/currency`, type: "Control" },
-        { scope: `${scopePrefix}/properties/value`, type: "Control" },
-      ],
-      label: "MonetaryAmount",
-      type: "Group",
-    };
-  }
-
-  export function monetaryAmountJsonZodSchema() {
-    return StructuredValue.structuredValueJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("MonetaryAmount"),
-        currency: zod.string().optional(),
-        value: zod.number().optional(),
-      }),
     );
   }
 }
@@ -18341,11 +18391,11 @@ export class MonetaryAmountStub extends StructuredValueStub {
     return this._identifier;
   }
 
-  override equals(other: MonetaryAmountStub): EqualsResult {
+  override equals(other: MonetaryAmountStub): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.currency,
           other.currency,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -18357,7 +18407,7 @@ export class MonetaryAmountStub extends StructuredValueStub {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.value,
           other.value,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -18394,16 +18444,13 @@ export class MonetaryAmountStub extends StructuredValueStub {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly currency: string | undefined;
-    readonly value: number | undefined;
-  } & ReturnType<StructuredValueStub["toJson"]> {
+  override toJson(): MonetaryAmountStub.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         currency: this.currency.map((_item) => _item).extract(),
         value: this.value.map((_item) => _item).extract(),
-      } satisfies ReturnType<MonetaryAmountStub["toJson"]>),
+      } satisfies MonetaryAmountStub.Json),
     );
   }
 
@@ -18444,7 +18491,15 @@ export class MonetaryAmountStub extends StructuredValueStub {
 }
 
 export namespace MonetaryAmountStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MonetaryAmount",
+  );
+  export type Json = {
+    readonly currency: string | undefined;
+    readonly value: number | undefined;
+  } & StructuredValueStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -18452,16 +18507,18 @@ export namespace MonetaryAmountStub {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       currency: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromJson>>
+    } & $UnwrapR<
+      ReturnType<typeof StructuredValueStubStatic.propertiesFromJson>
+    >
   > {
-    const _jsonSafeParseResult =
-      monetaryAmountStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = StructuredValueStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      StructuredValueStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -18478,12 +18535,40 @@ export namespace MonetaryAmountStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, MonetaryAmountStub> {
-    return MonetaryAmountStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new MonetaryAmountStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        StructuredValueStubStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/currency`, type: "Control" },
+        { scope: `${scopePrefix}/properties/value`, type: "Control" },
+      ],
+      label: "MonetaryAmountStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return StructuredValueStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MonetaryAmountStub"),
+        currency: zod.string().optional(),
+        value: zod.number().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -18500,9 +18585,9 @@ export namespace MonetaryAmountStub {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       currency: purify.Maybe<string>;
       value: purify.Maybe<number>;
-    } & UnwrapR<ReturnType<typeof StructuredValueStub._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof StructuredValueStubStatic.propertiesFromRdf>>
   > {
-    const _super0Either = StructuredValueStub._propertiesFromRdf({
+    const _super0Either = StructuredValueStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -18567,44 +18652,10 @@ export namespace MonetaryAmountStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof MonetaryAmountStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof MonetaryAmountStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, MonetaryAmountStub> {
-    return MonetaryAmountStub._propertiesFromRdf(parameters).map(
+    return MonetaryAmountStub.propertiesFromRdf(parameters).map(
       (properties) => new MonetaryAmountStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/MonetaryAmount",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(monetaryAmountStubJsonZodSchema());
-  }
-
-  export function monetaryAmountStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        StructuredValueStub.structuredValueStubJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/currency`, type: "Control" },
-        { scope: `${scopePrefix}/properties/value`, type: "Control" },
-      ],
-      label: "MonetaryAmountStub",
-      type: "Group",
-    };
-  }
-
-  export function monetaryAmountStubJsonZodSchema() {
-    return StructuredValueStub.structuredValueStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("MonetaryAmountStub"),
-        currency: zod.string().optional(),
-        value: zod.number().optional(),
-      }),
     );
   }
 
@@ -18658,7 +18709,7 @@ export namespace MonetaryAmountStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
     return [
-      ...StructuredValueStub.sparqlConstructTemplateTriples({
+      ...StructuredValueStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -18698,7 +18749,7 @@ export namespace MonetaryAmountStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
     return [
-      ...StructuredValueStub.sparqlWherePatterns({
+      ...StructuredValueStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -18795,11 +18846,11 @@ export class Message extends CreativeWork {
     return this._identifier;
   }
 
-  override equals(other: Message): EqualsResult {
+  override equals(other: Message): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, AgentStub.equals))(
+        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
           this.sender,
           other.sender,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -18833,19 +18884,12 @@ export class Message extends CreativeWork {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly sender:
-      | (
-          | ReturnType<OrganizationStub["toJson"]>
-          | ReturnType<PersonStub["toJson"]>
-        )
-      | undefined;
-  } & ReturnType<CreativeWork["toJson"]> {
+  override toJson(): Message.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         sender: this.sender.map((_item) => _item.toJson()).extract(),
-      } satisfies ReturnType<Message["toJson"]>),
+      } satisfies Message.Json),
     );
   }
 
@@ -18887,22 +18931,29 @@ export class Message extends CreativeWork {
 }
 
 export namespace Message {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Message",
+  );
+  export type Json = {
+    readonly sender: (OrganizationStub.Json | PersonStub.Json) | undefined;
+  } & CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       sender: purify.Maybe<AgentStub>;
-    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = messageJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWork._propertiesFromJson(_jsonObject);
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -18920,12 +18971,38 @@ export namespace Message {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Message> {
-    return Message._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new Message(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/sender`, type: "Control" },
+      ],
+      label: "Message",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Message"),
+        sender: AgentStub.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -18941,9 +19018,9 @@ export namespace Message {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       sender: purify.Maybe<AgentStub>;
-    } & UnwrapR<ReturnType<typeof CreativeWork._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
-    const _super0Either = CreativeWork._propertiesFromRdf({
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -18998,40 +19075,10 @@ export namespace Message {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Message._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Message.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Message> {
-    return Message._propertiesFromRdf(parameters).map(
+    return Message.propertiesFromRdf(parameters).map(
       (properties) => new Message(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Message",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(messageJsonZodSchema());
-  }
-
-  export function messageJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWork.creativeWorkJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/sender`, type: "Control" },
-      ],
-      label: "Message",
-      type: "Group",
-    };
-  }
-
-  export function messageJsonZodSchema() {
-    return CreativeWork.creativeWorkJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Message"),
-        sender: AgentStub.jsonZodSchema().optional(),
-      }),
     );
   }
 }
@@ -19086,21 +19133,27 @@ export class MessageStub extends CreativeWorkStub {
 }
 
 export namespace MessageStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Message",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = messageStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWorkStub._propertiesFromJson(_jsonObject);
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -19115,12 +19168,34 @@ export namespace MessageStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, MessageStub> {
-    return MessageStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new MessageStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MessageStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MessageStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -19133,11 +19208,11 @@ export namespace MessageStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof CreativeWorkStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = CreativeWorkStub._propertiesFromRdf({
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -19168,40 +19243,10 @@ export namespace MessageStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof MessageStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof MessageStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, MessageStub> {
-    return MessageStub._propertiesFromRdf(parameters).map(
+    return MessageStub.propertiesFromRdf(parameters).map(
       (properties) => new MessageStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Message",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(messageStubJsonZodSchema());
-  }
-
-  export function messageStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWorkStub.creativeWorkStubJsonUiSchema({ scopePrefix }),
-      ],
-      label: "MessageStub",
-      type: "Group",
-    };
-  }
-
-  export function messageStubJsonZodSchema() {
-    return CreativeWorkStub.creativeWorkStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("MessageStub"),
-      }),
     );
   }
 
@@ -19251,7 +19296,7 @@ export namespace MessageStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "messageStub");
     return [
-      ...CreativeWorkStub.sparqlConstructTemplateTriples({
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -19280,7 +19325,7 @@ export namespace MessageStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "messageStub");
     return [
-      ...CreativeWorkStub.sparqlWherePatterns({
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -19384,11 +19429,11 @@ export class Invoice extends Intangible {
     return this._identifier;
   }
 
-  override equals(other: Invoice): EqualsResult {
+  override equals(other: Invoice): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.category,
           other.category,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -19400,7 +19445,7 @@ export class Invoice extends Intangible {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, AgentStub.equals))(
+        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
           this.provider,
           other.provider,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -19413,7 +19458,7 @@ export class Invoice extends Intangible {
       )
       .chain(() =>
         ((left, right) =>
-          arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.referencesOrder,
           other.referencesOrder,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -19426,7 +19471,7 @@ export class Invoice extends Intangible {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.totalPaymentDue,
           other.totalPaymentDue,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -19470,19 +19515,7 @@ export class Invoice extends Intangible {
     return _hasher;
   }
 
-  override toJson(): {
-    readonly category: string | undefined;
-    readonly provider:
-      | (
-          | ReturnType<OrganizationStub["toJson"]>
-          | ReturnType<PersonStub["toJson"]>
-        )
-      | undefined;
-    readonly referencesOrder: readonly ReturnType<OrderStub["toJson"]>[];
-    readonly totalPaymentDue:
-      | ReturnType<MonetaryAmountStub["toJson"]>
-      | undefined;
-  } & ReturnType<Intangible["toJson"]> {
+  override toJson(): Invoice.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -19492,7 +19525,7 @@ export class Invoice extends Intangible {
         totalPaymentDue: this.totalPaymentDue
           .map((_item) => _item.toJson())
           .extract(),
-      } satisfies ReturnType<Invoice["toJson"]>),
+      } satisfies Invoice.Json),
     );
   }
 
@@ -19550,7 +19583,17 @@ export class Invoice extends Intangible {
 }
 
 export namespace Invoice {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Invoice",
+  );
+  export type Json = {
+    readonly category: string | undefined;
+    readonly provider: (OrganizationStub.Json | PersonStub.Json) | undefined;
+    readonly referencesOrder: readonly OrderStub.Json[];
+    readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
+  } & IntangibleStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -19560,15 +19603,15 @@ export namespace Invoice {
       provider: purify.Maybe<AgentStub>;
       referencesOrder: readonly OrderStub[];
       totalPaymentDue: purify.Maybe<MonetaryAmountStub>;
-    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = invoiceJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = Intangible._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -19600,12 +19643,50 @@ export namespace Invoice {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Invoice> {
-    return Invoice._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new Invoice(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/category`, type: "Control" },
+        { scope: `${scopePrefix}/properties/provider`, type: "Control" },
+        OrderStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/referencesOrder`,
+        }),
+        MonetaryAmountStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/totalPaymentDue`,
+        }),
+      ],
+      label: "Invoice",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("Invoice"),
+        category: zod.string().optional(),
+        provider: AgentStub.jsonZodSchema().optional(),
+        referencesOrder: OrderStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        totalPaymentDue: MonetaryAmountStub.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -19624,9 +19705,9 @@ export namespace Invoice {
       provider: purify.Maybe<AgentStub>;
       referencesOrder: readonly OrderStub[];
       totalPaymentDue: purify.Maybe<MonetaryAmountStub>;
-    } & UnwrapR<ReturnType<typeof Intangible._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromRdf>>
   > {
-    const _super0Either = Intangible._propertiesFromRdf({
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -19760,53 +19841,10 @@ export namespace Invoice {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Invoice._propertiesFromRdf>[0],
+    parameters: Parameters<typeof Invoice.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Invoice> {
-    return Invoice._propertiesFromRdf(parameters).map(
+    return Invoice.propertiesFromRdf(parameters).map(
       (properties) => new Invoice(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Invoice",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(invoiceJsonZodSchema());
-  }
-
-  export function invoiceJsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        Intangible.intangibleJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/category`, type: "Control" },
-        { scope: `${scopePrefix}/properties/provider`, type: "Control" },
-        OrderStub.orderStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/referencesOrder`,
-        }),
-        MonetaryAmountStub.monetaryAmountStubJsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/totalPaymentDue`,
-        }),
-      ],
-      label: "Invoice",
-      type: "Group",
-    };
-  }
-
-  export function invoiceJsonZodSchema() {
-    return Intangible.intangibleJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("Invoice"),
-        category: zod.string().optional(),
-        provider: AgentStub.jsonZodSchema().optional(),
-        referencesOrder: OrderStub.orderStubJsonZodSchema()
-          .array()
-          .default(() => []),
-        totalPaymentDue:
-          MonetaryAmountStub.monetaryAmountStubJsonZodSchema().optional(),
-      }),
     );
   }
 }
@@ -19861,21 +19899,26 @@ export class InvoiceStub extends IntangibleStub {
 }
 
 export namespace InvoiceStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Invoice",
+  );
+  export type Json = IntangibleStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult = invoiceStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = IntangibleStub._propertiesFromJson(_jsonObject);
+    const _super0Either = IntangibleStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -19890,12 +19933,34 @@ export namespace InvoiceStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InvoiceStub> {
-    return InvoiceStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new InvoiceStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "InvoiceStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("InvoiceStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -19908,11 +19973,11 @@ export namespace InvoiceStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof IntangibleStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = IntangibleStub._propertiesFromRdf({
+    const _super0Either = IntangibleStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -19943,38 +20008,10 @@ export namespace InvoiceStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof InvoiceStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof InvoiceStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InvoiceStub> {
-    return InvoiceStub._propertiesFromRdf(parameters).map(
+    return InvoiceStub.propertiesFromRdf(parameters).map(
       (properties) => new InvoiceStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Invoice",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(invoiceStubJsonZodSchema());
-  }
-
-  export function invoiceStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IntangibleStub.intangibleStubJsonUiSchema({ scopePrefix })],
-      label: "InvoiceStub",
-      type: "Group",
-    };
-  }
-
-  export function invoiceStubJsonZodSchema() {
-    return IntangibleStub.intangibleStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("InvoiceStub"),
-      }),
     );
   }
 
@@ -20024,7 +20061,7 @@ export namespace InvoiceStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "invoiceStub");
     return [
-      ...IntangibleStub.sparqlConstructTemplateTriples({
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -20053,7 +20090,7 @@ export namespace InvoiceStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "invoiceStub");
     return [
-      ...IntangibleStub.sparqlWherePatterns({
+      ...IntangibleStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -20118,11 +20155,11 @@ export class PersonStub extends ThingStub {
     return this._identifier;
   }
 
-  override equals(other: PersonStub): EqualsResult {
+  override equals(other: PersonStub): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.jobTitle,
           other.jobTitle,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -20156,14 +20193,12 @@ export class PersonStub extends ThingStub {
     return _hasher;
   }
 
-  override toJson(): { readonly jobTitle: string | undefined } & ReturnType<
-    ThingStub["toJson"]
-  > {
+  override toJson(): PersonStub.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
         jobTitle: this.jobTitle.map((_item) => _item).extract(),
-      } satisfies ReturnType<PersonStub["toJson"]>),
+      } satisfies PersonStub.Json),
     );
   }
 
@@ -20203,22 +20238,29 @@ export class PersonStub extends ThingStub {
 }
 
 export namespace PersonStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Person",
+  );
+  export type Json = {
+    readonly jobTitle: string | undefined;
+  } & ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       jobTitle: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromJson>>
+    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromJson>>
   > {
-    const _jsonSafeParseResult = personStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -20234,12 +20276,38 @@ export namespace PersonStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PersonStub> {
-    return PersonStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new PersonStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStubStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
+      ],
+      label: "PersonStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("PersonStub"),
+        jobTitle: zod.string().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -20255,9 +20323,9 @@ export namespace PersonStub {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       jobTitle: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof ThingStub._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromRdf>>
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -20303,42 +20371,10 @@ export namespace PersonStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof PersonStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof PersonStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, PersonStub> {
-    return PersonStub._propertiesFromRdf(parameters).map(
+    return PersonStub.propertiesFromRdf(parameters).map(
       (properties) => new PersonStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Person",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(personStubJsonZodSchema());
-  }
-
-  export function personStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ThingStub.thingStubJsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
-      ],
-      label: "PersonStub",
-      type: "Group",
-    };
-  }
-
-  export function personStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("PersonStub"),
-        jobTitle: zod.string().optional(),
-      }),
     );
   }
 
@@ -20388,7 +20424,7 @@ export namespace PersonStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "personStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -20422,7 +20458,7 @@ export namespace PersonStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "personStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -20524,22 +20560,26 @@ export class OrganizationStub extends ThingStub {
 }
 
 export namespace OrganizationStub {
-  export function _propertiesFromJson(
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Organization",
+  );
+  export type Json = ThingStubStatic.Json;
+
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromJson>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      organizationStubJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStub._propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -20554,12 +20594,34 @@ export namespace OrganizationStub {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, OrganizationStub> {
-    return OrganizationStub._propertiesFromJson(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new OrganizationStub(properties),
     );
   }
 
-  export function _propertiesFromRdf({
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "OrganizationStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("OrganizationStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -20572,11 +20634,11 @@ export namespace OrganizationStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
-      ReturnType<typeof ThingStub._propertiesFromRdf>
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either = ThingStub._propertiesFromRdf({
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -20607,38 +20669,10 @@ export namespace OrganizationStub {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof OrganizationStub._propertiesFromRdf>[0],
+    parameters: Parameters<typeof OrganizationStub.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, OrganizationStub> {
-    return OrganizationStub._propertiesFromRdf(parameters).map(
+    return OrganizationStub.propertiesFromRdf(parameters).map(
       (properties) => new OrganizationStub(properties),
-    );
-  }
-
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Organization",
-  );
-
-  export function jsonSchema() {
-    return zodToJsonSchema(organizationStubJsonZodSchema());
-  }
-
-  export function organizationStubJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStub.thingStubJsonUiSchema({ scopePrefix })],
-      label: "OrganizationStub",
-      type: "Group",
-    };
-  }
-
-  export function organizationStubJsonZodSchema() {
-    return ThingStub.thingStubJsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("OrganizationStub"),
-      }),
     );
   }
 
@@ -20692,7 +20726,7 @@ export namespace OrganizationStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "organizationStub");
     return [
-      ...ThingStub.sparqlConstructTemplateTriples({
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -20722,7 +20756,7 @@ export namespace OrganizationStub {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "organizationStub");
     return [
-      ...ThingStub.sparqlWherePatterns({
+      ...ThingStubStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -20763,8 +20797,8 @@ export namespace OrganizationStub {
 export type AgentStub = OrganizationStub | PersonStub;
 
 export namespace AgentStub {
-  export function equals(left: AgentStub, right: AgentStub): EqualsResult {
-    return strictEquals(left.type, right.type).chain(() => {
+  export function equals(left: AgentStub, right: AgentStub): $EqualsResult {
+    return $strictEquals(left.type, right.type).chain(() => {
       switch (left.type) {
         case "OrganizationStub":
           return left.equals(right as unknown as OrganizationStub);
@@ -20820,10 +20854,12 @@ export namespace AgentStub {
     }
   }
 
+  export type Json = OrganizationStub.Json | PersonStub.Json;
+
   export function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
-      OrganizationStub.organizationStubJsonZodSchema(),
-      PersonStub.personStubJsonZodSchema(),
+      OrganizationStub.jsonZodSchema(),
+      PersonStub.jsonZodSchema(),
     ]);
   }
 
@@ -20925,7 +20961,7 @@ export namespace AgentStub {
 
   export function toJson(
     _agentStub: AgentStub,
-  ): ReturnType<OrganizationStub["toJson"]> | ReturnType<PersonStub["toJson"]> {
+  ): OrganizationStub.Json | PersonStub.Json {
     switch (_agentStub.type) {
       case "OrganizationStub":
         return _agentStub.toJson();
@@ -20949,3 +20985,71 @@ export namespace AgentStub {
     }
   }
 }
+
+export const $ObjectTypes = {
+    Action: ActionStatic,
+    ActionStub: ActionStubStatic,
+    Article: ArticleStatic,
+    ArticleStub: ArticleStubStatic,
+    AssessAction: AssessActionStatic,
+    AssessActionStub: AssessActionStubStatic,
+    BroadcastEvent,
+    BroadcastService: BroadcastServiceStatic,
+    BroadcastServiceStub: BroadcastServiceStubStatic,
+    ChooseAction: ChooseActionStatic,
+    ChooseActionStub: ChooseActionStubStatic,
+    CreativeWork: CreativeWorkStatic,
+    CreativeWorkSeries: CreativeWorkSeriesStatic,
+    CreativeWorkStub: CreativeWorkStubStatic,
+    Enumeration: EnumerationStatic,
+    Episode: EpisodeStatic,
+    EpisodeStub: EpisodeStubStatic,
+    Event: EventStatic,
+    EventStub: EventStubStatic,
+    GenderType,
+    ImageObject,
+    Intangible: IntangibleStatic,
+    IntangibleStub: IntangibleStubStatic,
+    Invoice,
+    InvoiceStub,
+    MediaObject: MediaObjectStatic,
+    MediaObjectStub: MediaObjectStubStatic,
+    Message,
+    MessageStub,
+    Model: ModelStatic,
+    MonetaryAmount,
+    MonetaryAmountStub,
+    Occupation,
+    Order,
+    OrderStub,
+    Organization,
+    OrganizationStub,
+    Person,
+    PersonStub,
+    Place,
+    PlaceStub,
+    PublicationEvent: PublicationEventStatic,
+    PublicationEventStub,
+    QuantitativeValue,
+    QuantitativeValueStub,
+    RadioBroadcastService,
+    RadioBroadcastServiceStub,
+    RadioEpisode,
+    RadioEpisodeStub,
+    RadioSeries,
+    Report,
+    ReportStub,
+    Role,
+    Service: ServiceStatic,
+    ServiceStub: ServiceStubStatic,
+    StructuredValue: StructuredValueStatic,
+    StructuredValueStub: StructuredValueStubStatic,
+    TextObject,
+    TextObjectStub,
+    Thing: ThingStatic,
+    ThingStub: ThingStubStatic,
+    VoteAction,
+    VoteActionStub,
+  },
+  $ObjectUnionTypes = { AgentStub },
+  $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };

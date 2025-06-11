@@ -94,6 +94,11 @@ sdapps:MessageStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
+sdapps:Model
+    shaclmate:abstract true ;
+    shaclmate:name "Model" ;
+    a owl:Class, sh:NodeShape .
+
 sdapps:MonetaryAmountStub
     shaclmate:fromRdfType schema:MonetaryAmount ;
     shaclmate:name "MonetaryAmountStub" ;
@@ -180,6 +185,7 @@ sdapps:Thing-order
 sdapps:ThingStub
     shaclmate:name "ThingStub" ;
     a owl:Class, sh:NodeShape ;
+    rdfs:subClass sdapps:Model ;
     sh:property sdapps:Thing-order, schema:Thing-name .
 
 sdapps:VoteActionStub
@@ -731,6 +737,7 @@ schema:TextObject-uriSpace
 schema:Thing
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:Model ;
     sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-description
