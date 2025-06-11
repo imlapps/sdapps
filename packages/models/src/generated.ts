@@ -480,6 +480,8 @@ export namespace ModelStatic {
     >;
   }
 
+  export const rdfProperties = [];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -1394,6 +1396,17 @@ export namespace ThingStatic {
         ),
       );
   }
+
+  export const rdfProperties = [
+    ...ModelStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/description") },
+    { path: dataFactory.namedNode("http://schema.org/identifier") },
+    { path: dataFactory.namedNode("http://schema.org/name") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
+    { path: dataFactory.namedNode("http://schema.org/sameAs") },
+    { path: dataFactory.namedNode("http://schema.org/subjectOf") },
+    { path: dataFactory.namedNode("http://schema.org/url") },
+  ];
 }
 export class CreativeWork extends Thing {
   override readonly type:
@@ -2057,6 +2070,15 @@ export namespace CreativeWorkStatic {
         ),
       );
   }
+
+  export const rdfProperties = [
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/about") },
+    { path: dataFactory.namedNode("http://schema.org/author") },
+    { path: dataFactory.namedNode("http://schema.org/datePublished") },
+    { path: dataFactory.namedNode("http://schema.org/isBasedOn") },
+    { path: dataFactory.namedNode("http://schema.org/publication") },
+  ];
 }
 export class CreativeWorkSeries extends CreativeWork {
   override readonly type: "CreativeWorkSeries" | "RadioSeries" =
@@ -2244,6 +2266,8 @@ export namespace CreativeWorkSeriesStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
 }
 export class RadioSeries extends CreativeWorkSeries {
   override readonly type = "RadioSeries";
@@ -2520,6 +2544,11 @@ export namespace RadioSeries {
       (properties) => new RadioSeries(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...CreativeWorkSeriesStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/episode") },
+  ];
 }
 export class Episode extends CreativeWork {
   override readonly type: "Episode" | "RadioEpisode" = "Episode";
@@ -2697,6 +2726,8 @@ export namespace EpisodeStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
 }
 export class RadioEpisode extends Episode {
   override readonly type = "RadioEpisode";
@@ -2864,6 +2895,8 @@ export namespace RadioEpisode {
       (properties) => new RadioEpisode(properties),
     );
   }
+
+  export const rdfProperties = [...EpisodeStatic.rdfProperties];
 }
 export class Intangible extends Thing {
   override readonly type:
@@ -3143,6 +3176,8 @@ export namespace IntangibleStatic {
         ),
       );
   }
+
+  export const rdfProperties = [...ThingStatic.rdfProperties];
 }
 export class Service extends Intangible {
   override readonly type:
@@ -3330,6 +3365,8 @@ export namespace ServiceStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...IntangibleStatic.rdfProperties];
 }
 export class BroadcastService extends Service {
   override readonly type: "BroadcastService" | "RadioBroadcastService" =
@@ -3602,6 +3639,11 @@ export namespace BroadcastServiceStatic {
       ),
     );
   }
+
+  export const rdfProperties = [
+    ...ServiceStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/callSign") },
+  ];
 }
 export class RadioBroadcastService extends BroadcastService {
   override readonly type = "RadioBroadcastService";
@@ -3774,6 +3816,8 @@ export namespace RadioBroadcastService {
       (properties) => new RadioBroadcastService(properties),
     );
   }
+
+  export const rdfProperties = [...BroadcastServiceStatic.rdfProperties];
 }
 export class Role extends Intangible {
   protected readonly _identifierPrefix?: string;
@@ -4194,6 +4238,13 @@ export namespace Role {
       (properties) => new Role(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...IntangibleStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/endDate") },
+    { path: dataFactory.namedNode("http://schema.org/roleName") },
+    { path: dataFactory.namedNode("http://schema.org/startDate") },
+  ];
 }
 export class Occupation extends Intangible {
   override readonly type = "Occupation";
@@ -4361,6 +4412,8 @@ export namespace Occupation {
       (properties) => new Occupation(properties),
     );
   }
+
+  export const rdfProperties = [...IntangibleStatic.rdfProperties];
 }
 export class StructuredValue extends Intangible {
   override readonly type:
@@ -4566,6 +4619,8 @@ export namespace StructuredValueStatic {
         ),
       );
   }
+
+  export const rdfProperties = [...IntangibleStatic.rdfProperties];
 }
 export class MediaObject extends CreativeWork {
   override readonly type: "ImageObject" | "MediaObject" | "TextObject" =
@@ -5078,6 +5133,14 @@ export namespace MediaObjectStatic {
         ),
       );
   }
+
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/contentUrl") },
+    { path: dataFactory.namedNode("http://schema.org/encodingFormat") },
+    { path: dataFactory.namedNode("http://schema.org/height") },
+    { path: dataFactory.namedNode("http://schema.org/width") },
+  ];
 }
 export class ImageObject extends MediaObject {
   override readonly type = "ImageObject";
@@ -5245,6 +5308,8 @@ export namespace ImageObject {
       (properties) => new ImageObject(properties),
     );
   }
+
+  export const rdfProperties = [...MediaObjectStatic.rdfProperties];
 }
 export class Enumeration extends Intangible {
   override readonly type: "Enumeration" | "GenderType" = "Enumeration";
@@ -5422,6 +5487,8 @@ export namespace EnumerationStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...IntangibleStatic.rdfProperties];
 }
 export class GenderType extends Enumeration {
   override readonly type = "GenderType";
@@ -5612,6 +5679,8 @@ export namespace GenderType {
       (properties) => new GenderType(properties),
     );
   }
+
+  export const rdfProperties = [...EnumerationStatic.rdfProperties];
 }
 export class Event extends Thing {
   override readonly type: "BroadcastEvent" | "Event" | "PublicationEvent" =
@@ -6419,6 +6488,18 @@ export namespace EventStatic {
       ),
     );
   }
+
+  export const rdfProperties = [
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/about") },
+    { path: dataFactory.namedNode("http://schema.org/endDate") },
+    { path: dataFactory.namedNode("http://schema.org/location") },
+    { path: dataFactory.namedNode("http://schema.org/organizer") },
+    { path: dataFactory.namedNode("http://schema.org/performer") },
+    { path: dataFactory.namedNode("http://schema.org/startDate") },
+    { path: dataFactory.namedNode("http://schema.org/subEvent") },
+    { path: dataFactory.namedNode("http://schema.org/superEvent") },
+  ];
 }
 export class PublicationEvent extends Event {
   override readonly type: "BroadcastEvent" | "PublicationEvent" =
@@ -6712,6 +6793,11 @@ export namespace PublicationEventStatic {
       ),
     );
   }
+
+  export const rdfProperties = [
+    ...EventStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/publishedOn") },
+  ];
 }
 export class BroadcastEvent extends PublicationEvent {
   override readonly type = "BroadcastEvent";
@@ -6880,6 +6966,8 @@ export namespace BroadcastEvent {
       (properties) => new BroadcastEvent(properties),
     );
   }
+
+  export const rdfProperties = [...PublicationEventStatic.rdfProperties];
 }
 export class Action extends Thing {
   override readonly type:
@@ -7386,6 +7474,14 @@ export namespace ActionStatic {
       ),
     );
   }
+
+  export const rdfProperties = [
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/agent") },
+    { path: dataFactory.namedNode("http://schema.org/endTime") },
+    { path: dataFactory.namedNode("http://schema.org/participant") },
+    { path: dataFactory.namedNode("http://schema.org/startTime") },
+  ];
 }
 export class AssessAction extends Action {
   override readonly type: "AssessAction" | "ChooseAction" | "VoteAction" =
@@ -7569,6 +7665,8 @@ export namespace AssessActionStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...ActionStatic.rdfProperties];
 }
 export class ChooseAction extends AssessAction {
   override readonly type: "ChooseAction" | "VoteAction" = "ChooseAction";
@@ -7748,6 +7846,8 @@ export namespace ChooseActionStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...AssessActionStatic.rdfProperties];
 }
 export class VoteAction extends ChooseAction {
   override readonly type = "VoteAction";
@@ -7915,6 +8015,8 @@ export namespace VoteAction {
       (properties) => new VoteAction(properties),
     );
   }
+
+  export const rdfProperties = [...ChooseActionStatic.rdfProperties];
 }
 export class ThingStub {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -8423,6 +8525,11 @@ export namespace ThingStubStatic {
       );
   }
 
+  export const rdfProperties = [
+    { path: dataFactory.namedNode("http://schema.org/name") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
+  ];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -8758,6 +8865,8 @@ export namespace ActionStubStatic {
     );
   }
 
+  export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -9061,6 +9170,8 @@ export namespace AssessActionStubStatic {
     );
   }
 
+  export const rdfProperties = [...ActionStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -9363,6 +9474,8 @@ export namespace ChooseActionStubStatic {
     );
   }
 
+  export const rdfProperties = [...AssessActionStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -9648,6 +9761,8 @@ export namespace VoteActionStub {
       (properties) => new VoteActionStub(properties),
     );
   }
+
+  export const rdfProperties = [...ChooseActionStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -10018,6 +10133,11 @@ export namespace TextObject {
       (properties) => new TextObject(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...MediaObjectStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://rdfs.org/ns/void#uriSpace") },
+  ];
 }
 export class CreativeWorkStub extends ThingStub {
   override readonly type:
@@ -10261,6 +10381,8 @@ export namespace CreativeWorkStubStatic {
         ),
       );
   }
+
+  export const rdfProperties = [...ThingStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -10564,6 +10686,8 @@ export namespace MediaObjectStubStatic {
     );
   }
 
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -10848,6 +10972,8 @@ export namespace TextObjectStub {
       (properties) => new TextObjectStub(properties),
     );
   }
+
+  export const rdfProperties = [...MediaObjectStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -11141,6 +11267,8 @@ export namespace ArticleStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
 }
 export class Report extends Article {
   override readonly type = "Report";
@@ -11299,6 +11427,8 @@ export namespace Report {
       (properties) => new Report(properties),
     );
   }
+
+  export const rdfProperties = [...ArticleStatic.rdfProperties];
 }
 export class ArticleStub extends CreativeWorkStub {
   override readonly type: "ArticleStub" | "ReportStub" = "ArticleStub";
@@ -11477,6 +11607,8 @@ export namespace ArticleStubStatic {
       ),
     );
   }
+
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -11756,6 +11888,8 @@ export namespace ReportStub {
       (properties) => new ReportStub(properties),
     );
   }
+
+  export const rdfProperties = [...ArticleStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -12053,6 +12187,8 @@ export namespace EpisodeStubStatic {
     );
   }
 
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -12341,6 +12477,8 @@ export namespace RadioEpisodeStub {
       (properties) => new RadioEpisodeStub(properties),
     );
   }
+
+  export const rdfProperties = [...EpisodeStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -12709,6 +12847,8 @@ export namespace IntangibleStubStatic {
       );
   }
 
+  export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -13018,6 +13158,8 @@ export namespace ServiceStubStatic {
     );
   }
 
+  export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -13325,6 +13467,8 @@ export namespace BroadcastServiceStubStatic {
     );
   }
 
+  export const rdfProperties = [...ServiceStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -13628,6 +13772,8 @@ export namespace RadioBroadcastServiceStub {
       (properties) => new RadioBroadcastServiceStub(properties),
     );
   }
+
+  export const rdfProperties = [...BroadcastServiceStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -14061,6 +14207,12 @@ export namespace QuantitativeValue {
       (properties) => new QuantitativeValue(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...StructuredValueStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/unitText") },
+    { path: dataFactory.namedNode("http://schema.org/value") },
+  ];
 }
 export class StructuredValueStub extends IntangibleStub {
   override readonly type:
@@ -14274,6 +14426,8 @@ export namespace StructuredValueStubStatic {
         ),
       );
   }
+
+  export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -14706,6 +14860,12 @@ export namespace QuantitativeValueStub {
       (properties) => new QuantitativeValueStub(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...StructuredValueStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/unitText") },
+    { path: dataFactory.namedNode("http://schema.org/value") },
+  ];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -15220,6 +15380,12 @@ export namespace EventStubStatic {
     );
   }
 
+  export const rdfProperties = [
+    ...ThingStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/startDate") },
+    { path: dataFactory.namedNode("http://schema.org/superEvent") },
+  ];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -15549,6 +15715,8 @@ export namespace PublicationEventStub {
     );
   }
 
+  export const rdfProperties = [...EventStubStatic.rdfProperties];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -15828,6 +15996,8 @@ export namespace Place {
       (properties) => new Place(properties),
     );
   }
+
+  export const rdfProperties = [...ThingStatic.rdfProperties];
 }
 export class PlaceStub extends ThingStub {
   override readonly type = "PlaceStub";
@@ -15993,6 +16163,8 @@ export namespace PlaceStub {
       (properties) => new PlaceStub(properties),
     );
   }
+
+  export const rdfProperties = [...ThingStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -17062,6 +17234,19 @@ export namespace Person {
       (properties) => new Person(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/birthDate") },
+    { path: dataFactory.namedNode("http://schema.org/familyName") },
+    { path: dataFactory.namedNode("http://schema.org/gender") },
+    { path: dataFactory.namedNode("http://schema.org/givenName") },
+    { path: dataFactory.namedNode("http://schema.org/hasOccupation") },
+    { path: dataFactory.namedNode("http://schema.org/image") },
+    { path: dataFactory.namedNode("http://schema.org/jobTitle") },
+    { path: dataFactory.namedNode("http://schema.org/memberOf") },
+    { path: dataFactory.namedNode("http://schema.org/performerIn") },
+  ];
 }
 export class Organization extends Thing {
   override readonly type = "Organization";
@@ -17499,6 +17684,13 @@ export namespace Organization {
       (properties) => new Organization(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/member") },
+    { path: dataFactory.namedNode("http://schema.org/parentOrganization") },
+    { path: dataFactory.namedNode("http://schema.org/subOrganization") },
+  ];
 }
 export class Order extends Intangible {
   override readonly type = "Order";
@@ -17767,6 +17959,11 @@ export namespace Order {
       (properties) => new Order(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...IntangibleStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/partOfInvoice") },
+  ];
 }
 export class OrderStub extends IntangibleStub {
   override readonly type = "OrderStub";
@@ -17932,6 +18129,8 @@ export namespace OrderStub {
       (properties) => new OrderStub(properties),
     );
   }
+
+  export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -18349,6 +18548,12 @@ export namespace MonetaryAmount {
       (properties) => new MonetaryAmount(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...StructuredValueStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/currency") },
+    { path: dataFactory.namedNode("http://schema.org/value") },
+  ];
 }
 export class MonetaryAmountStub extends StructuredValueStub {
   override readonly type = "MonetaryAmountStub";
@@ -18658,6 +18863,12 @@ export namespace MonetaryAmountStub {
       (properties) => new MonetaryAmountStub(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...StructuredValueStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/currency") },
+    { path: dataFactory.namedNode("http://schema.org/value") },
+  ];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -19081,6 +19292,11 @@ export namespace Message {
       (properties) => new Message(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/sender") },
+  ];
 }
 export class MessageStub extends CreativeWorkStub {
   override readonly type = "MessageStub";
@@ -19249,6 +19465,8 @@ export namespace MessageStub {
       (properties) => new MessageStub(properties),
     );
   }
+
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -19847,6 +20065,14 @@ export namespace Invoice {
       (properties) => new Invoice(properties),
     );
   }
+
+  export const rdfProperties = [
+    ...IntangibleStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/category") },
+    { path: dataFactory.namedNode("http://schema.org/provider") },
+    { path: dataFactory.namedNode("http://schema.org/referencesOrder") },
+    { path: dataFactory.namedNode("http://schema.org/totalPaymentDue") },
+  ];
 }
 export class InvoiceStub extends IntangibleStub {
   override readonly type = "InvoiceStub";
@@ -20014,6 +20240,8 @@ export namespace InvoiceStub {
       (properties) => new InvoiceStub(properties),
     );
   }
+
+  export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -20378,6 +20606,11 @@ export namespace PersonStub {
     );
   }
 
+  export const rdfProperties = [
+    ...ThingStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/jobTitle") },
+  ];
+
   export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
@@ -20675,6 +20908,8 @@ export namespace OrganizationStub {
       (properties) => new OrganizationStub(properties),
     );
   }
+
+  export const rdfProperties = [...ThingStubStatic.rdfProperties];
 
   export function sparqlConstructQuery(
     parameters?: {
