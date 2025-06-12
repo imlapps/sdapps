@@ -185,7 +185,7 @@ sdapps:Thing-order
 sdapps:ThingStub
     shaclmate:name "ThingStub" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClass sdapps:Model ;
+    rdfs:subClassOf sdapps:Model ;
     sh:property sdapps:Thing-order, schema:Thing-name .
 
 sdapps:VoteActionStub
@@ -632,6 +632,7 @@ schema:PublicationEvent
 
 schema:PublicationEvent-publishedOn
     a sh:PropertyShape ;
+    sh:maxCount 1 ;
     sh:name "publishedOn" ;
     sh:node sdapps:BroadcastServiceStub ;
     sh:path schema:publishedOn .

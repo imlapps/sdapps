@@ -205,40 +205,67 @@ export abstract class Model {
   abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   abstract readonly type:
     | "Action"
+    | "ActionStub"
     | "Article"
+    | "ArticleStub"
     | "AssessAction"
+    | "AssessActionStub"
     | "BroadcastEvent"
     | "BroadcastService"
+    | "BroadcastServiceStub"
     | "ChooseAction"
+    | "ChooseActionStub"
     | "CreativeWork"
     | "CreativeWorkSeries"
+    | "CreativeWorkStub"
     | "Enumeration"
     | "Episode"
+    | "EpisodeStub"
     | "Event"
+    | "EventStub"
     | "GenderType"
     | "ImageObject"
     | "Intangible"
+    | "IntangibleStub"
     | "Invoice"
+    | "InvoiceStub"
     | "MediaObject"
+    | "MediaObjectStub"
     | "Message"
+    | "MessageStub"
     | "MonetaryAmount"
+    | "MonetaryAmountStub"
     | "Occupation"
     | "Order"
+    | "OrderStub"
     | "Organization"
+    | "OrganizationStub"
     | "Person"
+    | "PersonStub"
     | "Place"
+    | "PlaceStub"
     | "PublicationEvent"
+    | "PublicationEventStub"
     | "QuantitativeValue"
+    | "QuantitativeValueStub"
     | "RadioBroadcastService"
+    | "RadioBroadcastServiceStub"
     | "RadioEpisode"
+    | "RadioEpisodeStub"
     | "RadioSeries"
     | "Report"
+    | "ReportStub"
     | "Role"
     | "Service"
+    | "ServiceStub"
     | "StructuredValue"
+    | "StructuredValueStub"
     | "TextObject"
+    | "TextObjectStub"
     | "Thing"
-    | "VoteAction";
+    | "ThingStub"
+    | "VoteAction"
+    | "VoteActionStub";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(_parameters: object) {}
@@ -320,40 +347,67 @@ export namespace ModelStatic {
     readonly "@id": string;
     readonly type:
       | "Action"
+      | "ActionStub"
       | "Article"
+      | "ArticleStub"
       | "AssessAction"
+      | "AssessActionStub"
       | "BroadcastEvent"
       | "BroadcastService"
+      | "BroadcastServiceStub"
       | "ChooseAction"
+      | "ChooseActionStub"
       | "CreativeWork"
       | "CreativeWorkSeries"
+      | "CreativeWorkStub"
       | "Enumeration"
       | "Episode"
+      | "EpisodeStub"
       | "Event"
+      | "EventStub"
       | "GenderType"
       | "ImageObject"
       | "Intangible"
+      | "IntangibleStub"
       | "Invoice"
+      | "InvoiceStub"
       | "MediaObject"
+      | "MediaObjectStub"
       | "Message"
+      | "MessageStub"
       | "MonetaryAmount"
+      | "MonetaryAmountStub"
       | "Occupation"
       | "Order"
+      | "OrderStub"
       | "Organization"
+      | "OrganizationStub"
       | "Person"
+      | "PersonStub"
       | "Place"
+      | "PlaceStub"
       | "PublicationEvent"
+      | "PublicationEventStub"
       | "QuantitativeValue"
+      | "QuantitativeValueStub"
       | "RadioBroadcastService"
+      | "RadioBroadcastServiceStub"
       | "RadioEpisode"
+      | "RadioEpisodeStub"
       | "RadioSeries"
       | "Report"
+      | "ReportStub"
       | "Role"
       | "Service"
+      | "ServiceStub"
       | "StructuredValue"
+      | "StructuredValueStub"
       | "TextObject"
+      | "TextObjectStub"
       | "Thing"
-      | "VoteAction";
+      | "ThingStub"
+      | "VoteAction"
+      | "VoteActionStub";
   };
 
   export function propertiesFromJson(
@@ -375,7 +429,11 @@ export namespace ModelStatic {
   }
 
   export function fromJson(json: unknown): purify.Either<zod.ZodError, Model> {
-    return ThingStatic.fromJson(json) as purify.Either<zod.ZodError, Model>;
+    return (
+      ThingStubStatic.fromJson(json) as purify.Either<zod.ZodError, Model>
+    ).altLazy(
+      () => ThingStatic.fromJson(json) as purify.Either<zod.ZodError, Model>,
+    );
   }
 
   export function jsonSchema() {
@@ -413,40 +471,67 @@ export namespace ModelStatic {
       "@id": zod.string().min(1),
       type: zod.enum([
         "Action",
+        "ActionStub",
         "Article",
+        "ArticleStub",
         "AssessAction",
+        "AssessActionStub",
         "BroadcastEvent",
         "BroadcastService",
+        "BroadcastServiceStub",
         "ChooseAction",
+        "ChooseActionStub",
         "CreativeWork",
         "CreativeWorkSeries",
+        "CreativeWorkStub",
         "Enumeration",
         "Episode",
+        "EpisodeStub",
         "Event",
+        "EventStub",
         "GenderType",
         "ImageObject",
         "Intangible",
+        "IntangibleStub",
         "Invoice",
+        "InvoiceStub",
         "MediaObject",
+        "MediaObjectStub",
         "Message",
+        "MessageStub",
         "MonetaryAmount",
+        "MonetaryAmountStub",
         "Occupation",
         "Order",
+        "OrderStub",
         "Organization",
+        "OrganizationStub",
         "Person",
+        "PersonStub",
         "Place",
+        "PlaceStub",
         "PublicationEvent",
+        "PublicationEventStub",
         "QuantitativeValue",
+        "QuantitativeValueStub",
         "RadioBroadcastService",
+        "RadioBroadcastServiceStub",
         "RadioEpisode",
+        "RadioEpisodeStub",
         "RadioSeries",
         "Report",
+        "ReportStub",
         "Role",
         "Service",
+        "ServiceStub",
         "StructuredValue",
+        "StructuredValueStub",
         "TextObject",
+        "TextObjectStub",
         "Thing",
+        "ThingStub",
         "VoteAction",
+        "VoteActionStub",
       ]),
     });
   }
@@ -474,10 +559,18 @@ export namespace ModelStatic {
     parameters: Parameters<typeof ModelStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Model> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return ThingStatic.fromRdf(otherParameters) as purify.Either<
-      rdfjsResource.Resource.ValueError,
-      Model
-    >;
+    return (
+      ThingStubStatic.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        Model
+      >
+    ).altLazy(
+      () =>
+        ThingStatic.fromRdf(otherParameters) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          Model
+        >,
+    );
   }
 
   export const rdfProperties = [];
@@ -6504,19 +6597,26 @@ export namespace EventStatic {
 export class PublicationEvent extends Event {
   override readonly type: "BroadcastEvent" | "PublicationEvent" =
     "PublicationEvent";
-  readonly publishedOn: readonly BroadcastServiceStub[];
+  readonly publishedOn: purify.Maybe<BroadcastServiceStub>;
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly publishedOn?: readonly BroadcastServiceStub[];
+      readonly publishedOn?:
+        | BroadcastServiceStub
+        | purify.Maybe<BroadcastServiceStub>;
     } & ConstructorParameters<typeof Event>[0],
   ) {
     super(parameters);
-    if (typeof parameters.publishedOn === "undefined") {
-      this.publishedOn = [];
-    } else if (Array.isArray(parameters.publishedOn)) {
+    if (purify.Maybe.isMaybe(parameters.publishedOn)) {
       this.publishedOn = parameters.publishedOn;
+    } else if (
+      typeof parameters.publishedOn === "object" &&
+      parameters.publishedOn instanceof BroadcastServiceStub
+    ) {
+      this.publishedOn = purify.Maybe.of(parameters.publishedOn);
+    } else if (typeof parameters.publishedOn === "undefined") {
+      this.publishedOn = purify.Maybe.empty();
     } else {
       this.publishedOn = parameters.publishedOn as never;
     }
@@ -6534,7 +6634,7 @@ export class PublicationEvent extends Event {
       .equals(other)
       .chain(() =>
         ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.publishedOn,
           other.publishedOn,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6562,10 +6662,9 @@ export class PublicationEvent extends Event {
     },
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
-    for (const _item0 of this.publishedOn) {
-      _item0.hash(_hasher);
-    }
-
+    this.publishedOn.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
     return _hasher;
   }
 
@@ -6573,7 +6672,7 @@ export class PublicationEvent extends Event {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
-        publishedOn: this.publishedOn.map((_item) => _item.toJson()),
+        publishedOn: this.publishedOn.map((_item) => _item.toJson()).extract(),
       } satisfies PublicationEventStatic.Json),
     );
   }
@@ -6603,8 +6702,8 @@ export class PublicationEvent extends Event {
 
     _resource.add(
       dataFactory.namedNode("http://schema.org/publishedOn"),
-      this.publishedOn.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.publishedOn.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -6620,7 +6719,7 @@ export namespace PublicationEventStatic {
     "http://schema.org/PublicationEvent",
   );
   export type Json = {
-    readonly publishedOn: readonly BroadcastServiceStubStatic.Json[];
+    readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
   } & EventStatic.Json;
 
   export function propertiesFromJson(
@@ -6629,7 +6728,7 @@ export namespace PublicationEventStatic {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      publishedOn: readonly BroadcastServiceStub[];
+      publishedOn: purify.Maybe<BroadcastServiceStub>;
     } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -6647,9 +6746,9 @@ export namespace PublicationEventStatic {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const publishedOn = _jsonObject["publishedOn"].map((_item) =>
-      BroadcastServiceStubStatic.fromJson(_item).unsafeCoerce(),
-    );
+    const publishedOn = purify.Maybe.fromNullable(
+      _jsonObject["publishedOn"],
+    ).map((_item) => BroadcastServiceStubStatic.fromJson(_item).unsafeCoerce());
     return purify.Either.of({ ..._super0, identifier, publishedOn });
   }
 
@@ -6691,9 +6790,7 @@ export namespace PublicationEventStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum(["BroadcastEvent", "PublicationEvent"]),
-        publishedOn: BroadcastServiceStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
+        publishedOn: BroadcastServiceStubStatic.jsonZodSchema().optional(),
       }),
     );
   }
@@ -6713,7 +6810,7 @@ export namespace PublicationEventStatic {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      publishedOn: readonly BroadcastServiceStub[];
+      publishedOn: purify.Maybe<BroadcastServiceStub>;
     } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromRdf>>
   > {
     const _super0Either = EventStatic.propertiesFromRdf({
@@ -6747,29 +6844,24 @@ export namespace PublicationEventStatic {
     const identifier = _resource.identifier;
     const _publishedOnEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly BroadcastServiceStub[]
-    > = purify.Either.of([
-      ..._resource
+      purify.Maybe<BroadcastServiceStub>
+    > = purify.Either.of(
+      _resource
         .values(dataFactory.namedNode("http://schema.org/publishedOn"), {
           unique: true,
         })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              BroadcastServiceStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          BroadcastServiceStubStatic.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
     if (_publishedOnEither.isLeft()) {
       return _publishedOnEither;
     }
@@ -8018,9 +8110,9 @@ export namespace VoteAction {
 
   export const rdfProperties = [...ChooseActionStatic.rdfProperties];
 }
-export class ThingStub {
+export class ThingStub extends Model {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type:
+  override readonly type:
     | "ActionStub"
     | "ArticleStub"
     | "AssessActionStub"
@@ -8051,11 +8143,14 @@ export class ThingStub {
   readonly name: purify.Maybe<string>;
   readonly order: purify.Maybe<number>;
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly name?: purify.Maybe<string> | string;
-    readonly order?: number | purify.Maybe<number>;
-  }) {
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly name?: purify.Maybe<string> | string;
+      readonly order?: number | purify.Maybe<number>;
+    } & ConstructorParameters<typeof Model>[0],
+  ) {
+    super(parameters);
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
     } else if (typeof parameters.identifier === "string") {
@@ -8086,33 +8181,16 @@ export class ThingStub {
     }
   }
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  equals(other: ThingStub): $EqualsResult {
-    return $booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
+  override equals(other: ThingStub): $EqualsResult {
+    return super
+      .equals(other)
       .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.name,
@@ -8139,22 +8217,21 @@ export class ThingStub {
       );
   }
 
-  hash<
+  override hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
     this.hashShaclProperties(_hasher);
     return _hasher;
   }
 
-  protected hashShaclProperties<
+  protected override hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
     this.name.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -8164,21 +8241,17 @@ export class ThingStub {
     return _hasher;
   }
 
-  toJson(): ThingStubStatic.Json {
+  override toJson(): ThingStubStatic.Json {
     return JSON.parse(
       JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
+        ...super.toJson(),
         name: this.name.map((_item) => _item).extract(),
         order: this.order.map((_item) => _item).extract(),
       } satisfies ThingStubStatic.Json),
     );
   }
 
-  toRdf({
+  override toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -8187,8 +8260,10 @@ export class ThingStub {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
       mutateGraph,
+      resourceSet,
     });
     if (!ignoreRdfType) {
       _resource.add(
@@ -8209,7 +8284,7 @@ export class ThingStub {
     return _resource;
   }
 
-  toString(): string {
+  override toString(): string {
     return JSON.stringify(this.toJson());
   }
 }
@@ -8219,38 +8294,9 @@ export namespace ThingStubStatic {
     "http://purl.org/sdapps/ontology#ThingStub",
   );
   export type Json = {
-    readonly "@id": string;
-    readonly type:
-      | "ActionStub"
-      | "ArticleStub"
-      | "AssessActionStub"
-      | "BroadcastServiceStub"
-      | "ChooseActionStub"
-      | "CreativeWorkStub"
-      | "EpisodeStub"
-      | "EventStub"
-      | "IntangibleStub"
-      | "InvoiceStub"
-      | "MediaObjectStub"
-      | "MessageStub"
-      | "MonetaryAmountStub"
-      | "OrderStub"
-      | "OrganizationStub"
-      | "PersonStub"
-      | "PlaceStub"
-      | "PublicationEventStub"
-      | "QuantitativeValueStub"
-      | "RadioBroadcastServiceStub"
-      | "RadioEpisodeStub"
-      | "ReportStub"
-      | "ServiceStub"
-      | "StructuredValueStub"
-      | "TextObjectStub"
-      | "ThingStub"
-      | "VoteActionStub";
     readonly name: string | undefined;
     readonly order: number | undefined;
-  };
+  } & ModelStatic.Json;
 
   export function propertiesFromJson(
     _json: unknown,
@@ -8260,7 +8306,7 @@ export namespace ThingStubStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
-    }
+    } & $UnwrapR<ReturnType<typeof ModelStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -8268,12 +8314,18 @@ export namespace ThingStubStatic {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ModelStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
     const order = purify.Maybe.fromNullable(_jsonObject["order"]);
-    return purify.Either.of({ identifier, name, order });
+    return purify.Either.of({ ..._super0, identifier, name, order });
   }
 
   export function fromJson(
@@ -8331,22 +8383,7 @@ export namespace ThingStubStatic {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ThingStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
+        ModelStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/name`, type: "Control" },
         { scope: `${scopePrefix}/properties/order`, type: "Control" },
       ],
@@ -8356,40 +8393,42 @@ export namespace ThingStubStatic {
   }
 
   export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.enum([
-        "ActionStub",
-        "ArticleStub",
-        "AssessActionStub",
-        "BroadcastServiceStub",
-        "ChooseActionStub",
-        "CreativeWorkStub",
-        "EpisodeStub",
-        "EventStub",
-        "IntangibleStub",
-        "InvoiceStub",
-        "MediaObjectStub",
-        "MessageStub",
-        "MonetaryAmountStub",
-        "OrderStub",
-        "OrganizationStub",
-        "PersonStub",
-        "PlaceStub",
-        "PublicationEventStub",
-        "QuantitativeValueStub",
-        "RadioBroadcastServiceStub",
-        "RadioEpisodeStub",
-        "ReportStub",
-        "ServiceStub",
-        "StructuredValueStub",
-        "TextObjectStub",
-        "ThingStub",
-        "VoteActionStub",
-      ]),
-      name: zod.string().optional(),
-      order: zod.number().optional(),
-    });
+    return ModelStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "ActionStub",
+          "ArticleStub",
+          "AssessActionStub",
+          "BroadcastServiceStub",
+          "ChooseActionStub",
+          "CreativeWorkStub",
+          "EpisodeStub",
+          "EventStub",
+          "IntangibleStub",
+          "InvoiceStub",
+          "MediaObjectStub",
+          "MessageStub",
+          "MonetaryAmountStub",
+          "OrderStub",
+          "OrganizationStub",
+          "PersonStub",
+          "PlaceStub",
+          "PublicationEventStub",
+          "QuantitativeValueStub",
+          "RadioBroadcastServiceStub",
+          "RadioEpisodeStub",
+          "ReportStub",
+          "ServiceStub",
+          "StructuredValueStub",
+          "TextObjectStub",
+          "ThingStub",
+          "VoteActionStub",
+        ]),
+        name: zod.string().optional(),
+        order: zod.number().optional(),
+      }),
+    );
   }
 
   export function propertiesFromRdf({
@@ -8409,8 +8448,19 @@ export namespace ThingStubStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
-    }
+    } & $UnwrapR<ReturnType<typeof ModelStatic.propertiesFromRdf>>
   > {
+    const _super0Either = ModelStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(
@@ -8463,7 +8513,7 @@ export namespace ThingStubStatic {
     }
 
     const order = _orderEither.unsafeCoerce();
-    return purify.Either.of({ identifier, name, order });
+    return purify.Either.of({ ..._super0, identifier, name, order });
   }
 
   export function fromRdf(
@@ -8526,6 +8576,7 @@ export namespace ThingStubStatic {
   }
 
   export const rdfProperties = [
+    ...ModelStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/name") },
     { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
   ];
@@ -8579,6 +8630,11 @@ export namespace ThingStubStatic {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "thingStub");
     return [
+      ...ModelStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -8613,6 +8669,11 @@ export namespace ThingStubStatic {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "thingStub");
     return [
+      ...ModelStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
