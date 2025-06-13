@@ -630,6 +630,7 @@ export namespace ModelStatic {
 export class Thing extends Model {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type:
+    | "Thing"
     | "Action"
     | "Article"
     | "AssessAction"
@@ -663,7 +664,6 @@ export class Thing extends Model {
     | "Service"
     | "StructuredValue"
     | "TextObject"
-    | "Thing"
     | "VoteAction" = "Thing";
   readonly description: purify.Maybe<string>;
   readonly localIdentifiers: readonly string[];
@@ -847,7 +847,43 @@ export class Thing extends Model {
               ) {
                 return ((left, right) => left.equals(right))(left, right);
               }
+              if (left.type === "ArticleStub" && right.type === "ArticleStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (left.type === "EpisodeStub" && right.type === "EpisodeStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "MediaObjectStub" &&
+                right.type === "MediaObjectStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (left.type === "MessageStub" && right.type === "MessageStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "RadioEpisodeStub" &&
+                right.type === "RadioEpisodeStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (left.type === "ReportStub" && right.type === "ReportStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "TextObjectStub" &&
+                right.type === "TextObjectStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
               if (left.type === "EventStub" && right.type === "EventStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "PublicationEventStub" &&
+                right.type === "PublicationEventStub"
+              ) {
                 return ((left, right) => left.equals(right))(left, right);
               }
 
@@ -922,11 +958,19 @@ export class Thing extends Model {
 
     for (const _item0 of this.subjectOf) {
       switch (_item0.type) {
-        case "CreativeWorkStub": {
+        case "CreativeWorkStub":
+        case "ArticleStub":
+        case "EpisodeStub":
+        case "MediaObjectStub":
+        case "MessageStub":
+        case "RadioEpisodeStub":
+        case "ReportStub":
+        case "TextObjectStub": {
           _item0.hash(_hasher);
           break;
         }
-        case "EventStub": {
+        case "EventStub":
+        case "PublicationEventStub": {
           _item0.hash(_hasher);
           break;
         }
@@ -950,7 +994,9 @@ export class Thing extends Model {
         order: this.order.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
         subjectOf: this.subjectOf.map((_item) =>
-          _item.type === "EventStub" ? _item.toJson() : _item.toJson(),
+          _item.type === "EventStub" || _item.type === "PublicationEventStub"
+            ? _item.toJson()
+            : _item.toJson(),
         ),
         url: this.url.map((_item) => ({ "@id": _item.value })).extract(),
       } satisfies ThingStatic.Json),
@@ -1000,7 +1046,7 @@ export class Thing extends Model {
     _resource.add(
       dataFactory.namedNode("http://schema.org/subjectOf"),
       this.subjectOf.map((_item) =>
-        _item.type === "EventStub"
+        _item.type === "EventStub" || _item.type === "PublicationEventStub"
           ? _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
           : _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
@@ -1069,7 +1115,7 @@ export namespace ThingStatic {
       dataFactory.namedNode(_item["@id"]),
     );
     const subjectOf = _jsonObject["subjectOf"].map((_item) =>
-      _item.type === "EventStub"
+      _item.type === "EventStub" || _item.type === "PublicationEventStub"
         ? EventStubStatic.fromJson(_item).unsafeCoerce()
         : CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
     );
@@ -1147,6 +1193,7 @@ export namespace ThingStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "Thing",
           "Action",
           "Article",
           "AssessAction",
@@ -1180,7 +1227,6 @@ export namespace ThingStatic {
           "Service",
           "StructuredValue",
           "TextObject",
-          "Thing",
           "VoteAction",
         ]),
         description: zod.string().optional(),
@@ -1503,8 +1549,8 @@ export namespace ThingStatic {
 }
 export class CreativeWork extends Thing {
   override readonly type:
-    | "Article"
     | "CreativeWork"
+    | "Article"
     | "CreativeWorkSeries"
     | "Episode"
     | "ImageObject"
@@ -1901,8 +1947,8 @@ export namespace CreativeWorkStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
-          "Article",
           "CreativeWork",
+          "Article",
           "CreativeWorkSeries",
           "Episode",
           "ImageObject",
@@ -2993,10 +3039,10 @@ export namespace RadioEpisode {
 }
 export class Intangible extends Thing {
   override readonly type:
+    | "Intangible"
     | "BroadcastService"
     | "Enumeration"
     | "GenderType"
-    | "Intangible"
     | "Invoice"
     | "MonetaryAmount"
     | "Occupation"
@@ -3146,10 +3192,10 @@ export namespace IntangibleStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "Intangible",
           "BroadcastService",
           "Enumeration",
           "GenderType",
-          "Intangible",
           "Invoice",
           "MonetaryAmount",
           "Occupation",
@@ -3274,9 +3320,9 @@ export namespace IntangibleStatic {
 }
 export class Service extends Intangible {
   override readonly type:
+    | "Service"
     | "BroadcastService"
-    | "RadioBroadcastService"
-    | "Service" = "Service";
+    | "RadioBroadcastService" = "Service";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -3388,9 +3434,9 @@ export namespace ServiceStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "Service",
           "BroadcastService",
           "RadioBroadcastService",
-          "Service",
         ]),
       }),
     );
@@ -4510,9 +4556,9 @@ export namespace Occupation {
 }
 export class StructuredValue extends Intangible {
   override readonly type:
+    | "StructuredValue"
     | "MonetaryAmount"
-    | "QuantitativeValue"
-    | "StructuredValue" = "StructuredValue";
+    | "QuantitativeValue" = "StructuredValue";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -4634,9 +4680,9 @@ export namespace StructuredValueStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "StructuredValue",
           "MonetaryAmount",
           "QuantitativeValue",
-          "StructuredValue",
         ]),
       }),
     );
@@ -4716,7 +4762,7 @@ export namespace StructuredValueStatic {
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
 }
 export class MediaObject extends CreativeWork {
-  override readonly type: "ImageObject" | "MediaObject" | "TextObject" =
+  override readonly type: "MediaObject" | "ImageObject" | "TextObject" =
     "MediaObject";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
@@ -5052,7 +5098,7 @@ export namespace MediaObjectStatic {
     return CreativeWorkStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["ImageObject", "MediaObject", "TextObject"]),
+        type: zod.enum(["MediaObject", "ImageObject", "TextObject"]),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
         height: QuantitativeValue.jsonZodSchema().optional(),
@@ -5776,7 +5822,7 @@ export namespace GenderType {
   export const rdfProperties = [...EnumerationStatic.rdfProperties];
 }
 export class Event extends Thing {
-  override readonly type: "BroadcastEvent" | "Event" | "PublicationEvent" =
+  override readonly type: "Event" | "BroadcastEvent" | "PublicationEvent" =
     "Event";
   readonly about: readonly ThingStub[];
   readonly endDate: purify.Maybe<Date>;
@@ -6279,7 +6325,7 @@ export namespace EventStatic {
     return ThingStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["BroadcastEvent", "Event", "PublicationEvent"]),
+        type: zod.enum(["Event", "BroadcastEvent", "PublicationEvent"]),
         about: ThingStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
@@ -6595,7 +6641,7 @@ export namespace EventStatic {
   ];
 }
 export class PublicationEvent extends Event {
-  override readonly type: "BroadcastEvent" | "PublicationEvent" =
+  override readonly type: "PublicationEvent" | "BroadcastEvent" =
     "PublicationEvent";
   readonly publishedOn: purify.Maybe<BroadcastServiceStub>;
 
@@ -6789,7 +6835,7 @@ export namespace PublicationEventStatic {
     return EventStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["BroadcastEvent", "PublicationEvent"]),
+        type: zod.enum(["PublicationEvent", "BroadcastEvent"]),
         publishedOn: BroadcastServiceStubStatic.jsonZodSchema().optional(),
       }),
     );
@@ -8113,6 +8159,7 @@ export namespace VoteAction {
 export class ThingStub extends Model {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type:
+    | "ThingStub"
     | "ActionStub"
     | "ArticleStub"
     | "AssessActionStub"
@@ -8138,7 +8185,6 @@ export class ThingStub extends Model {
     | "ServiceStub"
     | "StructuredValueStub"
     | "TextObjectStub"
-    | "ThingStub"
     | "VoteActionStub" = "ThingStub";
   readonly name: purify.Maybe<string>;
   readonly order: purify.Maybe<number>;
@@ -8397,6 +8443,7 @@ export namespace ThingStubStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "ThingStub",
           "ActionStub",
           "ArticleStub",
           "AssessActionStub",
@@ -8422,7 +8469,6 @@ export namespace ThingStubStatic {
           "ServiceStub",
           "StructuredValueStub",
           "TextObjectStub",
-          "ThingStub",
           "VoteActionStub",
         ]),
         name: zod.string().optional(),
@@ -10202,8 +10248,8 @@ export namespace TextObject {
 }
 export class CreativeWorkStub extends ThingStub {
   override readonly type:
-    | "ArticleStub"
     | "CreativeWorkStub"
+    | "ArticleStub"
     | "EpisodeStub"
     | "MediaObjectStub"
     | "MessageStub"
@@ -10345,8 +10391,8 @@ export namespace CreativeWorkStubStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
-          "ArticleStub",
           "CreativeWorkStub",
+          "ArticleStub",
           "EpisodeStub",
           "MediaObjectStub",
           "MessageStub",
@@ -12661,8 +12707,8 @@ export namespace RadioEpisodeStub {
 }
 export class IntangibleStub extends ThingStub {
   override readonly type:
-    | "BroadcastServiceStub"
     | "IntangibleStub"
+    | "BroadcastServiceStub"
     | "InvoiceStub"
     | "MonetaryAmountStub"
     | "OrderStub"
@@ -12807,8 +12853,8 @@ export namespace IntangibleStubStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
-          "BroadcastServiceStub",
           "IntangibleStub",
+          "BroadcastServiceStub",
           "InvoiceStub",
           "MonetaryAmountStub",
           "OrderStub",
@@ -13030,9 +13076,9 @@ export namespace IntangibleStubStatic {
 }
 export class ServiceStub extends IntangibleStub {
   override readonly type:
+    | "ServiceStub"
     | "BroadcastServiceStub"
-    | "RadioBroadcastServiceStub"
-    | "ServiceStub" = "ServiceStub";
+    | "RadioBroadcastServiceStub" = "ServiceStub";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -13146,9 +13192,9 @@ export namespace ServiceStubStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "ServiceStub",
           "BroadcastServiceStub",
           "RadioBroadcastServiceStub",
-          "ServiceStub",
         ]),
       }),
     );
@@ -14277,9 +14323,9 @@ export namespace QuantitativeValue {
 }
 export class StructuredValueStub extends IntangibleStub {
   override readonly type:
+    | "StructuredValueStub"
     | "MonetaryAmountStub"
-    | "QuantitativeValueStub"
-    | "StructuredValueStub" = "StructuredValueStub";
+    | "QuantitativeValueStub" = "StructuredValueStub";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -14403,9 +14449,9 @@ export namespace StructuredValueStubStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
+          "StructuredValueStub",
           "MonetaryAmountStub",
           "QuantitativeValueStub",
-          "StructuredValueStub",
         ]),
       }),
     );
