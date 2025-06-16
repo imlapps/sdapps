@@ -10,8 +10,8 @@
 @prefix void: <http://rdfs.org/ns/void#> .
 
 sdapps:ActionStub
-    shaclmate:fromRdfType schema:Action ;
     shaclmate:name "ActionStub" ;
+    shaclmate:rdfType schema:Action ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
@@ -23,42 +23,44 @@ sdapps:AgentStub
     ) .
 
 sdapps:ArticleStub
-    shaclmate:fromRdfType schema:Article ;
     shaclmate:name "ArticleStub" ;
+    shaclmate:rdfType schema:Article ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:AssessActionStub
-    shaclmate:fromRdfType schema:AssessAction ;
     shaclmate:name "AssessActionStub" ;
+    shaclmate:rdfType schema:AssessAction ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ActionStub .
 
 sdapps:BroadcastServiceStub
     shaclmate:name "BroadcastServiceStub" ;
+    shaclmate:rdfType schema:BroadcastService ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ServiceStub .
 
 sdapps:ChooseActionStub
-    shaclmate:fromRdfType schema:ChooseAction ;
     shaclmate:name "ChooseActionStub" ;
+    shaclmate:rdfType schema:ChooseAction ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:AssessActionStub .
 
 sdapps:CreativeWorkStub
-    shaclmate:fromRdfType schema:CreativeWork ;
     shaclmate:name "CreativeWorkStub" ;
+    shaclmate:rdfType schema:CreativeWork ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
 sdapps:EpisodeStub
     shaclmate:name "EpisodeStub" ;
+    shaclmate:rdfType schema:Episode ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:EventStub
-    shaclmate:fromRdfType schema:Event ;
     shaclmate:name "EventStub" ;
+    shaclmate:rdfType schema:Event ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub ;
     sh:property sdapps:EventStub-superEvent, schema:Event-startDate .
@@ -73,24 +75,25 @@ sdapps:EventStub-superEvent
 
 sdapps:IntangibleStub
     shaclmate:name "IntangibleStub" ;
+    shaclmate:rdfType schema:Intangible ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
 sdapps:InvoiceStub
-    shaclmate:fromRdfType schema:Invoice ;
     shaclmate:name "InvoiceStub" ;
+    shaclmate:rdfType schema:Invoice ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:MediaObjectStub
-    shaclmate:fromRdfType schema:MediaObject ;
     shaclmate:name "MediaObjectStub" ;
+    shaclmate:rdfType schema:MediaObject ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:MessageStub
-    shaclmate:fromRdfType schema:Message ;
     shaclmate:name "MessageStub" ;
+    shaclmate:rdfType schema:Message ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
@@ -100,78 +103,83 @@ sdapps:Model
     a owl:Class, sh:NodeShape .
 
 sdapps:MonetaryAmountStub
-    shaclmate:fromRdfType schema:MonetaryAmount ;
     shaclmate:name "MonetaryAmountStub" ;
+    shaclmate:rdfType schema:MonetaryAmount ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:StructuredValueStub ;
     sh:property schema:MonetaryAmount-currency, schema:MonetaryAmount-value .
 
 sdapps:OrderStub
-    shaclmate:fromRdfType schema:Order ;
     shaclmate:name "OrderStub" ;
+    shaclmate:rdfType schema:Order ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:OrganizationStub
-    shaclmate:fromRdfType schema:Organization ;
     shaclmate:name "OrganizationStub" ;
+    shaclmate:rdfType schema:Organization ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
 sdapps:PersonStub
-    shaclmate:fromRdfType schema:Person ;
     shaclmate:name "PersonStub" ;
+    shaclmate:rdfType schema:Person ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub ;
     sh:property schema:Person-jobTitle .
 
 sdapps:PlaceStub
-    shaclmate:fromRdfType schema:Place ;
     shaclmate:name "PlaceStub" ;
+    shaclmate:rdfType schema:Place ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
 sdapps:PublicationEventStub
     shaclmate:name "PublicationEventStub" ;
+    shaclmate:rdfType schema:PublicationEvent ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:EventStub .
 
 sdapps:QuantitativeValueStub
-    shaclmate:fromRdfType schema:QuantitativeValue ;
     shaclmate:name "QuantitativeValueStub" ;
+    shaclmate:rdfType schema:QuantitativeValue ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:StructuredValueStub ;
     sh:property schema:QuantitativeValue-unitText, schema:QuantitativeValue-value .
 
 sdapps:RadioBroadcastServiceStub
     shaclmate:name "RadioBroadcastServiceStub" ;
+    shaclmate:rdfType schema:RadioBroadcastService ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:BroadcastServiceStub .
 
 sdapps:RadioEpisodeStub
     shaclmate:name "RadioEpisodeStub" ;
+    shaclmate:rdfType schema:RadioEpisode ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:EpisodeStub .
 
 sdapps:ReportStub
-    shaclmate:fromRdfType schema:Report ;
     shaclmate:name "ReportStub" ;
+    shaclmate:rdfType schema:Report ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ArticleStub .
 
 sdapps:ServiceStub
     shaclmate:name "ServiceStub" ;
+    shaclmate:rdfType schema:Service ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:StructuredValueStub
     shaclmate:name "StructuredValueStub" ;
+    shaclmate:rdfType schema:StructuredValue ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:TextObjectStub
-    shaclmate:fromRdfType schema:TextObject ;
     shaclmate:name "TextObjectStub" ;
+    shaclmate:rdfType schema:TextObject ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:MediaObjectStub .
 
@@ -184,13 +192,14 @@ sdapps:Thing-order
 
 sdapps:ThingStub
     shaclmate:name "ThingStub" ;
+    shaclmate:rdfType schema:Thing ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:Model ;
     sh:property sdapps:Thing-order, schema:Thing-name .
 
 sdapps:VoteActionStub
-    shaclmate:fromRdfType schema:VoteAction ;
     shaclmate:name "VoteActionStub" ;
+    shaclmate:rdfType schema:VoteAction ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ChooseActionStub .
 

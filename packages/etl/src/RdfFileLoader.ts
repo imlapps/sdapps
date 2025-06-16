@@ -1,22 +1,14 @@
+// tsco:ignore
+
 import { DatasetCore, NamedNode } from "@rdfjs/types";
 import { _void, rdf, rdfs, schema, sh, xsd } from "@tpluscode/rdf-ns-builders";
+
 import N3 from "n3";
 
 export abstract class RdfFileLoader {
   protected readonly fd: any;
   protected readonly format: RdfFileLoader.Format;
   protected readonly prefixes?: N3.Prefixes<string | NamedNode>;
-
-  static create(parameters: ConstructorParameters<typeof RdfFileLoader>[0]) {
-    switch (parameters.format) {
-      case "application/n-quads":
-      case "application/n-triples":
-        return new StreamingRdfFileLoader(parameters);
-      case "application/trig":
-      case "text/turtle":
-        return new BufferingRdfFileLoader(parameters);
-    }
-  }
 
   constructor({
     fd,
@@ -29,17 +21,38 @@ export abstract class RdfFileLoader {
   }) {
     this.fd = fd;
     this.format = format;
-    this.prefixes = prefixes ?? {
-      rdf: rdf[""],
-      rdfs: rdfs[""],
-      schema: schema[""],
-      sh: sh[""],
-      xsd: xsd[""],
-      void: _void[""],
-    };
+    this.prefixes = prefixes ?? RdfFileLoader.PREFIXES_DEFAULT;
+  }
+
+  static create(parameters: ConstructorParameters<typeof RdfFileLoader>[0]) {
+    switch (parameters.format) {
+      case "application/n-quads":
+      case "application/n-triples":
+        return new StreamingRdfFileLoader(parameters);
+      case "application/trig":
+      case "text/turtle":
+        return new BufferingRdfFileLoader(parameters);
+    }
   }
 
   abstract load(datasets: AsyncIterable<DatasetCore>): Promise<void>;
+}
+
+export namespace RdfFileLoader {
+  export type Format =
+    | "application/n-quads"
+    | "application/n-triples"
+    | "application/trig"
+    | "text/turtle";
+
+  export const PREFIXES_DEFAULT = {
+    rdf: rdf[""],
+    rdfs: rdfs[""],
+    schema: schema[""],
+    sh: sh[""],
+    xsd: xsd[""],
+    void: _void[""],
+  };
 }
 
 class BufferingRdfFileLoader extends RdfFileLoader {
@@ -81,12 +94,4 @@ class StreamingRdfFileLoader extends RdfFileLoader {
 
     writer.end();
   }
-}
-
-export namespace RdfFileLoader {
-  export type Format =
-    | "application/n-quads"
-    | "application/n-triples"
-    | "application/trig"
-    | "text/turtle";
 }

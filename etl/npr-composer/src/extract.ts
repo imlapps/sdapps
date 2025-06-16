@@ -1,6 +1,5 @@
-import { Stats } from "node:fs";
-import fs from "node:fs/promises";
-import path from "node:path";
+import * as dates from "date-fns";
+
 import { DatasetCore } from "@rdfjs/types";
 import { readRdfInput } from "@sdapps/etl";
 import {
@@ -8,10 +7,14 @@ import {
   RadioBroadcastService,
   iso8601DateString,
 } from "@sdapps/models";
-import * as dates from "date-fns";
+
+import { Stats } from "node:fs";
+import path from "node:path";
 import { Maybe } from "purify-ts";
 import { ResourceSet } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
+
+import fs from "node:fs/promises";
 import { ExtractResult } from "./ExtractResult";
 import { Iris } from "./Iris";
 import { logger } from "./logger";
@@ -21,36 +24,6 @@ function ensureDateWithoutTime(date: Date): void {
   invariant(date.getUTCMinutes() === 0);
   invariant(date.getUTCSeconds() === 0);
   invariant(date.getUTCMilliseconds() === 0);
-}
-
-export async function extract({
-  cachesDirectoryPath,
-  endDate,
-  input,
-  startDate,
-}: {
-  cachesDirectoryPath: string;
-  endDate: Date;
-  input: Maybe<string>;
-  startDate: Date;
-}): Promise<{
-  playlistResponsesJson: AsyncIterable<{
-    playlistResponseJson: any;
-    radioBroadcastService: RadioBroadcastService;
-  }>;
-  inputDataset: DatasetCore;
-}> {
-  const inputDataset = (await readRdfInput(input, { logger })).unsafeCoerce();
-
-  return {
-    inputDataset,
-    playlistResponsesJson: extractPlaylistResponsesJson({
-      cachesDirectoryPath,
-      endDate,
-      startDate,
-      ucsIdentifiers: extractUcsIdentifiers(inputDataset),
-    }),
-  };
 }
 
 async function* extractPlaylistResponsesJson({
@@ -190,4 +163,31 @@ function extractUcsIdentifiers(
       });
   }
   return ucsIdentifiers;
+}
+
+export async function extract({
+  cachesDirectoryPath,
+  endDate,
+  input,
+  startDate,
+}: {
+  cachesDirectoryPath: string;
+  endDate: Date;
+  input: Maybe<string>;
+  startDate: Date;
+}): Promise<{
+  extractResults: AsyncIterable<ExtractResult>;
+  inputDataset: DatasetCore;
+}> {
+  const inputDataset = (await readRdfInput(input, { logger })).unsafeCoerce();
+
+  return {
+    extractResults: extractPlaylistResponsesJson({
+      cachesDirectoryPath,
+      endDate,
+      startDate,
+      ucsIdentifiers: extractUcsIdentifiers(inputDataset),
+    }),
+    inputDataset,
+  };
 }
