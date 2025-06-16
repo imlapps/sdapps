@@ -974,6 +974,9 @@ export class Thing extends Model {
           _item0.hash(_hasher);
           break;
         }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
       }
     }
 
@@ -16658,6 +16661,9 @@ export class Person extends Thing {
           _item0.hash(_hasher);
           break;
         }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
       }
     }
 
@@ -21098,6 +21104,9 @@ export namespace AgentStub {
           return left.equals(right as unknown as OrganizationStub);
         case "PersonStub":
           return left.equals(right as unknown as PersonStub);
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
       }
     });
   }
@@ -21145,6 +21154,9 @@ export namespace AgentStub {
         return _agentStub.hash(_hasher);
       case "PersonStub":
         return _agentStub.hash(_hasher);
+      default:
+        _agentStub satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -21261,6 +21273,9 @@ export namespace AgentStub {
         return _agentStub.toJson();
       case "PersonStub":
         return _agentStub.toJson();
+      default:
+        _agentStub satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -21276,6 +21291,9 @@ export namespace AgentStub {
         return _agentStub.toRdf(_parameters);
       case "PersonStub":
         return _agentStub.toRdf(_parameters);
+      default:
+        _agentStub satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 }
