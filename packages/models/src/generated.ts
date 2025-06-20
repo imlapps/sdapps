@@ -236,11 +236,21 @@ export abstract class Model {
     | "MessageStub"
     | "MonetaryAmount"
     | "MonetaryAmountStub"
+    | "MusicAlbum"
+    | "MusicAlbumStub"
+    | "MusicComposition"
+    | "MusicCompositionStub"
+    | "MusicGroup"
+    | "MusicGroupStub"
+    | "MusicRecording"
+    | "MusicRecordingStub"
     | "Occupation"
     | "Order"
     | "OrderStub"
     | "Organization"
     | "OrganizationStub"
+    | "PerformingGroup"
+    | "PerformingGroupStub"
     | "Person"
     | "PersonStub"
     | "Place"
@@ -380,11 +390,21 @@ export namespace ModelStatic {
       | "MessageStub"
       | "MonetaryAmount"
       | "MonetaryAmountStub"
+      | "MusicAlbum"
+      | "MusicAlbumStub"
+      | "MusicComposition"
+      | "MusicCompositionStub"
+      | "MusicGroup"
+      | "MusicGroupStub"
+      | "MusicRecording"
+      | "MusicRecordingStub"
       | "Occupation"
       | "Order"
       | "OrderStub"
       | "Organization"
       | "OrganizationStub"
+      | "PerformingGroup"
+      | "PerformingGroupStub"
       | "Person"
       | "PersonStub"
       | "Place"
@@ -506,11 +526,21 @@ export namespace ModelStatic {
         "MessageStub",
         "MonetaryAmount",
         "MonetaryAmountStub",
+        "MusicAlbum",
+        "MusicAlbumStub",
+        "MusicComposition",
+        "MusicCompositionStub",
+        "MusicGroup",
+        "MusicGroupStub",
+        "MusicRecording",
+        "MusicRecordingStub",
         "Occupation",
         "Order",
         "OrderStub",
         "Organization",
         "OrganizationStub",
+        "PerformingGroup",
+        "PerformingGroupStub",
         "Person",
         "PersonStub",
         "Place",
@@ -655,9 +685,14 @@ export class Thing extends Model {
     | "MediaObject"
     | "Message"
     | "MonetaryAmount"
+    | "MusicAlbum"
+    | "MusicComposition"
+    | "MusicGroup"
+    | "MusicRecording"
     | "Occupation"
     | "Order"
     | "Organization"
+    | "PerformingGroup"
     | "Person"
     | "Place"
     | "PublicationEvent"
@@ -875,6 +910,24 @@ export class Thing extends Model {
                 return ((left, right) => left.equals(right))(left, right);
               }
               if (
+                left.type === "MusicAlbumStub" &&
+                right.type === "MusicAlbumStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "MusicCompositionStub" &&
+                right.type === "MusicCompositionStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "MusicRecordingStub" &&
+                right.type === "MusicRecordingStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
                 left.type === "RadioEpisodeStub" &&
                 right.type === "RadioEpisodeStub"
               ) {
@@ -982,6 +1035,9 @@ export class Thing extends Model {
         case "EpisodeStub":
         case "MediaObjectStub":
         case "MessageStub":
+        case "MusicAlbumStub":
+        case "MusicCompositionStub":
+        case "MusicRecordingStub":
         case "RadioEpisodeStub":
         case "RadioSeriesStub":
         case "ReportStub":
@@ -1175,7 +1231,11 @@ export namespace ThingStatic {
           IntangibleStatic.fromJson(json) as purify.Either<zod.ZodError, Thing>,
       )
       .altLazy(
-        () => Organization.fromJson(json) as purify.Either<zod.ZodError, Thing>,
+        () =>
+          OrganizationStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            Thing
+          >,
       )
       .altLazy(
         () => Person.fromJson(json) as purify.Either<zod.ZodError, Thing>,
@@ -1235,9 +1295,14 @@ export namespace ThingStatic {
           "MediaObject",
           "Message",
           "MonetaryAmount",
+          "MusicAlbum",
+          "MusicComposition",
+          "MusicGroup",
+          "MusicRecording",
           "Occupation",
           "Order",
           "Organization",
+          "PerformingGroup",
           "Person",
           "Place",
           "PublicationEvent",
@@ -1533,7 +1598,7 @@ export namespace ThingStatic {
       )
       .altLazy(
         () =>
-          Organization.fromRdf(otherParameters) as purify.Either<
+          OrganizationStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Thing
           >,
@@ -2456,6 +2521,9 @@ export class CreativeWork extends Thing {
     | "ImageObject"
     | "MediaObject"
     | "Message"
+    | "MusicAlbum"
+    | "MusicComposition"
+    | "MusicRecording"
     | "RadioEpisode"
     | "RadioSeries"
     | "Report"
@@ -2720,7 +2788,10 @@ export namespace CreativeWorkStatic {
   );
   export type Json = {
     readonly about: readonly ThingStubStatic.Json[];
-    readonly authors: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly authors: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
     readonly datePublished: string | undefined;
     readonly isBasedOn: readonly { readonly "@id": string }[];
     readonly publication: readonly PublicationEventStub.Json[];
@@ -2811,6 +2882,27 @@ export namespace CreativeWorkStatic {
         () =>
           Message.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
       )
+      .altLazy(
+        () =>
+          MusicAlbum.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicComposition.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicRecording.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
       .altLazy(() =>
         propertiesFromJson(json).map(
           (properties) => new CreativeWork(properties),
@@ -2854,6 +2946,9 @@ export namespace CreativeWorkStatic {
           "ImageObject",
           "MediaObject",
           "Message",
+          "MusicAlbum",
+          "MusicComposition",
+          "MusicRecording",
           "RadioEpisode",
           "RadioSeries",
           "Report",
@@ -3099,6 +3194,27 @@ export namespace CreativeWorkStatic {
       .altLazy(
         () =>
           Message.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicAlbum.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicComposition.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicRecording.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWork
           >,
@@ -4561,8 +4677,14 @@ export namespace EventStatic {
     readonly about: readonly ThingStubStatic.Json[];
     readonly endDate: string | undefined;
     readonly location: PlaceStub.Json | undefined;
-    readonly organizers: readonly (OrganizationStub.Json | PersonStub.Json)[];
-    readonly performers: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly organizers: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
+    readonly performers: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
     readonly startDate: string | undefined;
     readonly subEvents: readonly EventStubStatic.Json[];
     readonly superEvent: EventStubStatic.Json | undefined;
@@ -5703,9 +5825,12 @@ export namespace ActionStatic {
     "http://schema.org/Action",
   );
   export type Json = {
-    readonly agents: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly agents: readonly (OrganizationStubStatic.Json | PersonStub.Json)[];
     readonly endTime: string | undefined;
-    readonly participants: readonly (OrganizationStub.Json | PersonStub.Json)[];
+    readonly participants: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
     readonly startTime: string | undefined;
   } & ThingStatic.Json;
 
@@ -6532,8 +6657,13 @@ export class ThingStub extends Model {
     | "MediaObjectStub"
     | "MessageStub"
     | "MonetaryAmountStub"
+    | "MusicAlbumStub"
+    | "MusicCompositionStub"
+    | "MusicGroupStub"
+    | "MusicRecordingStub"
     | "OrderStub"
     | "OrganizationStub"
+    | "PerformingGroupStub"
     | "PersonStub"
     | "PlaceStub"
     | "PublicationEventStub"
@@ -6740,7 +6870,7 @@ export namespace ThingStubStatic {
     )
       .altLazy(
         () =>
-          OrganizationStub.fromJson(json) as purify.Either<
+          OrganizationStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             ThingStub
           >,
@@ -6816,8 +6946,13 @@ export namespace ThingStubStatic {
           "MediaObjectStub",
           "MessageStub",
           "MonetaryAmountStub",
+          "MusicAlbumStub",
+          "MusicCompositionStub",
+          "MusicGroupStub",
+          "MusicRecordingStub",
           "OrderStub",
           "OrganizationStub",
+          "PerformingGroupStub",
           "PersonStub",
           "PlaceStub",
           "PublicationEventStub",
@@ -6930,7 +7065,7 @@ export namespace ThingStubStatic {
     )
       .altLazy(
         () =>
-          OrganizationStub.fromRdf(otherParameters) as purify.Either<
+          OrganizationStubStatic.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             ThingStub
           >,
@@ -8608,6 +8743,9 @@ export class CreativeWorkStub extends ThingStub {
     | "EpisodeStub"
     | "MediaObjectStub"
     | "MessageStub"
+    | "MusicAlbumStub"
+    | "MusicCompositionStub"
+    | "MusicRecordingStub"
     | "RadioEpisodeStub"
     | "RadioSeriesStub"
     | "ReportStub"
@@ -8729,6 +8867,27 @@ export namespace CreativeWorkStubStatic {
             CreativeWorkStub
           >,
       )
+      .altLazy(
+        () =>
+          MusicAlbumStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicCompositionStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicRecordingStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWorkStub
+          >,
+      )
       .altLazy(() =>
         propertiesFromJson(json).map(
           (properties) => new CreativeWorkStub(properties),
@@ -8760,6 +8919,9 @@ export namespace CreativeWorkStubStatic {
           "EpisodeStub",
           "MediaObjectStub",
           "MessageStub",
+          "MusicAlbumStub",
+          "MusicCompositionStub",
+          "MusicRecordingStub",
           "RadioEpisodeStub",
           "RadioSeriesStub",
           "ReportStub",
@@ -8852,6 +9014,27 @@ export namespace CreativeWorkStubStatic {
       .altLazy(
         () =>
           MessageStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicAlbumStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicCompositionStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicRecordingStub.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWorkStub
           >,
@@ -17594,7 +17777,7 @@ export namespace Person {
     readonly hasOccupation: readonly (Occupation.Json | Role.Json)[];
     readonly images: readonly ImageObject.Json[];
     readonly jobTitle: string | undefined;
-    readonly memberOf: readonly OrganizationStub.Json[];
+    readonly memberOf: readonly OrganizationStubStatic.Json[];
     readonly performerIn: readonly EventStubStatic.Json[];
   } & ThingStatic.Json;
 
@@ -17660,7 +17843,7 @@ export namespace Person {
     );
     const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
     const memberOf = _jsonObject["memberOf"].map((_item) =>
-      OrganizationStub.fromJson(_item).unsafeCoerce(),
+      OrganizationStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const performerIn = _jsonObject["performerIn"].map((_item) =>
       EventStubStatic.fromJson(_item).unsafeCoerce(),
@@ -17702,7 +17885,7 @@ export namespace Person {
           scopePrefix: `${scopePrefix}/properties/images`,
         }),
         { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
-        OrganizationStub.jsonUiSchema({
+        OrganizationStubStatic.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/memberOf`,
         }),
         EventStubStatic.jsonUiSchema({
@@ -17751,7 +17934,7 @@ export namespace Person {
           .array()
           .default(() => []),
         jobTitle: zod.string().optional(),
-        memberOf: OrganizationStub.jsonZodSchema()
+        memberOf: OrganizationStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
         performerIn: EventStubStatic.jsonZodSchema()
@@ -17992,7 +18175,7 @@ export namespace Person {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              OrganizationStub.fromRdf({
+              OrganizationStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -18075,7 +18258,8 @@ export namespace Person {
   ];
 }
 export class Organization extends Thing {
-  override readonly type = "Organization";
+  override readonly type: "Organization" | "MusicGroup" | "PerformingGroup" =
+    "Organization";
   members: AgentStub[];
   parentOrganizations: OrganizationStub[];
   subOrganizations: OrganizationStub[];
@@ -18194,7 +18378,7 @@ export class Organization extends Thing {
     return _hasher;
   }
 
-  override toJson(): Organization.Json {
+  override toJson(): OrganizationStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
@@ -18203,7 +18387,7 @@ export class Organization extends Thing {
           _item.toJson(),
         ),
         subOrganizations: this.subOrganizations.map((_item) => _item.toJson()),
-      } satisfies Organization.Json),
+      } satisfies OrganizationStatic.Json),
     );
   }
 
@@ -18256,14 +18440,17 @@ export class Organization extends Thing {
   }
 }
 
-export namespace Organization {
+export namespace OrganizationStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Organization",
   );
   export type Json = {
-    readonly members: readonly (OrganizationStub.Json | PersonStub.Json)[];
-    readonly parentOrganizations: readonly OrganizationStub.Json[];
-    readonly subOrganizations: readonly OrganizationStub.Json[];
+    readonly members: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
+    readonly parentOrganizations: readonly OrganizationStubStatic.Json[];
+    readonly subOrganizations: readonly OrganizationStubStatic.Json[];
   } & ThingStatic.Json;
 
   export function propertiesFromJson(
@@ -18296,10 +18483,10 @@ export namespace Organization {
       AgentStub.fromJson(_item).unsafeCoerce(),
     );
     const parentOrganizations = _jsonObject["parentOrganizations"].map(
-      (_item) => OrganizationStub.fromJson(_item).unsafeCoerce(),
+      (_item) => OrganizationStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const subOrganizations = _jsonObject["subOrganizations"].map((_item) =>
-      OrganizationStub.fromJson(_item).unsafeCoerce(),
+      OrganizationStubStatic.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -18313,8 +18500,15 @@ export namespace Organization {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Organization> {
-    return propertiesFromJson(json).map(
-      (properties) => new Organization(properties),
+    return (
+      PerformingGroupStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        Organization
+      >
+    ).altLazy(() =>
+      propertiesFromJson(json).map(
+        (properties) => new Organization(properties),
+      ),
     );
   }
 
@@ -18328,10 +18522,10 @@ export namespace Organization {
       elements: [
         ThingStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/members`, type: "Control" },
-        OrganizationStub.jsonUiSchema({
+        OrganizationStubStatic.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/parentOrganizations`,
         }),
-        OrganizationStub.jsonUiSchema({
+        OrganizationStubStatic.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/subOrganizations`,
         }),
       ],
@@ -18344,14 +18538,14 @@ export namespace Organization {
     return ThingStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.literal("Organization"),
+        type: zod.enum(["Organization", "MusicGroup", "PerformingGroup"]),
         members: AgentStub.jsonZodSchema()
           .array()
           .default(() => []),
-        parentOrganizations: OrganizationStub.jsonZodSchema()
+        parentOrganizations: OrganizationStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
-        subOrganizations: OrganizationStub.jsonZodSchema()
+        subOrganizations: OrganizationStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
       }),
@@ -18448,7 +18642,7 @@ export namespace Organization {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              OrganizationStub.fromRdf({
+              OrganizationStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -18478,7 +18672,7 @@ export namespace Organization {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              OrganizationStub.fromRdf({
+              OrganizationStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -18504,10 +18698,18 @@ export namespace Organization {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof Organization.propertiesFromRdf>[0],
+    parameters: Parameters<typeof OrganizationStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Organization> {
-    return Organization.propertiesFromRdf(parameters).map(
-      (properties) => new Organization(properties),
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      PerformingGroupStatic.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        Organization
+      >
+    ).altLazy(() =>
+      OrganizationStatic.propertiesFromRdf(parameters).map(
+        (properties) => new Organization(properties),
+      ),
     );
   }
 
@@ -18517,6 +18719,187 @@ export namespace Organization {
     { path: dataFactory.namedNode("http://schema.org/parentOrganization") },
     { path: dataFactory.namedNode("http://schema.org/subOrganization") },
   ];
+}
+export class PerformingGroup extends Organization {
+  override readonly type: "PerformingGroup" | "MusicGroup" = "PerformingGroup";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof Organization>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/PerformingGroup"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace PerformingGroupStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/PerformingGroup",
+  );
+  export type Json = OrganizationStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof OrganizationStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = OrganizationStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PerformingGroup> {
+    return (
+      MusicGroup.fromJson(json) as purify.Either<zod.ZodError, PerformingGroup>
+    ).altLazy(() =>
+      propertiesFromJson(json).map(
+        (properties) => new PerformingGroup(properties),
+      ),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [OrganizationStatic.jsonUiSchema({ scopePrefix })],
+      label: "PerformingGroup",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return OrganizationStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["PerformingGroup", "MusicGroup"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof OrganizationStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = OrganizationStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/PerformingGroup"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/PerformingGroup)`,
+          predicate: dataFactory.namedNode("http://schema.org/PerformingGroup"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof PerformingGroupStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, PerformingGroup> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      MusicGroup.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        PerformingGroup
+      >
+    ).altLazy(() =>
+      PerformingGroupStatic.propertiesFromRdf(parameters).map(
+        (properties) => new PerformingGroup(properties),
+      ),
+    );
+  }
+
+  export const rdfProperties = [...OrganizationStatic.rdfProperties];
 }
 export class Order extends Intangible {
   override readonly type = "Order";
@@ -19049,6 +19432,2906 @@ export namespace OrderStub {
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                   ),
                   object: dataFactory.namedNode("http://schema.org/Order"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class MusicRecording extends CreativeWork {
+  override readonly type = "MusicRecording";
+  readonly byArtist: purify.Maybe<
+    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+  >;
+  readonly inAlbum: purify.Maybe<MusicAlbumStub>;
+  readonly recordingOf: purify.Maybe<MusicCompositionStub>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly byArtist?:
+        | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+        | Date
+        | boolean
+        | number
+        | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+        | string;
+      readonly inAlbum?: MusicAlbumStub | purify.Maybe<MusicAlbumStub>;
+      readonly recordingOf?:
+        | MusicCompositionStub
+        | purify.Maybe<MusicCompositionStub>;
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+    if (purify.Maybe.isMaybe(parameters.byArtist)) {
+      this.byArtist = parameters.byArtist;
+    } else if (typeof parameters.byArtist === "boolean") {
+      this.byArtist = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.byArtist, { dataFactory }),
+      );
+    } else if (
+      typeof parameters.byArtist === "object" &&
+      parameters.byArtist instanceof Date
+    ) {
+      this.byArtist = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.byArtist, { dataFactory }),
+      );
+    } else if (typeof parameters.byArtist === "number") {
+      this.byArtist = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.byArtist, { dataFactory }),
+      );
+    } else if (typeof parameters.byArtist === "string") {
+      this.byArtist = purify.Maybe.of(dataFactory.literal(parameters.byArtist));
+    } else if (typeof parameters.byArtist === "object") {
+      this.byArtist = purify.Maybe.of(parameters.byArtist);
+    } else if (typeof parameters.byArtist === "undefined") {
+      this.byArtist = purify.Maybe.empty();
+    } else {
+      this.byArtist = parameters.byArtist as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.inAlbum)) {
+      this.inAlbum = parameters.inAlbum;
+    } else if (
+      typeof parameters.inAlbum === "object" &&
+      parameters.inAlbum instanceof MusicAlbumStub
+    ) {
+      this.inAlbum = purify.Maybe.of(parameters.inAlbum);
+    } else if (typeof parameters.inAlbum === "undefined") {
+      this.inAlbum = purify.Maybe.empty();
+    } else {
+      this.inAlbum = parameters.inAlbum as never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.recordingOf)) {
+      this.recordingOf = parameters.recordingOf;
+    } else if (
+      typeof parameters.recordingOf === "object" &&
+      parameters.recordingOf instanceof MusicCompositionStub
+    ) {
+      this.recordingOf = purify.Maybe.of(parameters.recordingOf);
+    } else if (typeof parameters.recordingOf === "undefined") {
+      this.recordingOf = purify.Maybe.empty();
+    } else {
+      this.recordingOf = parameters.recordingOf as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: MusicRecording): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.byArtist,
+          other.byArtist,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "byArtist",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.inAlbum,
+          other.inAlbum,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "inAlbum",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.recordingOf,
+          other.recordingOf,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "recordingOf",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.byArtist.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    this.inAlbum.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    this.recordingOf.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  override toJson(): MusicRecording.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        byArtist: this.byArtist
+          .map((_item) =>
+            _item.termType === "Literal"
+              ? {
+                  "@language":
+                    _item.language.length > 0 ? _item.language : undefined,
+                  "@type":
+                    _item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? _item.datatype.value
+                      : undefined,
+                  "@value": _item.value,
+                  termType: "Literal" as const,
+                }
+              : _item.termType === "NamedNode"
+                ? { "@id": _item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
+          )
+          .extract(),
+        inAlbum: this.inAlbum.map((_item) => _item.toJson()).extract(),
+        recordingOf: this.recordingOf.map((_item) => _item.toJson()).extract(),
+      } satisfies MusicRecording.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicRecording"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/byArtist"),
+      this.byArtist,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/inAlbum"),
+      this.inAlbum.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/recordingOf"),
+      this.recordingOf.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicRecording {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicRecording",
+  );
+  export type Json = {
+    readonly byArtist:
+      | (
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
+            }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
+    readonly inAlbum: MusicAlbumStub.Json | undefined;
+    readonly recordingOf: MusicCompositionStub.Json | undefined;
+  } & CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      byArtist: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
+      inAlbum: purify.Maybe<MusicAlbumStub>;
+      recordingOf: purify.Maybe<MusicCompositionStub>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const byArtist = purify.Maybe.fromNullable(_jsonObject["byArtist"]).map(
+      (_item) =>
+        _item.termType === "Literal"
+          ? dataFactory.literal(
+              _item["@value"],
+              typeof _item["@language"] !== "undefined"
+                ? _item["@language"]
+                : typeof _item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(_item["@type"])
+                  : undefined,
+            )
+          : _item.termType === "NamedNode"
+            ? dataFactory.namedNode(_item["@id"])
+            : dataFactory.blankNode(_item["@id"].substring(2)),
+    );
+    const inAlbum = purify.Maybe.fromNullable(_jsonObject["inAlbum"]).map(
+      (_item) => MusicAlbumStub.fromJson(_item).unsafeCoerce(),
+    );
+    const recordingOf = purify.Maybe.fromNullable(
+      _jsonObject["recordingOf"],
+    ).map((_item) => MusicCompositionStub.fromJson(_item).unsafeCoerce());
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      byArtist,
+      inAlbum,
+      recordingOf,
+    });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicRecording> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicRecording(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/byArtist`, type: "Control" },
+        MusicAlbumStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/inAlbum`,
+        }),
+        MusicCompositionStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/recordingOf`,
+        }),
+      ],
+      label: "MusicRecording",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicRecording"),
+        byArtist: zod
+          .discriminatedUnion("termType", [
+            zod.object({
+              "@id": zod.string().min(1),
+              termType: zod.literal("BlankNode"),
+            }),
+            zod.object({
+              "@id": zod.string().min(1),
+              termType: zod.literal("NamedNode"),
+            }),
+            zod.object({
+              "@language": zod.string().optional(),
+              "@type": zod.string().optional(),
+              "@value": zod.string(),
+              termType: zod.literal("Literal"),
+            }),
+          ])
+          .optional(),
+        inAlbum: MusicAlbumStub.jsonZodSchema().optional(),
+        recordingOf: MusicCompositionStub.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      byArtist: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
+      inAlbum: purify.Maybe<MusicAlbumStub>;
+      recordingOf: purify.Maybe<MusicCompositionStub>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicRecording"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicRecording)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicRecording"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _byArtistEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/byArtist"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => purify.Either.of(_value.toTerm()))
+        .toMaybe(),
+    );
+    if (_byArtistEither.isLeft()) {
+      return _byArtistEither;
+    }
+
+    const byArtist = _byArtistEither.unsafeCoerce();
+    const _inAlbumEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<MusicAlbumStub>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/inAlbum"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          MusicAlbumStub.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_inAlbumEither.isLeft()) {
+      return _inAlbumEither;
+    }
+
+    const inAlbum = _inAlbumEither.unsafeCoerce();
+    const _recordingOfEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<MusicCompositionStub>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/recordingOf"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          MusicCompositionStub.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_recordingOfEither.isLeft()) {
+      return _recordingOfEither;
+    }
+
+    const recordingOf = _recordingOfEither.unsafeCoerce();
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      byArtist,
+      inAlbum,
+      recordingOf,
+    });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicRecording.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicRecording> {
+    return MusicRecording.propertiesFromRdf(parameters).map(
+      (properties) => new MusicRecording(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/byArtist") },
+    { path: dataFactory.namedNode("http://schema.org/inAlbum") },
+    { path: dataFactory.namedNode("http://schema.org/recordingOf") },
+  ];
+}
+export class MusicRecordingStub extends CreativeWorkStub {
+  override readonly type = "MusicRecordingStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWorkStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicRecording"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicRecordingStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicRecording",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicRecordingStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicRecordingStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicRecordingStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicRecordingStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicRecording"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicRecording)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicRecording"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicRecordingStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicRecordingStub> {
+    return MusicRecordingStub.propertiesFromRdf(parameters).map(
+      (properties) => new MusicRecordingStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicRecordingStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicRecordingStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicRecordingStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicRecordingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicRecordingStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicRecordingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicRecordingStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicRecording",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class OrganizationStub extends ThingStub {
+  override readonly type:
+    | "OrganizationStub"
+    | "MusicGroupStub"
+    | "PerformingGroupStub" = "OrganizationStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Organization"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace OrganizationStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Organization",
+  );
+  export type Json = ThingStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, OrganizationStub> {
+    return (
+      PerformingGroupStubStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        OrganizationStub
+      >
+    ).altLazy(() =>
+      propertiesFromJson(json).map(
+        (properties) => new OrganizationStub(properties),
+      ),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "OrganizationStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "OrganizationStub",
+          "MusicGroupStub",
+          "PerformingGroupStub",
+        ]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/Organization"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Organization)`,
+          predicate: dataFactory.namedNode("http://schema.org/Organization"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof OrganizationStubStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, OrganizationStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      PerformingGroupStubStatic.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        OrganizationStub
+      >
+    ).altLazy(() =>
+      OrganizationStubStatic.propertiesFromRdf(parameters).map(
+        (properties) => new OrganizationStub(properties),
+      ),
+    );
+  }
+
+  export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        OrganizationStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        OrganizationStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      OrganizationStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("organizationStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "organizationStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("organizationStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "organizationStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/Organization",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class PerformingGroupStub extends OrganizationStub {
+  override readonly type: "PerformingGroupStub" | "MusicGroupStub" =
+    "PerformingGroupStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof OrganizationStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/PerformingGroup"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace PerformingGroupStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/PerformingGroup",
+  );
+  export type Json = OrganizationStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof OrganizationStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      OrganizationStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PerformingGroupStub> {
+    return (
+      MusicGroupStub.fromJson(json) as purify.Either<
+        zod.ZodError,
+        PerformingGroupStub
+      >
+    ).altLazy(() =>
+      propertiesFromJson(json).map(
+        (properties) => new PerformingGroupStub(properties),
+      ),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [OrganizationStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "PerformingGroupStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return OrganizationStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["PerformingGroupStub", "MusicGroupStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof OrganizationStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = OrganizationStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/PerformingGroup"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/PerformingGroup)`,
+          predicate: dataFactory.namedNode("http://schema.org/PerformingGroup"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<
+      typeof PerformingGroupStubStatic.propertiesFromRdf
+    >[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, PerformingGroupStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      MusicGroupStub.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        PerformingGroupStub
+      >
+    ).altLazy(() =>
+      PerformingGroupStubStatic.propertiesFromRdf(parameters).map(
+        (properties) => new PerformingGroupStub(properties),
+      ),
+    );
+  }
+
+  export const rdfProperties = [...OrganizationStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PerformingGroupStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PerformingGroupStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PerformingGroupStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("performingGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "performingGroupStub");
+    return [
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("performingGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "performingGroupStub");
+    return [
+      ...OrganizationStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/PerformingGroup",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class MusicGroup extends PerformingGroup {
+  override readonly type = "MusicGroup";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof PerformingGroup>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicGroup"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicGroup {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicGroup",
+  );
+  export type Json = PerformingGroupStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PerformingGroupStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = PerformingGroupStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicGroup> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicGroup(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [PerformingGroupStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicGroup",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return PerformingGroupStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicGroup"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PerformingGroupStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = PerformingGroupStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicGroup"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicGroup)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicGroup"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicGroup.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicGroup> {
+    return MusicGroup.propertiesFromRdf(parameters).map(
+      (properties) => new MusicGroup(properties),
+    );
+  }
+
+  export const rdfProperties = [...PerformingGroupStatic.rdfProperties];
+}
+export class MusicGroupStub extends PerformingGroupStub {
+  override readonly type = "MusicGroupStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof PerformingGroupStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicGroup"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicGroupStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicGroup",
+  );
+  export type Json = PerformingGroupStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PerformingGroupStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      PerformingGroupStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicGroupStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicGroupStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [PerformingGroupStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicGroupStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return PerformingGroupStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicGroupStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PerformingGroupStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = PerformingGroupStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicGroup"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicGroup)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicGroup"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicGroupStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicGroupStub> {
+    return MusicGroupStub.propertiesFromRdf(parameters).map(
+      (properties) => new MusicGroupStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...PerformingGroupStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicGroupStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicGroupStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicGroupStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicGroupStub");
+    return [
+      ...PerformingGroupStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicGroupStub");
+    return [
+      ...PerformingGroupStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/MusicGroup"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class MusicComposition extends CreativeWork {
+  override readonly type = "MusicComposition";
+  readonly recordedAs: purify.Maybe<MusicRecordingStub>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly recordedAs?:
+        | MusicRecordingStub
+        | purify.Maybe<MusicRecordingStub>;
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+    if (purify.Maybe.isMaybe(parameters.recordedAs)) {
+      this.recordedAs = parameters.recordedAs;
+    } else if (
+      typeof parameters.recordedAs === "object" &&
+      parameters.recordedAs instanceof MusicRecordingStub
+    ) {
+      this.recordedAs = purify.Maybe.of(parameters.recordedAs);
+    } else if (typeof parameters.recordedAs === "undefined") {
+      this.recordedAs = purify.Maybe.empty();
+    } else {
+      this.recordedAs = parameters.recordedAs as never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: MusicComposition): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.recordedAs,
+          other.recordedAs,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "recordedAs",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.recordedAs.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  override toJson(): MusicComposition.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        recordedAs: this.recordedAs.map((_item) => _item.toJson()).extract(),
+      } satisfies MusicComposition.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicComposition"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/recordedAs"),
+      this.recordedAs.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicComposition {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicComposition",
+  );
+  export type Json = {
+    readonly recordedAs: MusicRecordingStub.Json | undefined;
+  } & CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      recordedAs: purify.Maybe<MusicRecordingStub>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const recordedAs = purify.Maybe.fromNullable(_jsonObject["recordedAs"]).map(
+      (_item) => MusicRecordingStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, recordedAs });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicComposition> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicComposition(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        MusicRecordingStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/recordedAs`,
+        }),
+      ],
+      label: "MusicComposition",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicComposition"),
+        recordedAs: MusicRecordingStub.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      recordedAs: purify.Maybe<MusicRecordingStub>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicComposition"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicComposition)`,
+          predicate: dataFactory.namedNode(
+            "http://schema.org/MusicComposition",
+          ),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _recordedAsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<MusicRecordingStub>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/recordedAs"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          MusicRecordingStub.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_recordedAsEither.isLeft()) {
+      return _recordedAsEither;
+    }
+
+    const recordedAs = _recordedAsEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, recordedAs });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicComposition.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicComposition> {
+    return MusicComposition.propertiesFromRdf(parameters).map(
+      (properties) => new MusicComposition(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/recordedAs") },
+  ];
+}
+export class MusicCompositionStub extends CreativeWorkStub {
+  override readonly type = "MusicCompositionStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWorkStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicComposition"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicCompositionStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicComposition",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicCompositionStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicCompositionStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicCompositionStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicCompositionStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicComposition"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicComposition)`,
+          predicate: dataFactory.namedNode(
+            "http://schema.org/MusicComposition",
+          ),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicCompositionStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicCompositionStub> {
+    return MusicCompositionStub.propertiesFromRdf(parameters).map(
+      (properties) => new MusicCompositionStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicCompositionStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicCompositionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicCompositionStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicCompositionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "musicCompositionStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicCompositionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "musicCompositionStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicComposition",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class MusicAlbum extends CreativeWork {
+  override readonly type = "MusicAlbum";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicAlbum"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicAlbum {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicAlbum",
+  );
+  export type Json = CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicAlbum> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicAlbum(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicAlbum",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicAlbum"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicAlbum"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicAlbum)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicAlbum"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicAlbum.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicAlbum> {
+    return MusicAlbum.propertiesFromRdf(parameters).map(
+      (properties) => new MusicAlbum(properties),
+    );
+  }
+
+  export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
+}
+export class MusicAlbumStub extends CreativeWorkStub {
+  override readonly type = "MusicAlbumStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWorkStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicAlbum"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicAlbumStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicAlbum",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicAlbumStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicAlbumStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicAlbumStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicAlbumStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicAlbum"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicAlbum)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicAlbum"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicAlbumStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicAlbumStub> {
+    return MusicAlbumStub.propertiesFromRdf(parameters).map(
+      (properties) => new MusicAlbumStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicAlbumStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicAlbumStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicAlbumStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicAlbumStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicAlbumStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicAlbumStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicAlbumStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/MusicAlbum"),
                 },
               ],
               type: "bgp" as const,
@@ -19972,7 +23255,9 @@ export namespace Message {
     "http://schema.org/Message",
   );
   export type Json = {
-    readonly sender: (OrganizationStub.Json | PersonStub.Json) | undefined;
+    readonly sender:
+      | (OrganizationStubStatic.Json | PersonStub.Json)
+      | undefined;
   } & CreativeWorkStatic.Json;
 
   export function propertiesFromJson(
@@ -20632,7 +23917,9 @@ export namespace Invoice {
   );
   export type Json = {
     readonly category: string | undefined;
-    readonly provider: (OrganizationStub.Json | PersonStub.Json) | undefined;
+    readonly provider:
+      | (OrganizationStubStatic.Json | PersonStub.Json)
+      | undefined;
     readonly referencesOrder: readonly OrderStub.Json[];
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
@@ -21568,293 +24855,6 @@ export namespace PersonStub {
     ];
   }
 }
-export class OrganizationStub extends ThingStub {
-  override readonly type = "OrganizationStub";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof ThingStub>[0],
-  ) {
-    super(parameters);
-  }
-
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/Organization"),
-      );
-    }
-
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace OrganizationStub {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Organization",
-  );
-  export type Json = ThingStubStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof ThingStubStatic.propertiesFromJson>
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, OrganizationStub> {
-    return propertiesFromJson(json).map(
-      (properties) => new OrganizationStub(properties),
-    );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStubStatic.jsonUiSchema({ scopePrefix })],
-      label: "OrganizationStub",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return ThingStubStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("OrganizationStub"),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof ThingStubStatic.propertiesFromRdf>
-    >
-  > {
-    const _super0Either = ThingStubStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/Organization"),
-      )
-    ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Organization)`,
-          predicate: dataFactory.namedNode("http://schema.org/Organization"),
-        }),
-      );
-    }
-
-    const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof OrganizationStub.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, OrganizationStub> {
-    return OrganizationStub.propertiesFromRdf(parameters).map(
-      (properties) => new OrganizationStub(properties),
-    );
-  }
-
-  export const rdfProperties = [...ThingStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        OrganizationStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        OrganizationStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      OrganizationStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("organizationStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "organizationStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("organizationStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "organizationStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/Organization",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
-}
 export type AgentStub = OrganizationStub | PersonStub;
 
 export namespace AgentStub {
@@ -21862,6 +24862,8 @@ export namespace AgentStub {
     return $strictEquals(left.type, right.type).chain(() => {
       switch (left.type) {
         case "OrganizationStub":
+        case "MusicGroupStub":
+        case "PerformingGroupStub":
           return left.equals(right as unknown as OrganizationStub);
         case "PersonStub":
           return left.equals(right as unknown as PersonStub);
@@ -21876,7 +24878,10 @@ export namespace AgentStub {
     json: unknown,
   ): purify.Either<zod.ZodError, AgentStub> {
     return (
-      OrganizationStub.fromJson(json) as purify.Either<zod.ZodError, AgentStub>
+      OrganizationStubStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        AgentStub
+      >
     ).altLazy(
       () => PersonStub.fromJson(json) as purify.Either<zod.ZodError, AgentStub>,
     );
@@ -21892,7 +24897,7 @@ export namespace AgentStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<rdfjsResource.Resource.ValueError, AgentStub> {
     return (
-      OrganizationStub.fromRdf({ ...context, resource }) as purify.Either<
+      OrganizationStubStatic.fromRdf({ ...context, resource }) as purify.Either<
         rdfjsResource.Resource.ValueError,
         AgentStub
       >
@@ -21912,6 +24917,8 @@ export namespace AgentStub {
   >(_agentStub: AgentStub, _hasher: HasherT): HasherT {
     switch (_agentStub.type) {
       case "OrganizationStub":
+      case "MusicGroupStub":
+      case "PerformingGroupStub":
         return _agentStub.hash(_hasher);
       case "PersonStub":
         return _agentStub.hash(_hasher);
@@ -21921,11 +24928,11 @@ export namespace AgentStub {
     }
   }
 
-  export type Json = OrganizationStub.Json | PersonStub.Json;
+  export type Json = OrganizationStubStatic.Json | PersonStub.Json;
 
   export function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
-      OrganizationStub.jsonZodSchema(),
+      OrganizationStubStatic.jsonZodSchema(),
       PersonStub.jsonZodSchema(),
     ]);
   }
@@ -21972,7 +24979,7 @@ export namespace AgentStub {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...OrganizationStub.sparqlConstructTemplateTriples({
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("agentStubOrganizationStub"),
@@ -21999,7 +25006,7 @@ export namespace AgentStub {
       {
         patterns: [
           {
-            patterns: OrganizationStub.sparqlWherePatterns({
+            patterns: OrganizationStubStatic.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("agentStubOrganizationStub"),
@@ -22028,9 +25035,11 @@ export namespace AgentStub {
 
   export function toJson(
     _agentStub: AgentStub,
-  ): OrganizationStub.Json | PersonStub.Json {
+  ): OrganizationStubStatic.Json | PersonStub.Json {
     switch (_agentStub.type) {
       case "OrganizationStub":
+      case "MusicGroupStub":
+      case "PerformingGroupStub":
         return _agentStub.toJson();
       case "PersonStub":
         return _agentStub.toJson();
@@ -22049,6 +25058,8 @@ export namespace AgentStub {
   ): rdfjsResource.MutableResource {
     switch (_agentStub.type) {
       case "OrganizationStub":
+      case "MusicGroupStub":
+      case "PerformingGroupStub":
         return _agentStub.toRdf(_parameters);
       case "PersonStub":
         return _agentStub.toRdf(_parameters);
@@ -22093,11 +25104,21 @@ export const $ObjectTypes = {
     Model: ModelStatic,
     MonetaryAmount,
     MonetaryAmountStub,
+    MusicAlbum,
+    MusicAlbumStub,
+    MusicComposition,
+    MusicCompositionStub,
+    MusicGroup,
+    MusicGroupStub,
+    MusicRecording,
+    MusicRecordingStub,
     Occupation,
     Order,
     OrderStub,
-    Organization,
-    OrganizationStub,
+    Organization: OrganizationStatic,
+    OrganizationStub: OrganizationStubStatic,
+    PerformingGroup: PerformingGroupStatic,
+    PerformingGroupStub: PerformingGroupStubStatic,
     Person,
     PersonStub,
     Place,

@@ -115,6 +115,30 @@ sdapps:MonetaryAmountStub
     rdfs:subClassOf sdapps:StructuredValueStub ;
     sh:property schema:MonetaryAmount-currency, schema:MonetaryAmount-value .
 
+sdapps:MusicAlbumStub
+    shaclmate:name "MusicAlbumStub" ;
+    shaclmate:rdfType schema:MusicAlbum ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MusicCompositionStub
+    shaclmate:name "MusicCompositionStub" ;
+    shaclmate:rdfType schema:MusicComposition ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MusicGroupStub
+    shaclmate:name "MusicGroupStub" ;
+    shaclmate:rdfType schema:MusicGroup ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:PerformingGroupStub .
+
+sdapps:MusicRecordingStub
+    shaclmate:name "MusicRecordingStub" ;
+    shaclmate:rdfType schema:MusicRecording ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:OrderStub
     shaclmate:name "OrderStub" ;
     shaclmate:rdfType schema:Order ;
@@ -126,6 +150,12 @@ sdapps:OrganizationStub
     shaclmate:rdfType schema:Organization ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
+
+sdapps:PerformingGroupStub
+    shaclmate:name "PerformingGroupStub" ;
+    shaclmate:rdfType schema:PerformingGroup ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:OrganizationStub .
 
 sdapps:PersonStub
     shaclmate:name "PersonStub" ;
@@ -542,6 +572,62 @@ schema:MonetaryAmount-value
     sh:name "value" ;
     sh:path schema:value .
 
+schema:MusicAlbum
+    shaclmate:name "MusicAlbum" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork .
+
+schema:MusicComposition
+    shaclmate:name "MusicComposition" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicComposition-recordedAs .
+
+schema:MusicComposition-recordedAs
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "recordedAs" ;
+    sh:node sdapps:MusicRecordingStub ;
+    sh:path schema:recordedAs .
+
+schema:MusicGroup
+    shaclmate:name "MusicGroup" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:PerformingGroup .
+
+schema:MusicRecording
+    shaclmate:name "MusicRecording" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicRecording-byArtist, schema:MusicRecording-inAlbum, schema:MusicRecording-recordingOf .
+
+schema:MusicRecording-byArtist
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "byArtist" ;
+    sh:path schema:byArtist ;
+    sh:xor ([
+            sh:node sdapps:MusicGroupStub
+        ]
+        [
+            sh:node sdapps:PersonStub
+        ]
+    ) .
+
+schema:MusicRecording-inAlbum
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "inAlbum" ;
+    sh:node sdapps:MusicAlbumStub ;
+    sh:path schema:inAlbum .
+
+schema:MusicRecording-recordingOf
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "recordingOf" ;
+    sh:node sdapps:MusicCompositionStub ;
+    sh:path schema:recordingOf .
+
 schema:Occupation
     shaclmate:name "Occupation" ;
     a owl:Class, sh:NodeShape ;
@@ -586,6 +672,11 @@ schema:Organization-subOrganizations
     sh:name "subOrganizations" ;
     sh:node sdapps:OrganizationStub ;
     sh:path schema:subOrganization .
+
+schema:PerformingGroup
+    shaclmate:name "PerformingGroup" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Organization .
 
 schema:Person
     shaclmate:name "Person" ;

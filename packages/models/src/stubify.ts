@@ -10,8 +10,13 @@ import {
   Event,
   MediaObjectStub,
   MessageStub,
+  MusicAlbumStub,
+  MusicCompositionStub,
+  MusicGroupStub,
+  MusicRecordingStub,
   Organization,
   OrganizationStub,
+  PerformingGroupStub,
   Person,
   PersonStub,
   PublicationEvent,
@@ -103,8 +108,18 @@ export function stubify(
       return new MediaObjectStub(stubifyThing(model));
     case "Message":
       return new MessageStub(stubifyThing(model));
+    case "MusicAlbum":
+      return new MusicAlbumStub(stubifyThing(model));
+    case "MusicGroup":
+      return new MusicGroupStub(stubifyThing(model));
+    case "MusicComposition":
+      return new MusicCompositionStub(stubifyThing(model));
+    case "MusicRecording":
+      return new MusicRecordingStub(stubifyThing(model));
     case "Organization":
       return new OrganizationStub(stubifyThing(model));
+    case "PerformingGroup":
+      return new PerformingGroupStub(stubifyThing(model));
     case "Person":
       return new PersonStub({
         ...stubifyThing(model),
