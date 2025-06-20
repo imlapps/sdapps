@@ -28,23 +28,28 @@ async function* transformPlaylistJson({
   ucsId: string;
 }): AsyncIterable<Thing> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
+    endDate: new Date(playlistJson.end_utc),
     identifier: Iris.broadcastEvent({
       episodeId: playlistJson.episode_id,
     }),
     publishedOn: stubify(radioBroadcastService),
+    startDate: new Date(playlistJson.start_utc),
   });
   yield radioEpisodeBroadcastEvent;
 
+  const radioSeries = new RadioSeries({
+    identifier: Iris.program(playlistJson.program_id),
+    name: playlistJson.name,
+  });
+
   const radioEpisode = new RadioEpisode({
     identifier: Iris.episode(playlistJson.episode_id),
+    partOfSeries: stubify(radioSeries),
     publication: [stubify(radioEpisodeBroadcastEvent)],
   });
   yield radioEpisode;
 
-  const radioSeries = new RadioSeries({
-    episodes: [stubify(radioEpisode)],
-    identifier: Iris.program(playlistJson.program_id),
-  });
+  radioSeries.episodes.push(stubify(radioEpisode));
   yield radioSeries;
 }
 

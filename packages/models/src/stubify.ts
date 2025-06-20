@@ -2,7 +2,14 @@ import { Maybe } from "purify-ts";
 
 import { Identifier } from "./Identifier";
 import {
+  ArticleStub,
+  CreativeWork,
+  CreativeWorkSeriesStub,
+  CreativeWorkStub,
+  EpisodeStub,
   Event,
+  MediaObjectStub,
+  MessageStub,
   Organization,
   OrganizationStub,
   Person,
@@ -13,6 +20,10 @@ import {
   RadioBroadcastServiceStub,
   RadioEpisode,
   RadioEpisodeStub,
+  RadioSeries,
+  RadioSeriesStub,
+  ReportStub,
+  TextObjectStub,
   Thing,
 } from "./generated";
 
@@ -56,20 +67,42 @@ export function stubify(
 
 export function stubify(radioEpisode: RadioEpisode): RadioEpisodeStub;
 
+export function stubify(radioSeries: RadioSeries): RadioSeriesStub;
+
+export function stubify(creativeWork: CreativeWork): CreativeWorkStub;
+
 export function stubify(
   model:
+    | CreativeWork
     | Organization
     | Person
     | PublicationEvent
     | RadioBroadcastService
-    | RadioEpisode,
+    | RadioEpisode
+    | RadioSeries,
 ):
+  | CreativeWorkStub
   | OrganizationStub
   | PersonStub
   | PublicationEventStub
   | RadioBroadcastServiceStub
-  | RadioEpisodeStub {
+  | RadioEpisodeStub
+  | RadioSeriesStub {
   switch (model.type) {
+    case "Article":
+      return new ArticleStub(stubifyThing(model));
+    case "CreativeWork":
+      return new CreativeWorkStub(stubifyThing(model));
+    case "CreativeWorkSeries":
+      return new CreativeWorkSeriesStub(stubifyThing(model));
+    case "Episode":
+      return new EpisodeStub(stubifyThing(model));
+    case "ImageObject":
+      return new CreativeWorkStub(stubifyThing(model));
+    case "MediaObject":
+      return new MediaObjectStub(stubifyThing(model));
+    case "Message":
+      return new MessageStub(stubifyThing(model));
     case "Organization":
       return new OrganizationStub(stubifyThing(model));
     case "Person":
@@ -84,5 +117,11 @@ export function stubify(
       return new RadioBroadcastServiceStub(stubifyThing(model));
     case "RadioEpisode":
       return new RadioEpisodeStub(stubifyThing(model));
+    case "RadioSeries":
+      return new RadioSeriesStub(stubifyThing(model));
+    case "Report":
+      return new ReportStub(stubifyThing(model));
+    case "TextObject":
+      return new TextObjectStub(stubifyThing(model));
   }
 }

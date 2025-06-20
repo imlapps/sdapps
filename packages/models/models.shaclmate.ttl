@@ -46,6 +46,12 @@ sdapps:ChooseActionStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:AssessActionStub .
 
+sdapps:CreativeWorkSeriesStub
+    shaclmate:name "CreativeWorkSeriesStub" ;
+    shaclmate:rdfType schema:CreativeWorkSeries ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:CreativeWorkStub
     shaclmate:name "CreativeWorkStub" ;
     shaclmate:rdfType schema:CreativeWork ;
@@ -158,6 +164,12 @@ sdapps:RadioEpisodeStub
     shaclmate:rdfType schema:RadioEpisode ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:EpisodeStub .
+
+sdapps:RadioSeriesStub
+    shaclmate:name "RadioSeriesStub" ;
+    shaclmate:rdfType schema:RadioSeries ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkSeriesStub .
 
 sdapps:ReportStub
     shaclmate:name "ReportStub" ;
@@ -297,11 +309,23 @@ schema:CreativeWork-datePublished
     sh:name "datePublished" ;
     sh:path schema:datePublished .
 
+schema:CreativeWork-hasPart
+    a sh:PropertyShape ;
+    sh:name "hasPart" ;
+    sh:node sdapps:CreativeWorkStub ;
+    sh:path schema:hasPart .
+
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
     sh:name "isBasedOn" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:isBasedOn .
+
+schema:CreativeWork-isPartOf
+    a sh:PropertyShape ;
+    sh:name "isPartOf" ;
+    sh:node sdapps:CreativeWorkStub ;
+    sh:path schema:isPartOf .
 
 schema:CreativeWork-publication
     a sh:PropertyShape ;
@@ -322,7 +346,15 @@ schema:Enumeration
 schema:Episode
     shaclmate:name "Episode" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:CreativeWork .
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:Episode-partOfSeries .
+
+schema:Episode-partOfSeries
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "partOfSeries" ;
+    sh:node sdapps:CreativeWorkSeriesStub ;
+    sh:path schema:partOfSeries .
 
 schema:Event
     shaclmate:name "Event" ;
@@ -683,6 +715,7 @@ schema:RadioSeries
     sh:property schema:RadioSeries-episodes .
 
 schema:RadioSeries-episodes
+    shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "episodes" ;
     sh:node sdapps:RadioEpisodeStub ;

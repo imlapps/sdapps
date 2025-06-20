@@ -12,777 +12,1338 @@ radio:wmht a schema:RadioBroadcastService;
     schema:callSign "WMHT";
     schema:name "WMHT";
     schema:sameAs <https://api.composer.nprstations.org/v1/ucs/51892578e1c81d34d1474a5d>.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcec/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-19T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-19T04:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcec> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcec/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375> a schema:RadioSeries;
+    schema:name "Music from the WMHT Catalog";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcec>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61401>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fceb>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61400>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcea>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ff>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce9>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fe>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce8>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e30a>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fd>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce7>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f848>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce6>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fc>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce5>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fb>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce4>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fa>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce3>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f9>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce2>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f8>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce1>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e309>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f7>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce0>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f847>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdf>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f6>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcde>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f5>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdd>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f4>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdc>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f3>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdb>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f2>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcda>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e308>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f1>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd9>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f846>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd8>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f0>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd7>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ef>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd6>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ee>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd5>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ed>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd4>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ec>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd3>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e307>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613eb>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd2>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f845>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd1>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ea>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd0>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e9>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccf>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e8>.
+<https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c39c/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-19T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-19T10:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c39c> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c39c/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
+<https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad> a schema:RadioSeries;
+    schema:name "Mary Darcy";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c39c>, <https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c07a>, <https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88c1>, <https://api.composer.nprstations.org/v1/episode/666e7bd03227a40d32354166>, <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca77>, <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d4573>, <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea1e>, <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bff0>, <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09ff1>, <https://api.composer.nprstations.org/v1/episode/66614cd23f4f024331299427>, <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a4b>, <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069b9>, <https://api.composer.nprstations.org/v1/episode/665c07863f4f02433128bbad>, <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc90>, <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5cd5>, <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c22612496>, <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb355428c>, <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da55>, <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d070a>, <https://api.composer.nprstations.org/v1/episode/664d8652213daa61592cb47b>, <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe57>.
+<https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c394/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-19T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-19T16:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c394> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c394/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
+<https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73> a schema:RadioSeries;
+    schema:name "Bach's Lunch";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/667270503227a40d3235c394>, <https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c074>, <https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88b9>, <https://api.composer.nprstations.org/v1/episode/666e7bcf3227a40d3235415c>, <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca75>, <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d456b>, <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea18>, <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bfe8>, <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09fe7>, <https://api.composer.nprstations.org/v1/episode/66614cd13f4f02433129941d>, <https://api.composer.nprstations.org/v1/episode/665ffb521866ad7043df5db8>, <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a41>, <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069af>, <https://api.composer.nprstations.org/v1/episode/665c07853f4f02433128bba7>, <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc8c>, <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5ccd>, <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c2261248e>, <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb3554282>, <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da4f>, <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d0704>, <https://api.composer.nprstations.org/v1/episode/664d8651213daa61592cb473>, <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe51>.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa59/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-19T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-19T17:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa59> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa59/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
+<https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def> a schema:RadioSeries;
+    schema:name "Rob Brown";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa59>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa58>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa57>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa56>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c6>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa55>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa54>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa53>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa52>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa51>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c5>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa50>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4f>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4e>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4d>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4c>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c4>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4b>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4a>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa49>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa48>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa47>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c3>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa46>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa45>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa44>.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bed0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-20T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-19T20:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bed0> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bed0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
+<https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b> a schema:RadioSeries;
+    schema:name "Charlotte Wilson";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bed0>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becf>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bece>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becd>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc3>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becc>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becb>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beca>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec9>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec8>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc2>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec7>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec6>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec5>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec4>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec3>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc1>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec2>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec1>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec0>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebf>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebe>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc0>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebd>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebc>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebb>.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61401/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-20T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-20T02:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61401> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61401/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fceb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-18T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-18T04:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fceb> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fceb/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c07a/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-18T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-18T10:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c07a> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c07a/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
+<https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c074/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-18T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-18T16:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c074> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66711ed32dd9970d3d08c074/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa58/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-18T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-18T17:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa58> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa58/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becf/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-19T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-18T20:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becf> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becf/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61400/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-19T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-19T02:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61400> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61400/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcea/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-17T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-17T04:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcea> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcea/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88c1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-17T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-17T10:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88c1> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88c1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
+<https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88b9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-17T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-17T16:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88b9> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666fcd50f38dce5f5a7c88b9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa57/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-17T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-17T17:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa57> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa57/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bece/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-18T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-17T20:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bece> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bece/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ff/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-18T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-18T02:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ff> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ff/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-16T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-16T04:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce9> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
+<https://api.composer.nprstations.org/v1/episode/666e7bd03227a40d32354166/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-16T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-16T10:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/666e7bd03227a40d32354166> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666e7bd03227a40d32354166/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
+<https://api.composer.nprstations.org/v1/episode/666e7bcf3227a40d3235415c/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-16T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-16T16:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/666e7bcf3227a40d3235415c> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666e7bcf3227a40d3235415c/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa56/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-16T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-16T17:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa56> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa56/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becd/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-17T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-16T20:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becd> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becd/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fe/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-17T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-17T02:00:00.000Z"^^xsd:dateTime;
+    schema:publishedOn radio:wmht.
+<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fe> a schema:RadioEpisode;
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fe/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-15T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce8/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce8>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e30a>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fd>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce7>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f848>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce6>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fc>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce5>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fb>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce4>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fa>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce3>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f9>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce2>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f8>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce1>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e309>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f7>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce0>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f847>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdf>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f6>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcde>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f5>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdd>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f4>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdc>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f3>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdb>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f2>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcda>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e308>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f1>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd9>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f846>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd8>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f0>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd7>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ef>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd6>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ee>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd5>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ed>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd4>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ec>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd3>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e307>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613eb>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd2>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f845>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd1>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ea>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd0>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e9>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccf>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e8>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcce>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e7>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccd>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e6>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccc>, <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e306>, <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e5>, <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccb>, <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f844>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e30a/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-15T11:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e30a> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e30a/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e30a/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740043/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-15T15:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740043> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740043/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740043/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef9354b8f0c040074002c>.
 <https://api.composer.nprstations.org/v1/program/677ef9354b8f0c040074002c> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740043>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740042>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740041>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740040>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c040074003f>.
+    schema:name "Sunday Baroque";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740043>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740042>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740041>, <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740040>.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-15T19:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T15:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c6/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c6>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa55>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa54>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa53>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa52>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa51>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c5>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa50>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4f>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4e>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4d>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4c>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c4>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4b>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4a>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa49>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa48>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa47>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c3>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa46>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa45>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa44>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa43>, <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa42>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c2>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-15T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T19:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f7>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f6>, <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a341d>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f5>, <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde677>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f4>, <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3f5>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f3>, <https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1230>.
+    schema:name "Mindy Ratner";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f7>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f6>, <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a341d>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f5>, <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde677>, <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f4>, <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3f5>.
 <https://api.composer.nprstations.org/v1/episode/666d2a4ff38dce5f5a7c4b5b/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-16T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T22:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666d2a4ff38dce5f5a7c4b5b> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666d2a4ff38dce5f5a7c4b5b/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666d2a4ff38dce5f5a7c4b5b/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892594e1c81d34d1474a6c>.
 <https://api.composer.nprstations.org/v1/program/51892594e1c81d34d1474a6c> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/666d2a4ff38dce5f5a7c4b5b>, <https://api.composer.nprstations.org/v1/episode/6663efcadf98183658e07f9f>, <https://api.composer.nprstations.org/v1/episode/665ab54f1866ad7043de99c8>, <https://api.composer.nprstations.org/v1/episode/66517ad23f6bd83c2260b969>, <https://api.composer.nprstations.org/v1/episode/6648404932b60c3c2c74a070>.
+    schema:name "WMHT Live";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/666d2a4ff38dce5f5a7c4b5b>, <https://api.composer.nprstations.org/v1/episode/6663efcadf98183658e07f9f>, <https://api.composer.nprstations.org/v1/episode/665ab54f1866ad7043de99c8>, <https://api.composer.nprstations.org/v1/episode/66517ad23f6bd83c2260b969>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fd/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-16T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-16T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fd> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fd/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fd/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-14T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/666bd8ce2dd9970d3d0821c6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T14:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-14T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666bd8ce2dd9970d3d0821c6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666bd8ce2dd9970d3d0821c6/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666bd8ce2dd9970d3d0821c6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a72>.
 <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a72> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/666bd8ce2dd9970d3d0821c6>, <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a3415>, <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde66b>, <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3ed>, <https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1224>.
+    schema:name "Ward Jacobson";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/666bd8ce2dd9970d3d0821c6>, <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a3415>, <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde66b>, <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3ed>.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-14T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/6421ff66f2a64f2eda7434e1>.
 <https://api.composer.nprstations.org/v1/program/6421ff66f2a64f2eda7434e1> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b4>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b3>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b2>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b1>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b0>.
+    schema:name "Bonnie North";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b4>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b3>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b2>, <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b1>.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T18:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-14T14:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc3/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc3>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becc>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becb>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beca>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec9>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec8>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc2>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec7>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec6>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec5>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec4>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec3>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc1>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec2>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec1>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec0>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebf>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebe>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc0>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebd>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebc>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebb>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beba>, <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beb9>, <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bbf>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a780/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-14T18:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a780> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a780/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a780/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a7c>.
 <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a7c> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a780>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77f>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77e>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77d>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77c>.
+    schema:name "Lynn Warfel";
+    schema:episode <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a780>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77f>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77e>, <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77d>.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f848/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-15T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-15T03:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f848> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f848/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f848/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-13T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-13T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce6/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca77/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-13T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-13T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca77> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca77/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca77>, <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d4573>, <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea1e>, <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bff0>, <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09ff1>, <https://api.composer.nprstations.org/v1/episode/66614cd23f4f024331299427>, <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a4b>, <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069b9>, <https://api.composer.nprstations.org/v1/episode/665c07863f4f02433128bbad>, <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc90>, <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5cd5>, <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c22612496>, <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb355428c>, <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da55>, <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d070a>, <https://api.composer.nprstations.org/v1/episode/664d8652213daa61592cb47b>, <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe57>, <https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7b3>, <https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a5a>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca77/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca75/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-13T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-13T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca75> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca75/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73> a schema:RadioSeries;
-    schema:episode <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca75>, <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d456b>, <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea18>, <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bfe8>, <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09fe7>, <https://api.composer.nprstations.org/v1/episode/66614cd13f4f02433129941d>, <https://api.composer.nprstations.org/v1/episode/665ffb521866ad7043df5db8>, <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a41>, <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069af>, <https://api.composer.nprstations.org/v1/episode/665c07853f4f02433128bba7>, <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc8c>, <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5ccd>, <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c2261248e>, <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb3554282>, <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da4f>, <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d0704>, <https://api.composer.nprstations.org/v1/episode/664d8651213daa61592cb473>, <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe51>, <https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7a9>, <https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a54>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666a874c3227a40d3234ca75/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa55/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-13T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-13T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa55> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa55/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa55/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becc/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-13T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becc> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becc/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becc/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fc/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-14T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-14T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fc> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fc/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fc/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-12T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-12T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d4573/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-12T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-12T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d4573> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d4573/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d4573/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d456b/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-12T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-12T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d456b> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d456b/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666935c90da438670b3d456b/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa54/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-12T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-12T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa54> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa54/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa54/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-13T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-12T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becb> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becb/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4becb/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-13T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-13T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fb> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fb/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fb/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-11T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-11T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea1e/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-11T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-11T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea1e> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea1e/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea1e/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea18/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-11T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-11T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea18> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea18/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6667e44edf98183658e0ea18/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa53/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-11T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-11T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa53> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa53/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa53/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beca/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-12T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-11T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beca> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beca/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beca/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fa/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-12T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-12T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fa> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fa/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613fa/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-10T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-10T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce3/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bff0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-10T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-10T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bff0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bff0/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bff0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bfe8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-10T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-10T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bfe8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bfe8/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/666692ccdf98183658e0bfe8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa52/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-10T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-10T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa52> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa52/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa52/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-11T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-10T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec9/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-11T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-11T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f9/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-09T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-09T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce2/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce2/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09ff1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-09T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-09T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09ff1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09ff1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09ff1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09fe7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-09T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-09T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09fe7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09fe7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6665414cdf98183658e09fe7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa51/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-09T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-09T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa51> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa51/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa51/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-10T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-09T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec8/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-10T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-10T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f8/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-08T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e309/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-08T11:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e309> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e309/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e309/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740042/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-08T15:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740042> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740042/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740042/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef9354b8f0c040074002c>.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-08T19:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T15:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-08T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T19:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f6/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/episode/6663efcadf98183658e07f9f/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-09T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T22:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6663efcadf98183658e07f9f> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6663efcadf98183658e07f9f/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6663efcadf98183658e07f9f/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892594e1c81d34d1474a6c>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-09T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-09T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce0/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fce0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a3415/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T14:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a3415> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a3415/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a3415/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a72>.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b3/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/6421ff66f2a64f2eda7434e1>.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T18:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T14:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc2/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc2/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77f/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T18:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77f> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77f/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77f/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a7c>.
 <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a341d/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a341d> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a341d/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66629e4f3f4f0243312a341d/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f847/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-08T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-08T03:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f847> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f847/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f847/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdf/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-06T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-06T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdf> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdf/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdf/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/66614cd23f4f024331299427/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-06T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-06T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66614cd23f4f024331299427> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66614cd23f4f024331299427/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66614cd23f4f024331299427/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/66614cd13f4f02433129941d/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-06T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-06T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66614cd13f4f02433129941d> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66614cd13f4f02433129941d/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66614cd13f4f02433129941d/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa50/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-06T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-06T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa50> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa50/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa50/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-06T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-07T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-07T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f6/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcde/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-05T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-05T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcde> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcde/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcde/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/665ffb521866ad7043df5db8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-05T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-05T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665ffb521866ad7043df5db8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665ffb521866ad7043df5db8/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665ffb521866ad7043df5db8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4f/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-05T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-05T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4f> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4f/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4f/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-06T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-05T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec6/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-06T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-06T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdd/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-04T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-04T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdd> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdd/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdd/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a4b/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-04T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-04T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a4b> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a4b/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a4b/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a41/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-04T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-04T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a41> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a41/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665ea9d31866ad7043df2a41/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4e/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-04T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-04T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4e> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4e/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4e/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-05T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-04T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-05T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-05T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdc/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-03T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-03T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdc> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdc/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdc/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069b9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-03T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-03T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069b9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069b9/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069b9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069af/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-03T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-03T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069af> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069af/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665d5850213daa61593069af/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4d/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-03T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-03T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4d> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4d/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4d/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-04T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-03T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-04T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-04T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f3/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-02T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-02T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdb> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdb/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcdb/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/665c07863f4f02433128bbad/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-02T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-02T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665c07863f4f02433128bbad> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665c07863f4f02433128bbad/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665c07863f4f02433128bbad/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/665c07853f4f02433128bba7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-02T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-02T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665c07853f4f02433128bba7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665c07853f4f02433128bba7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665c07853f4f02433128bba7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4c/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-02T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-02T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4c> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4c/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4c/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-03T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-02T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec3/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-03T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-03T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f2/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f2/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcda/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-01T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcda> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcda/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcda/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e308/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-01T11:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e308> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e308/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e308/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740041/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-01T15:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740041> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740041/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740041/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef9354b8f0c040074002c>.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-01T19:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T15:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-01T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T19:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/episode/665ab54f1866ad7043de99c8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-02T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T22:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665ab54f1866ad7043de99c8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665ab54f1866ad7043de99c8/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665ab54f1866ad7043de99c8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892594e1c81d34d1474a6c>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-02T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-02T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd9/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde66b/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T14:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde66b> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde66b/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde66b/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a72>.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b2/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b2/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/6421ff66f2a64f2eda7434e1>.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T18:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T14:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77e/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T18:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77e> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77e/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77e/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a7c>.
 <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde677/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde677> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde677/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665963d51866ad7043dde677/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f846/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-06-01T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-06-01T03:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f846> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f846/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f846/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-30T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-30T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd8/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc90/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-30T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-30T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc90> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc90/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc90/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc8c/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-30T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-30T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc8c> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc8c/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6658124d3f6bd83c2261fc8c/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4b/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-30T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-30T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4b> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4b/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4b/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-30T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec2/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec2/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-31T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-31T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f0/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613f0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-29T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-29T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd7/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd7/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5cd5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-29T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-29T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5cd5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5cd5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5cd5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5ccd/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-29T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-29T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5ccd> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5ccd/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6656c0d11866ad7043dd5ccd/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4a/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-29T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-29T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4a> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4a/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa4a/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-30T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-29T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ef/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-30T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-30T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ef> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ef/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ef/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-28T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-28T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd6/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd6/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c22612496/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-28T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-28T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c22612496> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c22612496/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c22612496/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c2261248e/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-28T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-28T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c2261248e> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c2261248e/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66556f503f6bd83c2261248e/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa49/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-28T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-28T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa49> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa49/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa49/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-29T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-28T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec0/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bec0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ee/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-29T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-29T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ee> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ee/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ee/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-27T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-27T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb355428c/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-27T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-27T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb355428c> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb355428c/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb355428c/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb3554282/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-27T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-27T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb3554282> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb3554282/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66541dd21a7e337fb3554282/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa48/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-27T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-27T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa48> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa48/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa48/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebf/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-28T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-27T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebf> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebf/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebf/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ed/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-28T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-28T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ed> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ed/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ed/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-26T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-26T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da55/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-26T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-26T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da55> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da55/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da55/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da4f/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-26T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-26T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da4f> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da4f/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/6652cc523f6bd83c2260da4f/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa47/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-26T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-26T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa47> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa47/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa47/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebe/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-27T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-26T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebe> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebe/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebe/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ec/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-27T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-27T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ec> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ec/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ec/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-25T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd3/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e307/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-25T11:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e307> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e307/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e307/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740040/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-25T15:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740040> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740040/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c0400740040/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef9354b8f0c040074002c>.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-25T19:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T15:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c3/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c3/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f4/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-25T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T19:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f4> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f4/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f4/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/episode/66517ad23f6bd83c2260b969/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-26T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T22:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/66517ad23f6bd83c2260b969> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/66517ad23f6bd83c2260b969/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/66517ad23f6bd83c2260b969/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892594e1c81d34d1474a6c>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613eb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-26T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-26T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613eb> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613eb/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613eb/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd2/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd2/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3ed/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T14:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3ed> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3ed/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3ed/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a72>.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T11:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/6421ff66f2a64f2eda7434e1>.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T18:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T14:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc0/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bc0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77d/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T18:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77d> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77d/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77d/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a7c>.
 <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3f5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T21:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3f5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3f5/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/665029581a7e337fb354d3f5/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892596e1c81d34d1474a81>.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f845/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-25T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-25T03:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f845> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f845/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f845/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd1/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-23T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-23T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd1> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd1/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd1/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d070a/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-23T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-23T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d070a> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d070a/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d070a/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d0704/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-23T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-23T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d0704> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d0704/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/664ed7d1213daa61592d0704/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa46/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-23T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-23T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa46> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa46/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa46/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebd/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-23T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebd> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebd/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebd/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ea/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-24T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-24T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ea> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ea/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613ea/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-22T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-22T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd0/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcd0/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/664d8652213daa61592cb47b/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-22T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-22T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/664d8652213daa61592cb47b> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664d8652213daa61592cb47b/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/664d8652213daa61592cb47b/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/664d8651213daa61592cb473/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-22T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-22T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/664d8651213daa61592cb473> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664d8651213daa61592cb473/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/664d8651213daa61592cb473/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa45/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-22T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-22T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa45> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa45/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa45/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebc/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-23T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-22T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebc> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebc/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebc/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-23T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-23T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e9/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e9/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccf/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-21T10:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-21T04:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccf> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccf/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccf/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
 <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe57/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-21T16:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-21T10:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe57> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe57/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe57/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/611ff46ae08b94713761f8ad>.
 <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe51/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-21T17:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-21T16:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe51> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe51/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/664c34cc3f6bd83c225efe51/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/51892595e1c81d34d1474a73>.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa44/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-21T20:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-21T17:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa44> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa44/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa44/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/54832201cbc21d650c307def>.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-22T00:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-21T20:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebb> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebb/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bebb/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/65a7ed0f52b8087c7ce4bd5b>.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e8/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
+    schema:endDate "2025-05-22T04:00:00.000Z"^^xsd:dateTime;
+    schema:startDate "2025-05-22T02:00:00.000Z"^^xsd:dateTime;
     schema:publishedOn radio:wmht.
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e8> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e8/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcce/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcce> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fcce/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7b3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7b3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7b3/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7a9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7a9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664ae34732b60c3c2c74f7a9/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa43/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa43> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa43/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beba/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beba> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beba/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e7/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e7> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e7/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccd/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccd> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccd/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a5a/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a5a> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a5a/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a54/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a54> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/664991c5948ffa3c36487a54/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa42/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa42> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ebe652b8087c7ce4aa42/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beb9/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beb9> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4beb9/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e6/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e6> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e6/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccc/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccc> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccc/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e306/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e306> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9509ab84b400752e306/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c040074003f/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c040074003f> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9354b8f0c040074003f/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c2/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c2> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7c2/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f3/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f3> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65b42793ef733320daa094f3/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/6648404932b60c3c2c74a070/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/6648404932b60c3c2c74a070> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6648404932b60c3c2c74a070/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e5/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e5> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e5/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccb/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccb> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fccb/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1224/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1224> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1224/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b0/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b0> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/647a120bd48bf95ff9d770b0/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bbf/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bbf> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/65aaf99e52b8087c7ce56bbf/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77c/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77c> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef9a693407e689473a77c/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1230/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1230> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/6646eec93f6bd83c225e1230/broadcastEvent>.
-<https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f844/broadcastEvent> a schema:BroadcastEvent, schema:PublicationEvent;
-    schema:publishedOn radio:wmht.
-<https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f844> a schema:RadioEpisode;
-    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8bcb9a094616cf5f844/broadcastEvent>.
+    schema:publication <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c613e8/broadcastEvent>;
+    schema:partOfSeries <https://api.composer.nprstations.org/v1/program/677ef89f9ea18c2245c61375>.
