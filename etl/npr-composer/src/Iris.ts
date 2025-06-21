@@ -26,17 +26,18 @@ function hashStrings(...strings: readonly (string | undefined)[]): string {
     }
   }
   if (!valid) {
-    throw new Error(`no strings to hash from id ${id}`);
+    throw new Error("no strings to hash");
   }
   return hasher.hex();
 }
 
 export namespace Iris {
   const nprComposerApiBaseUrl = "https://api.composer.nprstations.org/v1/";
+  const radioBaseIri = "http://purl.org/sdapps/instance/radio/";
 
   export function broadcastEvent({ episodeId }: { episodeId: string }) {
     return dataFactory.namedNode(
-      `${Iris.episode(episodeId).value}/broadcastEvent`,
+      `${Iris.episode(episodeId).value}/broadcast-event`,
     );
   }
 
@@ -46,19 +47,19 @@ export namespace Iris {
 
   export function musicAlbum(playlistItem: PlaylistItem): NamedNode {
     return dataFactory.namedNode(
-      `${nprComposerApiBaseUrl}musicAlbum/${hashStrings(playlistItem.artistName, playlistItem.collectionName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists)}`,
+      `${radioBaseIri}music-album/${hashStrings(playlistItem.artistName, playlistItem.collectionName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists)}`,
     );
   }
 
   export function musicGroup({ name }: { name: string }): NamedNode {
     return dataFactory.namedNode(
-      `${nprComposerApiBaseUrl}musicGroup/${hashStrings(name)}`,
+      `${radioBaseIri}music-group/${hashStrings(name)}`,
     );
   }
 
   export function musicRecording(playlistItem: PlaylistItem): NamedNode {
     return dataFactory.namedNode(
-      `${nprComposerApiBaseUrl}musicRecording/${hashStrings(playlistItem.artistName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists, playlistItem.trackName)}`,
+      `${radioBaseIri}music-recording/${hashStrings(playlistItem.artistName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists, playlistItem.trackName)}`,
     );
   }
 
