@@ -51,6 +51,12 @@ export namespace Iris {
     );
   }
 
+  export function musicComposition(playlistItem: PlaylistItem): NamedNode {
+    return dataFactory.namedNode(
+      `${radioBaseIri}music-composition/${hashStrings(playlistItem.composerName, playlistItem.trackName)}`,
+    );
+  }
+
   export function musicGroup({ name }: { name: string }): NamedNode {
     return dataFactory.namedNode(
       `${radioBaseIri}music-group/${hashStrings(name)}`,

@@ -2,6 +2,7 @@ import { DatasetCore } from "@rdfjs/types";
 import {
   BroadcastEvent,
   MusicAlbum,
+  MusicComposition,
   MusicGroup,
   MusicRecording,
   RadioBroadcastService,
@@ -40,7 +41,6 @@ async function* transformPlaylistJson({
     publishedOn: stubify(radioBroadcastService),
     startDate: new Date(playlistJson.start_utc),
   });
-  yield radioEpisodeBroadcastEvent;
 
   const radioSeries = new RadioSeries({
     identifier: Iris.program(playlistJson.program_id),
@@ -71,6 +71,7 @@ async function* transformPlaylistJson({
       new Date(),
     );
 
+    let composerMusicGroup: MusicGroup | undefined;
     const musicGroups: MusicGroup[] = [];
     const musicGroupUnqualifiedNames = new Set<string>();
     for (const [qualifier, unqualifiedName] of Object.entries({
@@ -93,6 +94,9 @@ async function* transformPlaylistJson({
       });
       yield musicGroup;
       musicGroups.push(musicGroup);
+      if (qualifier === "composer") {
+        composerMusicGroup = musicGroup;
+      }
     }
 
     if (musicGroups.length === 0) {
@@ -116,6 +120,16 @@ async function* transformPlaylistJson({
       yield musicAlbum;
     }
 
+    const musicComposition = composerMusicGroup
+      ? new MusicComposition({
+          composer: composerMusicGroup
+            ? stubify(composerMusicGroup)
+            : undefined,
+          identifier: Iris.musicComposition(playlistItemJson),
+          name: playlistItemJson.trackName,
+        })
+      : undefined;
+
     const musicRecording = new MusicRecording({
       duration: dates.formatISODuration({
         seconds: playlistItemJson._duration,
@@ -124,11 +138,18 @@ async function* transformPlaylistJson({
       inAlbum: musicAlbum ? stubify(musicAlbum) : undefined,
       identifier: Iris.musicRecording(playlistItemJson),
       name: playlistItemJson.trackName,
+      recordingOf: musicComposition ? stubify(musicComposition) : undefined,
     });
     yield musicRecording;
+
+    if (musicComposition) {
+      musicComposition.recordedAs.push(stubify(musicRecording));
+      yield musicComposition;
+    }
   }
 
   yield radioEpisode;
+  yield radioEpisodeBroadcastEvent;
 }
 
 export async function* transform({

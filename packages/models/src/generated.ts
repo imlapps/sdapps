@@ -21464,26 +21464,31 @@ export namespace MusicGroupStub {
 }
 export class MusicComposition extends CreativeWork {
   override readonly type = "MusicComposition";
-  readonly recordedAs: purify.Maybe<MusicRecordingStub>;
+  readonly composer: purify.Maybe<AgentStub>;
+  recordedAs: MusicRecordingStub[];
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly recordedAs?:
-        | MusicRecordingStub
-        | purify.Maybe<MusicRecordingStub>;
+      readonly composer?: AgentStub | purify.Maybe<AgentStub>;
+      readonly recordedAs?: readonly MusicRecordingStub[];
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
-    if (purify.Maybe.isMaybe(parameters.recordedAs)) {
-      this.recordedAs = parameters.recordedAs;
-    } else if (
-      typeof parameters.recordedAs === "object" &&
-      parameters.recordedAs instanceof MusicRecordingStub
-    ) {
-      this.recordedAs = purify.Maybe.of(parameters.recordedAs);
-    } else if (typeof parameters.recordedAs === "undefined") {
-      this.recordedAs = purify.Maybe.empty();
+    if (purify.Maybe.isMaybe(parameters.composer)) {
+      this.composer = parameters.composer;
+    } else if (typeof parameters.composer === "object") {
+      this.composer = purify.Maybe.of(parameters.composer);
+    } else if (typeof parameters.composer === "undefined") {
+      this.composer = purify.Maybe.empty();
+    } else {
+      this.composer = parameters.composer satisfies never;
+    }
+
+    if (typeof parameters.recordedAs === "undefined") {
+      this.recordedAs = [];
+    } else if (typeof parameters.recordedAs === "object") {
+      this.recordedAs = parameters.recordedAs.concat();
     } else {
       this.recordedAs = parameters.recordedAs satisfies never;
     }
@@ -21500,8 +21505,20 @@ export class MusicComposition extends CreativeWork {
     return super
       .equals(other)
       .chain(() =>
+        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
+          this.composer,
+          other.composer,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "composer",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
           this.recordedAs,
           other.recordedAs,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -21529,9 +21546,13 @@ export class MusicComposition extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
-    this.recordedAs.ifJust((_value0) => {
+    this.composer.ifJust((_value0) => {
       _value0.hash(_hasher);
     });
+    for (const _item0 of this.recordedAs) {
+      _item0.hash(_hasher);
+    }
+
     return _hasher;
   }
 
@@ -21539,7 +21560,8 @@ export class MusicComposition extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
-        recordedAs: this.recordedAs.map((_item) => _item.toJson()).extract(),
+        composer: this.composer.map((_item) => _item.toJson()).extract(),
+        recordedAs: this.recordedAs.map((_item) => _item.toJson()),
       } satisfies MusicComposition.Json),
     );
   }
@@ -21568,9 +21590,15 @@ export class MusicComposition extends CreativeWork {
     }
 
     _resource.add(
-      dataFactory.namedNode("http://schema.org/recordedAs"),
-      this.recordedAs.map((_value) =>
+      dataFactory.namedNode("http://schema.org/composer"),
+      this.composer.map((_value) =>
         _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/recordedAs"),
+      this.recordedAs.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -21586,7 +21614,10 @@ export namespace MusicComposition {
     "http://schema.org/MusicComposition",
   );
   export type Json = {
-    readonly recordedAs: MusicRecordingStub.Json | undefined;
+    readonly composer:
+      | (OrganizationStubStatic.Json | PersonStub.Json)
+      | undefined;
+    readonly recordedAs: readonly MusicRecordingStub.Json[];
   } & CreativeWorkStatic.Json;
 
   export function propertiesFromJson(
@@ -21595,7 +21626,8 @@ export namespace MusicComposition {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      recordedAs: purify.Maybe<MusicRecordingStub>;
+      composer: purify.Maybe<AgentStub>;
+      recordedAs: MusicRecordingStub[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -21613,10 +21645,13 @@ export namespace MusicComposition {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const recordedAs = purify.Maybe.fromNullable(_jsonObject["recordedAs"]).map(
-      (_item) => MusicRecordingStub.fromJson(_item).unsafeCoerce(),
+    const composer = purify.Maybe.fromNullable(_jsonObject["composer"]).map(
+      (_item) => AgentStub.fromJson(_item).unsafeCoerce(),
     );
-    return purify.Either.of({ ..._super0, identifier, recordedAs });
+    const recordedAs = _jsonObject["recordedAs"].map((_item) =>
+      MusicRecordingStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, composer, recordedAs });
   }
 
   export function fromJson(
@@ -21636,6 +21671,7 @@ export namespace MusicComposition {
     return {
       elements: [
         CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/composer`, type: "Control" },
         MusicRecordingStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/recordedAs`,
         }),
@@ -21650,7 +21686,10 @@ export namespace MusicComposition {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("MusicComposition"),
-        recordedAs: MusicRecordingStub.jsonZodSchema().optional(),
+        composer: AgentStub.jsonZodSchema().optional(),
+        recordedAs: MusicRecordingStub.jsonZodSchema()
+          .array()
+          .default(() => []),
       }),
     );
   }
@@ -21670,7 +21709,8 @@ export namespace MusicComposition {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      recordedAs: purify.Maybe<MusicRecordingStub>;
+      composer: purify.Maybe<AgentStub>;
+      recordedAs: MusicRecordingStub[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStatic.propertiesFromRdf({
@@ -21702,32 +21742,61 @@ export namespace MusicComposition {
     }
 
     const identifier = _resource.identifier;
-    const _recordedAsEither: purify.Either<
+    const _composerEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<MusicRecordingStub>
+      purify.Maybe<AgentStub>
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://schema.org/recordedAs"), {
+        .values(dataFactory.namedNode("http://schema.org/composer"), {
           unique: true,
         })
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          MusicRecordingStub.fromRdf({
+          AgentStub.fromRdf({
             ..._context,
-            ignoreRdfType: true,
             languageIn: _languageIn,
             resource: _resource,
           }),
         )
         .toMaybe(),
     );
+    if (_composerEither.isLeft()) {
+      return _composerEither;
+    }
+
+    const composer = _composerEither.unsafeCoerce();
+    const _recordedAsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      MusicRecordingStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/recordedAs"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              MusicRecordingStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
     if (_recordedAsEither.isLeft()) {
       return _recordedAsEither;
     }
 
     const recordedAs = _recordedAsEither.unsafeCoerce();
-    return purify.Either.of({ ..._super0, identifier, recordedAs });
+    return purify.Either.of({ ..._super0, identifier, composer, recordedAs });
   }
 
   export function fromRdf(
@@ -21740,6 +21809,7 @@ export namespace MusicComposition {
 
   export const rdfProperties = [
     ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/composer") },
     { path: dataFactory.namedNode("http://schema.org/recordedAs") },
   ];
 }

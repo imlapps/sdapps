@@ -12,9 +12,11 @@ import {
   MessageStub,
   MusicAlbum,
   MusicAlbumStub,
+  MusicComposition,
   MusicCompositionStub,
   MusicGroup,
   MusicGroupStub,
+  MusicRecording,
   MusicRecordingStub,
   Organization,
   OrganizationStub,
@@ -60,27 +62,29 @@ function stubifyThing(thing: Thing): {
 /**
  * Convert a model to its stub equivalent e.g., Organization to OrganizationStub.
  */
-export function stubify(musicAlbum: MusicAlbum): MusicAlbumStub;
+export function stubify(model: MusicAlbum): MusicAlbumStub;
 
-export function stubify(musicGroup: MusicGroup): MusicGroupStub;
+export function stubify(model: MusicComposition): MusicCompositionStub;
 
-export function stubify(organization: Organization): OrganizationStub;
+export function stubify(model: MusicGroup): MusicGroupStub;
 
-export function stubify(person: Person): PersonStub;
+export function stubify(model: MusicRecording): MusicRecordingStub;
+
+export function stubify(model: Organization): OrganizationStub;
+
+export function stubify(model: Person): PersonStub;
+
+export function stubify(model: PublicationEvent): PublicationEventStub;
 
 export function stubify(
-  publicationEvent: PublicationEvent,
-): PublicationEventStub;
-
-export function stubify(
-  radioBroadcastService: RadioBroadcastService,
+  model: RadioBroadcastService,
 ): RadioBroadcastServiceStub;
 
-export function stubify(radioEpisode: RadioEpisode): RadioEpisodeStub;
+export function stubify(model: RadioEpisode): RadioEpisodeStub;
 
-export function stubify(radioSeries: RadioSeries): RadioSeriesStub;
+export function stubify(model: RadioSeries): RadioSeriesStub;
 
-export function stubify(creativeWork: CreativeWork): CreativeWorkStub;
+export function stubify(model: CreativeWork): CreativeWorkStub;
 
 export function stubify(
   model:
