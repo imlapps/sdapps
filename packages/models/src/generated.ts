@@ -66,8 +66,8 @@ export namespace $EqualsResult {
         readonly type: "Primitive";
       }
     | {
-        readonly left: object;
-        readonly right: object;
+        readonly left: any;
+        readonly right: any;
         readonly propertyName: string;
         readonly propertyValuesUnequal: Unequal;
         readonly type: "Property";
@@ -733,7 +733,7 @@ export class Thing extends Model {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.description)) {
@@ -743,15 +743,15 @@ export class Thing extends Model {
     } else if (typeof parameters.description === "undefined") {
       this.description = purify.Maybe.empty();
     } else {
-      this.description = parameters.description as never;
+      this.description = parameters.description satisfies never;
     }
 
     if (typeof parameters.localIdentifiers === "undefined") {
       this.localIdentifiers = [];
-    } else if (Array.isArray(parameters.localIdentifiers)) {
+    } else if (typeof parameters.localIdentifiers === "object") {
       this.localIdentifiers = parameters.localIdentifiers;
     } else {
-      this.localIdentifiers = parameters.localIdentifiers as never;
+      this.localIdentifiers = parameters.localIdentifiers satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.name)) {
@@ -761,7 +761,7 @@ export class Thing extends Model {
     } else if (typeof parameters.name === "undefined") {
       this.name = purify.Maybe.empty();
     } else {
-      this.name = parameters.name as never;
+      this.name = parameters.name satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.order)) {
@@ -771,23 +771,23 @@ export class Thing extends Model {
     } else if (typeof parameters.order === "undefined") {
       this.order = purify.Maybe.empty();
     } else {
-      this.order = parameters.order as never;
+      this.order = parameters.order satisfies never;
     }
 
     if (typeof parameters.sameAs === "undefined") {
       this.sameAs = [];
-    } else if (Array.isArray(parameters.sameAs)) {
+    } else if (typeof parameters.sameAs === "object") {
       this.sameAs = parameters.sameAs;
     } else {
-      this.sameAs = parameters.sameAs as never;
+      this.sameAs = parameters.sameAs satisfies never;
     }
 
     if (typeof parameters.subjectOf === "undefined") {
       this.subjectOf = [];
-    } else if (Array.isArray(parameters.subjectOf)) {
-      this.subjectOf = parameters.subjectOf;
+    } else if (typeof parameters.subjectOf === "object") {
+      this.subjectOf = parameters.subjectOf.concat();
     } else {
-      this.subjectOf = parameters.subjectOf as never;
+      this.subjectOf = parameters.subjectOf satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.url)) {
@@ -799,7 +799,7 @@ export class Thing extends Model {
     } else if (typeof parameters.url === "undefined") {
       this.url = purify.Maybe.empty();
     } else {
-      this.url = parameters.url as never;
+      this.url = parameters.url satisfies never;
     }
   }
 
@@ -1947,7 +1947,7 @@ export class Role extends Intangible {
     } else if (typeof parameters.endDate === "undefined") {
       this.endDate = purify.Maybe.empty();
     } else {
-      this.endDate = parameters.endDate as never;
+      this.endDate = parameters.endDate satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.roleName)) {
@@ -1961,7 +1961,7 @@ export class Role extends Intangible {
     } else if (typeof parameters.roleName === "undefined") {
       this.roleName = purify.Maybe.empty();
     } else {
-      this.roleName = parameters.roleName as never;
+      this.roleName = parameters.roleName satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.startDate)) {
@@ -1974,7 +1974,7 @@ export class Role extends Intangible {
     } else if (typeof parameters.startDate === "undefined") {
       this.startDate = purify.Maybe.empty();
     } else {
-      this.startDate = parameters.startDate as never;
+      this.startDate = parameters.startDate satisfies never;
     }
   }
 
@@ -2547,18 +2547,18 @@ export class CreativeWork extends Thing {
     super(parameters);
     if (typeof parameters.about === "undefined") {
       this.about = [];
-    } else if (Array.isArray(parameters.about)) {
+    } else if (typeof parameters.about === "object") {
       this.about = parameters.about;
     } else {
-      this.about = parameters.about as never;
+      this.about = parameters.about satisfies never;
     }
 
     if (typeof parameters.authors === "undefined") {
       this.authors = [];
-    } else if (Array.isArray(parameters.authors)) {
+    } else if (typeof parameters.authors === "object") {
       this.authors = parameters.authors;
     } else {
-      this.authors = parameters.authors as never;
+      this.authors = parameters.authors satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.datePublished)) {
@@ -2571,23 +2571,23 @@ export class CreativeWork extends Thing {
     } else if (typeof parameters.datePublished === "undefined") {
       this.datePublished = purify.Maybe.empty();
     } else {
-      this.datePublished = parameters.datePublished as never;
+      this.datePublished = parameters.datePublished satisfies never;
     }
 
     if (typeof parameters.isBasedOn === "undefined") {
       this.isBasedOn = [];
-    } else if (Array.isArray(parameters.isBasedOn)) {
+    } else if (typeof parameters.isBasedOn === "object") {
       this.isBasedOn = parameters.isBasedOn;
     } else {
-      this.isBasedOn = parameters.isBasedOn as never;
+      this.isBasedOn = parameters.isBasedOn satisfies never;
     }
 
     if (typeof parameters.publication === "undefined") {
       this.publication = [];
-    } else if (Array.isArray(parameters.publication)) {
+    } else if (typeof parameters.publication === "object") {
       this.publication = parameters.publication;
     } else {
-      this.publication = parameters.publication as never;
+      this.publication = parameters.publication satisfies never;
     }
   }
 
@@ -3267,7 +3267,7 @@ export class MediaObject extends CreativeWork {
     } else if (typeof parameters.contentUrl === "undefined") {
       this.contentUrl = purify.Maybe.empty();
     } else {
-      this.contentUrl = parameters.contentUrl as never;
+      this.contentUrl = parameters.contentUrl satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.encodingFormat)) {
@@ -3277,7 +3277,7 @@ export class MediaObject extends CreativeWork {
     } else if (typeof parameters.encodingFormat === "undefined") {
       this.encodingFormat = purify.Maybe.empty();
     } else {
-      this.encodingFormat = parameters.encodingFormat as never;
+      this.encodingFormat = parameters.encodingFormat satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.height)) {
@@ -3290,7 +3290,7 @@ export class MediaObject extends CreativeWork {
     } else if (typeof parameters.height === "undefined") {
       this.height = purify.Maybe.empty();
     } else {
-      this.height = parameters.height as never;
+      this.height = parameters.height satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.width)) {
@@ -3303,7 +3303,7 @@ export class MediaObject extends CreativeWork {
     } else if (typeof parameters.width === "undefined") {
       this.width = purify.Maybe.empty();
     } else {
-      this.width = parameters.width as never;
+      this.width = parameters.width satisfies never;
     }
   }
 
@@ -4323,10 +4323,10 @@ export class Event extends Thing {
     super(parameters);
     if (typeof parameters.about === "undefined") {
       this.about = [];
-    } else if (Array.isArray(parameters.about)) {
+    } else if (typeof parameters.about === "object") {
       this.about = parameters.about;
     } else {
-      this.about = parameters.about as never;
+      this.about = parameters.about satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.endDate)) {
@@ -4339,7 +4339,7 @@ export class Event extends Thing {
     } else if (typeof parameters.endDate === "undefined") {
       this.endDate = purify.Maybe.empty();
     } else {
-      this.endDate = parameters.endDate as never;
+      this.endDate = parameters.endDate satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.location)) {
@@ -4352,23 +4352,23 @@ export class Event extends Thing {
     } else if (typeof parameters.location === "undefined") {
       this.location = purify.Maybe.empty();
     } else {
-      this.location = parameters.location as never;
+      this.location = parameters.location satisfies never;
     }
 
     if (typeof parameters.organizers === "undefined") {
       this.organizers = [];
-    } else if (Array.isArray(parameters.organizers)) {
+    } else if (typeof parameters.organizers === "object") {
       this.organizers = parameters.organizers;
     } else {
-      this.organizers = parameters.organizers as never;
+      this.organizers = parameters.organizers satisfies never;
     }
 
     if (typeof parameters.performers === "undefined") {
       this.performers = [];
-    } else if (Array.isArray(parameters.performers)) {
+    } else if (typeof parameters.performers === "object") {
       this.performers = parameters.performers;
     } else {
-      this.performers = parameters.performers as never;
+      this.performers = parameters.performers satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.startDate)) {
@@ -4381,15 +4381,15 @@ export class Event extends Thing {
     } else if (typeof parameters.startDate === "undefined") {
       this.startDate = purify.Maybe.empty();
     } else {
-      this.startDate = parameters.startDate as never;
+      this.startDate = parameters.startDate satisfies never;
     }
 
     if (typeof parameters.subEvents === "undefined") {
       this.subEvents = [];
-    } else if (Array.isArray(parameters.subEvents)) {
-      this.subEvents = parameters.subEvents;
+    } else if (typeof parameters.subEvents === "object") {
+      this.subEvents = parameters.subEvents.concat();
     } else {
-      this.subEvents = parameters.subEvents as never;
+      this.subEvents = parameters.subEvents satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.superEvent)) {
@@ -4402,7 +4402,7 @@ export class Event extends Thing {
     } else if (typeof parameters.superEvent === "undefined") {
       this.superEvent = purify.Maybe.empty();
     } else {
-      this.superEvent = parameters.superEvent as never;
+      this.superEvent = parameters.superEvent satisfies never;
     }
   }
 
@@ -5144,7 +5144,7 @@ export class PublicationEvent extends Event {
     } else if (typeof parameters.publishedOn === "undefined") {
       this.publishedOn = purify.Maybe.empty();
     } else {
-      this.publishedOn = parameters.publishedOn as never;
+      this.publishedOn = parameters.publishedOn satisfies never;
     }
   }
 
@@ -5610,10 +5610,10 @@ export class Action extends Thing {
     super(parameters);
     if (typeof parameters.agents === "undefined") {
       this.agents = [];
-    } else if (Array.isArray(parameters.agents)) {
+    } else if (typeof parameters.agents === "object") {
       this.agents = parameters.agents;
     } else {
-      this.agents = parameters.agents as never;
+      this.agents = parameters.agents satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.endTime)) {
@@ -5626,15 +5626,15 @@ export class Action extends Thing {
     } else if (typeof parameters.endTime === "undefined") {
       this.endTime = purify.Maybe.empty();
     } else {
-      this.endTime = parameters.endTime as never;
+      this.endTime = parameters.endTime satisfies never;
     }
 
     if (typeof parameters.participants === "undefined") {
       this.participants = [];
-    } else if (Array.isArray(parameters.participants)) {
+    } else if (typeof parameters.participants === "object") {
       this.participants = parameters.participants;
     } else {
-      this.participants = parameters.participants as never;
+      this.participants = parameters.participants satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.startTime)) {
@@ -5647,7 +5647,7 @@ export class Action extends Thing {
     } else if (typeof parameters.startTime === "undefined") {
       this.startTime = purify.Maybe.empty();
     } else {
-      this.startTime = parameters.startTime as never;
+      this.startTime = parameters.startTime satisfies never;
     }
   }
 
@@ -6693,7 +6693,7 @@ export class ThingStub extends Model {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.name)) {
@@ -6703,7 +6703,7 @@ export class ThingStub extends Model {
     } else if (typeof parameters.name === "undefined") {
       this.name = purify.Maybe.empty();
     } else {
-      this.name = parameters.name as never;
+      this.name = parameters.name satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.order)) {
@@ -6713,7 +6713,7 @@ export class ThingStub extends Model {
     } else if (typeof parameters.order === "undefined") {
       this.order = purify.Maybe.empty();
     } else {
-      this.order = parameters.order as never;
+      this.order = parameters.order satisfies never;
     }
   }
 
@@ -8494,7 +8494,7 @@ export class TextObject extends MediaObject {
     } else if (typeof parameters.uriSpace === "undefined") {
       this.uriSpace = purify.Maybe.empty();
     } else {
-      this.uriSpace = parameters.uriSpace as never;
+      this.uriSpace = parameters.uriSpace satisfies never;
     }
   }
 
@@ -11264,10 +11264,10 @@ export class RadioSeries extends CreativeWorkSeries {
     super(parameters);
     if (typeof parameters.episodes === "undefined") {
       this.episodes = [];
-    } else if (Array.isArray(parameters.episodes)) {
-      this.episodes = parameters.episodes;
+    } else if (typeof parameters.episodes === "object") {
+      this.episodes = parameters.episodes.concat();
     } else {
-      this.episodes = parameters.episodes as never;
+      this.episodes = parameters.episodes satisfies never;
     }
   }
 
@@ -12158,7 +12158,7 @@ export class Episode extends CreativeWork {
     } else if (typeof parameters.partOfSeries === "undefined") {
       this.partOfSeries = purify.Maybe.empty();
     } else {
-      this.partOfSeries = parameters.partOfSeries as never;
+      this.partOfSeries = parameters.partOfSeries satisfies never;
     }
   }
 
@@ -13200,7 +13200,7 @@ export class BroadcastService extends Service {
     } else if (typeof parameters.callSign === "undefined") {
       this.callSign = purify.Maybe.empty();
     } else {
-      this.callSign = parameters.callSign as never;
+      this.callSign = parameters.callSign satisfies never;
     }
   }
 
@@ -14936,7 +14936,7 @@ export class QuantitativeValue extends StructuredValue {
     } else if (typeof parameters.unitText === "undefined") {
       this.unitText = purify.Maybe.empty();
     } else {
-      this.unitText = parameters.unitText as never;
+      this.unitText = parameters.unitText satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.value)) {
@@ -14946,7 +14946,7 @@ export class QuantitativeValue extends StructuredValue {
     } else if (typeof parameters.value === "undefined") {
       this.value = purify.Maybe.empty();
     } else {
-      this.value = parameters.value as never;
+      this.value = parameters.value satisfies never;
     }
   }
 
@@ -15580,7 +15580,7 @@ export class QuantitativeValueStub extends StructuredValueStub {
     } else if (typeof parameters.unitText === "undefined") {
       this.unitText = purify.Maybe.empty();
     } else {
-      this.unitText = parameters.unitText as never;
+      this.unitText = parameters.unitText satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.value)) {
@@ -15590,7 +15590,7 @@ export class QuantitativeValueStub extends StructuredValueStub {
     } else if (typeof parameters.value === "undefined") {
       this.value = purify.Maybe.empty();
     } else {
-      this.value = parameters.value as never;
+      this.value = parameters.value satisfies never;
     }
   }
 
@@ -16065,7 +16065,7 @@ export class EventStub extends ThingStub {
     } else if (typeof parameters.startDate === "undefined") {
       this.startDate = purify.Maybe.empty();
     } else {
-      this.startDate = parameters.startDate as never;
+      this.startDate = parameters.startDate satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.superEvent)) {
@@ -16079,7 +16079,7 @@ export class EventStub extends ThingStub {
     } else if (typeof parameters.superEvent === "undefined") {
       this.superEvent = purify.Maybe.empty();
     } else {
-      this.superEvent = parameters.superEvent as never;
+      this.superEvent = parameters.superEvent satisfies never;
     }
   }
 
@@ -17328,7 +17328,7 @@ export class Person extends Thing {
     } else if (typeof parameters.birthDate === "undefined") {
       this.birthDate = purify.Maybe.empty();
     } else {
-      this.birthDate = parameters.birthDate as never;
+      this.birthDate = parameters.birthDate satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.familyName)) {
@@ -17338,7 +17338,7 @@ export class Person extends Thing {
     } else if (typeof parameters.familyName === "undefined") {
       this.familyName = purify.Maybe.empty();
     } else {
-      this.familyName = parameters.familyName as never;
+      this.familyName = parameters.familyName satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.gender)) {
@@ -17365,7 +17365,7 @@ export class Person extends Thing {
     } else if (typeof parameters.gender === "undefined") {
       this.gender = purify.Maybe.empty();
     } else {
-      this.gender = parameters.gender as never;
+      this.gender = parameters.gender satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.givenName)) {
@@ -17375,23 +17375,23 @@ export class Person extends Thing {
     } else if (typeof parameters.givenName === "undefined") {
       this.givenName = purify.Maybe.empty();
     } else {
-      this.givenName = parameters.givenName as never;
+      this.givenName = parameters.givenName satisfies never;
     }
 
     if (typeof parameters.hasOccupation === "undefined") {
       this.hasOccupation = [];
-    } else if (Array.isArray(parameters.hasOccupation)) {
+    } else if (typeof parameters.hasOccupation === "object") {
       this.hasOccupation = parameters.hasOccupation;
     } else {
-      this.hasOccupation = parameters.hasOccupation as never;
+      this.hasOccupation = parameters.hasOccupation satisfies never;
     }
 
     if (typeof parameters.images === "undefined") {
       this.images = [];
-    } else if (Array.isArray(parameters.images)) {
+    } else if (typeof parameters.images === "object") {
       this.images = parameters.images;
     } else {
-      this.images = parameters.images as never;
+      this.images = parameters.images satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.jobTitle)) {
@@ -17401,23 +17401,23 @@ export class Person extends Thing {
     } else if (typeof parameters.jobTitle === "undefined") {
       this.jobTitle = purify.Maybe.empty();
     } else {
-      this.jobTitle = parameters.jobTitle as never;
+      this.jobTitle = parameters.jobTitle satisfies never;
     }
 
     if (typeof parameters.memberOf === "undefined") {
       this.memberOf = [];
-    } else if (Array.isArray(parameters.memberOf)) {
-      this.memberOf = parameters.memberOf;
+    } else if (typeof parameters.memberOf === "object") {
+      this.memberOf = parameters.memberOf.concat();
     } else {
-      this.memberOf = parameters.memberOf as never;
+      this.memberOf = parameters.memberOf satisfies never;
     }
 
     if (typeof parameters.performerIn === "undefined") {
       this.performerIn = [];
-    } else if (Array.isArray(parameters.performerIn)) {
-      this.performerIn = parameters.performerIn;
+    } else if (typeof parameters.performerIn === "object") {
+      this.performerIn = parameters.performerIn.concat();
     } else {
-      this.performerIn = parameters.performerIn as never;
+      this.performerIn = parameters.performerIn satisfies never;
     }
   }
 
@@ -18275,26 +18275,26 @@ export class Organization extends Thing {
     super(parameters);
     if (typeof parameters.members === "undefined") {
       this.members = [];
-    } else if (Array.isArray(parameters.members)) {
-      this.members = parameters.members;
+    } else if (typeof parameters.members === "object") {
+      this.members = parameters.members.concat();
     } else {
-      this.members = parameters.members as never;
+      this.members = parameters.members satisfies never;
     }
 
     if (typeof parameters.parentOrganizations === "undefined") {
       this.parentOrganizations = [];
-    } else if (Array.isArray(parameters.parentOrganizations)) {
-      this.parentOrganizations = parameters.parentOrganizations;
+    } else if (typeof parameters.parentOrganizations === "object") {
+      this.parentOrganizations = parameters.parentOrganizations.concat();
     } else {
-      this.parentOrganizations = parameters.parentOrganizations as never;
+      this.parentOrganizations = parameters.parentOrganizations satisfies never;
     }
 
     if (typeof parameters.subOrganizations === "undefined") {
       this.subOrganizations = [];
-    } else if (Array.isArray(parameters.subOrganizations)) {
-      this.subOrganizations = parameters.subOrganizations;
+    } else if (typeof parameters.subOrganizations === "object") {
+      this.subOrganizations = parameters.subOrganizations.concat();
     } else {
-      this.subOrganizations = parameters.subOrganizations as never;
+      this.subOrganizations = parameters.subOrganizations satisfies never;
     }
   }
 
@@ -18922,7 +18922,7 @@ export class Order extends Intangible {
     } else if (typeof parameters.partOfInvoice === "undefined") {
       this.partOfInvoice = purify.Maybe.empty();
     } else {
-      this.partOfInvoice = parameters.partOfInvoice as never;
+      this.partOfInvoice = parameters.partOfInvoice satisfies never;
     }
   }
 
@@ -19454,21 +19454,18 @@ export namespace OrderStub {
 }
 export class MusicRecording extends CreativeWork {
   override readonly type = "MusicRecording";
-  readonly byArtist: purify.Maybe<
-    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
-  >;
+  readonly byArtists: readonly (MusicGroupStub | PersonStub)[];
+  readonly duration: purify.Maybe<string | QuantitativeValueStub>;
   readonly inAlbum: purify.Maybe<MusicAlbumStub>;
   readonly recordingOf: purify.Maybe<MusicCompositionStub>;
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly byArtist?:
-        | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
-        | Date
-        | boolean
-        | number
-        | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      readonly byArtists?: readonly (MusicGroupStub | PersonStub)[];
+      readonly duration?:
+        | QuantitativeValueStub
+        | purify.Maybe<string | QuantitativeValueStub>
         | string;
       readonly inAlbum?: MusicAlbumStub | purify.Maybe<MusicAlbumStub>;
       readonly recordingOf?:
@@ -19477,31 +19474,24 @@ export class MusicRecording extends CreativeWork {
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
-    if (purify.Maybe.isMaybe(parameters.byArtist)) {
-      this.byArtist = parameters.byArtist;
-    } else if (typeof parameters.byArtist === "boolean") {
-      this.byArtist = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.byArtist, { dataFactory }),
-      );
-    } else if (
-      typeof parameters.byArtist === "object" &&
-      parameters.byArtist instanceof Date
-    ) {
-      this.byArtist = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.byArtist, { dataFactory }),
-      );
-    } else if (typeof parameters.byArtist === "number") {
-      this.byArtist = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.byArtist, { dataFactory }),
-      );
-    } else if (typeof parameters.byArtist === "string") {
-      this.byArtist = purify.Maybe.of(dataFactory.literal(parameters.byArtist));
-    } else if (typeof parameters.byArtist === "object") {
-      this.byArtist = purify.Maybe.of(parameters.byArtist);
-    } else if (typeof parameters.byArtist === "undefined") {
-      this.byArtist = purify.Maybe.empty();
+    if (typeof parameters.byArtists === "undefined") {
+      this.byArtists = [];
+    } else if (typeof parameters.byArtists === "object") {
+      this.byArtists = parameters.byArtists;
     } else {
-      this.byArtist = parameters.byArtist as never;
+      this.byArtists = parameters.byArtists satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.duration)) {
+      this.duration = parameters.duration;
+    } else if (typeof parameters.duration === "string") {
+      this.duration = purify.Maybe.of(parameters.duration);
+    } else if (typeof parameters.duration === "object") {
+      this.duration = purify.Maybe.of(parameters.duration);
+    } else if (typeof parameters.duration === "undefined") {
+      this.duration = purify.Maybe.empty();
+    } else {
+      this.duration = parameters.duration satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inAlbum)) {
@@ -19514,7 +19504,7 @@ export class MusicRecording extends CreativeWork {
     } else if (typeof parameters.inAlbum === "undefined") {
       this.inAlbum = purify.Maybe.empty();
     } else {
-      this.inAlbum = parameters.inAlbum as never;
+      this.inAlbum = parameters.inAlbum satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.recordingOf)) {
@@ -19527,7 +19517,7 @@ export class MusicRecording extends CreativeWork {
     } else if (typeof parameters.recordingOf === "undefined") {
       this.recordingOf = purify.Maybe.empty();
     } else {
-      this.recordingOf = parameters.recordingOf as never;
+      this.recordingOf = parameters.recordingOf satisfies never;
     }
   }
 
@@ -19542,16 +19532,83 @@ export class MusicRecording extends CreativeWork {
     return super
       .equals(other)
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          this.byArtist,
-          other.byArtist,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "byArtist",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (
+              left: MusicGroupStub | PersonStub,
+              right: MusicGroupStub | PersonStub,
+            ) => {
+              if (
+                left.type === "MusicGroupStub" &&
+                right.type === "MusicGroupStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (left.type === "PersonStub" && right.type === "PersonStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.byArtists, other.byArtists).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "byArtists",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left: string | QuantitativeValueStub,
+              right: string | QuantitativeValueStub,
+            ) => {
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "object" && typeof right === "object") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.duration, other.duration).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "duration",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
       )
       .chain(() =>
         ((left, right) =>
@@ -19596,9 +19653,36 @@ export class MusicRecording extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
-    this.byArtist.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    for (const _item0 of this.byArtists) {
+      switch (_item0.type) {
+        case "MusicGroupStub": {
+          _item0.hash(_hasher);
+          break;
+        }
+        case "PersonStub": {
+          _item0.hash(_hasher);
+          break;
+        }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    }
+
+    this.duration.ifJust((_value0) => {
+      switch (typeof _value0) {
+        case "string": {
+          _hasher.update(_value0);
+          break;
+        }
+        case "object": {
+          _value0.hash(_hasher);
+          break;
+        }
+        default:
+          _value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
     });
     this.inAlbum.ifJust((_value0) => {
       _value0.hash(_hasher);
@@ -19613,24 +19697,11 @@ export class MusicRecording extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
-        byArtist: this.byArtist
-          .map((_item) =>
-            _item.termType === "Literal"
-              ? {
-                  "@language":
-                    _item.language.length > 0 ? _item.language : undefined,
-                  "@type":
-                    _item.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? _item.datatype.value
-                      : undefined,
-                  "@value": _item.value,
-                  termType: "Literal" as const,
-                }
-              : _item.termType === "NamedNode"
-                ? { "@id": _item.value, termType: "NamedNode" as const }
-                : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
-          )
+        byArtists: this.byArtists.map((_item) =>
+          _item.type === "PersonStub" ? _item.toJson() : _item.toJson(),
+        ),
+        duration: this.duration
+          .map((_item) => (typeof _item === "object" ? _item.toJson() : _item))
           .extract(),
         inAlbum: this.inAlbum.map((_item) => _item.toJson()).extract(),
         recordingOf: this.recordingOf.map((_item) => _item.toJson()).extract(),
@@ -19663,7 +19734,19 @@ export class MusicRecording extends CreativeWork {
 
     _resource.add(
       dataFactory.namedNode("http://schema.org/byArtist"),
-      this.byArtist,
+      this.byArtists.map((_item) =>
+        _item.type === "PersonStub"
+          ? _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/duration"),
+      this.duration.map((_value) =>
+        typeof _value === "object"
+          ? _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _value,
+      ),
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/inAlbum"),
@@ -19690,20 +19773,8 @@ export namespace MusicRecording {
     "http://schema.org/MusicRecording",
   );
   export type Json = {
-    readonly byArtist:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
+    readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
+    readonly duration: (string | QuantitativeValueStub.Json) | undefined;
     readonly inAlbum: MusicAlbumStub.Json | undefined;
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
@@ -19714,7 +19785,8 @@ export namespace MusicRecording {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      byArtist: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
+      byArtists: readonly (MusicGroupStub | PersonStub)[];
+      duration: purify.Maybe<string | QuantitativeValueStub>;
       inAlbum: purify.Maybe<MusicAlbumStub>;
       recordingOf: purify.Maybe<MusicCompositionStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
@@ -19734,20 +19806,16 @@ export namespace MusicRecording {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const byArtist = purify.Maybe.fromNullable(_jsonObject["byArtist"]).map(
+    const byArtists = _jsonObject["byArtists"].map((_item) =>
+      _item.type === "PersonStub"
+        ? PersonStub.fromJson(_item).unsafeCoerce()
+        : MusicGroupStub.fromJson(_item).unsafeCoerce(),
+    );
+    const duration = purify.Maybe.fromNullable(_jsonObject["duration"]).map(
       (_item) =>
-        _item.termType === "Literal"
-          ? dataFactory.literal(
-              _item["@value"],
-              typeof _item["@language"] !== "undefined"
-                ? _item["@language"]
-                : typeof _item["@type"] !== "undefined"
-                  ? dataFactory.namedNode(_item["@type"])
-                  : undefined,
-            )
-          : _item.termType === "NamedNode"
-            ? dataFactory.namedNode(_item["@id"])
-            : dataFactory.blankNode(_item["@id"].substring(2)),
+        typeof _item === "object"
+          ? QuantitativeValueStub.fromJson(_item).unsafeCoerce()
+          : _item,
     );
     const inAlbum = purify.Maybe.fromNullable(_jsonObject["inAlbum"]).map(
       (_item) => MusicAlbumStub.fromJson(_item).unsafeCoerce(),
@@ -19758,7 +19826,8 @@ export namespace MusicRecording {
     return purify.Either.of({
       ..._super0,
       identifier,
-      byArtist,
+      byArtists,
+      duration,
       inAlbum,
       recordingOf,
     });
@@ -19781,7 +19850,8 @@ export namespace MusicRecording {
     return {
       elements: [
         CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/byArtist`, type: "Control" },
+        { scope: `${scopePrefix}/properties/byArtists`, type: "Control" },
+        { scope: `${scopePrefix}/properties/duration`, type: "Control" },
         MusicAlbumStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/inAlbum`,
         }),
@@ -19799,23 +19869,15 @@ export namespace MusicRecording {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("MusicRecording"),
-        byArtist: zod
-          .discriminatedUnion("termType", [
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("BlankNode"),
-            }),
-            zod.object({
-              "@id": zod.string().min(1),
-              termType: zod.literal("NamedNode"),
-            }),
-            zod.object({
-              "@language": zod.string().optional(),
-              "@type": zod.string().optional(),
-              "@value": zod.string(),
-              termType: zod.literal("Literal"),
-            }),
+        byArtists: zod
+          .discriminatedUnion("type", [
+            MusicGroupStub.jsonZodSchema(),
+            PersonStub.jsonZodSchema(),
           ])
+          .array()
+          .default(() => []),
+        duration: zod
+          .union([zod.string(), QuantitativeValueStub.jsonZodSchema()])
           .optional(),
         inAlbum: MusicAlbumStub.jsonZodSchema().optional(),
         recordingOf: MusicCompositionStub.jsonZodSchema().optional(),
@@ -19838,7 +19900,8 @@ export namespace MusicRecording {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      byArtist: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
+      byArtists: readonly (MusicGroupStub | PersonStub)[];
+      duration: purify.Maybe<string | QuantitativeValueStub>;
       inAlbum: purify.Maybe<MusicAlbumStub>;
       recordingOf: purify.Maybe<MusicCompositionStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
@@ -19870,23 +19933,98 @@ export namespace MusicRecording {
     }
 
     const identifier = _resource.identifier;
-    const _byArtistEither: purify.Either<
+    const _byArtistsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
-    > = purify.Either.of(
-      _resource
+      readonly (MusicGroupStub | PersonStub)[]
+    > = purify.Either.of([
+      ..._resource
         .values(dataFactory.namedNode("http://schema.org/byArtist"), {
           unique: true,
         })
-        .head()
-        .chain((_value) => purify.Either.of(_value.toTerm()))
-        .toMaybe(),
-    );
-    if (_byArtistEither.isLeft()) {
-      return _byArtistEither;
+        .flatMap((_item) =>
+          (
+            _item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                MusicGroupStub.fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              MusicGroupStub | PersonStub
+            >
+          )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    PersonStub.fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicGroupStub | PersonStub
+                >,
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_byArtistsEither.isLeft()) {
+      return _byArtistsEither;
     }
 
-    const byArtist = _byArtistEither.unsafeCoerce();
+    const byArtists = _byArtistsEither.unsafeCoerce();
+    const _durationEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string | QuantitativeValueStub>
+    > = purify.Either.of(
+      (
+        _resource
+          .values(dataFactory.namedNode("http://schema.org/duration"), {
+            unique: true,
+          })
+          .head()
+          .chain((_value) => _value.toString()) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          string | QuantitativeValueStub
+        >
+      )
+        .altLazy(
+          () =>
+            _resource
+              .values(dataFactory.namedNode("http://schema.org/duration"), {
+                unique: true,
+              })
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                QuantitativeValueStub.fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              string | QuantitativeValueStub
+            >,
+        )
+        .toMaybe(),
+    );
+    if (_durationEither.isLeft()) {
+      return _durationEither;
+    }
+
+    const duration = _durationEither.unsafeCoerce();
     const _inAlbumEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<MusicAlbumStub>
@@ -19940,7 +20078,8 @@ export namespace MusicRecording {
     return purify.Either.of({
       ..._super0,
       identifier,
-      byArtist,
+      byArtists,
+      duration,
       inAlbum,
       recordingOf,
     });
@@ -19957,6 +20096,7 @@ export namespace MusicRecording {
   export const rdfProperties = [
     ...CreativeWorkStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/byArtist") },
+    { path: dataFactory.namedNode("http://schema.org/duration") },
     { path: dataFactory.namedNode("http://schema.org/inAlbum") },
     { path: dataFactory.namedNode("http://schema.org/recordingOf") },
   ];
@@ -21345,7 +21485,7 @@ export class MusicComposition extends CreativeWork {
     } else if (typeof parameters.recordedAs === "undefined") {
       this.recordedAs = purify.Maybe.empty();
     } else {
-      this.recordedAs = parameters.recordedAs as never;
+      this.recordedAs = parameters.recordedAs satisfies never;
     }
   }
 
@@ -21899,14 +22039,22 @@ export namespace MusicCompositionStub {
 }
 export class MusicAlbum extends CreativeWork {
   override readonly type = "MusicAlbum";
+  readonly byArtists: readonly (MusicGroupStub | PersonStub)[];
 
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly byArtists?: readonly (MusicGroupStub | PersonStub)[];
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
+    if (typeof parameters.byArtists === "undefined") {
+      this.byArtists = [];
+    } else if (typeof parameters.byArtists === "object") {
+      this.byArtists = parameters.byArtists;
+    } else {
+      this.byArtists = parameters.byArtists satisfies never;
+    }
   }
 
   override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
@@ -21914,6 +22062,95 @@ export class MusicAlbum extends CreativeWork {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
+  }
+
+  override equals(other: MusicAlbum): $EqualsResult {
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(
+          left,
+          right,
+          (
+            left: MusicGroupStub | PersonStub,
+            right: MusicGroupStub | PersonStub,
+          ) => {
+            if (
+              left.type === "MusicGroupStub" &&
+              right.type === "MusicGroupStub"
+            ) {
+              return ((left, right) => left.equals(right))(left, right);
+            }
+            if (left.type === "PersonStub" && right.type === "PersonStub") {
+              return ((left, right) => left.equals(right))(left, right);
+            }
+
+            return purify.Left({
+              left,
+              right,
+              propertyName: "type",
+              propertyValuesUnequal: {
+                left: typeof left,
+                right: typeof right,
+                type: "BooleanEquals" as const,
+              },
+              type: "Property" as const,
+            });
+          },
+        ))(this.byArtists, other.byArtists).mapLeft(
+        (propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "byArtists",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        }),
+      ),
+    );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    for (const _item0 of this.byArtists) {
+      switch (_item0.type) {
+        case "MusicGroupStub": {
+          _item0.hash(_hasher);
+          break;
+        }
+        case "PersonStub": {
+          _item0.hash(_hasher);
+          break;
+        }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    }
+
+    return _hasher;
+  }
+
+  override toJson(): MusicAlbum.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        byArtists: this.byArtists.map((_item) =>
+          _item.type === "PersonStub" ? _item.toJson() : _item.toJson(),
+        ),
+      } satisfies MusicAlbum.Json),
+    );
   }
 
   override toRdf({
@@ -21939,6 +22176,14 @@ export class MusicAlbum extends CreativeWork {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/byArtist"),
+      this.byArtists.map((_item) =>
+        _item.type === "PersonStub"
+          ? _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
     return _resource;
   }
 
@@ -21951,15 +22196,18 @@ export namespace MusicAlbum {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicAlbum",
   );
-  export type Json = CreativeWorkStatic.Json;
+  export type Json = {
+    readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
+  } & CreativeWorkStatic.Json;
 
   export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof CreativeWorkStatic.propertiesFromJson>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      byArtists: readonly (MusicGroupStub | PersonStub)[];
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -21976,7 +22224,12 @@ export namespace MusicAlbum {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
+    const byArtists = _jsonObject["byArtists"].map((_item) =>
+      _item.type === "PersonStub"
+        ? PersonStub.fromJson(_item).unsafeCoerce()
+        : MusicGroupStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, byArtists });
   }
 
   export function fromJson(
@@ -21994,7 +22247,10 @@ export namespace MusicAlbum {
   export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [CreativeWorkStatic.jsonUiSchema({ scopePrefix })],
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/byArtists`, type: "Control" },
+      ],
       label: "MusicAlbum",
       type: "Group",
     };
@@ -22005,6 +22261,13 @@ export namespace MusicAlbum {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("MusicAlbum"),
+        byArtists: zod
+          .discriminatedUnion("type", [
+            MusicGroupStub.jsonZodSchema(),
+            PersonStub.jsonZodSchema(),
+          ])
+          .array()
+          .default(() => []),
       }),
     );
   }
@@ -22022,9 +22285,10 @@ export namespace MusicAlbum {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      byArtists: readonly (MusicGroupStub | PersonStub)[];
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStatic.propertiesFromRdf({
       ..._context,
@@ -22053,7 +22317,58 @@ export namespace MusicAlbum {
     }
 
     const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
+    const _byArtistsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly (MusicGroupStub | PersonStub)[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/byArtist"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          (
+            _item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                MusicGroupStub.fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              MusicGroupStub | PersonStub
+            >
+          )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    PersonStub.fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicGroupStub | PersonStub
+                >,
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_byArtistsEither.isLeft()) {
+      return _byArtistsEither;
+    }
+
+    const byArtists = _byArtistsEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, byArtists });
   }
 
   export function fromRdf(
@@ -22064,7 +22379,10 @@ export namespace MusicAlbum {
     );
   }
 
-  export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/byArtist") },
+  ];
 }
 export class MusicAlbumStub extends CreativeWorkStub {
   override readonly type = "MusicAlbumStub";
@@ -22372,7 +22690,7 @@ export class MonetaryAmount extends StructuredValue {
     } else if (typeof parameters.currency === "undefined") {
       this.currency = purify.Maybe.empty();
     } else {
-      this.currency = parameters.currency as never;
+      this.currency = parameters.currency satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.value)) {
@@ -22382,7 +22700,7 @@ export class MonetaryAmount extends StructuredValue {
     } else if (typeof parameters.value === "undefined") {
       this.value = purify.Maybe.empty();
     } else {
-      this.value = parameters.value as never;
+      this.value = parameters.value satisfies never;
     }
   }
 
@@ -22684,7 +23002,7 @@ export class MonetaryAmountStub extends StructuredValueStub {
     } else if (typeof parameters.currency === "undefined") {
       this.currency = purify.Maybe.empty();
     } else {
-      this.currency = parameters.currency as never;
+      this.currency = parameters.currency satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.value)) {
@@ -22694,7 +23012,7 @@ export class MonetaryAmountStub extends StructuredValueStub {
     } else if (typeof parameters.value === "undefined") {
       this.value = purify.Maybe.empty();
     } else {
-      this.value = parameters.value as never;
+      this.value = parameters.value satisfies never;
     }
   }
 
@@ -23155,7 +23473,7 @@ export class Message extends CreativeWork {
     } else if (typeof parameters.sender === "undefined") {
       this.sender = purify.Maybe.empty();
     } else {
-      this.sender = parameters.sender as never;
+      this.sender = parameters.sender satisfies never;
     }
   }
 
@@ -23716,7 +24034,7 @@ export class Invoice extends Intangible {
     } else if (typeof parameters.category === "undefined") {
       this.category = purify.Maybe.empty();
     } else {
-      this.category = parameters.category as never;
+      this.category = parameters.category satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.provider)) {
@@ -23726,15 +24044,15 @@ export class Invoice extends Intangible {
     } else if (typeof parameters.provider === "undefined") {
       this.provider = purify.Maybe.empty();
     } else {
-      this.provider = parameters.provider as never;
+      this.provider = parameters.provider satisfies never;
     }
 
     if (typeof parameters.referencesOrder === "undefined") {
       this.referencesOrder = [];
-    } else if (Array.isArray(parameters.referencesOrder)) {
+    } else if (typeof parameters.referencesOrder === "object") {
       this.referencesOrder = parameters.referencesOrder;
     } else {
-      this.referencesOrder = parameters.referencesOrder as never;
+      this.referencesOrder = parameters.referencesOrder satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.totalPaymentDue)) {
@@ -23747,7 +24065,7 @@ export class Invoice extends Intangible {
     } else if (typeof parameters.totalPaymentDue === "undefined") {
       this.totalPaymentDue = purify.Maybe.empty();
     } else {
-      this.totalPaymentDue = parameters.totalPaymentDue as never;
+      this.totalPaymentDue = parameters.totalPaymentDue satisfies never;
     }
   }
 
@@ -24485,7 +24803,7 @@ export class PersonStub extends ThingStub {
     } else if (typeof parameters.jobTitle === "undefined") {
       this.jobTitle = purify.Maybe.empty();
     } else {
-      this.jobTitle = parameters.jobTitle as never;
+      this.jobTitle = parameters.jobTitle satisfies never;
     }
   }
 

@@ -10,8 +10,10 @@ import {
   Event,
   MediaObjectStub,
   MessageStub,
+  MusicAlbum,
   MusicAlbumStub,
   MusicCompositionStub,
+  MusicGroup,
   MusicGroupStub,
   MusicRecordingStub,
   Organization,
@@ -58,6 +60,10 @@ function stubifyThing(thing: Thing): {
 /**
  * Convert a model to its stub equivalent e.g., Organization to OrganizationStub.
  */
+export function stubify(musicAlbum: MusicAlbum): MusicAlbumStub;
+
+export function stubify(musicGroup: MusicGroup): MusicGroupStub;
+
 export function stubify(organization: Organization): OrganizationStub;
 
 export function stubify(person: Person): PersonStub;

@@ -575,7 +575,20 @@ schema:MonetaryAmount-value
 schema:MusicAlbum
     shaclmate:name "MusicAlbum" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:CreativeWork .
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicAlbum-byArtists .
+
+schema:MusicAlbum-byArtists
+    a sh:PropertyShape ;
+    sh:name "byArtists" ;
+    sh:path schema:byArtist ;
+    sh:xone ([
+            sh:node sdapps:MusicGroupStub
+        ]
+        [
+            sh:node sdapps:PersonStub
+        ]
+    ) .
 
 schema:MusicComposition
     shaclmate:name "MusicComposition" ;
@@ -599,18 +612,30 @@ schema:MusicRecording
     shaclmate:name "MusicRecording" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:CreativeWork ;
-    sh:property schema:MusicRecording-byArtist, schema:MusicRecording-inAlbum, schema:MusicRecording-recordingOf .
+    sh:property schema:MusicRecording-byArtists, schema:MusicRecording-duration, schema:MusicRecording-inAlbum, schema:MusicRecording-recordingOf .
 
-schema:MusicRecording-byArtist
+schema:MusicRecording-byArtists
     a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:name "byArtist" ;
+    sh:name "byArtists" ;
     sh:path schema:byArtist ;
-    sh:xor ([
+    sh:xone ([
             sh:node sdapps:MusicGroupStub
         ]
         [
             sh:node sdapps:PersonStub
+        ]
+    ) .
+
+schema:MusicRecording-duration
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "duration" ;
+    sh:path schema:duration ;
+    sh:xone ([
+            sh:datatype xsd:string
+        ]
+        [
+            sh:node sdapps:QuantitativeValueStub
         ]
     ) .
 
