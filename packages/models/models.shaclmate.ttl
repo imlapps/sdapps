@@ -133,6 +133,12 @@ sdapps:MusicGroupStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:PerformingGroupStub .
 
+sdapps:MusicPlaylistStub
+    shaclmate:name "MusicPlaylistStub" ;
+    shaclmate:rdfType schema:MusicPlaylist ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:MusicRecordingStub
     shaclmate:name "MusicRecordingStub" ;
     shaclmate:rdfType schema:MusicRecording ;
@@ -318,7 +324,7 @@ schema:CreativeWork
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-isBasedOn, schema:CreativeWork-publication .
+    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-hasParts, schema:CreativeWork-isBasedOn, schema:CreativeWork-isPartOf, schema:CreativeWork-publication .
 
 schema:CreativeWork-about
     a sh:PropertyShape ;
@@ -339,9 +345,10 @@ schema:CreativeWork-datePublished
     sh:name "datePublished" ;
     sh:path schema:datePublished .
 
-schema:CreativeWork-hasPart
+schema:CreativeWork-hasParts
+    shaclmate:mutable true ;
     a sh:PropertyShape ;
-    sh:name "hasPart" ;
+    sh:name "hasParts" ;
     sh:node sdapps:CreativeWorkStub ;
     sh:path schema:hasPart .
 
@@ -615,11 +622,24 @@ schema:MusicGroup
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:PerformingGroup .
 
+schema:MusicPlaylist
+    shaclmate:name "MusicPlaylist" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicPlaylist-tracks .
+
+schema:MusicPlaylist-tracks
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "tracks" ;
+    sh:node sdapps:MusicRecordingStub ;
+    sh:path schema:track .
+
 schema:MusicRecording
     shaclmate:name "MusicRecording" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:CreativeWork ;
-    sh:property schema:MusicRecording-byArtists, schema:MusicRecording-duration, schema:MusicRecording-inAlbum, schema:MusicRecording-recordingOf .
+    sh:property schema:MusicRecording-byArtists, schema:MusicRecording-duration, schema:MusicRecording-inAlbum, schema:MusicRecording-inPlaylists, schema:MusicRecording-recordingOf .
 
 schema:MusicRecording-byArtists
     a sh:PropertyShape ;
@@ -652,6 +672,12 @@ schema:MusicRecording-inAlbum
     sh:name "inAlbum" ;
     sh:node sdapps:MusicAlbumStub ;
     sh:path schema:inAlbum .
+
+schema:MusicRecording-inPlaylists
+    a sh:PropertyShape ;
+    sh:name "inPlaylists" ;
+    sh:node sdapps:MusicPlaylistStub ;
+    sh:path schema:inPlaylist .
 
 schema:MusicRecording-recordingOf
     a sh:PropertyShape ;

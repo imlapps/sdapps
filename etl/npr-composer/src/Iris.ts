@@ -35,14 +35,27 @@ export namespace Iris {
   const nprComposerApiBaseUrl = "https://api.composer.nprstations.org/v1/";
   const radioBaseIri = "http://purl.org/sdapps/instance/radio/";
 
-  export function broadcastEvent({ episodeId }: { episodeId: string }) {
+  export function episode(id: string): NamedNode {
+    return dataFactory.namedNode(`${nprComposerApiBaseUrl}episode/${id}`);
+  }
+
+  export function episodeBroadcastEvent({ episodeId }: { episodeId: string }) {
     return dataFactory.namedNode(
       `${Iris.episode(episodeId).value}/broadcast-event`,
     );
   }
 
-  export function episode(id: string): NamedNode {
-    return dataFactory.namedNode(`${nprComposerApiBaseUrl}episode/${id}`);
+  export function episodePlaylist({ episodeId }: { episodeId: string }) {
+    return dataFactory.namedNode(`${Iris.episode(episodeId).value}/playlist`);
+  }
+
+  export function episodePlaylistItem({
+    episodeId,
+    playlistItemId,
+  }: { episodeId: string; playlistItemId: string }) {
+    return dataFactory.namedNode(
+      `${Iris.episode(episodeId).value}/playlist/${playlistItemId}`,
+    );
   }
 
   export function musicAlbum(playlistItem: PlaylistItem): NamedNode {

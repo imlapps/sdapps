@@ -4,6 +4,7 @@ import {
   MusicAlbum,
   MusicComposition,
   MusicGroup,
+  MusicPlaylist,
   MusicRecording,
   RadioBroadcastService,
   RadioEpisode,
@@ -24,6 +25,23 @@ import { logger } from "./logger";
 
 type PlaylistJson = z.infer<typeof playlistJsonSchema>;
 
+function durationSecondsToDuration(durationSeconds: number): dates.Duration {
+  const duration: dates.Duration = {};
+  let durationSecondsLeft = durationSeconds;
+  duration.hours =
+    durationSecondsLeft >= 3600
+      ? Math.floor(durationSecondsLeft / 3600)
+      : undefined;
+  durationSecondsLeft %= 3600;
+  duration.minutes =
+    durationSecondsLeft >= 60
+      ? Math.floor(durationSecondsLeft / 60)
+      : undefined;
+  durationSecondsLeft %= 60;
+  duration.seconds = durationSecondsLeft > 0 ? durationSecondsLeft : undefined;
+  return duration;
+}
+
 async function* transformPlaylistJson({
   playlistJson,
   radioBroadcastService,
@@ -35,7 +53,7 @@ async function* transformPlaylistJson({
 }): AsyncIterable<Thing> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
     endDate: new Date(playlistJson.end_utc),
-    identifier: Iris.broadcastEvent({
+    identifier: Iris.episodeBroadcastEvent({
       episodeId: playlistJson.episode_id,
     }),
     publishedOn: stubify(radioBroadcastService),
@@ -52,8 +70,9 @@ async function* transformPlaylistJson({
     partOfSeries: stubify(radioSeries),
     publication: [stubify(radioEpisodeBroadcastEvent)],
   });
+  const radioEpisodeStub = stubify(radioEpisode);
 
-  radioSeries.episodes.push(stubify(radioEpisode));
+  radioSeries.episodes.push(radioEpisodeStub);
   yield radioSeries;
 
   const ucsUtcOffsetMs =
@@ -62,6 +81,13 @@ async function* transformPlaylistJson({
   invariant(ucsUtcOffsetMs % (1000 * 60 * 60) === 0);
   const utcOffsetHours = ucsUtcOffsetMs / (1000 * 60 * 60);
   // logger.debug(`UCS UTC offset hours: ${utcOffsetHours}`);
+
+  const musicPlaylist = new MusicPlaylist({
+    identifier: Iris.episodePlaylist({ episodeId: playlistJson.episode_id }),
+    isPartOf: [radioEpisodeStub],
+  });
+  const musicPlaylistStub = stubify(musicPlaylist);
+  radioEpisode.hasParts.push(musicPlaylistStub);
 
   for (const playlistItemJson of playlistJson.playlist) {
     // 05-05-2025 00:00:00
@@ -131,25 +157,30 @@ async function* transformPlaylistJson({
       : undefined;
 
     const musicRecording = new MusicRecording({
-      duration: dates.formatISODuration({
-        seconds: playlistItemJson._duration,
-      }),
+      duration: dates.formatISODuration(
+        durationSecondsToDuration(playlistItemJson._duration / 1000),
+      ),
       byArtists: musicGroupStubs,
       inAlbum: musicAlbum ? stubify(musicAlbum) : undefined,
       identifier: Iris.musicRecording(playlistItemJson),
+      inPlaylists: [musicPlaylistStub],
       name: playlistItemJson.trackName,
       recordingOf: musicComposition ? stubify(musicComposition) : undefined,
     });
     yield musicRecording;
+    const musicRecordingStub = stubify(musicRecording);
 
     if (musicComposition) {
-      musicComposition.recordedAs.push(stubify(musicRecording));
+      musicComposition.recordedAs.push(musicRecordingStub);
       yield musicComposition;
     }
+
+    musicPlaylist.tracks.push(musicRecordingStub);
   }
 
   yield radioEpisode;
   yield radioEpisodeBroadcastEvent;
+  yield musicPlaylist;
 }
 
 export async function* transform({

@@ -16,6 +16,8 @@ import {
   MusicCompositionStub,
   MusicGroup,
   MusicGroupStub,
+  MusicPlaylist,
+  MusicPlaylistStub,
   MusicRecording,
   MusicRecordingStub,
   Organization,
@@ -67,6 +69,8 @@ export function stubify(model: MusicAlbum): MusicAlbumStub;
 export function stubify(model: MusicComposition): MusicCompositionStub;
 
 export function stubify(model: MusicGroup): MusicGroupStub;
+
+export function stubify(model: MusicPlaylist): MusicPlaylistStub;
 
 export function stubify(model: MusicRecording): MusicRecordingStub;
 
@@ -124,6 +128,8 @@ export function stubify(
       return new MusicGroupStub(stubifyThing(model));
     case "MusicComposition":
       return new MusicCompositionStub(stubifyThing(model));
+    case "MusicPlaylist":
+      return new MusicPlaylistStub(stubifyThing(model));
     case "MusicRecording":
       return new MusicRecordingStub(stubifyThing(model));
     case "Organization":

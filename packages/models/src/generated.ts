@@ -242,6 +242,8 @@ export abstract class Model {
     | "MusicCompositionStub"
     | "MusicGroup"
     | "MusicGroupStub"
+    | "MusicPlaylist"
+    | "MusicPlaylistStub"
     | "MusicRecording"
     | "MusicRecordingStub"
     | "Occupation"
@@ -396,6 +398,8 @@ export namespace ModelStatic {
       | "MusicCompositionStub"
       | "MusicGroup"
       | "MusicGroupStub"
+      | "MusicPlaylist"
+      | "MusicPlaylistStub"
       | "MusicRecording"
       | "MusicRecordingStub"
       | "Occupation"
@@ -532,6 +536,8 @@ export namespace ModelStatic {
         "MusicCompositionStub",
         "MusicGroup",
         "MusicGroupStub",
+        "MusicPlaylist",
+        "MusicPlaylistStub",
         "MusicRecording",
         "MusicRecordingStub",
         "Occupation",
@@ -688,6 +694,7 @@ export class Thing extends Model {
     | "MusicAlbum"
     | "MusicComposition"
     | "MusicGroup"
+    | "MusicPlaylist"
     | "MusicRecording"
     | "Occupation"
     | "Order"
@@ -922,6 +929,12 @@ export class Thing extends Model {
                 return ((left, right) => left.equals(right))(left, right);
               }
               if (
+                left.type === "MusicPlaylistStub" &&
+                right.type === "MusicPlaylistStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
                 left.type === "MusicRecordingStub" &&
                 right.type === "MusicRecordingStub"
               ) {
@@ -1037,6 +1050,7 @@ export class Thing extends Model {
         case "MessageStub":
         case "MusicAlbumStub":
         case "MusicCompositionStub":
+        case "MusicPlaylistStub":
         case "MusicRecordingStub":
         case "RadioEpisodeStub":
         case "RadioSeriesStub":
@@ -1298,6 +1312,7 @@ export namespace ThingStatic {
           "MusicAlbum",
           "MusicComposition",
           "MusicGroup",
+          "MusicPlaylist",
           "MusicRecording",
           "Occupation",
           "Order",
@@ -2523,6 +2538,7 @@ export class CreativeWork extends Thing {
     | "Message"
     | "MusicAlbum"
     | "MusicComposition"
+    | "MusicPlaylist"
     | "MusicRecording"
     | "RadioEpisode"
     | "RadioSeries"
@@ -2531,7 +2547,9 @@ export class CreativeWork extends Thing {
   readonly about: readonly ThingStub[];
   readonly authors: readonly AgentStub[];
   readonly datePublished: purify.Maybe<Date>;
+  hasParts: CreativeWorkStub[];
   readonly isBasedOn: readonly rdfjs.NamedNode[];
+  readonly isPartOf: readonly CreativeWorkStub[];
   readonly publication: readonly PublicationEventStub[];
 
   constructor(
@@ -2540,7 +2558,9 @@ export class CreativeWork extends Thing {
       readonly about?: readonly ThingStub[];
       readonly authors?: readonly AgentStub[];
       readonly datePublished?: Date | purify.Maybe<Date>;
+      readonly hasParts?: readonly CreativeWorkStub[];
       readonly isBasedOn?: readonly rdfjs.NamedNode[];
+      readonly isPartOf?: readonly CreativeWorkStub[];
       readonly publication?: readonly PublicationEventStub[];
     } & ConstructorParameters<typeof Thing>[0],
   ) {
@@ -2574,12 +2594,28 @@ export class CreativeWork extends Thing {
       this.datePublished = parameters.datePublished satisfies never;
     }
 
+    if (typeof parameters.hasParts === "undefined") {
+      this.hasParts = [];
+    } else if (typeof parameters.hasParts === "object") {
+      this.hasParts = parameters.hasParts.concat();
+    } else {
+      this.hasParts = parameters.hasParts satisfies never;
+    }
+
     if (typeof parameters.isBasedOn === "undefined") {
       this.isBasedOn = [];
     } else if (typeof parameters.isBasedOn === "object") {
       this.isBasedOn = parameters.isBasedOn;
     } else {
       this.isBasedOn = parameters.isBasedOn satisfies never;
+    }
+
+    if (typeof parameters.isPartOf === "undefined") {
+      this.isPartOf = [];
+    } else if (typeof parameters.isPartOf === "object") {
+      this.isPartOf = parameters.isPartOf;
+    } else {
+      this.isPartOf = parameters.isPartOf satisfies never;
     }
 
     if (typeof parameters.publication === "undefined") {
@@ -2639,6 +2675,19 @@ export class CreativeWork extends Thing {
         })),
       )
       .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.hasParts,
+          other.hasParts,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "hasParts",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) => $arrayEquals(left, right, $booleanEquals))(
           this.isBasedOn,
           other.isBasedOn,
@@ -2646,6 +2695,19 @@ export class CreativeWork extends Thing {
           left: this,
           right: other,
           propertyName: "isBasedOn",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.isPartOf,
+          other.isPartOf,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "isPartOf",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2691,9 +2753,17 @@ export class CreativeWork extends Thing {
     this.datePublished.ifJust((_value0) => {
       _hasher.update(_value0.toISOString());
     });
+    for (const _item0 of this.hasParts) {
+      _item0.hash(_hasher);
+    }
+
     for (const _item0 of this.isBasedOn) {
       _hasher.update(_item0.termType);
       _hasher.update(_item0.value);
+    }
+
+    for (const _item0 of this.isPartOf) {
+      _item0.hash(_hasher);
     }
 
     for (const _item0 of this.publication) {
@@ -2712,7 +2782,9 @@ export class CreativeWork extends Thing {
         datePublished: this.datePublished
           .map((_item) => _item.toISOString())
           .extract(),
+        hasParts: this.hasParts.map((_item) => _item.toJson()),
         isBasedOn: this.isBasedOn.map((_item) => ({ "@id": _item.value })),
+        isPartOf: this.isPartOf.map((_item) => _item.toJson()),
         publication: this.publication.map((_item) => _item.toJson()),
       } satisfies CreativeWorkStatic.Json),
     );
@@ -2765,8 +2837,20 @@ export class CreativeWork extends Thing {
       ),
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/hasPart"),
+      this.hasParts.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/isBasedOn"),
       this.isBasedOn.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/isPartOf"),
+      this.isPartOf.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/publication"),
@@ -2793,7 +2877,9 @@ export namespace CreativeWorkStatic {
       | PersonStub.Json
     )[];
     readonly datePublished: string | undefined;
+    readonly hasParts: readonly CreativeWorkStubStatic.Json[];
     readonly isBasedOn: readonly { readonly "@id": string }[];
+    readonly isPartOf: readonly CreativeWorkStubStatic.Json[];
     readonly publication: readonly PublicationEventStub.Json[];
   } & ThingStatic.Json;
 
@@ -2806,7 +2892,9 @@ export namespace CreativeWorkStatic {
       about: readonly ThingStub[];
       authors: readonly AgentStub[];
       datePublished: purify.Maybe<Date>;
+      hasParts: CreativeWorkStub[];
       isBasedOn: readonly rdfjs.NamedNode[];
+      isPartOf: readonly CreativeWorkStub[];
       publication: readonly PublicationEventStub[];
     } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
@@ -2834,8 +2922,14 @@ export namespace CreativeWorkStatic {
     const datePublished = purify.Maybe.fromNullable(
       _jsonObject["datePublished"],
     ).map((_item) => new Date(_item));
+    const hasParts = _jsonObject["hasParts"].map((_item) =>
+      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
+    );
     const isBasedOn = _jsonObject["isBasedOn"].map((_item) =>
       dataFactory.namedNode(_item["@id"]),
+    );
+    const isPartOf = _jsonObject["isPartOf"].map((_item) =>
+      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const publication = _jsonObject["publication"].map((_item) =>
       PublicationEventStub.fromJson(_item).unsafeCoerce(),
@@ -2846,7 +2940,9 @@ export namespace CreativeWorkStatic {
       about,
       authors,
       datePublished,
+      hasParts,
       isBasedOn,
+      isPartOf,
       publication,
     });
   }
@@ -2898,6 +2994,13 @@ export namespace CreativeWorkStatic {
       )
       .altLazy(
         () =>
+          MusicPlaylist.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
           MusicRecording.fromJson(json) as purify.Either<
             zod.ZodError,
             CreativeWork
@@ -2924,7 +3027,13 @@ export namespace CreativeWorkStatic {
         }),
         { scope: `${scopePrefix}/properties/authors`, type: "Control" },
         { scope: `${scopePrefix}/properties/datePublished`, type: "Control" },
+        CreativeWorkStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/hasParts`,
+        }),
         { scope: `${scopePrefix}/properties/isBasedOn`, type: "Control" },
+        CreativeWorkStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/isPartOf`,
+        }),
         PublicationEventStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/publication`,
         }),
@@ -2948,6 +3057,7 @@ export namespace CreativeWorkStatic {
           "Message",
           "MusicAlbum",
           "MusicComposition",
+          "MusicPlaylist",
           "MusicRecording",
           "RadioEpisode",
           "RadioSeries",
@@ -2961,8 +3071,14 @@ export namespace CreativeWorkStatic {
           .array()
           .default(() => []),
         datePublished: zod.string().datetime().optional(),
+        hasParts: CreativeWorkStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
         isBasedOn: zod
           .object({ "@id": zod.string().min(1) })
+          .array()
+          .default(() => []),
+        isPartOf: CreativeWorkStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
         publication: PublicationEventStub.jsonZodSchema()
@@ -2990,7 +3106,9 @@ export namespace CreativeWorkStatic {
       about: readonly ThingStub[];
       authors: readonly AgentStub[];
       datePublished: purify.Maybe<Date>;
+      hasParts: CreativeWorkStub[];
       isBasedOn: readonly rdfjs.NamedNode[];
+      isPartOf: readonly CreativeWorkStub[];
       publication: readonly PublicationEventStub[];
     } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
@@ -3097,6 +3215,36 @@ export namespace CreativeWorkStatic {
     }
 
     const datePublished = _datePublishedEither.unsafeCoerce();
+    const _hasPartsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      CreativeWorkStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/hasPart"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              CreativeWorkStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_hasPartsEither.isLeft()) {
+      return _hasPartsEither;
+    }
+
+    const hasParts = _hasPartsEither.unsafeCoerce();
     const _isBasedOnEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode[]
@@ -3119,6 +3267,36 @@ export namespace CreativeWorkStatic {
     }
 
     const isBasedOn = _isBasedOnEither.unsafeCoerce();
+    const _isPartOfEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly CreativeWorkStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/isPartOf"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              CreativeWorkStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_isPartOfEither.isLeft()) {
+      return _isPartOfEither;
+    }
+
+    const isPartOf = _isPartOfEither.unsafeCoerce();
     const _publicationEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly PublicationEventStub[]
@@ -3155,7 +3333,9 @@ export namespace CreativeWorkStatic {
       about,
       authors,
       datePublished,
+      hasParts,
       isBasedOn,
+      isPartOf,
       publication,
     });
   }
@@ -3214,6 +3394,13 @@ export namespace CreativeWorkStatic {
       )
       .altLazy(
         () =>
+          MusicPlaylist.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
           MusicRecording.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWork
@@ -3231,7 +3418,9 @@ export namespace CreativeWorkStatic {
     { path: dataFactory.namedNode("http://schema.org/about") },
     { path: dataFactory.namedNode("http://schema.org/author") },
     { path: dataFactory.namedNode("http://schema.org/datePublished") },
+    { path: dataFactory.namedNode("http://schema.org/hasPart") },
     { path: dataFactory.namedNode("http://schema.org/isBasedOn") },
+    { path: dataFactory.namedNode("http://schema.org/isPartOf") },
     { path: dataFactory.namedNode("http://schema.org/publication") },
   ];
 }
@@ -6660,6 +6849,7 @@ export class ThingStub extends Model {
     | "MusicAlbumStub"
     | "MusicCompositionStub"
     | "MusicGroupStub"
+    | "MusicPlaylistStub"
     | "MusicRecordingStub"
     | "OrderStub"
     | "OrganizationStub"
@@ -6949,6 +7139,7 @@ export namespace ThingStubStatic {
           "MusicAlbumStub",
           "MusicCompositionStub",
           "MusicGroupStub",
+          "MusicPlaylistStub",
           "MusicRecordingStub",
           "OrderStub",
           "OrganizationStub",
@@ -8745,6 +8936,7 @@ export class CreativeWorkStub extends ThingStub {
     | "MessageStub"
     | "MusicAlbumStub"
     | "MusicCompositionStub"
+    | "MusicPlaylistStub"
     | "MusicRecordingStub"
     | "RadioEpisodeStub"
     | "RadioSeriesStub"
@@ -8883,6 +9075,13 @@ export namespace CreativeWorkStubStatic {
       )
       .altLazy(
         () =>
+          MusicPlaylistStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
           MusicRecordingStub.fromJson(json) as purify.Either<
             zod.ZodError,
             CreativeWorkStub
@@ -8921,6 +9120,7 @@ export namespace CreativeWorkStubStatic {
           "MessageStub",
           "MusicAlbumStub",
           "MusicCompositionStub",
+          "MusicPlaylistStub",
           "MusicRecordingStub",
           "RadioEpisodeStub",
           "RadioSeriesStub",
@@ -9028,6 +9228,13 @@ export namespace CreativeWorkStubStatic {
       .altLazy(
         () =>
           MusicCompositionStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWorkStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicPlaylistStub.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             CreativeWorkStub
           >,
@@ -19457,6 +19664,7 @@ export class MusicRecording extends CreativeWork {
   readonly byArtists: readonly (MusicGroupStub | PersonStub)[];
   readonly duration: purify.Maybe<string | QuantitativeValueStub>;
   readonly inAlbum: purify.Maybe<MusicAlbumStub>;
+  readonly inPlaylists: readonly MusicPlaylistStub[];
   readonly recordingOf: purify.Maybe<MusicCompositionStub>;
 
   constructor(
@@ -19468,6 +19676,7 @@ export class MusicRecording extends CreativeWork {
         | purify.Maybe<string | QuantitativeValueStub>
         | string;
       readonly inAlbum?: MusicAlbumStub | purify.Maybe<MusicAlbumStub>;
+      readonly inPlaylists?: readonly MusicPlaylistStub[];
       readonly recordingOf?:
         | MusicCompositionStub
         | purify.Maybe<MusicCompositionStub>;
@@ -19505,6 +19714,14 @@ export class MusicRecording extends CreativeWork {
       this.inAlbum = purify.Maybe.empty();
     } else {
       this.inAlbum = parameters.inAlbum satisfies never;
+    }
+
+    if (typeof parameters.inPlaylists === "undefined") {
+      this.inPlaylists = [];
+    } else if (typeof parameters.inPlaylists === "object") {
+      this.inPlaylists = parameters.inPlaylists;
+    } else {
+      this.inPlaylists = parameters.inPlaylists satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.recordingOf)) {
@@ -19625,6 +19842,19 @@ export class MusicRecording extends CreativeWork {
       )
       .chain(() =>
         ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.inPlaylists,
+          other.inPlaylists,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "inPlaylists",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
           $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.recordingOf,
           other.recordingOf,
@@ -19687,6 +19917,10 @@ export class MusicRecording extends CreativeWork {
     this.inAlbum.ifJust((_value0) => {
       _value0.hash(_hasher);
     });
+    for (const _item0 of this.inPlaylists) {
+      _item0.hash(_hasher);
+    }
+
     this.recordingOf.ifJust((_value0) => {
       _value0.hash(_hasher);
     });
@@ -19704,6 +19938,7 @@ export class MusicRecording extends CreativeWork {
           .map((_item) => (typeof _item === "object" ? _item.toJson() : _item))
           .extract(),
         inAlbum: this.inAlbum.map((_item) => _item.toJson()).extract(),
+        inPlaylists: this.inPlaylists.map((_item) => _item.toJson()),
         recordingOf: this.recordingOf.map((_item) => _item.toJson()).extract(),
       } satisfies MusicRecording.Json),
     );
@@ -19755,6 +19990,12 @@ export class MusicRecording extends CreativeWork {
       ),
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/inPlaylist"),
+      this.inPlaylists.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/recordingOf"),
       this.recordingOf.map((_value) =>
         _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
@@ -19776,6 +20017,7 @@ export namespace MusicRecording {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
     readonly duration: (string | QuantitativeValueStub.Json) | undefined;
     readonly inAlbum: MusicAlbumStub.Json | undefined;
+    readonly inPlaylists: readonly MusicPlaylistStub.Json[];
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
@@ -19788,6 +20030,7 @@ export namespace MusicRecording {
       byArtists: readonly (MusicGroupStub | PersonStub)[];
       duration: purify.Maybe<string | QuantitativeValueStub>;
       inAlbum: purify.Maybe<MusicAlbumStub>;
+      inPlaylists: readonly MusicPlaylistStub[];
       recordingOf: purify.Maybe<MusicCompositionStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
@@ -19820,6 +20063,9 @@ export namespace MusicRecording {
     const inAlbum = purify.Maybe.fromNullable(_jsonObject["inAlbum"]).map(
       (_item) => MusicAlbumStub.fromJson(_item).unsafeCoerce(),
     );
+    const inPlaylists = _jsonObject["inPlaylists"].map((_item) =>
+      MusicPlaylistStub.fromJson(_item).unsafeCoerce(),
+    );
     const recordingOf = purify.Maybe.fromNullable(
       _jsonObject["recordingOf"],
     ).map((_item) => MusicCompositionStub.fromJson(_item).unsafeCoerce());
@@ -19829,6 +20075,7 @@ export namespace MusicRecording {
       byArtists,
       duration,
       inAlbum,
+      inPlaylists,
       recordingOf,
     });
   }
@@ -19855,6 +20102,9 @@ export namespace MusicRecording {
         MusicAlbumStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/inAlbum`,
         }),
+        MusicPlaylistStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/inPlaylists`,
+        }),
         MusicCompositionStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/recordingOf`,
         }),
@@ -19880,6 +20130,9 @@ export namespace MusicRecording {
           .union([zod.string(), QuantitativeValueStub.jsonZodSchema()])
           .optional(),
         inAlbum: MusicAlbumStub.jsonZodSchema().optional(),
+        inPlaylists: MusicPlaylistStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         recordingOf: MusicCompositionStub.jsonZodSchema().optional(),
       }),
     );
@@ -19903,6 +20156,7 @@ export namespace MusicRecording {
       byArtists: readonly (MusicGroupStub | PersonStub)[];
       duration: purify.Maybe<string | QuantitativeValueStub>;
       inAlbum: purify.Maybe<MusicAlbumStub>;
+      inPlaylists: readonly MusicPlaylistStub[];
       recordingOf: purify.Maybe<MusicCompositionStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
@@ -20050,6 +20304,36 @@ export namespace MusicRecording {
     }
 
     const inAlbum = _inAlbumEither.unsafeCoerce();
+    const _inPlaylistsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly MusicPlaylistStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/inPlaylist"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              MusicPlaylistStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_inPlaylistsEither.isLeft()) {
+      return _inPlaylistsEither;
+    }
+
+    const inPlaylists = _inPlaylistsEither.unsafeCoerce();
     const _recordingOfEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<MusicCompositionStub>
@@ -20081,6 +20365,7 @@ export namespace MusicRecording {
       byArtists,
       duration,
       inAlbum,
+      inPlaylists,
       recordingOf,
     });
   }
@@ -20098,6 +20383,7 @@ export namespace MusicRecording {
     { path: dataFactory.namedNode("http://schema.org/byArtist") },
     { path: dataFactory.namedNode("http://schema.org/duration") },
     { path: dataFactory.namedNode("http://schema.org/inAlbum") },
+    { path: dataFactory.namedNode("http://schema.org/inPlaylist") },
     { path: dataFactory.namedNode("http://schema.org/recordingOf") },
   ];
 }
@@ -20368,6 +20654,574 @@ export namespace MusicRecordingStub {
                   ),
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicRecording",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class MusicPlaylist extends CreativeWork {
+  override readonly type = "MusicPlaylist";
+  tracks: MusicRecordingStub[];
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly tracks?: readonly MusicRecordingStub[];
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.tracks === "undefined") {
+      this.tracks = [];
+    } else if (typeof parameters.tracks === "object") {
+      this.tracks = parameters.tracks.concat();
+    } else {
+      this.tracks = parameters.tracks satisfies never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: MusicPlaylist): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.tracks,
+          other.tracks,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "tracks",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    for (const _item0 of this.tracks) {
+      _item0.hash(_hasher);
+    }
+
+    return _hasher;
+  }
+
+  override toJson(): MusicPlaylist.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        tracks: this.tracks.map((_item) => _item.toJson()),
+      } satisfies MusicPlaylist.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicPlaylist"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/track"),
+      this.tracks.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicPlaylist {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicPlaylist",
+  );
+  export type Json = {
+    readonly tracks: readonly MusicRecordingStub.Json[];
+  } & CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      tracks: MusicRecordingStub[];
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const tracks = _jsonObject["tracks"].map((_item) =>
+      MusicRecordingStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, tracks });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicPlaylist> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicPlaylist(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        MusicRecordingStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/tracks`,
+        }),
+      ],
+      label: "MusicPlaylist",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicPlaylist"),
+        tracks: MusicRecordingStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      tracks: MusicRecordingStub[];
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicPlaylist"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicPlaylist)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicPlaylist"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _tracksEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      MusicRecordingStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/track"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              MusicRecordingStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_tracksEither.isLeft()) {
+      return _tracksEither;
+    }
+
+    const tracks = _tracksEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, tracks });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicPlaylist.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicPlaylist> {
+    return MusicPlaylist.propertiesFromRdf(parameters).map(
+      (properties) => new MusicPlaylist(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/track") },
+  ];
+}
+export class MusicPlaylistStub extends CreativeWorkStub {
+  override readonly type = "MusicPlaylistStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof CreativeWorkStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MusicPlaylist"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MusicPlaylistStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MusicPlaylist",
+  );
+  export type Json = CreativeWorkStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      CreativeWorkStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicPlaylistStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new MusicPlaylistStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "MusicPlaylistStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("MusicPlaylistStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MusicPlaylist"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicPlaylist)`,
+          predicate: dataFactory.namedNode("http://schema.org/MusicPlaylist"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MusicPlaylistStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicPlaylistStub> {
+    return MusicPlaylistStub.propertiesFromRdf(parameters).map(
+      (properties) => new MusicPlaylistStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicPlaylistStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicPlaylistStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicPlaylistStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicPlaylistStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicPlaylistStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicPlaylistStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicPlaylistStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicPlaylist",
                   ),
                 },
               ],
@@ -25498,6 +26352,8 @@ export const $ObjectTypes = {
     MusicCompositionStub,
     MusicGroup,
     MusicGroupStub,
+    MusicPlaylist,
+    MusicPlaylistStub,
     MusicRecording,
     MusicRecordingStub,
     Occupation,
