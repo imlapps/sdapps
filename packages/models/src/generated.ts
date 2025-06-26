@@ -230,6 +230,10 @@ export abstract class Model {
     | "IntangibleStub"
     | "Invoice"
     | "InvoiceStub"
+    | "ItemList"
+    | "ItemListStub"
+    | "ListItem"
+    | "ListItemStub"
     | "MediaObject"
     | "MediaObjectStub"
     | "Message"
@@ -386,6 +390,10 @@ export namespace ModelStatic {
       | "IntangibleStub"
       | "Invoice"
       | "InvoiceStub"
+      | "ItemList"
+      | "ItemListStub"
+      | "ListItem"
+      | "ListItemStub"
       | "MediaObject"
       | "MediaObjectStub"
       | "Message"
@@ -524,6 +532,10 @@ export namespace ModelStatic {
         "IntangibleStub",
         "Invoice",
         "InvoiceStub",
+        "ItemList",
+        "ItemListStub",
+        "ListItem",
+        "ListItemStub",
         "MediaObject",
         "MediaObjectStub",
         "Message",
@@ -688,6 +700,8 @@ export class Thing extends Model {
     | "ImageObject"
     | "Intangible"
     | "Invoice"
+    | "ItemList"
+    | "ListItem"
     | "MediaObject"
     | "Message"
     | "MonetaryAmount"
@@ -1306,6 +1320,8 @@ export namespace ThingStatic {
           "ImageObject",
           "Intangible",
           "Invoice",
+          "ItemList",
+          "ListItem",
           "MediaObject",
           "Message",
           "MonetaryAmount",
@@ -1657,6 +1673,8 @@ export class Intangible extends Thing {
     | "Enumeration"
     | "GenderType"
     | "Invoice"
+    | "ItemList"
+    | "ListItem"
     | "MonetaryAmount"
     | "Occupation"
     | "Order"
@@ -1750,6 +1768,10 @@ export namespace IntangibleStatic {
   ): purify.Either<zod.ZodError, Intangible> {
     return (Invoice.fromJson(json) as purify.Either<zod.ZodError, Intangible>)
       .altLazy(
+        () =>
+          ListItem.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
+      )
+      .altLazy(
         () => Order.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
       )
       .altLazy(
@@ -1772,6 +1794,10 @@ export namespace IntangibleStatic {
             zod.ZodError,
             Intangible
           >,
+      )
+      .altLazy(
+        () =>
+          ItemList.fromJson(json) as purify.Either<zod.ZodError, Intangible>,
       )
       .altLazy(
         () =>
@@ -1810,6 +1836,8 @@ export namespace IntangibleStatic {
           "Enumeration",
           "GenderType",
           "Invoice",
+          "ItemList",
+          "ListItem",
           "MonetaryAmount",
           "Occupation",
           "Order",
@@ -1882,6 +1910,13 @@ export namespace IntangibleStatic {
     )
       .altLazy(
         () =>
+          ListItem.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            Intangible
+          >,
+      )
+      .altLazy(
+        () =>
           Order.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
@@ -1904,6 +1939,13 @@ export namespace IntangibleStatic {
       .altLazy(
         () =>
           EnumerationStatic.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            Intangible
+          >,
+      )
+      .altLazy(
+        () =>
+          ItemList.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             Intangible
           >,
@@ -2526,6 +2568,286 @@ export namespace Occupation {
   }
 
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
+}
+export class ItemList extends Intangible {
+  override readonly type = "ItemList";
+  readonly itemListElements: readonly ListItemStub[];
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly itemListElements?: readonly ListItemStub[];
+    } & ConstructorParameters<typeof Intangible>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.itemListElements === "undefined") {
+      this.itemListElements = [];
+    } else if (typeof parameters.itemListElements === "object") {
+      this.itemListElements = parameters.itemListElements;
+    } else {
+      this.itemListElements = parameters.itemListElements satisfies never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: ItemList): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    for (const _item0 of this.itemListElements) {
+      _item0.hash(_hasher);
+    }
+
+    return _hasher;
+  }
+
+  override toJson(): ItemList.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        itemListElements: this.itemListElements.map((_item) => _item.toJson()),
+      } satisfies ItemList.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/ItemList"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/itemListElement"),
+      this.itemListElements.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ItemList {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ItemList",
+  );
+  export type Json = {
+    readonly itemListElements: readonly ListItemStub.Json[];
+  } & IntangibleStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      itemListElements: readonly ListItemStub[];
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const itemListElements = _jsonObject["itemListElements"].map((_item) =>
+      ListItemStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, itemListElements });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ItemList> {
+    return propertiesFromJson(json).map(
+      (properties) => new ItemList(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStatic.jsonUiSchema({ scopePrefix }),
+        ListItemStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/itemListElements`,
+        }),
+      ],
+      label: "ItemList",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ItemList"),
+        itemListElements: ListItemStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      itemListElements: readonly ListItemStub[];
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/ItemList"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ItemList)`,
+          predicate: dataFactory.namedNode("http://schema.org/ItemList"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _itemListElementsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly ListItemStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/itemListElement"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              ListItemStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_itemListElementsEither.isLeft()) {
+      return _itemListElementsEither;
+    }
+
+    const itemListElements = _itemListElementsEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, itemListElements });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ItemList.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ItemList> {
+    return ItemList.propertiesFromRdf(parameters).map(
+      (properties) => new ItemList(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...IntangibleStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/itemListElement") },
+  ];
 }
 export class CreativeWork extends Thing {
   override readonly type:
@@ -6843,6 +7165,8 @@ export class ThingStub extends Model {
     | "EventStub"
     | "IntangibleStub"
     | "InvoiceStub"
+    | "ItemListStub"
+    | "ListItemStub"
     | "MediaObjectStub"
     | "MessageStub"
     | "MonetaryAmountStub"
@@ -7133,6 +7457,8 @@ export namespace ThingStubStatic {
           "EventStub",
           "IntangibleStub",
           "InvoiceStub",
+          "ItemListStub",
+          "ListItemStub",
           "MediaObjectStub",
           "MessageStub",
           "MonetaryAmountStub",
@@ -13844,6 +14170,8 @@ export class IntangibleStub extends ThingStub {
     | "IntangibleStub"
     | "BroadcastServiceStub"
     | "InvoiceStub"
+    | "ItemListStub"
+    | "ListItemStub"
     | "MonetaryAmountStub"
     | "OrderStub"
     | "QuantitativeValueStub"
@@ -13948,6 +14276,20 @@ export namespace IntangibleStubStatic {
       )
       .altLazy(
         () =>
+          ItemListStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ListItemStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
           StructuredValueStubStatic.fromJson(json) as purify.Either<
             zod.ZodError,
             IntangibleStub
@@ -13988,6 +14330,8 @@ export namespace IntangibleStubStatic {
           "IntangibleStub",
           "BroadcastServiceStub",
           "InvoiceStub",
+          "ItemListStub",
+          "ListItemStub",
           "MonetaryAmountStub",
           "OrderStub",
           "QuantitativeValueStub",
@@ -14059,6 +14403,20 @@ export namespace IntangibleStubStatic {
       .altLazy(
         () =>
           InvoiceStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ItemListStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ListItemStub.fromRdf(otherParameters) as purify.Either<
             rdfjsResource.Resource.ValueError,
             IntangibleStub
           >,
@@ -20677,12 +21035,12 @@ export namespace MusicRecordingStub {
 }
 export class MusicPlaylist extends CreativeWork {
   override readonly type = "MusicPlaylist";
-  tracks: MusicRecordingStub[];
+  tracks: (MusicRecordingStub | ItemListStub)[];
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly tracks?: readonly MusicRecordingStub[];
+      readonly tracks?: readonly (MusicRecordingStub | ItemListStub)[];
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
@@ -20703,21 +21061,45 @@ export class MusicPlaylist extends CreativeWork {
   }
 
   override equals(other: MusicPlaylist): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.tracks,
-          other.tracks,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "tracks",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(
+          left,
+          right,
+          (
+            left: MusicRecordingStub | ItemListStub,
+            right: MusicRecordingStub | ItemListStub,
+          ) => {
+            if (
+              left.type === "MusicRecordingStub" &&
+              right.type === "MusicRecordingStub"
+            ) {
+              return ((left, right) => left.equals(right))(left, right);
+            }
+            if (left.type === "ItemListStub" && right.type === "ItemListStub") {
+              return ((left, right) => left.equals(right))(left, right);
+            }
+
+            return purify.Left({
+              left,
+              right,
+              propertyName: "type",
+              propertyValuesUnequal: {
+                left: typeof left,
+                right: typeof right,
+                type: "BooleanEquals" as const,
+              },
+              type: "Property" as const,
+            });
+          },
+        ))(this.tracks, other.tracks).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "tracks",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -20736,7 +21118,19 @@ export class MusicPlaylist extends CreativeWork {
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
     for (const _item0 of this.tracks) {
-      _item0.hash(_hasher);
+      switch (_item0.type) {
+        case "MusicRecordingStub": {
+          _item0.hash(_hasher);
+          break;
+        }
+        case "ItemListStub": {
+          _item0.hash(_hasher);
+          break;
+        }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
     }
 
     return _hasher;
@@ -20746,7 +21140,9 @@ export class MusicPlaylist extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
-        tracks: this.tracks.map((_item) => _item.toJson()),
+        tracks: this.tracks.map((_item) =>
+          _item.type === "ItemListStub" ? _item.toJson() : _item.toJson(),
+        ),
       } satisfies MusicPlaylist.Json),
     );
   }
@@ -20777,7 +21173,9 @@ export class MusicPlaylist extends CreativeWork {
     _resource.add(
       dataFactory.namedNode("http://schema.org/track"),
       this.tracks.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+        _item.type === "ItemListStub"
+          ? _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -20793,7 +21191,7 @@ export namespace MusicPlaylist {
     "http://schema.org/MusicPlaylist",
   );
   export type Json = {
-    readonly tracks: readonly MusicRecordingStub.Json[];
+    readonly tracks: readonly (MusicRecordingStub.Json | ItemListStub.Json)[];
   } & CreativeWorkStatic.Json;
 
   export function propertiesFromJson(
@@ -20802,7 +21200,7 @@ export namespace MusicPlaylist {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      tracks: MusicRecordingStub[];
+      tracks: (MusicRecordingStub | ItemListStub)[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -20821,7 +21219,9 @@ export namespace MusicPlaylist {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const tracks = _jsonObject["tracks"].map((_item) =>
-      MusicRecordingStub.fromJson(_item).unsafeCoerce(),
+      _item.type === "ItemListStub"
+        ? ItemListStub.fromJson(_item).unsafeCoerce()
+        : MusicRecordingStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({ ..._super0, identifier, tracks });
   }
@@ -20843,9 +21243,7 @@ export namespace MusicPlaylist {
     return {
       elements: [
         CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
-        MusicRecordingStub.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/tracks`,
-        }),
+        { scope: `${scopePrefix}/properties/tracks`, type: "Control" },
       ],
       label: "MusicPlaylist",
       type: "Group",
@@ -20857,7 +21255,11 @@ export namespace MusicPlaylist {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("MusicPlaylist"),
-        tracks: MusicRecordingStub.jsonZodSchema()
+        tracks: zod
+          .discriminatedUnion("type", [
+            MusicRecordingStub.jsonZodSchema(),
+            ItemListStub.jsonZodSchema(),
+          ])
           .array()
           .default(() => []),
       }),
@@ -20879,7 +21281,7 @@ export namespace MusicPlaylist {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      tracks: MusicRecordingStub[];
+      tracks: (MusicRecordingStub | ItemListStub)[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStatic.propertiesFromRdf({
@@ -20911,24 +21313,45 @@ export namespace MusicPlaylist {
     const identifier = _resource.identifier;
     const _tracksEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      MusicRecordingStub[]
+      (MusicRecordingStub | ItemListStub)[]
     > = purify.Either.of([
       ..._resource
         .values(dataFactory.namedNode("http://schema.org/track"), {
           unique: true,
         })
         .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              MusicRecordingStub.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
+          (
+            _item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                MusicRecordingStub.fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              MusicRecordingStub | ItemListStub
+            >
+          )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    ItemListStub.fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicRecordingStub | ItemListStub
+                >,
             )
             .toMaybe()
             .toList(),
@@ -24932,6 +25355,1330 @@ export namespace MessageStub {
     ];
   }
 }
+export class ListItem extends Intangible {
+  override readonly type = "ListItem";
+  readonly item: ThingStub;
+  readonly position: purify.Maybe<number | string>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly item: ThingStub;
+      readonly position?: number | purify.Maybe<number | string> | string;
+    } & ConstructorParameters<typeof Intangible>[0],
+  ) {
+    super(parameters);
+    this.item = parameters.item;
+    if (purify.Maybe.isMaybe(parameters.position)) {
+      this.position = parameters.position;
+    } else if (typeof parameters.position === "number") {
+      this.position = purify.Maybe.of(parameters.position);
+    } else if (typeof parameters.position === "string") {
+      this.position = purify.Maybe.of(parameters.position);
+    } else if (typeof parameters.position === "undefined") {
+      this.position = purify.Maybe.empty();
+    } else {
+      this.position = parameters.position satisfies never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: ListItem): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => left.equals(right))(this.item, other.item).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "item",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (left: number | string, right: number | string) => {
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.position, other.position).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "position",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.item.hash(_hasher);
+    this.position.ifJust((_value0) => {
+      switch (typeof _value0) {
+        case "number": {
+          _hasher.update(_value0.toString());
+          break;
+        }
+        case "string": {
+          _hasher.update(_value0);
+          break;
+        }
+        default:
+          _value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    return _hasher;
+  }
+
+  override toJson(): ListItem.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        item: this.item.toJson(),
+        position: this.position
+          .map((_item) => (typeof _item === "string" ? _item : _item))
+          .extract(),
+      } satisfies ListItem.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/ListItem"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/item"),
+      this.item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/position"),
+      this.position.map((_value) =>
+        typeof _value === "string" ? _value : _value,
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ListItem {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ListItem",
+  );
+  export type Json = {
+    readonly item: ThingStubStatic.Json;
+    readonly position: (number | string) | undefined;
+  } & IntangibleStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      item: ThingStub;
+      position: purify.Maybe<number | string>;
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = IntangibleStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const item = ThingStubStatic.fromJson(_jsonObject["item"]).unsafeCoerce();
+    const position = purify.Maybe.fromNullable(_jsonObject["position"]).map(
+      (_item) => (typeof _item === "string" ? _item : _item),
+    );
+    return purify.Either.of({ ..._super0, identifier, item, position });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ListItem> {
+    return propertiesFromJson(json).map(
+      (properties) => new ListItem(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStatic.jsonUiSchema({ scopePrefix }),
+        ThingStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/item`,
+        }),
+        { scope: `${scopePrefix}/properties/position`, type: "Control" },
+      ],
+      label: "ListItem",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ListItem"),
+        item: ThingStubStatic.jsonZodSchema(),
+        position: zod.union([zod.number(), zod.string()]).optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      item: ThingStub;
+      position: purify.Maybe<number | string>;
+    } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = IntangibleStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/ListItem"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ListItem)`,
+          predicate: dataFactory.namedNode("http://schema.org/ListItem"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _itemEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      ThingStub
+    > = _resource
+      .values(dataFactory.namedNode("http://schema.org/item"), { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        ThingStubStatic.fromRdf({
+          ..._context,
+          ignoreRdfType: true,
+          languageIn: _languageIn,
+          resource: _resource,
+        }),
+      );
+    if (_itemEither.isLeft()) {
+      return _itemEither;
+    }
+
+    const item = _itemEither.unsafeCoerce();
+    const _positionEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number | string>
+    > = purify.Either.of(
+      (
+        _resource
+          .values(dataFactory.namedNode("http://schema.org/position"), {
+            unique: true,
+          })
+          .head()
+          .chain((_value) => _value.toNumber()) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          number | string
+        >
+      )
+        .altLazy(
+          () =>
+            _resource
+              .values(dataFactory.namedNode("http://schema.org/position"), {
+                unique: true,
+              })
+              .head()
+              .chain((_value) => _value.toString()) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              number | string
+            >,
+        )
+        .toMaybe(),
+    );
+    if (_positionEither.isLeft()) {
+      return _positionEither;
+    }
+
+    const position = _positionEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, item, position });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ListItem.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ListItem> {
+    return ListItem.propertiesFromRdf(parameters).map(
+      (properties) => new ListItem(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...IntangibleStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/item") },
+    { path: dataFactory.namedNode("http://schema.org/position") },
+  ];
+}
+export class ListItemStub extends IntangibleStub {
+  override readonly type = "ListItemStub";
+  readonly item: ThingStub;
+  readonly position: purify.Maybe<number | string>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly item: ThingStub;
+      readonly position?: number | purify.Maybe<number | string> | string;
+    } & ConstructorParameters<typeof IntangibleStub>[0],
+  ) {
+    super(parameters);
+    this.item = parameters.item;
+    if (purify.Maybe.isMaybe(parameters.position)) {
+      this.position = parameters.position;
+    } else if (typeof parameters.position === "number") {
+      this.position = purify.Maybe.of(parameters.position);
+    } else if (typeof parameters.position === "string") {
+      this.position = purify.Maybe.of(parameters.position);
+    } else if (typeof parameters.position === "undefined") {
+      this.position = purify.Maybe.empty();
+    } else {
+      this.position = parameters.position satisfies never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: ListItemStub): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => left.equals(right))(this.item, other.item).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "item",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (left: number | string, right: number | string) => {
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.position, other.position).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "position",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.item.hash(_hasher);
+    this.position.ifJust((_value0) => {
+      switch (typeof _value0) {
+        case "number": {
+          _hasher.update(_value0.toString());
+          break;
+        }
+        case "string": {
+          _hasher.update(_value0);
+          break;
+        }
+        default:
+          _value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    return _hasher;
+  }
+
+  override toJson(): ListItemStub.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        item: this.item.toJson(),
+        position: this.position
+          .map((_item) => (typeof _item === "string" ? _item : _item))
+          .extract(),
+      } satisfies ListItemStub.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/ListItem"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/item"),
+      this.item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/position"),
+      this.position.map((_value) =>
+        typeof _value === "string" ? _value : _value,
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ListItemStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ListItem",
+  );
+  export type Json = {
+    readonly item: ThingStubStatic.Json;
+    readonly position: (number | string) | undefined;
+  } & IntangibleStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      item: ThingStub;
+      position: purify.Maybe<number | string>;
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = IntangibleStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const item = ThingStubStatic.fromJson(_jsonObject["item"]).unsafeCoerce();
+    const position = purify.Maybe.fromNullable(_jsonObject["position"]).map(
+      (_item) => (typeof _item === "string" ? _item : _item),
+    );
+    return purify.Either.of({ ..._super0, identifier, item, position });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ListItemStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new ListItemStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStubStatic.jsonUiSchema({ scopePrefix }),
+        ThingStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/item`,
+        }),
+        { scope: `${scopePrefix}/properties/position`, type: "Control" },
+      ],
+      label: "ListItemStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ListItemStub"),
+        item: ThingStubStatic.jsonZodSchema(),
+        position: zod.union([zod.number(), zod.string()]).optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      item: ThingStub;
+      position: purify.Maybe<number | string>;
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = IntangibleStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/ListItem"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ListItem)`,
+          predicate: dataFactory.namedNode("http://schema.org/ListItem"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _itemEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      ThingStub
+    > = _resource
+      .values(dataFactory.namedNode("http://schema.org/item"), { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        ThingStubStatic.fromRdf({
+          ..._context,
+          ignoreRdfType: true,
+          languageIn: _languageIn,
+          resource: _resource,
+        }),
+      );
+    if (_itemEither.isLeft()) {
+      return _itemEither;
+    }
+
+    const item = _itemEither.unsafeCoerce();
+    const _positionEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number | string>
+    > = purify.Either.of(
+      (
+        _resource
+          .values(dataFactory.namedNode("http://schema.org/position"), {
+            unique: true,
+          })
+          .head()
+          .chain((_value) => _value.toNumber()) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          number | string
+        >
+      )
+        .altLazy(
+          () =>
+            _resource
+              .values(dataFactory.namedNode("http://schema.org/position"), {
+                unique: true,
+              })
+              .head()
+              .chain((_value) => _value.toString()) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              number | string
+            >,
+        )
+        .toMaybe(),
+    );
+    if (_positionEither.isLeft()) {
+      return _positionEither;
+    }
+
+    const position = _positionEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, item, position });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ListItemStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ListItemStub> {
+    return ListItemStub.propertiesFromRdf(parameters).map(
+      (properties) => new ListItemStub(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...IntangibleStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/item") },
+    { path: dataFactory.namedNode("http://schema.org/position") },
+  ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ListItemStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ListItemStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ListItemStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("listItemStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "listItemStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Item`),
+        predicate: dataFactory.namedNode("http://schema.org/item"),
+        subject,
+      },
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Item`),
+        variablePrefix: `${variablePrefix}Item`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Position`),
+        predicate: dataFactory.namedNode("http://schema.org/position"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("listItemStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "listItemStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/ListItem"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}Item`),
+            predicate: dataFactory.namedNode("http://schema.org/item"),
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Item`),
+        variablePrefix: `${variablePrefix}Item`,
+      }),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Position`),
+                predicate: dataFactory.namedNode("http://schema.org/position"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          { patterns: [{ patterns: [], type: "group" }], type: "union" },
+        ],
+        type: "optional",
+      },
+    ];
+  }
+}
+export class ItemListStub extends IntangibleStub {
+  override readonly type = "ItemListStub";
+  readonly itemListElements: readonly ListItemStub[];
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly itemListElements?: readonly ListItemStub[];
+    } & ConstructorParameters<typeof IntangibleStub>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.itemListElements === "undefined") {
+      this.itemListElements = [];
+    } else if (typeof parameters.itemListElements === "object") {
+      this.itemListElements = parameters.itemListElements;
+    } else {
+      this.itemListElements = parameters.itemListElements satisfies never;
+    }
+  }
+
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: ItemListStub): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    for (const _item0 of this.itemListElements) {
+      _item0.hash(_hasher);
+    }
+
+    return _hasher;
+  }
+
+  override toJson(): ItemListStub.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        itemListElements: this.itemListElements.map((_item) => _item.toJson()),
+      } satisfies ItemListStub.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/ItemListStub"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/itemListElement"),
+      this.itemListElements.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ItemListStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ItemListStub",
+  );
+  export type Json = {
+    readonly itemListElements: readonly ListItemStub.Json[];
+  } & IntangibleStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      itemListElements: readonly ListItemStub[];
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = IntangibleStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const itemListElements = _jsonObject["itemListElements"].map((_item) =>
+      ListItemStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({ ..._super0, identifier, itemListElements });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ItemListStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new ItemListStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStubStatic.jsonUiSchema({ scopePrefix }),
+        ListItemStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/itemListElements`,
+        }),
+      ],
+      label: "ItemListStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return IntangibleStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ItemListStub"),
+        itemListElements: ListItemStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      itemListElements: readonly ListItemStub[];
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = IntangibleStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/ItemListStub"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ItemListStub)`,
+          predicate: dataFactory.namedNode("http://schema.org/ItemListStub"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _itemListElementsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly ListItemStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/itemListElement"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              ListItemStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_itemListElementsEither.isLeft()) {
+      return _itemListElementsEither;
+    }
+
+    const itemListElements = _itemListElementsEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, itemListElements });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ItemListStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ItemListStub> {
+    return ItemListStub.propertiesFromRdf(parameters).map(
+      (properties) => new ItemListStub(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    ...IntangibleStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/itemListElement") },
+  ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ItemListStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ItemListStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ItemListStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("itemListStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "itemListStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+        predicate: dataFactory.namedNode("http://schema.org/itemListElement"),
+        subject,
+      },
+      ...ListItemStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+        variablePrefix: `${variablePrefix}ItemListElements`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("itemListStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "itemListStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/ItemListStub",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ItemListElements`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/itemListElement",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ListItemStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+            variablePrefix: `${variablePrefix}ItemListElements`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
+}
 export class Invoice extends Intangible {
   override readonly type = "Invoice";
   readonly category: purify.Maybe<string>;
@@ -26339,6 +28086,10 @@ export const $ObjectTypes = {
     IntangibleStub: IntangibleStubStatic,
     Invoice,
     InvoiceStub,
+    ItemList,
+    ItemListStub,
+    ListItem,
+    ListItemStub,
     MediaObject: MediaObjectStatic,
     MediaObjectStub: MediaObjectStubStatic,
     Message,

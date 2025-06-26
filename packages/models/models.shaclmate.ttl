@@ -91,6 +91,20 @@ sdapps:InvoiceStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
+sdapps:ItemListStub
+    shaclmate:name "ItemListStub" ;
+    shaclmate:rdfType schema:ItemListStub ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub ;
+    sh:property schema:ItemList-itemListElements .
+
+sdapps:ListItemStub
+    shaclmate:name "ListItemStub" ;
+    shaclmate:rdfType schema:ListItem ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub ;
+    sh:property schema:ListItem-item, schema:ListItem-position .
+
 sdapps:MediaObjectStub
     shaclmate:name "MediaObjectStub" ;
     shaclmate:rdfType schema:MediaObject ;
@@ -508,6 +522,46 @@ schema:Invoice-totalPaymentDue
     sh:node sdapps:MonetaryAmountStub ;
     sh:path schema:totalPaymentDue .
 
+schema:ItemList
+    shaclmate:name "ItemList" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:property schema:ItemList-itemListElements .
+
+schema:ItemList-itemListElements
+    a sh:PropertyShape ;
+    sh:name "itemListElements" ;
+    sh:node sdapps:ListItemStub ;
+    sh:path schema:itemListElement .
+
+schema:ListItem
+    shaclmate:name "ListItem" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:property schema:ListItem-item, schema:ListItem-position .
+
+schema:ListItem-item
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "item" ;
+    sh:node sdapps:ThingStub ;
+    sh:path schema:item .
+
+schema:ListItem-position
+    shaclmate:widen false ;
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "position" ;
+    sh:path schema:position ;
+    sh:xone ([
+            sh:datatype xsd:integer
+        ]
+        [
+            sh:datatype xsd:string
+        ]
+    ) .
+
 schema:Male
     a schema:GenderType ;
     rdfs:label "Male" .
@@ -632,8 +686,14 @@ schema:MusicPlaylist-tracks
     shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "tracks" ;
-    sh:node sdapps:MusicRecordingStub ;
-    sh:path schema:track .
+    sh:path schema:track ;
+    sh:xone ([
+            sh:node sdapps:MusicRecordingStub
+        ]
+        [
+            sh:node sdapps:ItemListStub
+        ]
+    ) .
 
 schema:MusicRecording
     shaclmate:name "MusicRecording" ;
