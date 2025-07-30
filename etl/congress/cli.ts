@@ -400,9 +400,9 @@ const cmd = command({
           },
         }),
       ];
-      legislatorImageObjects.forEach((imageObject) =>
-        imageObject.toRdf({ resourceSet }),
-      );
+      for (const legislatorImageObject of legislatorImageObjects) {
+        legislatorImageObject.toRdf({ resourceSet });
+      }
 
       const legislatorPerson = new Person({
         birthDate: legislator.bio.birthday

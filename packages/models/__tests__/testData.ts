@@ -22,7 +22,9 @@ const people = [...new Array(3).keys()].map(
     }),
 );
 
-people.forEach((person) => person.toRdf({ mutateGraph, resourceSet }));
+for (const person of people) {
+  person.toRdf({ mutateGraph, resourceSet });
+}
 
 export const testData = {
   dataset,
