@@ -4,7 +4,6 @@ import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
-import * as sparqljs from "sparqljs";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
@@ -202,7 +201,7 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
   );
 }
 export abstract class Model {
-  abstract readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+  abstract readonly identifier: ModelStatic.Identifier;
   abstract readonly type:
     | "Action"
     | "ActionStub"
@@ -361,6 +360,24 @@ export abstract class Model {
 }
 
 export namespace ModelStatic {
+  export type Identifier = rdfjsResource.Resource.Identifier;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export type Json = {
     readonly "@id": string;
     readonly type:
@@ -605,7 +622,7 @@ export namespace ModelStatic {
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
   > {
-    const identifier = _resource.identifier;
+    const identifier: ModelStatic.Identifier = _resource.identifier;
     return purify.Either.of({ identifier });
   }
 
@@ -628,61 +645,9 @@ export namespace ModelStatic {
   }
 
   export const rdfProperties = [];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ModelStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ModelStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ModelStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(_parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    return [];
-  }
-
-  export function sparqlWherePatterns(_parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    return [];
-  }
 }
 export class Thing extends Model {
-  protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  protected _identifier: ThingStatic.Identifier | undefined;
   override readonly type:
     | "Thing"
     | "Action"
@@ -824,7 +789,7 @@ export class Thing extends Model {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ThingStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -1171,6 +1136,8 @@ export namespace ThingStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Thing",
   );
+  export type Identifier = ModelStatic.Identifier;
+  export const Identifier = ModelStatic.Identifier;
   export type Json = {
     readonly description: string | undefined;
     readonly localIdentifiers: readonly string[];
@@ -1184,9 +1151,7 @@ export namespace ThingStatic {
     readonly url: { readonly "@id": string } | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1410,16 +1375,27 @@ export namespace ThingStatic {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Thing"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Thing)`,
-          predicate: dataFactory.namedNode("http://schema.org/Thing"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Thing)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ThingStatic.Identifier = _resource.identifier;
     const _descriptionEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -1693,7 +1669,7 @@ export class Intangible extends Thing {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): IntangibleStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -1735,6 +1711,8 @@ export namespace IntangibleStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Intangible",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = ThingStatic.Json;
 
   export function propertiesFromJson(
@@ -1885,16 +1863,27 @@ export namespace IntangibleStatic {
         dataFactory.namedNode("http://schema.org/Intangible"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Intangible)`,
-          predicate: dataFactory.namedNode("http://schema.org/Intangible"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: IntangibleStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -2035,7 +2024,7 @@ export class Role extends Intangible {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Role.Identifier {
     return typeof this._identifier !== "undefined"
       ? this._identifier
       : dataFactory.namedNode(
@@ -2196,15 +2185,15 @@ export namespace Role {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Role",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = {
     readonly endDate: string | undefined;
     readonly roleName: { readonly "@id": string } | undefined;
     readonly startDate: string | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2315,16 +2304,27 @@ export namespace Role {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Role"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Role)`,
-          predicate: dataFactory.namedNode("http://schema.org/Role"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Role.Identifier = _resource.identifier;
     const _endDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -2412,7 +2412,7 @@ export class Occupation extends Intangible {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Occupation.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -2454,6 +2454,8 @@ export namespace Occupation {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Occupation",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = IntangibleStatic.Json;
 
   export function propertiesFromJson(
@@ -2546,16 +2548,27 @@ export namespace Occupation {
         dataFactory.namedNode("http://schema.org/Occupation"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Occupation)`,
-          predicate: dataFactory.namedNode("http://schema.org/Occupation"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Occupation)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Occupation.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -2589,7 +2602,7 @@ export class ItemList extends Intangible {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ItemList.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -2597,21 +2610,19 @@ export class ItemList extends Intangible {
   }
 
   override equals(other: ItemList): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.itemListElements,
-          other.itemListElements,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "itemListElements",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(left, right, (left, right) => left.equals(right)))(
+        this.itemListElements,
+        other.itemListElements,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "itemListElements",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -2686,13 +2697,13 @@ export namespace ItemList {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ItemList",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2793,16 +2804,27 @@ export namespace ItemList {
         dataFactory.namedNode("http://schema.org/ItemList"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ItemList)`,
-          predicate: dataFactory.namedNode("http://schema.org/ItemList"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ItemList)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ItemList.Identifier = _resource.identifier;
     const _itemListElementsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly ListItemStub[]
@@ -2949,7 +2971,7 @@ export class CreativeWork extends Thing {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): CreativeWorkStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -3192,6 +3214,8 @@ export namespace CreativeWorkStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/CreativeWork",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = {
     readonly about: readonly ThingStubStatic.Json[];
     readonly authors: readonly (
@@ -3205,9 +3229,7 @@ export namespace CreativeWorkStatic {
     readonly publication: readonly PublicationEventStub.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3451,16 +3473,27 @@ export namespace CreativeWorkStatic {
         dataFactory.namedNode("http://schema.org/CreativeWork"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/CreativeWork)`,
-          predicate: dataFactory.namedNode("http://schema.org/CreativeWork"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: CreativeWorkStatic.Identifier = _resource.identifier;
     const _aboutEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly ThingStub[]
@@ -3818,7 +3851,7 @@ export class MediaObject extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MediaObjectStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -3980,6 +4013,8 @@ export namespace MediaObjectStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MediaObject",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly contentUrl: { readonly "@id": string } | undefined;
     readonly encodingFormat: string | undefined;
@@ -3987,9 +4022,7 @@ export namespace MediaObjectStatic {
     readonly width: QuantitativeValue.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4130,16 +4163,27 @@ export namespace MediaObjectStatic {
         dataFactory.namedNode("http://schema.org/MediaObject"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MediaObject)`,
-          predicate: dataFactory.namedNode("http://schema.org/MediaObject"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MediaObjectStatic.Identifier = _resource.identifier;
     const _contentUrlEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<rdfjs.NamedNode>
@@ -4278,7 +4322,7 @@ export class ImageObject extends MediaObject {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ImageObject.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -4320,6 +4364,8 @@ export namespace ImageObject {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ImageObject",
   );
+  export type Identifier = MediaObjectStatic.Identifier;
+  export const Identifier = MediaObjectStatic.Identifier;
   export type Json = MediaObjectStatic.Json;
 
   export function propertiesFromJson(
@@ -4412,16 +4458,27 @@ export namespace ImageObject {
         dataFactory.namedNode("http://schema.org/ImageObject"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ImageObject)`,
-          predicate: dataFactory.namedNode("http://schema.org/ImageObject"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ImageObject.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -4447,7 +4504,7 @@ export class Enumeration extends Intangible {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): EnumerationStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -4489,6 +4546,8 @@ export namespace EnumerationStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Enumeration",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = IntangibleStatic.Json;
 
   export function propertiesFromJson(
@@ -4583,16 +4642,27 @@ export namespace EnumerationStatic {
         dataFactory.namedNode("http://schema.org/Enumeration"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Enumeration)`,
-          predicate: dataFactory.namedNode("http://schema.org/Enumeration"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Enumeration)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: EnumerationStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -4631,6 +4701,10 @@ export class GenderType extends Enumeration {
     super(parameters);
   }
 
+  override get identifier(): GenderType.Identifier {
+    return super.identifier as GenderType.Identifier;
+  }
+
   override toRdf({
     ignoreRdfType,
     mutateGraph,
@@ -4666,11 +4740,52 @@ export namespace GenderType {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/GenderType",
   );
+  export type Identifier = rdfjs.NamedNode<
+    "http://schema.org/Female" | "http://schema.org/Male"
+  >;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      )
+        .chain((identifier) =>
+          identifier.termType === "NamedNode"
+            ? purify.Either.of(identifier)
+            : purify.Left(new Error("expected identifier to be NamedNode")),
+        )
+        .chain((identifier) => {
+          switch (identifier.value) {
+            case "http://schema.org/Female":
+              return purify.Either.of(
+                identifier as rdfjs.NamedNode<"http://schema.org/Female">,
+              );
+            case "http://schema.org/Male":
+              return purify.Either.of(
+                identifier as rdfjs.NamedNode<"http://schema.org/Male">,
+              );
+            default:
+              return purify.Left(
+                new Error(
+                  "expected NamedNode identifier to be one of http://schema.org/Female http://schema.org/Male",
+                ),
+              );
+          }
+        }) as purify.Either<Error, Identifier>;
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export type Json = EnumerationStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -4760,18 +4875,27 @@ export namespace GenderType {
         dataFactory.namedNode("http://schema.org/GenderType"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/GenderType)`,
-          predicate: dataFactory.namedNode("http://schema.org/GenderType"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/GenderType)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    let identifier: rdfjs.NamedNode<
-      "http://schema.org/Female" | "http://schema.org/Male"
-    >;
+    let identifier: GenderType.Identifier;
     switch (_resource.identifier.value) {
       case "http://schema.org/Female":
         identifier = dataFactory.namedNode("http://schema.org/Female");
@@ -4917,7 +5041,7 @@ export class Event extends Thing {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): EventStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -5184,6 +5308,8 @@ export namespace EventStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Event",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = {
     readonly about: readonly ThingStubStatic.Json[];
     readonly endDate: string | undefined;
@@ -5201,9 +5327,7 @@ export namespace EventStatic {
     readonly superEvent: EventStubStatic.Json | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5377,16 +5501,27 @@ export namespace EventStatic {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Event"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Event)`,
-          predicate: dataFactory.namedNode("http://schema.org/Event"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: EventStatic.Identifier = _resource.identifier;
     const _aboutEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly ThingStub[]
@@ -5659,7 +5794,7 @@ export class PublicationEvent extends Event {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): PublicationEventStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -5667,21 +5802,19 @@ export class PublicationEvent extends Event {
   }
 
   override equals(other: PublicationEvent): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.publishedOn,
-          other.publishedOn,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "publishedOn",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $maybeEquals(left, right, (left, right) => left.equals(right)))(
+        this.publishedOn,
+        other.publishedOn,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "publishedOn",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -5755,13 +5888,13 @@ export namespace PublicationEventStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/PublicationEvent",
   );
+  export type Identifier = EventStatic.Identifier;
+  export const Identifier = EventStatic.Identifier;
   export type Json = {
     readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
   } & EventStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5867,18 +6000,27 @@ export namespace PublicationEventStatic {
         dataFactory.namedNode("http://schema.org/PublicationEvent"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/PublicationEvent)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/PublicationEvent",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: PublicationEventStatic.Identifier = _resource.identifier;
     const _publishedOnEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<BroadcastServiceStub>
@@ -5940,7 +6082,7 @@ export class BroadcastEvent extends PublicationEvent {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): BroadcastEvent.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -5982,6 +6124,8 @@ export namespace BroadcastEvent {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/BroadcastEvent",
   );
+  export type Identifier = PublicationEventStatic.Identifier;
+  export const Identifier = PublicationEventStatic.Identifier;
   export type Json = PublicationEventStatic.Json;
 
   export function propertiesFromJson(
@@ -6075,16 +6219,27 @@ export namespace BroadcastEvent {
         dataFactory.namedNode("http://schema.org/BroadcastEvent"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/BroadcastEvent)`,
-          predicate: dataFactory.namedNode("http://schema.org/BroadcastEvent"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: BroadcastEvent.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -6162,7 +6317,7 @@ export class Action extends Thing {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ActionStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -6335,6 +6490,8 @@ export namespace ActionStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Action",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = {
     readonly agents: readonly (OrganizationStubStatic.Json | PersonStub.Json)[];
     readonly endTime: string | undefined;
@@ -6345,9 +6502,7 @@ export namespace ActionStatic {
     readonly startTime: string | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6479,16 +6634,27 @@ export namespace ActionStatic {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Action"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Action)`,
-          predicate: dataFactory.namedNode("http://schema.org/Action"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Action)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ActionStatic.Identifier = _resource.identifier;
     const _agentsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly AgentStub[]
@@ -6628,7 +6794,7 @@ export class AssessAction extends Action {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): AssessActionStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -6670,6 +6836,8 @@ export namespace AssessActionStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/AssessAction",
   );
+  export type Identifier = ActionStatic.Identifier;
+  export const Identifier = ActionStatic.Identifier;
   export type Json = ActionStatic.Json;
 
   export function propertiesFromJson(
@@ -6769,16 +6937,27 @@ export namespace AssessActionStatic {
         dataFactory.namedNode("http://schema.org/AssessAction"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/AssessAction)`,
-          predicate: dataFactory.namedNode("http://schema.org/AssessAction"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/AssessAction)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: AssessActionStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -6812,7 +6991,7 @@ export class ChooseAction extends AssessAction {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ChooseActionStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -6854,6 +7033,8 @@ export namespace ChooseActionStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ChooseAction",
   );
+  export type Identifier = AssessActionStatic.Identifier;
+  export const Identifier = AssessActionStatic.Identifier;
   export type Json = AssessActionStatic.Json;
 
   export function propertiesFromJson(
@@ -6950,16 +7131,27 @@ export namespace ChooseActionStatic {
         dataFactory.namedNode("http://schema.org/ChooseAction"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ChooseAction)`,
-          predicate: dataFactory.namedNode("http://schema.org/ChooseAction"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ChooseAction)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ChooseActionStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -6993,7 +7185,7 @@ export class VoteAction extends ChooseAction {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): VoteAction.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -7035,6 +7227,8 @@ export namespace VoteAction {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/VoteAction",
   );
+  export type Identifier = ChooseActionStatic.Identifier;
+  export const Identifier = ChooseActionStatic.Identifier;
   export type Json = ChooseActionStatic.Json;
 
   export function propertiesFromJson(
@@ -7127,16 +7321,27 @@ export namespace VoteAction {
         dataFactory.namedNode("http://schema.org/VoteAction"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/VoteAction)`,
-          predicate: dataFactory.namedNode("http://schema.org/VoteAction"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/VoteAction)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: VoteAction.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -7151,7 +7356,7 @@ export namespace VoteAction {
   export const rdfProperties = [...ChooseActionStatic.rdfProperties];
 }
 export class ThingStub extends Model {
-  protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  protected _identifier: ThingStubStatic.Identifier | undefined;
   override readonly type:
     | "ThingStub"
     | "ActionStub"
@@ -7231,7 +7436,7 @@ export class ThingStub extends Model {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ThingStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -7341,14 +7546,14 @@ export namespace ThingStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Thing",
   );
+  export type Identifier = ModelStatic.Identifier;
+  export const Identifier = ModelStatic.Identifier;
   export type Json = {
     readonly name: string | undefined;
     readonly order: number | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7523,16 +7728,27 @@ export namespace ThingStubStatic {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Thing"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Thing)`,
-          predicate: dataFactory.namedNode("http://schema.org/Thing"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Thing)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ThingStubStatic.Identifier = _resource.identifier;
     const _nameEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -7634,162 +7850,6 @@ export namespace ThingStubStatic {
     { path: dataFactory.namedNode("http://schema.org/name") },
     { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ThingStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ThingStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ThingStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("thingStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "thingStub");
-    return [
-      ...ModelStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}Name`),
-        predicate: dataFactory.namedNode("http://schema.org/name"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}Order`),
-        predicate: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("thingStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "thingStub");
-    return [
-      ...ModelStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Thing"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Name`),
-                predicate: dataFactory.namedNode("http://schema.org/name"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Order`),
-                predicate: dataFactory.namedNode(
-                  "http://www.w3.org/ns/shacl#order",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export class ActionStub extends ThingStub {
   override readonly type:
@@ -7807,7 +7867,7 @@ export class ActionStub extends ThingStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ActionStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -7849,6 +7909,8 @@ export namespace ActionStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Action",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = ThingStubStatic.Json;
 
   export function propertiesFromJson(
@@ -7949,16 +8011,27 @@ export namespace ActionStubStatic {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Action"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Action)`,
-          predicate: dataFactory.namedNode("http://schema.org/Action"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Action)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ActionStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -7979,120 +8052,6 @@ export namespace ActionStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ActionStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ActionStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("actionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "actionStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("actionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "actionStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Action"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class AssessActionStub extends ActionStub {
   override readonly type:
@@ -8109,7 +8068,7 @@ export class AssessActionStub extends ActionStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): AssessActionStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -8151,6 +8110,8 @@ export namespace AssessActionStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/AssessAction",
   );
+  export type Identifier = ActionStubStatic.Identifier;
+  export const Identifier = ActionStubStatic.Identifier;
   export type Json = ActionStubStatic.Json;
 
   export function propertiesFromJson(
@@ -8254,16 +8215,27 @@ export namespace AssessActionStubStatic {
         dataFactory.namedNode("http://schema.org/AssessAction"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/AssessAction)`,
-          predicate: dataFactory.namedNode("http://schema.org/AssessAction"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/AssessAction)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: AssessActionStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -8284,124 +8256,6 @@ export namespace AssessActionStubStatic {
   }
 
   export const rdfProperties = [...ActionStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        AssessActionStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        AssessActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      AssessActionStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("assessActionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "assessActionStub");
-    return [
-      ...ActionStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("assessActionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "assessActionStub");
-    return [
-      ...ActionStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/AssessAction",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class ChooseActionStub extends AssessActionStub {
   override readonly type: "ChooseActionStub" | "VoteActionStub" =
@@ -8416,7 +8270,7 @@ export class ChooseActionStub extends AssessActionStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ChooseActionStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -8458,6 +8312,8 @@ export namespace ChooseActionStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ChooseAction",
   );
+  export type Identifier = AssessActionStubStatic.Identifier;
+  export const Identifier = AssessActionStubStatic.Identifier;
   export type Json = AssessActionStubStatic.Json;
 
   export function propertiesFromJson(
@@ -8558,16 +8414,27 @@ export namespace ChooseActionStubStatic {
         dataFactory.namedNode("http://schema.org/ChooseAction"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ChooseAction)`,
-          predicate: dataFactory.namedNode("http://schema.org/ChooseAction"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ChooseAction)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ChooseActionStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -8588,124 +8455,6 @@ export namespace ChooseActionStubStatic {
   }
 
   export const rdfProperties = [...AssessActionStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ChooseActionStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ChooseActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ChooseActionStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("chooseActionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "chooseActionStub");
-    return [
-      ...AssessActionStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("chooseActionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "chooseActionStub");
-    return [
-      ...AssessActionStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/ChooseAction",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class VoteActionStub extends ChooseActionStub {
   override readonly type = "VoteActionStub";
@@ -8719,7 +8468,7 @@ export class VoteActionStub extends ChooseActionStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): VoteActionStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -8761,6 +8510,8 @@ export namespace VoteActionStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/VoteAction",
   );
+  export type Identifier = ChooseActionStubStatic.Identifier;
+  export const Identifier = ChooseActionStubStatic.Identifier;
   export type Json = ChooseActionStubStatic.Json;
 
   export function propertiesFromJson(
@@ -8854,16 +8605,27 @@ export namespace VoteActionStub {
         dataFactory.namedNode("http://schema.org/VoteAction"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/VoteAction)`,
-          predicate: dataFactory.namedNode("http://schema.org/VoteAction"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/VoteAction)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: VoteActionStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -8876,122 +8638,6 @@ export namespace VoteActionStub {
   }
 
   export const rdfProperties = [...ChooseActionStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        VoteActionStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        VoteActionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      VoteActionStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("voteActionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "voteActionStub");
-    return [
-      ...ChooseActionStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("voteActionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "voteActionStub");
-    return [
-      ...ChooseActionStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/VoteAction"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class TextObject extends MediaObject {
   override readonly type = "TextObject";
@@ -9015,7 +8661,7 @@ export class TextObject extends MediaObject {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): TextObject.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -9023,20 +8669,18 @@ export class TextObject extends MediaObject {
   }
 
   override equals(other: TextObject): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.uriSpace,
-          other.uriSpace,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "uriSpace",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        this.uriSpace,
+        other.uriSpace,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "uriSpace",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -9108,13 +8752,13 @@ export namespace TextObject {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/TextObject",
   );
+  export type Identifier = MediaObjectStatic.Identifier;
+  export const Identifier = MediaObjectStatic.Identifier;
   export type Json = {
     readonly uriSpace: string | undefined;
   } & MediaObjectStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9209,16 +8853,27 @@ export namespace TextObject {
         dataFactory.namedNode("http://schema.org/TextObject"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/TextObject)`,
-          predicate: dataFactory.namedNode("http://schema.org/TextObject"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/TextObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: TextObject.Identifier = _resource.identifier;
     const _uriSpaceEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -9278,7 +8933,7 @@ export class CreativeWorkStub extends ThingStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): CreativeWorkStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -9320,6 +8975,8 @@ export namespace CreativeWorkStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/CreativeWork",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = ThingStubStatic.Json;
 
   export function propertiesFromJson(
@@ -9491,16 +9148,27 @@ export namespace CreativeWorkStubStatic {
         dataFactory.namedNode("http://schema.org/CreativeWork"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/CreativeWork)`,
-          predicate: dataFactory.namedNode("http://schema.org/CreativeWork"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: CreativeWorkStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -9580,124 +9248,6 @@ export namespace CreativeWorkStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        CreativeWorkStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      CreativeWorkStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/CreativeWork",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MediaObjectStub extends CreativeWorkStub {
   override readonly type: "MediaObjectStub" | "TextObjectStub" =
@@ -9712,7 +9262,7 @@ export class MediaObjectStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MediaObjectStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -9754,6 +9304,8 @@ export namespace MediaObjectStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MediaObject",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -9854,16 +9406,27 @@ export namespace MediaObjectStubStatic {
         dataFactory.namedNode("http://schema.org/MediaObject"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MediaObject)`,
-          predicate: dataFactory.namedNode("http://schema.org/MediaObject"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MediaObjectStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -9884,124 +9447,6 @@ export namespace MediaObjectStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MediaObjectStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MediaObjectStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MediaObjectStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("mediaObjectStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "mediaObjectStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("mediaObjectStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "mediaObjectStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/MediaObject",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class TextObjectStub extends MediaObjectStub {
   override readonly type = "TextObjectStub";
@@ -10015,7 +9460,7 @@ export class TextObjectStub extends MediaObjectStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): TextObjectStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -10057,6 +9502,8 @@ export namespace TextObjectStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/TextObject",
   );
+  export type Identifier = MediaObjectStubStatic.Identifier;
+  export const Identifier = MediaObjectStubStatic.Identifier;
   export type Json = MediaObjectStubStatic.Json;
 
   export function propertiesFromJson(
@@ -10149,16 +9596,27 @@ export namespace TextObjectStub {
         dataFactory.namedNode("http://schema.org/TextObject"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/TextObject)`,
-          predicate: dataFactory.namedNode("http://schema.org/TextObject"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/TextObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: TextObjectStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -10171,122 +9629,6 @@ export namespace TextObjectStub {
   }
 
   export const rdfProperties = [...MediaObjectStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        TextObjectStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        TextObjectStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      TextObjectStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("textObjectStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "textObjectStub");
-    return [
-      ...MediaObjectStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("textObjectStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "textObjectStub");
-    return [
-      ...MediaObjectStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/TextObject"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class StructuredValue extends Intangible {
   override readonly type:
@@ -10303,7 +9645,7 @@ export class StructuredValue extends Intangible {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): StructuredValueStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -10345,6 +9687,8 @@ export namespace StructuredValueStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/StructuredValue",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = IntangibleStatic.Json;
 
   export function propertiesFromJson(
@@ -10456,16 +9800,27 @@ export namespace StructuredValueStatic {
         dataFactory.namedNode("http://schema.org/StructuredValue"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/StructuredValue)`,
-          predicate: dataFactory.namedNode("http://schema.org/StructuredValue"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/StructuredValue)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: StructuredValueStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -10510,7 +9865,7 @@ export class Service extends Intangible {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ServiceStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -10552,6 +9907,8 @@ export namespace ServiceStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Service",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = IntangibleStatic.Json;
 
   export function propertiesFromJson(
@@ -10653,16 +10010,27 @@ export namespace ServiceStatic {
         dataFactory.namedNode("http://schema.org/Service"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Service)`,
-          predicate: dataFactory.namedNode("http://schema.org/Service"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Service)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ServiceStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -10696,7 +10064,7 @@ export class Article extends CreativeWork {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ArticleStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -10738,6 +10106,8 @@ export namespace ArticleStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Article",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = CreativeWorkStatic.Json;
 
   export function propertiesFromJson(
@@ -10832,16 +10202,27 @@ export namespace ArticleStatic {
         dataFactory.namedNode("http://schema.org/Article"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Article)`,
-          predicate: dataFactory.namedNode("http://schema.org/Article"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Article)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ArticleStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -10875,7 +10256,7 @@ export class Report extends Article {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Report.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -10917,6 +10298,8 @@ export namespace Report {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Report",
   );
+  export type Identifier = ArticleStatic.Identifier;
+  export const Identifier = ArticleStatic.Identifier;
   export type Json = ArticleStatic.Json;
 
   export function propertiesFromJson(
@@ -11000,16 +10383,27 @@ export namespace Report {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Report"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Report)`,
-          predicate: dataFactory.namedNode("http://schema.org/Report"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Report)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Report.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -11035,7 +10429,7 @@ export class ArticleStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ArticleStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -11077,6 +10471,8 @@ export namespace ArticleStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Article",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -11172,16 +10568,27 @@ export namespace ArticleStubStatic {
         dataFactory.namedNode("http://schema.org/Article"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Article)`,
-          predicate: dataFactory.namedNode("http://schema.org/Article"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Article)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ArticleStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -11202,120 +10609,6 @@ export namespace ArticleStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ArticleStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ArticleStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ArticleStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("articleStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "articleStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("articleStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "articleStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Article"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class ReportStub extends ArticleStub {
   override readonly type = "ReportStub";
@@ -11329,7 +10622,7 @@ export class ReportStub extends ArticleStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ReportStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -11371,6 +10664,8 @@ export namespace ReportStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Report",
   );
+  export type Identifier = ArticleStubStatic.Identifier;
+  export const Identifier = ArticleStubStatic.Identifier;
   export type Json = ArticleStubStatic.Json;
 
   export function propertiesFromJson(
@@ -11461,16 +10756,27 @@ export namespace ReportStub {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Report"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Report)`,
-          predicate: dataFactory.namedNode("http://schema.org/Report"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Report)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ReportStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -11483,117 +10789,6 @@ export namespace ReportStub {
   }
 
   export const rdfProperties = [...ArticleStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ReportStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ReportStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ReportStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("reportStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "reportStub");
-    return [
-      ...ArticleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("reportStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "reportStub");
-    return [
-      ...ArticleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Report"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class CreativeWorkSeries extends CreativeWork {
   override readonly type: "CreativeWorkSeries" | "RadioSeries" =
@@ -11608,7 +10803,7 @@ export class CreativeWorkSeries extends CreativeWork {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): CreativeWorkSeriesStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -11650,6 +10845,8 @@ export namespace CreativeWorkSeriesStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/CreativeWorkSeries",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = CreativeWorkStatic.Json;
 
   export function propertiesFromJson(
@@ -11749,18 +10946,28 @@ export namespace CreativeWorkSeriesStatic {
         dataFactory.namedNode("http://schema.org/CreativeWorkSeries"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/CreativeWorkSeries)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/CreativeWorkSeries",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWorkSeries)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: CreativeWorkSeriesStatic.Identifier =
+      _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -11804,7 +11011,7 @@ export class RadioSeries extends CreativeWorkSeries {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): RadioSeries.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -11812,21 +11019,19 @@ export class RadioSeries extends CreativeWorkSeries {
   }
 
   override equals(other: RadioSeries): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.episodes,
-          other.episodes,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "episodes",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(left, right, (left, right) => left.equals(right)))(
+        this.episodes,
+        other.episodes,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "episodes",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -11901,13 +11106,13 @@ export namespace RadioSeries {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/RadioSeries",
   );
+  export type Identifier = CreativeWorkSeriesStatic.Identifier;
+  export const Identifier = CreativeWorkSeriesStatic.Identifier;
   export type Json = {
     readonly episodes: readonly RadioEpisodeStub.Json[];
   } & CreativeWorkSeriesStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12009,16 +11214,27 @@ export namespace RadioSeries {
         dataFactory.namedNode("http://schema.org/RadioSeries"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioSeries)`,
-          predicate: dataFactory.namedNode("http://schema.org/RadioSeries"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioSeries)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: RadioSeries.Identifier = _resource.identifier;
     const _episodesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       RadioEpisodeStub[]
@@ -12078,7 +11294,7 @@ export class CreativeWorkSeriesStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): CreativeWorkSeriesStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -12120,6 +11336,8 @@ export namespace CreativeWorkSeriesStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/CreativeWorkSeries",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -12220,18 +11438,28 @@ export namespace CreativeWorkSeriesStubStatic {
         dataFactory.namedNode("http://schema.org/CreativeWorkSeries"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/CreativeWorkSeries)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/CreativeWorkSeries",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWorkSeries)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: CreativeWorkSeriesStubStatic.Identifier =
+      _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -12254,131 +11482,6 @@ export namespace CreativeWorkSeriesStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        CreativeWorkSeriesStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        CreativeWorkSeriesStubStatic.sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      CreativeWorkSeriesStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("creativeWorkSeriesStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "creativeWorkSeriesStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("creativeWorkSeriesStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "creativeWorkSeriesStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/CreativeWorkSeries",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class RadioSeriesStub extends CreativeWorkSeriesStub {
   override readonly type = "RadioSeriesStub";
@@ -12392,7 +11495,7 @@ export class RadioSeriesStub extends CreativeWorkSeriesStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): RadioSeriesStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -12434,6 +11537,8 @@ export namespace RadioSeriesStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/RadioSeries",
   );
+  export type Identifier = CreativeWorkSeriesStubStatic.Identifier;
+  export const Identifier = CreativeWorkSeriesStubStatic.Identifier;
   export type Json = CreativeWorkSeriesStubStatic.Json;
 
   export function propertiesFromJson(
@@ -12527,16 +11632,27 @@ export namespace RadioSeriesStub {
         dataFactory.namedNode("http://schema.org/RadioSeries"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioSeries)`,
-          predicate: dataFactory.namedNode("http://schema.org/RadioSeries"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioSeries)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: RadioSeriesStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -12549,124 +11665,6 @@ export namespace RadioSeriesStub {
   }
 
   export const rdfProperties = [...CreativeWorkSeriesStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        RadioSeriesStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        RadioSeriesStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      RadioSeriesStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("radioSeriesStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "radioSeriesStub");
-    return [
-      ...CreativeWorkSeriesStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("radioSeriesStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "radioSeriesStub");
-    return [
-      ...CreativeWorkSeriesStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/RadioSeries",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class Episode extends CreativeWork {
   override readonly type: "Episode" | "RadioEpisode" = "Episode";
@@ -12695,7 +11693,7 @@ export class Episode extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): EpisodeStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -12703,21 +11701,19 @@ export class Episode extends CreativeWork {
   }
 
   override equals(other: Episode): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.partOfSeries,
-          other.partOfSeries,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "partOfSeries",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $maybeEquals(left, right, (left, right) => left.equals(right)))(
+        this.partOfSeries,
+        other.partOfSeries,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "partOfSeries",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -12793,13 +11789,13 @@ export namespace EpisodeStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Episode",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly partOfSeries: CreativeWorkSeriesStubStatic.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12902,16 +11898,27 @@ export namespace EpisodeStatic {
         dataFactory.namedNode("http://schema.org/Episode"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Episode)`,
-          predicate: dataFactory.namedNode("http://schema.org/Episode"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Episode)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: EpisodeStatic.Identifier = _resource.identifier;
     const _partOfSeriesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<CreativeWorkSeriesStub>
@@ -12973,7 +11980,7 @@ export class RadioEpisode extends Episode {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): RadioEpisode.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -13015,6 +12022,8 @@ export namespace RadioEpisode {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/RadioEpisode",
   );
+  export type Identifier = EpisodeStatic.Identifier;
+  export const Identifier = EpisodeStatic.Identifier;
   export type Json = EpisodeStatic.Json;
 
   export function propertiesFromJson(
@@ -13107,16 +12116,27 @@ export namespace RadioEpisode {
         dataFactory.namedNode("http://schema.org/RadioEpisode"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioEpisode)`,
-          predicate: dataFactory.namedNode("http://schema.org/RadioEpisode"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioEpisode)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: RadioEpisode.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -13142,7 +12162,7 @@ export class EpisodeStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): EpisodeStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -13184,6 +12204,8 @@ export namespace EpisodeStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Episode",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -13282,16 +12304,27 @@ export namespace EpisodeStubStatic {
         dataFactory.namedNode("http://schema.org/Episode"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Episode)`,
-          predicate: dataFactory.namedNode("http://schema.org/Episode"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Episode)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: EpisodeStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -13312,120 +12345,6 @@ export namespace EpisodeStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        EpisodeStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        EpisodeStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      EpisodeStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("episodeStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "episodeStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("episodeStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "episodeStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Episode"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class RadioEpisodeStub extends EpisodeStub {
   override readonly type = "RadioEpisodeStub";
@@ -13439,7 +12358,7 @@ export class RadioEpisodeStub extends EpisodeStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): RadioEpisodeStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -13481,6 +12400,8 @@ export namespace RadioEpisodeStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/RadioEpisode",
   );
+  export type Identifier = EpisodeStubStatic.Identifier;
+  export const Identifier = EpisodeStubStatic.Identifier;
   export type Json = EpisodeStubStatic.Json;
 
   export function propertiesFromJson(
@@ -13573,16 +12494,27 @@ export namespace RadioEpisodeStub {
         dataFactory.namedNode("http://schema.org/RadioEpisode"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioEpisode)`,
-          predicate: dataFactory.namedNode("http://schema.org/RadioEpisode"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioEpisode)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: RadioEpisodeStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -13595,124 +12527,6 @@ export namespace RadioEpisodeStub {
   }
 
   export const rdfProperties = [...EpisodeStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        RadioEpisodeStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        RadioEpisodeStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      RadioEpisodeStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("radioEpisodeStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "radioEpisodeStub");
-    return [
-      ...EpisodeStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("radioEpisodeStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "radioEpisodeStub");
-    return [
-      ...EpisodeStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/RadioEpisode",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class BroadcastService extends Service {
   override readonly type: "BroadcastService" | "RadioBroadcastService" =
@@ -13737,7 +12551,7 @@ export class BroadcastService extends Service {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): BroadcastServiceStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -13745,20 +12559,18 @@ export class BroadcastService extends Service {
   }
 
   override equals(other: BroadcastService): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.callSign,
-          other.callSign,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "callSign",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        this.callSign,
+        other.callSign,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "callSign",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -13830,13 +12642,13 @@ export namespace BroadcastServiceStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/BroadcastService",
   );
+  export type Identifier = ServiceStatic.Identifier;
+  export const Identifier = ServiceStatic.Identifier;
   export type Json = {
     readonly callSign: string | undefined;
   } & ServiceStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13938,18 +12750,27 @@ export namespace BroadcastServiceStatic {
         dataFactory.namedNode("http://schema.org/BroadcastService"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/BroadcastService)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/BroadcastService",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastService)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: BroadcastServiceStatic.Identifier = _resource.identifier;
     const _callSignEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -14003,7 +12824,7 @@ export class RadioBroadcastService extends BroadcastService {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): RadioBroadcastService.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -14047,6 +12868,8 @@ export namespace RadioBroadcastService {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/RadioBroadcastService",
   );
+  export type Identifier = BroadcastServiceStatic.Identifier;
+  export const Identifier = BroadcastServiceStatic.Identifier;
   export type Json = BroadcastServiceStatic.Json;
 
   export function propertiesFromJson(
@@ -14140,18 +12963,27 @@ export namespace RadioBroadcastService {
         dataFactory.namedNode("http://schema.org/RadioBroadcastService"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioBroadcastService)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/RadioBroadcastService",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioBroadcastService)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: RadioBroadcastService.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -14188,7 +13020,7 @@ export class IntangibleStub extends ThingStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): IntangibleStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -14230,6 +13062,8 @@ export namespace IntangibleStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Intangible",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = ThingStubStatic.Json;
 
   export function propertiesFromJson(
@@ -14377,16 +13211,27 @@ export namespace IntangibleStubStatic {
         dataFactory.namedNode("http://schema.org/Intangible"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Intangible)`,
-          predicate: dataFactory.namedNode("http://schema.org/Intangible"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: IntangibleStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -14443,122 +13288,6 @@ export namespace IntangibleStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IntangibleStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        IntangibleStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IntangibleStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("intangibleStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "intangibleStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("intangibleStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "intangibleStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Intangible"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class ServiceStub extends IntangibleStub {
   override readonly type:
@@ -14575,7 +13304,7 @@ export class ServiceStub extends IntangibleStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ServiceStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -14617,6 +13346,8 @@ export namespace ServiceStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Service",
   );
+  export type Identifier = IntangibleStubStatic.Identifier;
+  export const Identifier = IntangibleStubStatic.Identifier;
   export type Json = IntangibleStubStatic.Json;
 
   export function propertiesFromJson(
@@ -14718,16 +13449,27 @@ export namespace ServiceStubStatic {
         dataFactory.namedNode("http://schema.org/Service"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Service)`,
-          predicate: dataFactory.namedNode("http://schema.org/Service"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Service)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ServiceStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -14748,120 +13490,6 @@ export namespace ServiceStubStatic {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ServiceStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ServiceStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ServiceStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("serviceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "serviceStub");
-    return [
-      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("serviceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "serviceStub");
-    return [
-      ...IntangibleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Service"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class BroadcastServiceStub extends ServiceStub {
   override readonly type: "BroadcastServiceStub" | "RadioBroadcastServiceStub" =
@@ -14876,7 +13504,7 @@ export class BroadcastServiceStub extends ServiceStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): BroadcastServiceStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -14918,6 +13546,8 @@ export namespace BroadcastServiceStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/BroadcastService",
   );
+  export type Identifier = ServiceStubStatic.Identifier;
+  export const Identifier = ServiceStubStatic.Identifier;
   export type Json = ServiceStubStatic.Json;
 
   export function propertiesFromJson(
@@ -15017,18 +13647,28 @@ export namespace BroadcastServiceStubStatic {
         dataFactory.namedNode("http://schema.org/BroadcastService"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/BroadcastService)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/BroadcastService",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastService)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: BroadcastServiceStubStatic.Identifier =
+      _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -15051,131 +13691,6 @@ export namespace BroadcastServiceStubStatic {
   }
 
   export const rdfProperties = [...ServiceStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        BroadcastServiceStubStatic.sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      BroadcastServiceStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("broadcastServiceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "broadcastServiceStub");
-    return [
-      ...ServiceStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("broadcastServiceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "broadcastServiceStub");
-    return [
-      ...ServiceStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/BroadcastService",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class RadioBroadcastServiceStub extends BroadcastServiceStub {
   override readonly type = "RadioBroadcastServiceStub";
@@ -15189,7 +13704,7 @@ export class RadioBroadcastServiceStub extends BroadcastServiceStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): RadioBroadcastServiceStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -15233,6 +13748,8 @@ export namespace RadioBroadcastServiceStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/RadioBroadcastService",
   );
+  export type Identifier = BroadcastServiceStubStatic.Identifier;
+  export const Identifier = BroadcastServiceStubStatic.Identifier;
   export type Json = BroadcastServiceStubStatic.Json;
 
   export function propertiesFromJson(
@@ -15326,18 +13843,28 @@ export namespace RadioBroadcastServiceStub {
         dataFactory.namedNode("http://schema.org/RadioBroadcastService"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/RadioBroadcastService)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/RadioBroadcastService",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioBroadcastService)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: RadioBroadcastServiceStub.Identifier =
+      _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -15355,131 +13882,6 @@ export namespace RadioBroadcastServiceStub {
   }
 
   export const rdfProperties = [...BroadcastServiceStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        RadioBroadcastServiceStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        RadioBroadcastServiceStub.sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      RadioBroadcastServiceStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("radioBroadcastServiceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "radioBroadcastServiceStub");
-    return [
-      ...BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("radioBroadcastServiceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "radioBroadcastServiceStub");
-    return [
-      ...BroadcastServiceStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/RadioBroadcastService",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class QuantitativeValue extends StructuredValue {
   override readonly type = "QuantitativeValue";
@@ -15515,7 +13917,7 @@ export class QuantitativeValue extends StructuredValue {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): QuantitativeValue.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -15625,14 +14027,14 @@ export namespace QuantitativeValue {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/QuantitativeValue",
   );
+  export type Identifier = StructuredValueStatic.Identifier;
+  export const Identifier = StructuredValueStatic.Identifier;
   export type Json = {
     readonly unitText: string | undefined;
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15732,18 +14134,27 @@ export namespace QuantitativeValue {
         dataFactory.namedNode("http://schema.org/QuantitativeValue"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/QuantitativeValue)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/QuantitativeValue",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/QuantitativeValue)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: QuantitativeValue.Identifier = _resource.identifier;
     const _unitTextEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -15810,7 +14221,7 @@ export class StructuredValueStub extends IntangibleStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): StructuredValueStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -15852,6 +14263,8 @@ export namespace StructuredValueStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/StructuredValue",
   );
+  export type Identifier = IntangibleStubStatic.Identifier;
+  export const Identifier = IntangibleStubStatic.Identifier;
   export type Json = IntangibleStubStatic.Json;
 
   export function propertiesFromJson(
@@ -15963,16 +14376,28 @@ export namespace StructuredValueStubStatic {
         dataFactory.namedNode("http://schema.org/StructuredValue"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/StructuredValue)`,
-          predicate: dataFactory.namedNode("http://schema.org/StructuredValue"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/StructuredValue)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: StructuredValueStubStatic.Identifier =
+      _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -16003,127 +14428,6 @@ export namespace StructuredValueStubStatic {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        StructuredValueStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        StructuredValueStubStatic.sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      StructuredValueStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("structuredValueStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "structuredValueStub");
-    return [
-      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("structuredValueStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "structuredValueStub");
-    return [
-      ...IntangibleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/StructuredValue",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class QuantitativeValueStub extends StructuredValueStub {
   override readonly type = "QuantitativeValueStub";
@@ -16159,7 +14463,7 @@ export class QuantitativeValueStub extends StructuredValueStub {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): QuantitativeValueStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -16269,14 +14573,14 @@ export namespace QuantitativeValueStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/QuantitativeValue",
   );
+  export type Identifier = StructuredValueStubStatic.Identifier;
+  export const Identifier = StructuredValueStubStatic.Identifier;
   export type Json = {
     readonly unitText: string | undefined;
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16379,18 +14683,27 @@ export namespace QuantitativeValueStub {
         dataFactory.namedNode("http://schema.org/QuantitativeValue"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/QuantitativeValue)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/QuantitativeValue",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/QuantitativeValue)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: QuantitativeValueStub.Identifier = _resource.identifier;
     const _unitTextEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -16441,168 +14754,6 @@ export namespace QuantitativeValueStub {
     { path: dataFactory.namedNode("http://schema.org/unitText") },
     { path: dataFactory.namedNode("http://schema.org/value") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        QuantitativeValueStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        QuantitativeValueStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      QuantitativeValueStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("quantitativeValueStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "quantitativeValueStub");
-    return [
-      ...StructuredValueStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}UnitText`),
-        predicate: dataFactory.namedNode("http://schema.org/unitText"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}Value`),
-        predicate: dataFactory.namedNode("http://schema.org/value"),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("quantitativeValueStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "quantitativeValueStub");
-    return [
-      ...StructuredValueStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/QuantitativeValue",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}UnitText`),
-                predicate: dataFactory.namedNode("http://schema.org/unitText"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Value`),
-                predicate: dataFactory.namedNode("http://schema.org/value"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export class EventStub extends ThingStub {
   override readonly type: "EventStub" | "PublicationEventStub" = "EventStub";
@@ -16648,7 +14799,7 @@ export class EventStub extends ThingStub {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): EventStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -16775,14 +14926,14 @@ export namespace EventStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Event",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = {
     readonly startDate: string | undefined;
     readonly superEvent: { readonly "@id": string } | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16892,16 +15043,27 @@ export namespace EventStubStatic {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Event"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Event)`,
-          predicate: dataFactory.namedNode("http://schema.org/Event"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: EventStubStatic.Identifier = _resource.identifier;
     const _startDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -16960,162 +15122,6 @@ export namespace EventStubStatic {
     { path: dataFactory.namedNode("http://schema.org/startDate") },
     { path: dataFactory.namedNode("http://schema.org/superEvent") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        EventStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        EventStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      EventStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "eventStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}StartDate`),
-        predicate: dataFactory.namedNode("http://schema.org/startDate"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
-        predicate: dataFactory.namedNode("http://schema.org/superEvent"),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "eventStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Event"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}StartDate`),
-                predicate: dataFactory.namedNode("http://schema.org/startDate"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
-                predicate: dataFactory.namedNode(
-                  "http://schema.org/superEvent",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export class PublicationEventStub extends EventStub {
   override readonly type = "PublicationEventStub";
@@ -17129,7 +15135,7 @@ export class PublicationEventStub extends EventStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): PublicationEventStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -17171,6 +15177,8 @@ export namespace PublicationEventStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/PublicationEvent",
   );
+  export type Identifier = EventStubStatic.Identifier;
+  export const Identifier = EventStubStatic.Identifier;
   export type Json = EventStubStatic.Json;
 
   export function propertiesFromJson(
@@ -17263,18 +15271,27 @@ export namespace PublicationEventStub {
         dataFactory.namedNode("http://schema.org/PublicationEvent"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/PublicationEvent)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/PublicationEvent",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: PublicationEventStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -17287,128 +15304,6 @@ export namespace PublicationEventStub {
   }
 
   export const rdfProperties = [...EventStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PublicationEventStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PublicationEventStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PublicationEventStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "publicationEventStub");
-    return [
-      ...EventStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "publicationEventStub");
-    return [
-      ...EventStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/PublicationEvent",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class Place extends Thing {
   override readonly type = "Place";
@@ -17422,7 +15317,7 @@ export class Place extends Thing {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Place.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -17464,6 +15359,8 @@ export namespace Place {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Place",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = ThingStatic.Json;
 
   export function propertiesFromJson(
@@ -17547,16 +15444,27 @@ export namespace Place {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Place"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Place)`,
-          predicate: dataFactory.namedNode("http://schema.org/Place"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Place)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Place.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -17582,7 +15490,7 @@ export class PlaceStub extends ThingStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): PlaceStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -17624,6 +15532,8 @@ export namespace PlaceStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Place",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = ThingStubStatic.Json;
 
   export function propertiesFromJson(
@@ -17714,16 +15624,27 @@ export namespace PlaceStub {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Place"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Place)`,
-          predicate: dataFactory.namedNode("http://schema.org/Place"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Place)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: PlaceStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -17736,117 +15657,6 @@ export namespace PlaceStub {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PlaceStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PlaceStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PlaceStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("placeStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "placeStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("placeStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "placeStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Place"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class Person extends Thing {
   override readonly type = "Person";
@@ -17986,7 +15796,7 @@ export class Person extends Thing {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Person.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -18321,6 +16131,8 @@ export namespace Person {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Person",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = {
     readonly birthDate: string | undefined;
     readonly familyName: string | undefined;
@@ -18346,9 +16158,7 @@ export namespace Person {
     readonly performerIn: readonly EventStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18550,16 +16360,27 @@ export namespace Person {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Person"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Person)`,
-          predicate: dataFactory.namedNode("http://schema.org/Person"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Person)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Person.Identifier = _resource.identifier;
     const _birthDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -18863,7 +16684,7 @@ export class Organization extends Thing {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): OrganizationStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -19009,6 +16830,8 @@ export namespace OrganizationStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Organization",
   );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = {
     readonly members: readonly (
       | OrganizationStubStatic.Json
@@ -19018,9 +16841,7 @@ export namespace OrganizationStatic {
     readonly subOrganizations: readonly OrganizationStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19154,16 +16975,27 @@ export namespace OrganizationStatic {
         dataFactory.namedNode("http://schema.org/Organization"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Organization)`,
-          predicate: dataFactory.namedNode("http://schema.org/Organization"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Organization)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: OrganizationStatic.Identifier = _resource.identifier;
     const _membersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       AgentStub[]
@@ -19297,7 +17129,7 @@ export class PerformingGroup extends Organization {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): PerformingGroupStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -19339,6 +17171,8 @@ export namespace PerformingGroupStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/PerformingGroup",
   );
+  export type Identifier = OrganizationStatic.Identifier;
+  export const Identifier = OrganizationStatic.Identifier;
   export type Json = OrganizationStatic.Json;
 
   export function propertiesFromJson(
@@ -19435,16 +17269,27 @@ export namespace PerformingGroupStatic {
         dataFactory.namedNode("http://schema.org/PerformingGroup"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/PerformingGroup)`,
-          predicate: dataFactory.namedNode("http://schema.org/PerformingGroup"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PerformingGroup)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: PerformingGroupStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -19491,7 +17336,7 @@ export class Order extends Intangible {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Order.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -19499,21 +17344,19 @@ export class Order extends Intangible {
   }
 
   override equals(other: Order): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.partOfInvoice,
-          other.partOfInvoice,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "partOfInvoice",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $maybeEquals(left, right, (left, right) => left.equals(right)))(
+        this.partOfInvoice,
+        other.partOfInvoice,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "partOfInvoice",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -19589,13 +17432,13 @@ export namespace Order {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Order",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = {
     readonly partOfInvoice: InvoiceStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19688,16 +17531,27 @@ export namespace Order {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Order"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Order)`,
-          predicate: dataFactory.namedNode("http://schema.org/Order"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Order)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Order.Identifier = _resource.identifier;
     const _partOfInvoiceEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<InvoiceStub>
@@ -19751,7 +17605,7 @@ export class OrderStub extends IntangibleStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): OrderStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -19793,6 +17647,8 @@ export namespace OrderStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Order",
   );
+  export type Identifier = IntangibleStubStatic.Identifier;
+  export const Identifier = IntangibleStubStatic.Identifier;
   export type Json = IntangibleStubStatic.Json;
 
   export function propertiesFromJson(
@@ -19883,16 +17739,27 @@ export namespace OrderStub {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Order"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Order)`,
-          predicate: dataFactory.namedNode("http://schema.org/Order"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Order)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: OrderStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -19905,117 +17772,6 @@ export namespace OrderStub {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        OrderStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        OrderStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      OrderStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("orderStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "orderStub");
-    return [
-      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("orderStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "orderStub");
-    return [
-      ...IntangibleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Order"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MusicRecording extends CreativeWork {
   override readonly type = "MusicRecording";
@@ -20096,7 +17852,7 @@ export class MusicRecording extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicRecording.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -20371,6 +18127,8 @@ export namespace MusicRecording {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicRecording",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
     readonly duration: (string | QuantitativeValueStub.Json) | undefined;
@@ -20379,9 +18137,7 @@ export namespace MusicRecording {
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20535,16 +18291,27 @@ export namespace MusicRecording {
         dataFactory.namedNode("http://schema.org/MusicRecording"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicRecording)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicRecording"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicRecording)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicRecording.Identifier = _resource.identifier;
     const _byArtistsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly (MusicGroupStub | PersonStub)[]
@@ -20757,7 +18524,7 @@ export class MusicRecordingStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicRecordingStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -20799,6 +18566,8 @@ export namespace MusicRecordingStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicRecording",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -20892,16 +18661,27 @@ export namespace MusicRecordingStub {
         dataFactory.namedNode("http://schema.org/MusicRecording"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicRecording)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicRecording"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicRecording)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicRecordingStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -20914,124 +18694,6 @@ export namespace MusicRecordingStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MusicRecordingStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MusicRecordingStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MusicRecordingStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicRecordingStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicRecordingStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicRecordingStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicRecordingStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/MusicRecording",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MusicPlaylist extends CreativeWork {
   override readonly type = "MusicPlaylist";
@@ -21053,7 +18715,7 @@ export class MusicPlaylist extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicPlaylist.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -21190,13 +18852,13 @@ export namespace MusicPlaylist {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicPlaylist",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly tracks: readonly (MusicRecordingStub.Json | ItemListStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21301,16 +18963,27 @@ export namespace MusicPlaylist {
         dataFactory.namedNode("http://schema.org/MusicPlaylist"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicPlaylist)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicPlaylist"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicPlaylist)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicPlaylist.Identifier = _resource.identifier;
     const _tracksEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       (MusicRecordingStub | ItemListStub)[]
@@ -21390,7 +19063,7 @@ export class MusicPlaylistStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicPlaylistStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -21432,6 +19105,8 @@ export namespace MusicPlaylistStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicPlaylist",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -21525,16 +19200,27 @@ export namespace MusicPlaylistStub {
         dataFactory.namedNode("http://schema.org/MusicPlaylist"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicPlaylist)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicPlaylist"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicPlaylist)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicPlaylistStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -21547,124 +19233,6 @@ export namespace MusicPlaylistStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MusicPlaylistStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MusicPlaylistStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MusicPlaylistStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicPlaylistStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicPlaylistStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicPlaylistStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicPlaylistStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/MusicPlaylist",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class OrganizationStub extends ThingStub {
   override readonly type:
@@ -21681,7 +19249,7 @@ export class OrganizationStub extends ThingStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): OrganizationStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -21723,6 +19291,8 @@ export namespace OrganizationStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Organization",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = ThingStubStatic.Json;
 
   export function propertiesFromJson(
@@ -21826,16 +19396,27 @@ export namespace OrganizationStubStatic {
         dataFactory.namedNode("http://schema.org/Organization"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Organization)`,
-          predicate: dataFactory.namedNode("http://schema.org/Organization"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Organization)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: OrganizationStubStatic.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -21856,124 +19437,6 @@ export namespace OrganizationStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        OrganizationStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        OrganizationStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      OrganizationStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("organizationStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "organizationStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("organizationStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "organizationStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/Organization",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class PerformingGroupStub extends OrganizationStub {
   override readonly type: "PerformingGroupStub" | "MusicGroupStub" =
@@ -21988,7 +19451,7 @@ export class PerformingGroupStub extends OrganizationStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): PerformingGroupStubStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -22030,6 +19493,8 @@ export namespace PerformingGroupStubStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/PerformingGroup",
   );
+  export type Identifier = OrganizationStubStatic.Identifier;
+  export const Identifier = OrganizationStubStatic.Identifier;
   export type Json = OrganizationStubStatic.Json;
 
   export function propertiesFromJson(
@@ -22130,16 +19595,28 @@ export namespace PerformingGroupStubStatic {
         dataFactory.namedNode("http://schema.org/PerformingGroup"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/PerformingGroup)`,
-          predicate: dataFactory.namedNode("http://schema.org/PerformingGroup"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PerformingGroup)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: PerformingGroupStubStatic.Identifier =
+      _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -22162,127 +19639,6 @@ export namespace PerformingGroupStubStatic {
   }
 
   export const rdfProperties = [...OrganizationStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PerformingGroupStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PerformingGroupStubStatic.sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PerformingGroupStubStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("performingGroupStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "performingGroupStub");
-    return [
-      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("performingGroupStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "performingGroupStub");
-    return [
-      ...OrganizationStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/PerformingGroup",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MusicGroup extends PerformingGroup {
   override readonly type = "MusicGroup";
@@ -22296,7 +19652,7 @@ export class MusicGroup extends PerformingGroup {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicGroup.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -22338,6 +19694,8 @@ export namespace MusicGroup {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicGroup",
   );
+  export type Identifier = PerformingGroupStatic.Identifier;
+  export const Identifier = PerformingGroupStatic.Identifier;
   export type Json = PerformingGroupStatic.Json;
 
   export function propertiesFromJson(
@@ -22430,16 +19788,27 @@ export namespace MusicGroup {
         dataFactory.namedNode("http://schema.org/MusicGroup"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicGroup)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicGroup"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicGroup)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicGroup.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -22465,7 +19834,7 @@ export class MusicGroupStub extends PerformingGroupStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicGroupStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -22507,6 +19876,8 @@ export namespace MusicGroupStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicGroup",
   );
+  export type Identifier = PerformingGroupStubStatic.Identifier;
+  export const Identifier = PerformingGroupStubStatic.Identifier;
   export type Json = PerformingGroupStubStatic.Json;
 
   export function propertiesFromJson(
@@ -22600,16 +19971,27 @@ export namespace MusicGroupStub {
         dataFactory.namedNode("http://schema.org/MusicGroup"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicGroup)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicGroup"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicGroup)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicGroupStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -22622,122 +20004,6 @@ export namespace MusicGroupStub {
   }
 
   export const rdfProperties = [...PerformingGroupStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MusicGroupStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MusicGroupStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MusicGroupStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicGroupStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicGroupStub");
-    return [
-      ...PerformingGroupStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicGroupStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicGroupStub");
-    return [
-      ...PerformingGroupStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/MusicGroup"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MusicComposition extends CreativeWork {
   override readonly type = "MusicComposition";
@@ -22771,7 +20037,7 @@ export class MusicComposition extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicComposition.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -22890,6 +20156,8 @@ export namespace MusicComposition {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicComposition",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly composer:
       | (OrganizationStubStatic.Json | PersonStub.Json)
@@ -22897,9 +20165,7 @@ export namespace MusicComposition {
     readonly recordedAs: readonly MusicRecordingStub.Json[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23007,18 +20273,27 @@ export namespace MusicComposition {
         dataFactory.namedNode("http://schema.org/MusicComposition"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicComposition)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/MusicComposition",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicComposition)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicComposition.Identifier = _resource.identifier;
     const _composerEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<AgentStub>
@@ -23102,7 +20377,7 @@ export class MusicCompositionStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicCompositionStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -23144,6 +20419,8 @@ export namespace MusicCompositionStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicComposition",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -23237,18 +20514,27 @@ export namespace MusicCompositionStub {
         dataFactory.namedNode("http://schema.org/MusicComposition"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicComposition)`,
-          predicate: dataFactory.namedNode(
-            "http://schema.org/MusicComposition",
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
           ),
-        }),
-      );
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicComposition)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicCompositionStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -23261,128 +20547,6 @@ export namespace MusicCompositionStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MusicCompositionStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MusicCompositionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MusicCompositionStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicCompositionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "musicCompositionStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicCompositionStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "musicCompositionStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/MusicComposition",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MusicAlbum extends CreativeWork {
   override readonly type = "MusicAlbum";
@@ -23404,7 +20568,7 @@ export class MusicAlbum extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicAlbum.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -23543,13 +20707,13 @@ export namespace MusicAlbum {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicAlbum",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23654,16 +20818,27 @@ export namespace MusicAlbum {
         dataFactory.namedNode("http://schema.org/MusicAlbum"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicAlbum)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicAlbum"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicAlbum)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicAlbum.Identifier = _resource.identifier;
     const _byArtistsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly (MusicGroupStub | PersonStub)[]
@@ -23743,7 +20918,7 @@ export class MusicAlbumStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MusicAlbumStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -23785,6 +20960,8 @@ export namespace MusicAlbumStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MusicAlbum",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -23878,16 +21055,27 @@ export namespace MusicAlbumStub {
         dataFactory.namedNode("http://schema.org/MusicAlbum"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MusicAlbum)`,
-          predicate: dataFactory.namedNode("http://schema.org/MusicAlbum"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicAlbum)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MusicAlbumStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -23900,122 +21088,6 @@ export namespace MusicAlbumStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MusicAlbumStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MusicAlbumStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MusicAlbumStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicAlbumStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicAlbumStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("musicAlbumStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "musicAlbumStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/MusicAlbum"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class MonetaryAmount extends StructuredValue {
   override readonly type = "MonetaryAmount";
@@ -24051,7 +21123,7 @@ export class MonetaryAmount extends StructuredValue {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MonetaryAmount.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -24161,14 +21233,14 @@ export namespace MonetaryAmount {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MonetaryAmount",
   );
+  export type Identifier = StructuredValueStatic.Identifier;
+  export const Identifier = StructuredValueStatic.Identifier;
   export type Json = {
     readonly currency: string | undefined;
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24268,16 +21340,27 @@ export namespace MonetaryAmount {
         dataFactory.namedNode("http://schema.org/MonetaryAmount"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MonetaryAmount)`,
-          predicate: dataFactory.namedNode("http://schema.org/MonetaryAmount"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MonetaryAmount)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MonetaryAmount.Identifier = _resource.identifier;
     const _currencyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -24363,7 +21446,7 @@ export class MonetaryAmountStub extends StructuredValueStub {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MonetaryAmountStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -24473,14 +21556,14 @@ export namespace MonetaryAmountStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/MonetaryAmount",
   );
+  export type Identifier = StructuredValueStubStatic.Identifier;
+  export const Identifier = StructuredValueStubStatic.Identifier;
   export type Json = {
     readonly currency: string | undefined;
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24583,16 +21666,27 @@ export namespace MonetaryAmountStub {
         dataFactory.namedNode("http://schema.org/MonetaryAmount"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/MonetaryAmount)`,
-          predicate: dataFactory.namedNode("http://schema.org/MonetaryAmount"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MonetaryAmount)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MonetaryAmountStub.Identifier = _resource.identifier;
     const _currencyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -24643,164 +21737,6 @@ export namespace MonetaryAmountStub {
     { path: dataFactory.namedNode("http://schema.org/currency") },
     { path: dataFactory.namedNode("http://schema.org/value") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MonetaryAmountStub.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MonetaryAmountStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MonetaryAmountStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("monetaryAmountStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
-    return [
-      ...StructuredValueStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}Currency`),
-        predicate: dataFactory.namedNode("http://schema.org/currency"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}Value`),
-        predicate: dataFactory.namedNode("http://schema.org/value"),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("monetaryAmountStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
-    return [
-      ...StructuredValueStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/MonetaryAmount",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Currency`),
-                predicate: dataFactory.namedNode("http://schema.org/currency"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Value`),
-                predicate: dataFactory.namedNode("http://schema.org/value"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export class Message extends CreativeWork {
   override readonly type = "Message";
@@ -24824,7 +21760,7 @@ export class Message extends CreativeWork {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Message.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -24832,20 +21768,18 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
-          this.sender,
-          other.sender,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "sender",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
+        this.sender,
+        other.sender,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "sender",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -24919,15 +21853,15 @@ export namespace Message {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Message",
   );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
   export type Json = {
     readonly sender:
       | (OrganizationStubStatic.Json | PersonStub.Json)
       | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25024,16 +21958,27 @@ export namespace Message {
         dataFactory.namedNode("http://schema.org/Message"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Message)`,
-          predicate: dataFactory.namedNode("http://schema.org/Message"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Message)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Message.Identifier = _resource.identifier;
     const _senderEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<AgentStub>
@@ -25086,7 +22031,7 @@ export class MessageStub extends CreativeWorkStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): MessageStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -25128,6 +22073,8 @@ export namespace MessageStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Message",
   );
+  export type Identifier = CreativeWorkStubStatic.Identifier;
+  export const Identifier = CreativeWorkStubStatic.Identifier;
   export type Json = CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
@@ -25221,16 +22168,27 @@ export namespace MessageStub {
         dataFactory.namedNode("http://schema.org/Message"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Message)`,
-          predicate: dataFactory.namedNode("http://schema.org/Message"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Message)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: MessageStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -25243,117 +22201,6 @@ export namespace MessageStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        MessageStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        MessageStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      MessageStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("messageStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "messageStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("messageStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "messageStub");
-    return [
-      ...CreativeWorkStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Message"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class ListItem extends Intangible {
   override readonly type = "ListItem";
@@ -25382,7 +22229,7 @@ export class ListItem extends Intangible {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ListItem.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -25531,14 +22378,14 @@ export namespace ListItem {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ListItem",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = {
     readonly item: ThingStubStatic.Json;
     readonly position: (number | string) | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25642,16 +22489,27 @@ export namespace ListItem {
         dataFactory.namedNode("http://schema.org/ListItem"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ListItem)`,
-          predicate: dataFactory.namedNode("http://schema.org/ListItem"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ListItem)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ListItem.Identifier = _resource.identifier;
     const _itemEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       ThingStub
@@ -25750,7 +22608,7 @@ export class ListItemStub extends IntangibleStub {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ListItemStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -25899,14 +22757,14 @@ export namespace ListItemStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ListItem",
   );
+  export type Identifier = IntangibleStubStatic.Identifier;
+  export const Identifier = IntangibleStubStatic.Identifier;
   export type Json = {
     readonly item: ThingStubStatic.Json;
     readonly position: (number | string) | undefined;
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26010,16 +22868,27 @@ export namespace ListItemStub {
         dataFactory.namedNode("http://schema.org/ListItem"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ListItem)`,
-          predicate: dataFactory.namedNode("http://schema.org/ListItem"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ListItem)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ListItemStub.Identifier = _resource.identifier;
     const _itemEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       ThingStub
@@ -26090,165 +22959,6 @@ export namespace ListItemStub {
     { path: dataFactory.namedNode("http://schema.org/item") },
     { path: dataFactory.namedNode("http://schema.org/position") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ListItemStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ListItemStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ListItemStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("listItemStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "listItemStub");
-    return [
-      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}Item`),
-        predicate: dataFactory.namedNode("http://schema.org/item"),
-        subject,
-      },
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}Item`),
-        variablePrefix: `${variablePrefix}Item`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}Position`),
-        predicate: dataFactory.namedNode("http://schema.org/position"),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("listItemStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "listItemStub");
-    return [
-      ...IntangibleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/ListItem"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(`${variablePrefix}Item`),
-            predicate: dataFactory.namedNode("http://schema.org/item"),
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}Item`),
-        variablePrefix: `${variablePrefix}Item`,
-      }),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Position`),
-                predicate: dataFactory.namedNode("http://schema.org/position"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          { patterns: [{ patterns: [], type: "group" }], type: "union" },
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export class ItemListStub extends IntangibleStub {
   override readonly type = "ItemListStub";
@@ -26270,7 +22980,7 @@ export class ItemListStub extends IntangibleStub {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): ItemListStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -26278,21 +22988,19 @@ export class ItemListStub extends IntangibleStub {
   }
 
   override equals(other: ItemListStub): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.itemListElements,
-          other.itemListElements,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "itemListElements",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(left, right, (left, right) => left.equals(right)))(
+        this.itemListElements,
+        other.itemListElements,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "itemListElements",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -26367,13 +23075,13 @@ export namespace ItemListStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/ItemListStub",
   );
+  export type Identifier = IntangibleStubStatic.Identifier;
+  export const Identifier = IntangibleStubStatic.Identifier;
   export type Json = {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26474,16 +23182,27 @@ export namespace ItemListStub {
         dataFactory.namedNode("http://schema.org/ItemListStub"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/ItemListStub)`,
-          predicate: dataFactory.namedNode("http://schema.org/ItemListStub"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ItemListStub)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: ItemListStub.Identifier = _resource.identifier;
     const _itemListElementsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly ListItemStub[]
@@ -26529,155 +23248,6 @@ export namespace ItemListStub {
     ...IntangibleStubStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/itemListElement") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ItemListStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ItemListStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ItemListStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("itemListStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "itemListStub");
-    return [
-      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}ItemListElements`),
-        predicate: dataFactory.namedNode("http://schema.org/itemListElement"),
-        subject,
-      },
-      ...ListItemStub.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
-        variablePrefix: `${variablePrefix}ItemListElements`,
-      }),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("itemListStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "itemListStub");
-    return [
-      ...IntangibleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode(
-                    "http://schema.org/ItemListStub",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}ItemListElements`,
-                ),
-                predicate: dataFactory.namedNode(
-                  "http://schema.org/itemListElement",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...ListItemStub.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
-            variablePrefix: `${variablePrefix}ItemListElements`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export class Invoice extends Intangible {
   override readonly type = "Invoice";
@@ -26740,7 +23310,7 @@ export class Invoice extends Intangible {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): Invoice.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -26904,6 +23474,8 @@ export namespace Invoice {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Invoice",
   );
+  export type Identifier = IntangibleStatic.Identifier;
+  export const Identifier = IntangibleStatic.Identifier;
   export type Json = {
     readonly category: string | undefined;
     readonly provider:
@@ -26913,9 +23485,7 @@ export namespace Invoice {
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27044,16 +23614,27 @@ export namespace Invoice {
         dataFactory.namedNode("http://schema.org/Invoice"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Invoice)`,
-          predicate: dataFactory.namedNode("http://schema.org/Invoice"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Invoice)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: Invoice.Identifier = _resource.identifier;
     const _categoryEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -27188,7 +23769,7 @@ export class InvoiceStub extends IntangibleStub {
     super(parameters);
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): InvoiceStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -27230,6 +23811,8 @@ export namespace InvoiceStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Invoice",
   );
+  export type Identifier = IntangibleStubStatic.Identifier;
+  export const Identifier = IntangibleStubStatic.Identifier;
   export type Json = IntangibleStubStatic.Json;
 
   export function propertiesFromJson(
@@ -27322,16 +23905,27 @@ export namespace InvoiceStub {
         dataFactory.namedNode("http://schema.org/Invoice"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Invoice)`,
-          predicate: dataFactory.namedNode("http://schema.org/Invoice"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Invoice)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: InvoiceStub.Identifier = _resource.identifier;
     return purify.Either.of({ ..._super0, identifier });
   }
 
@@ -27344,117 +23938,6 @@ export namespace InvoiceStub {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        InvoiceStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        InvoiceStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      InvoiceStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("invoiceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "invoiceStub");
-    return [
-      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("invoiceStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "invoiceStub");
-    return [
-      ...IntangibleStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Invoice"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-    ];
-  }
 }
 export class PersonStub extends ThingStub {
   override readonly type = "PersonStub";
@@ -27478,7 +23961,7 @@ export class PersonStub extends ThingStub {
     }
   }
 
-  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): PersonStub.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
@@ -27486,20 +23969,18 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.jobTitle,
-          other.jobTitle,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "jobTitle",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        this.jobTitle,
+        other.jobTitle,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "jobTitle",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -27571,13 +24052,13 @@ export namespace PersonStub {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Person",
   );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
   export type Json = {
     readonly jobTitle: string | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27670,16 +24151,27 @@ export namespace PersonStub {
       !_ignoreRdfType &&
       !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Person"))
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://schema.org/Person)`,
-          predicate: dataFactory.namedNode("http://schema.org/Person"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Person)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: PersonStub.Identifier = _resource.identifier;
     const _jobTitleEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -27712,137 +24204,6 @@ export namespace PersonStub {
     ...ThingStubStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/jobTitle") },
   ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PersonStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PersonStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PersonStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("personStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "personStub");
-    return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}JobTitle`),
-        predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("personStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "personStub");
-    return [
-      ...ThingStubStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.namedNode("http://schema.org/Person"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}JobTitle`),
-                predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-  }
 }
 export type AgentStub = OrganizationStub | PersonStub;
 
@@ -27926,102 +24287,6 @@ export namespace AgentStub {
     ]);
   }
 
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        AgentStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        AgentStub.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      AgentStub.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
-        subject:
-          parameters.subject ??
-          dataFactory.variable!("agentStubOrganizationStub"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}OrganizationStub`
-          : "agentStubOrganizationStub",
-      }).concat(),
-      ...PersonStub.sparqlConstructTemplateTriples({
-        subject:
-          parameters.subject ?? dataFactory.variable!("agentStubPersonStub"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}PersonStub`
-          : "agentStubPersonStub",
-      }).concat(),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: OrganizationStubStatic.sparqlWherePatterns({
-              subject:
-                parameters.subject ??
-                dataFactory.variable!("agentStubOrganizationStub"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}OrganizationStub`
-                : "agentStubOrganizationStub",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PersonStub.sparqlWherePatterns({
-              subject:
-                parameters.subject ??
-                dataFactory.variable!("agentStubPersonStub"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PersonStub`
-                : "agentStubPersonStub",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
-  }
-
   export function toJson(
     _agentStub: AgentStub,
   ): OrganizationStubStatic.Json | PersonStub.Json {
@@ -28058,89 +24323,6112 @@ export namespace AgentStub {
     }
   }
 }
+export interface $ObjectSet {
+  action(
+    identifier: ActionStatic.Identifier,
+  ): Promise<purify.Either<Error, Action>>;
+  actionIdentifiers(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ActionStatic.Identifier[]>>;
+  actions(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Action>[]>;
+  actionsCount(
+    query?: Pick<$ObjectSet.Query<ActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  actionStub(
+    identifier: ActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ActionStub>>;
+  actionStubIdentifiers(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ActionStubStatic.Identifier[]>>;
+  actionStubs(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ActionStub>[]>;
+  actionStubsCount(
+    query?: Pick<$ObjectSet.Query<ActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  article(
+    identifier: ArticleStatic.Identifier,
+  ): Promise<purify.Either<Error, Article>>;
+  articleIdentifiers(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ArticleStatic.Identifier[]>>;
+  articles(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Article>[]>;
+  articlesCount(
+    query?: Pick<$ObjectSet.Query<ArticleStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  articleStub(
+    identifier: ArticleStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ArticleStub>>;
+  articleStubIdentifiers(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ArticleStubStatic.Identifier[]>>;
+  articleStubs(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ArticleStub>[]>;
+  articleStubsCount(
+    query?: Pick<$ObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  assessAction(
+    identifier: AssessActionStatic.Identifier,
+  ): Promise<purify.Either<Error, AssessAction>>;
+  assessActionIdentifiers(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly AssessActionStatic.Identifier[]>>;
+  assessActions(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, AssessAction>[]>;
+  assessActionsCount(
+    query?: Pick<$ObjectSet.Query<AssessActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  assessActionStub(
+    identifier: AssessActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, AssessActionStub>>;
+  assessActionStubIdentifiers(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly AssessActionStubStatic.Identifier[]>
+  >;
+  assessActionStubs(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, AssessActionStub>[]>;
+  assessActionStubsCount(
+    query?: Pick<$ObjectSet.Query<AssessActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  broadcastEvent(
+    identifier: BroadcastEvent.Identifier,
+  ): Promise<purify.Either<Error, BroadcastEvent>>;
+  broadcastEventIdentifiers(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): Promise<purify.Either<Error, readonly BroadcastEvent.Identifier[]>>;
+  broadcastEvents(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastEvent>[]>;
+  broadcastEventsCount(
+    query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  broadcastService(
+    identifier: BroadcastServiceStatic.Identifier,
+  ): Promise<purify.Either<Error, BroadcastService>>;
+  broadcastServiceIdentifiers(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BroadcastServiceStatic.Identifier[]>
+  >;
+  broadcastServices(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastService>[]>;
+  broadcastServicesCount(
+    query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  broadcastServiceStub(
+    identifier: BroadcastServiceStubStatic.Identifier,
+  ): Promise<purify.Either<Error, BroadcastServiceStub>>;
+  broadcastServiceStubIdentifiers(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BroadcastServiceStubStatic.Identifier[]>
+  >;
+  broadcastServiceStubs(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]>;
+  broadcastServiceStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  chooseAction(
+    identifier: ChooseActionStatic.Identifier,
+  ): Promise<purify.Either<Error, ChooseAction>>;
+  chooseActionIdentifiers(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ChooseActionStatic.Identifier[]>>;
+  chooseActions(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ChooseAction>[]>;
+  chooseActionsCount(
+    query?: Pick<$ObjectSet.Query<ChooseActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  chooseActionStub(
+    identifier: ChooseActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ChooseActionStub>>;
+  chooseActionStubIdentifiers(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ChooseActionStubStatic.Identifier[]>
+  >;
+  chooseActionStubs(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ChooseActionStub>[]>;
+  chooseActionStubsCount(
+    query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  creativeWork(
+    identifier: CreativeWorkStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWork>>;
+  creativeWorkIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly CreativeWorkStatic.Identifier[]>>;
+  creativeWorks(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWork>[]>;
+  creativeWorksCount(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  creativeWorkSeries(
+    identifier: CreativeWorkSeriesStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkSeries>>;
+  creativeWorkSeriesIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkSeriesStatic.Identifier[]>
+  >;
+  creativeWorkSeriess(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]>;
+  creativeWorkSeriessCount(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  creativeWorkSeriesStub(
+    identifier: CreativeWorkSeriesStubStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkSeriesStub>>;
+  creativeWorkSeriesStubIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkSeriesStubStatic.Identifier[]>
+  >;
+  creativeWorkSeriesStubs(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]>;
+  creativeWorkSeriesStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  creativeWorkStub(
+    identifier: CreativeWorkStubStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkStub>>;
+  creativeWorkStubIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkStubStatic.Identifier[]>
+  >;
+  creativeWorkStubs(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]>;
+  creativeWorkStubsCount(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  enumeration(
+    identifier: EnumerationStatic.Identifier,
+  ): Promise<purify.Either<Error, Enumeration>>;
+  enumerationIdentifiers(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EnumerationStatic.Identifier[]>>;
+  enumerations(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Enumeration>[]>;
+  enumerationsCount(
+    query?: Pick<$ObjectSet.Query<EnumerationStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  episode(
+    identifier: EpisodeStatic.Identifier,
+  ): Promise<purify.Either<Error, Episode>>;
+  episodeIdentifiers(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EpisodeStatic.Identifier[]>>;
+  episodes(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Episode>[]>;
+  episodesCount(
+    query?: Pick<$ObjectSet.Query<EpisodeStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  episodeStub(
+    identifier: EpisodeStubStatic.Identifier,
+  ): Promise<purify.Either<Error, EpisodeStub>>;
+  episodeStubIdentifiers(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EpisodeStubStatic.Identifier[]>>;
+  episodeStubs(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, EpisodeStub>[]>;
+  episodeStubsCount(
+    query?: Pick<$ObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  event(
+    identifier: EventStatic.Identifier,
+  ): Promise<purify.Either<Error, Event>>;
+  eventIdentifiers(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EventStatic.Identifier[]>>;
+  events(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Event>[]>;
+  eventsCount(
+    query?: Pick<$ObjectSet.Query<EventStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  eventStub(
+    identifier: EventStubStatic.Identifier,
+  ): Promise<purify.Either<Error, EventStub>>;
+  eventStubIdentifiers(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EventStubStatic.Identifier[]>>;
+  eventStubs(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, EventStub>[]>;
+  eventStubsCount(
+    query?: Pick<$ObjectSet.Query<EventStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  genderType(
+    identifier: GenderType.Identifier,
+  ): Promise<purify.Either<Error, GenderType>>;
+  genderTypeIdentifiers(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): Promise<purify.Either<Error, readonly GenderType.Identifier[]>>;
+  genderTypes(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): Promise<readonly purify.Either<Error, GenderType>[]>;
+  genderTypesCount(
+    query?: Pick<$ObjectSet.Query<GenderType.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  imageObject(
+    identifier: ImageObject.Identifier,
+  ): Promise<purify.Either<Error, ImageObject>>;
+  imageObjectIdentifiers(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): Promise<purify.Either<Error, readonly ImageObject.Identifier[]>>;
+  imageObjects(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): Promise<readonly purify.Either<Error, ImageObject>[]>;
+  imageObjectsCount(
+    query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  intangible(
+    identifier: IntangibleStatic.Identifier,
+  ): Promise<purify.Either<Error, Intangible>>;
+  intangibleIdentifiers(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly IntangibleStatic.Identifier[]>>;
+  intangibles(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Intangible>[]>;
+  intangiblesCount(
+    query?: Pick<$ObjectSet.Query<IntangibleStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  intangibleStub(
+    identifier: IntangibleStubStatic.Identifier,
+  ): Promise<purify.Either<Error, IntangibleStub>>;
+  intangibleStubIdentifiers(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly IntangibleStubStatic.Identifier[]>>;
+  intangibleStubs(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, IntangibleStub>[]>;
+  intangibleStubsCount(
+    query?: Pick<$ObjectSet.Query<IntangibleStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  invoice(
+    identifier: Invoice.Identifier,
+  ): Promise<purify.Either<Error, Invoice>>;
+  invoiceIdentifiers(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): Promise<purify.Either<Error, readonly Invoice.Identifier[]>>;
+  invoices(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): Promise<readonly purify.Either<Error, Invoice>[]>;
+  invoicesCount(
+    query?: Pick<$ObjectSet.Query<Invoice.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  invoiceStub(
+    identifier: InvoiceStub.Identifier,
+  ): Promise<purify.Either<Error, InvoiceStub>>;
+  invoiceStubIdentifiers(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly InvoiceStub.Identifier[]>>;
+  invoiceStubs(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, InvoiceStub>[]>;
+  invoiceStubsCount(
+    query?: Pick<$ObjectSet.Query<InvoiceStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  itemList(
+    identifier: ItemList.Identifier,
+  ): Promise<purify.Either<Error, ItemList>>;
+  itemListIdentifiers(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): Promise<purify.Either<Error, readonly ItemList.Identifier[]>>;
+  itemLists(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): Promise<readonly purify.Either<Error, ItemList>[]>;
+  itemListsCount(
+    query?: Pick<$ObjectSet.Query<ItemList.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  itemListStub(
+    identifier: ItemListStub.Identifier,
+  ): Promise<purify.Either<Error, ItemListStub>>;
+  itemListStubIdentifiers(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ItemListStub.Identifier[]>>;
+  itemListStubs(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ItemListStub>[]>;
+  itemListStubsCount(
+    query?: Pick<$ObjectSet.Query<ItemListStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  listItem(
+    identifier: ListItem.Identifier,
+  ): Promise<purify.Either<Error, ListItem>>;
+  listItemIdentifiers(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): Promise<purify.Either<Error, readonly ListItem.Identifier[]>>;
+  listItems(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): Promise<readonly purify.Either<Error, ListItem>[]>;
+  listItemsCount(
+    query?: Pick<$ObjectSet.Query<ListItem.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  listItemStub(
+    identifier: ListItemStub.Identifier,
+  ): Promise<purify.Either<Error, ListItemStub>>;
+  listItemStubIdentifiers(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ListItemStub.Identifier[]>>;
+  listItemStubs(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ListItemStub>[]>;
+  listItemStubsCount(
+    query?: Pick<$ObjectSet.Query<ListItemStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  mediaObject(
+    identifier: MediaObjectStatic.Identifier,
+  ): Promise<purify.Either<Error, MediaObject>>;
+  mediaObjectIdentifiers(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly MediaObjectStatic.Identifier[]>>;
+  mediaObjects(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, MediaObject>[]>;
+  mediaObjectsCount(
+    query?: Pick<$ObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  mediaObjectStub(
+    identifier: MediaObjectStubStatic.Identifier,
+  ): Promise<purify.Either<Error, MediaObjectStub>>;
+  mediaObjectStubIdentifiers(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly MediaObjectStubStatic.Identifier[]>>;
+  mediaObjectStubs(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, MediaObjectStub>[]>;
+  mediaObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  message(
+    identifier: Message.Identifier,
+  ): Promise<purify.Either<Error, Message>>;
+  messageIdentifiers(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): Promise<purify.Either<Error, readonly Message.Identifier[]>>;
+  messages(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): Promise<readonly purify.Either<Error, Message>[]>;
+  messagesCount(
+    query?: Pick<$ObjectSet.Query<Message.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  messageStub(
+    identifier: MessageStub.Identifier,
+  ): Promise<purify.Either<Error, MessageStub>>;
+  messageStubIdentifiers(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MessageStub.Identifier[]>>;
+  messageStubs(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MessageStub>[]>;
+  messageStubsCount(
+    query?: Pick<$ObjectSet.Query<MessageStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  monetaryAmount(
+    identifier: MonetaryAmount.Identifier,
+  ): Promise<purify.Either<Error, MonetaryAmount>>;
+  monetaryAmountIdentifiers(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): Promise<purify.Either<Error, readonly MonetaryAmount.Identifier[]>>;
+  monetaryAmounts(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): Promise<readonly purify.Either<Error, MonetaryAmount>[]>;
+  monetaryAmountsCount(
+    query?: Pick<$ObjectSet.Query<MonetaryAmount.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  monetaryAmountStub(
+    identifier: MonetaryAmountStub.Identifier,
+  ): Promise<purify.Either<Error, MonetaryAmountStub>>;
+  monetaryAmountStubIdentifiers(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MonetaryAmountStub.Identifier[]>>;
+  monetaryAmountStubs(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]>;
+  monetaryAmountStubsCount(
+    query?: Pick<$ObjectSet.Query<MonetaryAmountStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicAlbum(
+    identifier: MusicAlbum.Identifier,
+  ): Promise<purify.Either<Error, MusicAlbum>>;
+  musicAlbumIdentifiers(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicAlbum.Identifier[]>>;
+  musicAlbums(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicAlbum>[]>;
+  musicAlbumsCount(
+    query?: Pick<$ObjectSet.Query<MusicAlbum.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicAlbumStub(
+    identifier: MusicAlbumStub.Identifier,
+  ): Promise<purify.Either<Error, MusicAlbumStub>>;
+  musicAlbumStubIdentifiers(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicAlbumStub.Identifier[]>>;
+  musicAlbumStubs(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]>;
+  musicAlbumStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicComposition(
+    identifier: MusicComposition.Identifier,
+  ): Promise<purify.Either<Error, MusicComposition>>;
+  musicCompositionIdentifiers(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicComposition.Identifier[]>>;
+  musicCompositions(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicComposition>[]>;
+  musicCompositionsCount(
+    query?: Pick<$ObjectSet.Query<MusicComposition.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicCompositionStub(
+    identifier: MusicCompositionStub.Identifier,
+  ): Promise<purify.Either<Error, MusicCompositionStub>>;
+  musicCompositionStubIdentifiers(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicCompositionStub.Identifier[]>>;
+  musicCompositionStubs(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]>;
+  musicCompositionStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicCompositionStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicGroup(
+    identifier: MusicGroup.Identifier,
+  ): Promise<purify.Either<Error, MusicGroup>>;
+  musicGroupIdentifiers(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicGroup.Identifier[]>>;
+  musicGroups(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicGroup>[]>;
+  musicGroupsCount(
+    query?: Pick<$ObjectSet.Query<MusicGroup.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicGroupStub(
+    identifier: MusicGroupStub.Identifier,
+  ): Promise<purify.Either<Error, MusicGroupStub>>;
+  musicGroupStubIdentifiers(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicGroupStub.Identifier[]>>;
+  musicGroupStubs(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicGroupStub>[]>;
+  musicGroupStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicGroupStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicPlaylist(
+    identifier: MusicPlaylist.Identifier,
+  ): Promise<purify.Either<Error, MusicPlaylist>>;
+  musicPlaylistIdentifiers(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicPlaylist.Identifier[]>>;
+  musicPlaylists(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicPlaylist>[]>;
+  musicPlaylistsCount(
+    query?: Pick<$ObjectSet.Query<MusicPlaylist.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicPlaylistStub(
+    identifier: MusicPlaylistStub.Identifier,
+  ): Promise<purify.Either<Error, MusicPlaylistStub>>;
+  musicPlaylistStubIdentifiers(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicPlaylistStub.Identifier[]>>;
+  musicPlaylistStubs(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]>;
+  musicPlaylistStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicRecording(
+    identifier: MusicRecording.Identifier,
+  ): Promise<purify.Either<Error, MusicRecording>>;
+  musicRecordingIdentifiers(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicRecording.Identifier[]>>;
+  musicRecordings(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicRecording>[]>;
+  musicRecordingsCount(
+    query?: Pick<$ObjectSet.Query<MusicRecording.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  musicRecordingStub(
+    identifier: MusicRecordingStub.Identifier,
+  ): Promise<purify.Either<Error, MusicRecordingStub>>;
+  musicRecordingStubIdentifiers(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicRecordingStub.Identifier[]>>;
+  musicRecordingStubs(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]>;
+  musicRecordingStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicRecordingStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  occupation(
+    identifier: Occupation.Identifier,
+  ): Promise<purify.Either<Error, Occupation>>;
+  occupationIdentifiers(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): Promise<purify.Either<Error, readonly Occupation.Identifier[]>>;
+  occupations(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): Promise<readonly purify.Either<Error, Occupation>[]>;
+  occupationsCount(
+    query?: Pick<$ObjectSet.Query<Occupation.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  order(identifier: Order.Identifier): Promise<purify.Either<Error, Order>>;
+  orderIdentifiers(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): Promise<purify.Either<Error, readonly Order.Identifier[]>>;
+  orders(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): Promise<readonly purify.Either<Error, Order>[]>;
+  ordersCount(
+    query?: Pick<$ObjectSet.Query<Order.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  orderStub(
+    identifier: OrderStub.Identifier,
+  ): Promise<purify.Either<Error, OrderStub>>;
+  orderStubIdentifiers(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly OrderStub.Identifier[]>>;
+  orderStubs(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, OrderStub>[]>;
+  orderStubsCount(
+    query?: Pick<$ObjectSet.Query<OrderStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  organization(
+    identifier: OrganizationStatic.Identifier,
+  ): Promise<purify.Either<Error, Organization>>;
+  organizationIdentifiers(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly OrganizationStatic.Identifier[]>>;
+  organizations(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Organization>[]>;
+  organizationsCount(
+    query?: Pick<$ObjectSet.Query<OrganizationStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  organizationStub(
+    identifier: OrganizationStubStatic.Identifier,
+  ): Promise<purify.Either<Error, OrganizationStub>>;
+  organizationStubIdentifiers(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly OrganizationStubStatic.Identifier[]>
+  >;
+  organizationStubs(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, OrganizationStub>[]>;
+  organizationStubsCount(
+    query?: Pick<$ObjectSet.Query<OrganizationStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  performingGroup(
+    identifier: PerformingGroupStatic.Identifier,
+  ): Promise<purify.Either<Error, PerformingGroup>>;
+  performingGroupIdentifiers(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly PerformingGroupStatic.Identifier[]>>;
+  performingGroups(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PerformingGroup>[]>;
+  performingGroupsCount(
+    query?: Pick<$ObjectSet.Query<PerformingGroupStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  performingGroupStub(
+    identifier: PerformingGroupStubStatic.Identifier,
+  ): Promise<purify.Either<Error, PerformingGroupStub>>;
+  performingGroupStubIdentifiers(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PerformingGroupStubStatic.Identifier[]>
+  >;
+  performingGroupStubs(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]>;
+  performingGroupStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  person(identifier: Person.Identifier): Promise<purify.Either<Error, Person>>;
+  personIdentifiers(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): Promise<purify.Either<Error, readonly Person.Identifier[]>>;
+  people(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): Promise<readonly purify.Either<Error, Person>[]>;
+  peopleCount(
+    query?: Pick<$ObjectSet.Query<Person.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  personStub(
+    identifier: PersonStub.Identifier,
+  ): Promise<purify.Either<Error, PersonStub>>;
+  personStubIdentifiers(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PersonStub.Identifier[]>>;
+  personStubs(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PersonStub>[]>;
+  personStubsCount(
+    query?: Pick<$ObjectSet.Query<PersonStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  place(identifier: Place.Identifier): Promise<purify.Either<Error, Place>>;
+  placeIdentifiers(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): Promise<purify.Either<Error, readonly Place.Identifier[]>>;
+  places(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): Promise<readonly purify.Either<Error, Place>[]>;
+  placesCount(
+    query?: Pick<$ObjectSet.Query<Place.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  placeStub(
+    identifier: PlaceStub.Identifier,
+  ): Promise<purify.Either<Error, PlaceStub>>;
+  placeStubIdentifiers(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PlaceStub.Identifier[]>>;
+  placeStubs(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PlaceStub>[]>;
+  placeStubsCount(
+    query?: Pick<$ObjectSet.Query<PlaceStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  publicationEvent(
+    identifier: PublicationEventStatic.Identifier,
+  ): Promise<purify.Either<Error, PublicationEvent>>;
+  publicationEventIdentifiers(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PublicationEventStatic.Identifier[]>
+  >;
+  publicationEvents(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PublicationEvent>[]>;
+  publicationEventsCount(
+    query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  publicationEventStub(
+    identifier: PublicationEventStub.Identifier,
+  ): Promise<purify.Either<Error, PublicationEventStub>>;
+  publicationEventStubIdentifiers(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>>;
+  publicationEventStubs(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PublicationEventStub>[]>;
+  publicationEventStubsCount(
+    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  quantitativeValue(
+    identifier: QuantitativeValue.Identifier,
+  ): Promise<purify.Either<Error, QuantitativeValue>>;
+  quantitativeValueIdentifiers(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): Promise<purify.Either<Error, readonly QuantitativeValue.Identifier[]>>;
+  quantitativeValues(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): Promise<readonly purify.Either<Error, QuantitativeValue>[]>;
+  quantitativeValuesCount(
+    query?: Pick<$ObjectSet.Query<QuantitativeValue.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  quantitativeValueStub(
+    identifier: QuantitativeValueStub.Identifier,
+  ): Promise<purify.Either<Error, QuantitativeValueStub>>;
+  quantitativeValueStubIdentifiers(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly QuantitativeValueStub.Identifier[]>>;
+  quantitativeValueStubs(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]>;
+  quantitativeValueStubsCount(
+    query?: Pick<$ObjectSet.Query<QuantitativeValueStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  radioBroadcastService(
+    identifier: RadioBroadcastService.Identifier,
+  ): Promise<purify.Either<Error, RadioBroadcastService>>;
+  radioBroadcastServiceIdentifiers(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioBroadcastService.Identifier[]>>;
+  radioBroadcastServices(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]>;
+  radioBroadcastServicesCount(
+    query?: Pick<$ObjectSet.Query<RadioBroadcastService.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  radioBroadcastServiceStub(
+    identifier: RadioBroadcastServiceStub.Identifier,
+  ): Promise<purify.Either<Error, RadioBroadcastServiceStub>>;
+  radioBroadcastServiceStubIdentifiers(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RadioBroadcastServiceStub.Identifier[]>
+  >;
+  radioBroadcastServiceStubs(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]>;
+  radioBroadcastServiceStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  radioEpisode(
+    identifier: RadioEpisode.Identifier,
+  ): Promise<purify.Either<Error, RadioEpisode>>;
+  radioEpisodeIdentifiers(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioEpisode.Identifier[]>>;
+  radioEpisodes(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioEpisode>[]>;
+  radioEpisodesCount(
+    query?: Pick<$ObjectSet.Query<RadioEpisode.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  radioEpisodeStub(
+    identifier: RadioEpisodeStub.Identifier,
+  ): Promise<purify.Either<Error, RadioEpisodeStub>>;
+  radioEpisodeStubIdentifiers(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioEpisodeStub.Identifier[]>>;
+  radioEpisodeStubs(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]>;
+  radioEpisodeStubsCount(
+    query?: Pick<$ObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  radioSeries(
+    identifier: RadioSeries.Identifier,
+  ): Promise<purify.Either<Error, RadioSeries>>;
+  radioSeriesIdentifiers(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioSeries.Identifier[]>>;
+  radioSeriess(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioSeries>[]>;
+  radioSeriessCount(
+    query?: Pick<$ObjectSet.Query<RadioSeries.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  radioSeriesStub(
+    identifier: RadioSeriesStub.Identifier,
+  ): Promise<purify.Either<Error, RadioSeriesStub>>;
+  radioSeriesStubIdentifiers(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioSeriesStub.Identifier[]>>;
+  radioSeriesStubs(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]>;
+  radioSeriesStubsCount(
+    query?: Pick<$ObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  report(identifier: Report.Identifier): Promise<purify.Either<Error, Report>>;
+  reportIdentifiers(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): Promise<purify.Either<Error, readonly Report.Identifier[]>>;
+  reports(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): Promise<readonly purify.Either<Error, Report>[]>;
+  reportsCount(
+    query?: Pick<$ObjectSet.Query<Report.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  reportStub(
+    identifier: ReportStub.Identifier,
+  ): Promise<purify.Either<Error, ReportStub>>;
+  reportStubIdentifiers(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ReportStub.Identifier[]>>;
+  reportStubs(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ReportStub>[]>;
+  reportStubsCount(
+    query?: Pick<$ObjectSet.Query<ReportStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  role(identifier: Role.Identifier): Promise<purify.Either<Error, Role>>;
+  roleIdentifiers(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): Promise<purify.Either<Error, readonly Role.Identifier[]>>;
+  roles(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): Promise<readonly purify.Either<Error, Role>[]>;
+  rolesCount(
+    query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  service(
+    identifier: ServiceStatic.Identifier,
+  ): Promise<purify.Either<Error, Service>>;
+  serviceIdentifiers(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ServiceStatic.Identifier[]>>;
+  services(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Service>[]>;
+  servicesCount(
+    query?: Pick<$ObjectSet.Query<ServiceStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  serviceStub(
+    identifier: ServiceStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ServiceStub>>;
+  serviceStubIdentifiers(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ServiceStubStatic.Identifier[]>>;
+  serviceStubs(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ServiceStub>[]>;
+  serviceStubsCount(
+    query?: Pick<$ObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  structuredValue(
+    identifier: StructuredValueStatic.Identifier,
+  ): Promise<purify.Either<Error, StructuredValue>>;
+  structuredValueIdentifiers(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly StructuredValueStatic.Identifier[]>>;
+  structuredValues(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, StructuredValue>[]>;
+  structuredValuesCount(
+    query?: Pick<$ObjectSet.Query<StructuredValueStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  structuredValueStub(
+    identifier: StructuredValueStubStatic.Identifier,
+  ): Promise<purify.Either<Error, StructuredValueStub>>;
+  structuredValueStubIdentifiers(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StructuredValueStubStatic.Identifier[]>
+  >;
+  structuredValueStubs(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, StructuredValueStub>[]>;
+  structuredValueStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  textObject(
+    identifier: TextObject.Identifier,
+  ): Promise<purify.Either<Error, TextObject>>;
+  textObjectIdentifiers(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): Promise<purify.Either<Error, readonly TextObject.Identifier[]>>;
+  textObjects(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): Promise<readonly purify.Either<Error, TextObject>[]>;
+  textObjectsCount(
+    query?: Pick<$ObjectSet.Query<TextObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  textObjectStub(
+    identifier: TextObjectStub.Identifier,
+  ): Promise<purify.Either<Error, TextObjectStub>>;
+  textObjectStubIdentifiers(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly TextObjectStub.Identifier[]>>;
+  textObjectStubs(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, TextObjectStub>[]>;
+  textObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<TextObjectStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  thing(
+    identifier: ThingStatic.Identifier,
+  ): Promise<purify.Either<Error, Thing>>;
+  thingIdentifiers(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ThingStatic.Identifier[]>>;
+  things(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Thing>[]>;
+  thingsCount(
+    query?: Pick<$ObjectSet.Query<ThingStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  thingStub(
+    identifier: ThingStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ThingStub>>;
+  thingStubIdentifiers(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ThingStubStatic.Identifier[]>>;
+  thingStubs(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ThingStub>[]>;
+  thingStubsCount(
+    query?: Pick<$ObjectSet.Query<ThingStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  voteAction(
+    identifier: VoteAction.Identifier,
+  ): Promise<purify.Either<Error, VoteAction>>;
+  voteActionIdentifiers(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): Promise<purify.Either<Error, readonly VoteAction.Identifier[]>>;
+  voteActions(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): Promise<readonly purify.Either<Error, VoteAction>[]>;
+  voteActionsCount(
+    query?: Pick<$ObjectSet.Query<VoteAction.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  voteActionStub(
+    identifier: VoteActionStub.Identifier,
+  ): Promise<purify.Either<Error, VoteActionStub>>;
+  voteActionStubIdentifiers(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly VoteActionStub.Identifier[]>>;
+  voteActionStubs(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, VoteActionStub>[]>;
+  voteActionStubsCount(
+    query?: Pick<$ObjectSet.Query<VoteActionStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+}
 
-export const $ObjectTypes = {
-    Action: ActionStatic,
-    ActionStub: ActionStubStatic,
-    Article: ArticleStatic,
-    ArticleStub: ArticleStubStatic,
-    AssessAction: AssessActionStatic,
-    AssessActionStub: AssessActionStubStatic,
-    BroadcastEvent,
-    BroadcastService: BroadcastServiceStatic,
-    BroadcastServiceStub: BroadcastServiceStubStatic,
-    ChooseAction: ChooseActionStatic,
-    ChooseActionStub: ChooseActionStubStatic,
-    CreativeWork: CreativeWorkStatic,
-    CreativeWorkSeries: CreativeWorkSeriesStatic,
-    CreativeWorkSeriesStub: CreativeWorkSeriesStubStatic,
-    CreativeWorkStub: CreativeWorkStubStatic,
-    Enumeration: EnumerationStatic,
-    Episode: EpisodeStatic,
-    EpisodeStub: EpisodeStubStatic,
-    Event: EventStatic,
-    EventStub: EventStubStatic,
-    GenderType,
-    ImageObject,
-    Intangible: IntangibleStatic,
-    IntangibleStub: IntangibleStubStatic,
-    Invoice,
-    InvoiceStub,
-    ItemList,
-    ItemListStub,
-    ListItem,
-    ListItemStub,
-    MediaObject: MediaObjectStatic,
-    MediaObjectStub: MediaObjectStubStatic,
-    Message,
-    MessageStub,
-    Model: ModelStatic,
-    MonetaryAmount,
-    MonetaryAmountStub,
-    MusicAlbum,
-    MusicAlbumStub,
-    MusicComposition,
-    MusicCompositionStub,
-    MusicGroup,
-    MusicGroupStub,
-    MusicPlaylist,
-    MusicPlaylistStub,
-    MusicRecording,
-    MusicRecordingStub,
-    Occupation,
-    Order,
-    OrderStub,
-    Organization: OrganizationStatic,
-    OrganizationStub: OrganizationStubStatic,
-    PerformingGroup: PerformingGroupStatic,
-    PerformingGroupStub: PerformingGroupStubStatic,
-    Person,
-    PersonStub,
-    Place,
-    PlaceStub,
-    PublicationEvent: PublicationEventStatic,
-    PublicationEventStub,
-    QuantitativeValue,
-    QuantitativeValueStub,
-    RadioBroadcastService,
-    RadioBroadcastServiceStub,
-    RadioEpisode,
-    RadioEpisodeStub,
-    RadioSeries,
-    RadioSeriesStub,
-    Report,
-    ReportStub,
-    Role,
-    Service: ServiceStatic,
-    ServiceStub: ServiceStubStatic,
-    StructuredValue: StructuredValueStatic,
-    StructuredValueStub: StructuredValueStubStatic,
-    TextObject,
-    TextObjectStub,
-    Thing: ThingStatic,
-    ThingStub: ThingStubStatic,
-    VoteAction,
-    VoteActionStub,
-  },
-  $ObjectUnionTypes = { AgentStub },
-  $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };
+export namespace $ObjectSet {
+  export type Query<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = {
+    readonly limit?: number;
+    readonly offset?: number;
+    readonly where?: Where<ObjectIdentifierT>;
+  };
+  export type Where<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = {
+    readonly identifiers: readonly ObjectIdentifierT[];
+    readonly type: "identifiers";
+  };
+}
+
+export class $RdfjsDatasetObjectSet implements $ObjectSet {
+  readonly resourceSet: rdfjsResource.ResourceSet;
+
+  constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
+    this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
+  }
+
+  async action(
+    identifier: ActionStatic.Identifier,
+  ): Promise<purify.Either<Error, Action>> {
+    return this.actionSync(identifier);
+  }
+
+  actionSync(
+    identifier: ActionStatic.Identifier,
+  ): purify.Either<Error, Action> {
+    return this.actionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async actionIdentifiers(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ActionStatic.Identifier[]>> {
+    return this.actionIdentifiersSync(query);
+  }
+
+  actionIdentifiersSync(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): purify.Either<Error, readonly ActionStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Action, ActionStatic.Identifier>(
+        ActionStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async actions(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Action>[]> {
+    return this.actionsSync(query);
+  }
+
+  actionsSync(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): readonly purify.Either<Error, Action>[] {
+    return [
+      ...this.$objectsSync<Action, ActionStatic.Identifier>(
+        ActionStatic,
+        query,
+      ),
+    ];
+  }
+
+  async actionsCount(
+    query?: Pick<$ObjectSet.Query<ActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.actionsCountSync(query);
+  }
+
+  actionsCountSync(
+    query?: Pick<$ObjectSet.Query<ActionStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Action, ActionStatic.Identifier>(
+      ActionStatic,
+      query,
+    );
+  }
+
+  async actionStub(
+    identifier: ActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ActionStub>> {
+    return this.actionStubSync(identifier);
+  }
+
+  actionStubSync(
+    identifier: ActionStubStatic.Identifier,
+  ): purify.Either<Error, ActionStub> {
+    return this.actionStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async actionStubIdentifiers(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ActionStubStatic.Identifier[]>> {
+    return this.actionStubIdentifiersSync(query);
+  }
+
+  actionStubIdentifiersSync(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): purify.Either<Error, readonly ActionStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ActionStub, ActionStubStatic.Identifier>(
+        ActionStubStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async actionStubs(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ActionStub>[]> {
+    return this.actionStubsSync(query);
+  }
+
+  actionStubsSync(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): readonly purify.Either<Error, ActionStub>[] {
+    return [
+      ...this.$objectsSync<ActionStub, ActionStubStatic.Identifier>(
+        ActionStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async actionStubsCount(
+    query?: Pick<$ObjectSet.Query<ActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.actionStubsCountSync(query);
+  }
+
+  actionStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ActionStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ActionStub, ActionStubStatic.Identifier>(
+      ActionStubStatic,
+      query,
+    );
+  }
+
+  async article(
+    identifier: ArticleStatic.Identifier,
+  ): Promise<purify.Either<Error, Article>> {
+    return this.articleSync(identifier);
+  }
+
+  articleSync(
+    identifier: ArticleStatic.Identifier,
+  ): purify.Either<Error, Article> {
+    return this.articlesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async articleIdentifiers(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ArticleStatic.Identifier[]>> {
+    return this.articleIdentifiersSync(query);
+  }
+
+  articleIdentifiersSync(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): purify.Either<Error, readonly ArticleStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Article, ArticleStatic.Identifier>(
+        ArticleStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async articles(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Article>[]> {
+    return this.articlesSync(query);
+  }
+
+  articlesSync(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): readonly purify.Either<Error, Article>[] {
+    return [
+      ...this.$objectsSync<Article, ArticleStatic.Identifier>(
+        ArticleStatic,
+        query,
+      ),
+    ];
+  }
+
+  async articlesCount(
+    query?: Pick<$ObjectSet.Query<ArticleStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.articlesCountSync(query);
+  }
+
+  articlesCountSync(
+    query?: Pick<$ObjectSet.Query<ArticleStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Article, ArticleStatic.Identifier>(
+      ArticleStatic,
+      query,
+    );
+  }
+
+  async articleStub(
+    identifier: ArticleStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ArticleStub>> {
+    return this.articleStubSync(identifier);
+  }
+
+  articleStubSync(
+    identifier: ArticleStubStatic.Identifier,
+  ): purify.Either<Error, ArticleStub> {
+    return this.articleStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async articleStubIdentifiers(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ArticleStubStatic.Identifier[]>> {
+    return this.articleStubIdentifiersSync(query);
+  }
+
+  articleStubIdentifiersSync(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): purify.Either<Error, readonly ArticleStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ArticleStub, ArticleStubStatic.Identifier>(
+        ArticleStubStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async articleStubs(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ArticleStub>[]> {
+    return this.articleStubsSync(query);
+  }
+
+  articleStubsSync(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): readonly purify.Either<Error, ArticleStub>[] {
+    return [
+      ...this.$objectsSync<ArticleStub, ArticleStubStatic.Identifier>(
+        ArticleStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async articleStubsCount(
+    query?: Pick<$ObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.articleStubsCountSync(query);
+  }
+
+  articleStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ArticleStub, ArticleStubStatic.Identifier>(
+      ArticleStubStatic,
+      query,
+    );
+  }
+
+  async assessAction(
+    identifier: AssessActionStatic.Identifier,
+  ): Promise<purify.Either<Error, AssessAction>> {
+    return this.assessActionSync(identifier);
+  }
+
+  assessActionSync(
+    identifier: AssessActionStatic.Identifier,
+  ): purify.Either<Error, AssessAction> {
+    return this.assessActionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async assessActionIdentifiers(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly AssessActionStatic.Identifier[]>> {
+    return this.assessActionIdentifiersSync(query);
+  }
+
+  assessActionIdentifiersSync(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): purify.Either<Error, readonly AssessActionStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        AssessAction,
+        AssessActionStatic.Identifier
+      >(AssessActionStatic, query),
+    ]);
+  }
+
+  async assessActions(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, AssessAction>[]> {
+    return this.assessActionsSync(query);
+  }
+
+  assessActionsSync(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): readonly purify.Either<Error, AssessAction>[] {
+    return [
+      ...this.$objectsSync<AssessAction, AssessActionStatic.Identifier>(
+        AssessActionStatic,
+        query,
+      ),
+    ];
+  }
+
+  async assessActionsCount(
+    query?: Pick<$ObjectSet.Query<AssessActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.assessActionsCountSync(query);
+  }
+
+  assessActionsCountSync(
+    query?: Pick<$ObjectSet.Query<AssessActionStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<AssessAction, AssessActionStatic.Identifier>(
+      AssessActionStatic,
+      query,
+    );
+  }
+
+  async assessActionStub(
+    identifier: AssessActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, AssessActionStub>> {
+    return this.assessActionStubSync(identifier);
+  }
+
+  assessActionStubSync(
+    identifier: AssessActionStubStatic.Identifier,
+  ): purify.Either<Error, AssessActionStub> {
+    return this.assessActionStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async assessActionStubIdentifiers(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly AssessActionStubStatic.Identifier[]>
+  > {
+    return this.assessActionStubIdentifiersSync(query);
+  }
+
+  assessActionStubIdentifiersSync(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): purify.Either<Error, readonly AssessActionStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        AssessActionStub,
+        AssessActionStubStatic.Identifier
+      >(AssessActionStubStatic, query),
+    ]);
+  }
+
+  async assessActionStubs(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, AssessActionStub>[]> {
+    return this.assessActionStubsSync(query);
+  }
+
+  assessActionStubsSync(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): readonly purify.Either<Error, AssessActionStub>[] {
+    return [
+      ...this.$objectsSync<AssessActionStub, AssessActionStubStatic.Identifier>(
+        AssessActionStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async assessActionStubsCount(
+    query?: Pick<$ObjectSet.Query<AssessActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.assessActionStubsCountSync(query);
+  }
+
+  assessActionStubsCountSync(
+    query?: Pick<$ObjectSet.Query<AssessActionStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      AssessActionStub,
+      AssessActionStubStatic.Identifier
+    >(AssessActionStubStatic, query);
+  }
+
+  async broadcastEvent(
+    identifier: BroadcastEvent.Identifier,
+  ): Promise<purify.Either<Error, BroadcastEvent>> {
+    return this.broadcastEventSync(identifier);
+  }
+
+  broadcastEventSync(
+    identifier: BroadcastEvent.Identifier,
+  ): purify.Either<Error, BroadcastEvent> {
+    return this.broadcastEventsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async broadcastEventIdentifiers(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): Promise<purify.Either<Error, readonly BroadcastEvent.Identifier[]>> {
+    return this.broadcastEventIdentifiersSync(query);
+  }
+
+  broadcastEventIdentifiersSync(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): purify.Either<Error, readonly BroadcastEvent.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<BroadcastEvent, BroadcastEvent.Identifier>(
+        BroadcastEvent,
+        query,
+      ),
+    ]);
+  }
+
+  async broadcastEvents(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastEvent>[]> {
+    return this.broadcastEventsSync(query);
+  }
+
+  broadcastEventsSync(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): readonly purify.Either<Error, BroadcastEvent>[] {
+    return [
+      ...this.$objectsSync<BroadcastEvent, BroadcastEvent.Identifier>(
+        BroadcastEvent,
+        query,
+      ),
+    ];
+  }
+
+  async broadcastEventsCount(
+    query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.broadcastEventsCountSync(query);
+  }
+
+  broadcastEventsCountSync(
+    query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<BroadcastEvent, BroadcastEvent.Identifier>(
+      BroadcastEvent,
+      query,
+    );
+  }
+
+  async broadcastService(
+    identifier: BroadcastServiceStatic.Identifier,
+  ): Promise<purify.Either<Error, BroadcastService>> {
+    return this.broadcastServiceSync(identifier);
+  }
+
+  broadcastServiceSync(
+    identifier: BroadcastServiceStatic.Identifier,
+  ): purify.Either<Error, BroadcastService> {
+    return this.broadcastServicesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async broadcastServiceIdentifiers(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BroadcastServiceStatic.Identifier[]>
+  > {
+    return this.broadcastServiceIdentifiersSync(query);
+  }
+
+  broadcastServiceIdentifiersSync(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): purify.Either<Error, readonly BroadcastServiceStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        BroadcastService,
+        BroadcastServiceStatic.Identifier
+      >(BroadcastServiceStatic, query),
+    ]);
+  }
+
+  async broadcastServices(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastService>[]> {
+    return this.broadcastServicesSync(query);
+  }
+
+  broadcastServicesSync(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): readonly purify.Either<Error, BroadcastService>[] {
+    return [
+      ...this.$objectsSync<BroadcastService, BroadcastServiceStatic.Identifier>(
+        BroadcastServiceStatic,
+        query,
+      ),
+    ];
+  }
+
+  async broadcastServicesCount(
+    query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.broadcastServicesCountSync(query);
+  }
+
+  broadcastServicesCountSync(
+    query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      BroadcastService,
+      BroadcastServiceStatic.Identifier
+    >(BroadcastServiceStatic, query);
+  }
+
+  async broadcastServiceStub(
+    identifier: BroadcastServiceStubStatic.Identifier,
+  ): Promise<purify.Either<Error, BroadcastServiceStub>> {
+    return this.broadcastServiceStubSync(identifier);
+  }
+
+  broadcastServiceStubSync(
+    identifier: BroadcastServiceStubStatic.Identifier,
+  ): purify.Either<Error, BroadcastServiceStub> {
+    return this.broadcastServiceStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async broadcastServiceStubIdentifiers(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BroadcastServiceStubStatic.Identifier[]>
+  > {
+    return this.broadcastServiceStubIdentifiersSync(query);
+  }
+
+  broadcastServiceStubIdentifiersSync(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): purify.Either<Error, readonly BroadcastServiceStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        BroadcastServiceStub,
+        BroadcastServiceStubStatic.Identifier
+      >(BroadcastServiceStubStatic, query),
+    ]);
+  }
+
+  async broadcastServiceStubs(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]> {
+    return this.broadcastServiceStubsSync(query);
+  }
+
+  broadcastServiceStubsSync(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): readonly purify.Either<Error, BroadcastServiceStub>[] {
+    return [
+      ...this.$objectsSync<
+        BroadcastServiceStub,
+        BroadcastServiceStubStatic.Identifier
+      >(BroadcastServiceStubStatic, query),
+    ];
+  }
+
+  async broadcastServiceStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.broadcastServiceStubsCountSync(query);
+  }
+
+  broadcastServiceStubsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      BroadcastServiceStub,
+      BroadcastServiceStubStatic.Identifier
+    >(BroadcastServiceStubStatic, query);
+  }
+
+  async chooseAction(
+    identifier: ChooseActionStatic.Identifier,
+  ): Promise<purify.Either<Error, ChooseAction>> {
+    return this.chooseActionSync(identifier);
+  }
+
+  chooseActionSync(
+    identifier: ChooseActionStatic.Identifier,
+  ): purify.Either<Error, ChooseAction> {
+    return this.chooseActionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async chooseActionIdentifiers(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ChooseActionStatic.Identifier[]>> {
+    return this.chooseActionIdentifiersSync(query);
+  }
+
+  chooseActionIdentifiersSync(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): purify.Either<Error, readonly ChooseActionStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        ChooseAction,
+        ChooseActionStatic.Identifier
+      >(ChooseActionStatic, query),
+    ]);
+  }
+
+  async chooseActions(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ChooseAction>[]> {
+    return this.chooseActionsSync(query);
+  }
+
+  chooseActionsSync(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): readonly purify.Either<Error, ChooseAction>[] {
+    return [
+      ...this.$objectsSync<ChooseAction, ChooseActionStatic.Identifier>(
+        ChooseActionStatic,
+        query,
+      ),
+    ];
+  }
+
+  async chooseActionsCount(
+    query?: Pick<$ObjectSet.Query<ChooseActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.chooseActionsCountSync(query);
+  }
+
+  chooseActionsCountSync(
+    query?: Pick<$ObjectSet.Query<ChooseActionStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ChooseAction, ChooseActionStatic.Identifier>(
+      ChooseActionStatic,
+      query,
+    );
+  }
+
+  async chooseActionStub(
+    identifier: ChooseActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ChooseActionStub>> {
+    return this.chooseActionStubSync(identifier);
+  }
+
+  chooseActionStubSync(
+    identifier: ChooseActionStubStatic.Identifier,
+  ): purify.Either<Error, ChooseActionStub> {
+    return this.chooseActionStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async chooseActionStubIdentifiers(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ChooseActionStubStatic.Identifier[]>
+  > {
+    return this.chooseActionStubIdentifiersSync(query);
+  }
+
+  chooseActionStubIdentifiersSync(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): purify.Either<Error, readonly ChooseActionStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        ChooseActionStub,
+        ChooseActionStubStatic.Identifier
+      >(ChooseActionStubStatic, query),
+    ]);
+  }
+
+  async chooseActionStubs(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ChooseActionStub>[]> {
+    return this.chooseActionStubsSync(query);
+  }
+
+  chooseActionStubsSync(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): readonly purify.Either<Error, ChooseActionStub>[] {
+    return [
+      ...this.$objectsSync<ChooseActionStub, ChooseActionStubStatic.Identifier>(
+        ChooseActionStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async chooseActionStubsCount(
+    query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.chooseActionStubsCountSync(query);
+  }
+
+  chooseActionStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      ChooseActionStub,
+      ChooseActionStubStatic.Identifier
+    >(ChooseActionStubStatic, query);
+  }
+
+  async creativeWork(
+    identifier: CreativeWorkStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWork>> {
+    return this.creativeWorkSync(identifier);
+  }
+
+  creativeWorkSync(
+    identifier: CreativeWorkStatic.Identifier,
+  ): purify.Either<Error, CreativeWork> {
+    return this.creativeWorksSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async creativeWorkIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly CreativeWorkStatic.Identifier[]>> {
+    return this.creativeWorkIdentifiersSync(query);
+  }
+
+  creativeWorkIdentifiersSync(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): purify.Either<Error, readonly CreativeWorkStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        CreativeWork,
+        CreativeWorkStatic.Identifier
+      >(CreativeWorkStatic, query),
+    ]);
+  }
+
+  async creativeWorks(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWork>[]> {
+    return this.creativeWorksSync(query);
+  }
+
+  creativeWorksSync(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): readonly purify.Either<Error, CreativeWork>[] {
+    return [
+      ...this.$objectsSync<CreativeWork, CreativeWorkStatic.Identifier>(
+        CreativeWorkStatic,
+        query,
+      ),
+    ];
+  }
+
+  async creativeWorksCount(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.creativeWorksCountSync(query);
+  }
+
+  creativeWorksCountSync(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<CreativeWork, CreativeWorkStatic.Identifier>(
+      CreativeWorkStatic,
+      query,
+    );
+  }
+
+  async creativeWorkSeries(
+    identifier: CreativeWorkSeriesStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkSeries>> {
+    return this.creativeWorkSeriesSync(identifier);
+  }
+
+  creativeWorkSeriesSync(
+    identifier: CreativeWorkSeriesStatic.Identifier,
+  ): purify.Either<Error, CreativeWorkSeries> {
+    return this.creativeWorkSeriessSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async creativeWorkSeriesIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkSeriesStatic.Identifier[]>
+  > {
+    return this.creativeWorkSeriesIdentifiersSync(query);
+  }
+
+  creativeWorkSeriesIdentifiersSync(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): purify.Either<Error, readonly CreativeWorkSeriesStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        CreativeWorkSeries,
+        CreativeWorkSeriesStatic.Identifier
+      >(CreativeWorkSeriesStatic, query),
+    ]);
+  }
+
+  async creativeWorkSeriess(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]> {
+    return this.creativeWorkSeriessSync(query);
+  }
+
+  creativeWorkSeriessSync(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): readonly purify.Either<Error, CreativeWorkSeries>[] {
+    return [
+      ...this.$objectsSync<
+        CreativeWorkSeries,
+        CreativeWorkSeriesStatic.Identifier
+      >(CreativeWorkSeriesStatic, query),
+    ];
+  }
+
+  async creativeWorkSeriessCount(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.creativeWorkSeriessCountSync(query);
+  }
+
+  creativeWorkSeriessCountSync(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      CreativeWorkSeries,
+      CreativeWorkSeriesStatic.Identifier
+    >(CreativeWorkSeriesStatic, query);
+  }
+
+  async creativeWorkSeriesStub(
+    identifier: CreativeWorkSeriesStubStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkSeriesStub>> {
+    return this.creativeWorkSeriesStubSync(identifier);
+  }
+
+  creativeWorkSeriesStubSync(
+    identifier: CreativeWorkSeriesStubStatic.Identifier,
+  ): purify.Either<Error, CreativeWorkSeriesStub> {
+    return this.creativeWorkSeriesStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async creativeWorkSeriesStubIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkSeriesStubStatic.Identifier[]>
+  > {
+    return this.creativeWorkSeriesStubIdentifiersSync(query);
+  }
+
+  creativeWorkSeriesStubIdentifiersSync(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): purify.Either<Error, readonly CreativeWorkSeriesStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        CreativeWorkSeriesStub,
+        CreativeWorkSeriesStubStatic.Identifier
+      >(CreativeWorkSeriesStubStatic, query),
+    ]);
+  }
+
+  async creativeWorkSeriesStubs(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]> {
+    return this.creativeWorkSeriesStubsSync(query);
+  }
+
+  creativeWorkSeriesStubsSync(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): readonly purify.Either<Error, CreativeWorkSeriesStub>[] {
+    return [
+      ...this.$objectsSync<
+        CreativeWorkSeriesStub,
+        CreativeWorkSeriesStubStatic.Identifier
+      >(CreativeWorkSeriesStubStatic, query),
+    ];
+  }
+
+  async creativeWorkSeriesStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.creativeWorkSeriesStubsCountSync(query);
+  }
+
+  creativeWorkSeriesStubsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      CreativeWorkSeriesStub,
+      CreativeWorkSeriesStubStatic.Identifier
+    >(CreativeWorkSeriesStubStatic, query);
+  }
+
+  async creativeWorkStub(
+    identifier: CreativeWorkStubStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkStub>> {
+    return this.creativeWorkStubSync(identifier);
+  }
+
+  creativeWorkStubSync(
+    identifier: CreativeWorkStubStatic.Identifier,
+  ): purify.Either<Error, CreativeWorkStub> {
+    return this.creativeWorkStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async creativeWorkStubIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkStubStatic.Identifier[]>
+  > {
+    return this.creativeWorkStubIdentifiersSync(query);
+  }
+
+  creativeWorkStubIdentifiersSync(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): purify.Either<Error, readonly CreativeWorkStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        CreativeWorkStub,
+        CreativeWorkStubStatic.Identifier
+      >(CreativeWorkStubStatic, query),
+    ]);
+  }
+
+  async creativeWorkStubs(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]> {
+    return this.creativeWorkStubsSync(query);
+  }
+
+  creativeWorkStubsSync(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): readonly purify.Either<Error, CreativeWorkStub>[] {
+    return [
+      ...this.$objectsSync<CreativeWorkStub, CreativeWorkStubStatic.Identifier>(
+        CreativeWorkStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async creativeWorkStubsCount(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.creativeWorkStubsCountSync(query);
+  }
+
+  creativeWorkStubsCountSync(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      CreativeWorkStub,
+      CreativeWorkStubStatic.Identifier
+    >(CreativeWorkStubStatic, query);
+  }
+
+  async enumeration(
+    identifier: EnumerationStatic.Identifier,
+  ): Promise<purify.Either<Error, Enumeration>> {
+    return this.enumerationSync(identifier);
+  }
+
+  enumerationSync(
+    identifier: EnumerationStatic.Identifier,
+  ): purify.Either<Error, Enumeration> {
+    return this.enumerationsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async enumerationIdentifiers(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EnumerationStatic.Identifier[]>> {
+    return this.enumerationIdentifiersSync(query);
+  }
+
+  enumerationIdentifiersSync(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): purify.Either<Error, readonly EnumerationStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Enumeration, EnumerationStatic.Identifier>(
+        EnumerationStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async enumerations(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Enumeration>[]> {
+    return this.enumerationsSync(query);
+  }
+
+  enumerationsSync(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): readonly purify.Either<Error, Enumeration>[] {
+    return [
+      ...this.$objectsSync<Enumeration, EnumerationStatic.Identifier>(
+        EnumerationStatic,
+        query,
+      ),
+    ];
+  }
+
+  async enumerationsCount(
+    query?: Pick<$ObjectSet.Query<EnumerationStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.enumerationsCountSync(query);
+  }
+
+  enumerationsCountSync(
+    query?: Pick<$ObjectSet.Query<EnumerationStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Enumeration, EnumerationStatic.Identifier>(
+      EnumerationStatic,
+      query,
+    );
+  }
+
+  async episode(
+    identifier: EpisodeStatic.Identifier,
+  ): Promise<purify.Either<Error, Episode>> {
+    return this.episodeSync(identifier);
+  }
+
+  episodeSync(
+    identifier: EpisodeStatic.Identifier,
+  ): purify.Either<Error, Episode> {
+    return this.episodesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async episodeIdentifiers(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EpisodeStatic.Identifier[]>> {
+    return this.episodeIdentifiersSync(query);
+  }
+
+  episodeIdentifiersSync(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): purify.Either<Error, readonly EpisodeStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Episode, EpisodeStatic.Identifier>(
+        EpisodeStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async episodes(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Episode>[]> {
+    return this.episodesSync(query);
+  }
+
+  episodesSync(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): readonly purify.Either<Error, Episode>[] {
+    return [
+      ...this.$objectsSync<Episode, EpisodeStatic.Identifier>(
+        EpisodeStatic,
+        query,
+      ),
+    ];
+  }
+
+  async episodesCount(
+    query?: Pick<$ObjectSet.Query<EpisodeStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.episodesCountSync(query);
+  }
+
+  episodesCountSync(
+    query?: Pick<$ObjectSet.Query<EpisodeStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Episode, EpisodeStatic.Identifier>(
+      EpisodeStatic,
+      query,
+    );
+  }
+
+  async episodeStub(
+    identifier: EpisodeStubStatic.Identifier,
+  ): Promise<purify.Either<Error, EpisodeStub>> {
+    return this.episodeStubSync(identifier);
+  }
+
+  episodeStubSync(
+    identifier: EpisodeStubStatic.Identifier,
+  ): purify.Either<Error, EpisodeStub> {
+    return this.episodeStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async episodeStubIdentifiers(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EpisodeStubStatic.Identifier[]>> {
+    return this.episodeStubIdentifiersSync(query);
+  }
+
+  episodeStubIdentifiersSync(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): purify.Either<Error, readonly EpisodeStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<EpisodeStub, EpisodeStubStatic.Identifier>(
+        EpisodeStubStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async episodeStubs(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, EpisodeStub>[]> {
+    return this.episodeStubsSync(query);
+  }
+
+  episodeStubsSync(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): readonly purify.Either<Error, EpisodeStub>[] {
+    return [
+      ...this.$objectsSync<EpisodeStub, EpisodeStubStatic.Identifier>(
+        EpisodeStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async episodeStubsCount(
+    query?: Pick<$ObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.episodeStubsCountSync(query);
+  }
+
+  episodeStubsCountSync(
+    query?: Pick<$ObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<EpisodeStub, EpisodeStubStatic.Identifier>(
+      EpisodeStubStatic,
+      query,
+    );
+  }
+
+  async event(
+    identifier: EventStatic.Identifier,
+  ): Promise<purify.Either<Error, Event>> {
+    return this.eventSync(identifier);
+  }
+
+  eventSync(identifier: EventStatic.Identifier): purify.Either<Error, Event> {
+    return this.eventsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async eventIdentifiers(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EventStatic.Identifier[]>> {
+    return this.eventIdentifiersSync(query);
+  }
+
+  eventIdentifiersSync(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): purify.Either<Error, readonly EventStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Event, EventStatic.Identifier>(
+        EventStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async events(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Event>[]> {
+    return this.eventsSync(query);
+  }
+
+  eventsSync(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): readonly purify.Either<Error, Event>[] {
+    return [
+      ...this.$objectsSync<Event, EventStatic.Identifier>(EventStatic, query),
+    ];
+  }
+
+  async eventsCount(
+    query?: Pick<$ObjectSet.Query<EventStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.eventsCountSync(query);
+  }
+
+  eventsCountSync(
+    query?: Pick<$ObjectSet.Query<EventStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Event, EventStatic.Identifier>(
+      EventStatic,
+      query,
+    );
+  }
+
+  async eventStub(
+    identifier: EventStubStatic.Identifier,
+  ): Promise<purify.Either<Error, EventStub>> {
+    return this.eventStubSync(identifier);
+  }
+
+  eventStubSync(
+    identifier: EventStubStatic.Identifier,
+  ): purify.Either<Error, EventStub> {
+    return this.eventStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async eventStubIdentifiers(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EventStubStatic.Identifier[]>> {
+    return this.eventStubIdentifiersSync(query);
+  }
+
+  eventStubIdentifiersSync(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): purify.Either<Error, readonly EventStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<EventStub, EventStubStatic.Identifier>(
+        EventStubStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async eventStubs(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, EventStub>[]> {
+    return this.eventStubsSync(query);
+  }
+
+  eventStubsSync(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): readonly purify.Either<Error, EventStub>[] {
+    return [
+      ...this.$objectsSync<EventStub, EventStubStatic.Identifier>(
+        EventStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async eventStubsCount(
+    query?: Pick<$ObjectSet.Query<EventStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.eventStubsCountSync(query);
+  }
+
+  eventStubsCountSync(
+    query?: Pick<$ObjectSet.Query<EventStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<EventStub, EventStubStatic.Identifier>(
+      EventStubStatic,
+      query,
+    );
+  }
+
+  async genderType(
+    identifier: GenderType.Identifier,
+  ): Promise<purify.Either<Error, GenderType>> {
+    return this.genderTypeSync(identifier);
+  }
+
+  genderTypeSync(
+    identifier: GenderType.Identifier,
+  ): purify.Either<Error, GenderType> {
+    return this.genderTypesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async genderTypeIdentifiers(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): Promise<purify.Either<Error, readonly GenderType.Identifier[]>> {
+    return this.genderTypeIdentifiersSync(query);
+  }
+
+  genderTypeIdentifiersSync(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): purify.Either<Error, readonly GenderType.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<GenderType, GenderType.Identifier>(
+        GenderType,
+        query,
+      ),
+    ]);
+  }
+
+  async genderTypes(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): Promise<readonly purify.Either<Error, GenderType>[]> {
+    return this.genderTypesSync(query);
+  }
+
+  genderTypesSync(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): readonly purify.Either<Error, GenderType>[] {
+    return [
+      ...this.$objectsSync<GenderType, GenderType.Identifier>(
+        GenderType,
+        query,
+      ),
+    ];
+  }
+
+  async genderTypesCount(
+    query?: Pick<$ObjectSet.Query<GenderType.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.genderTypesCountSync(query);
+  }
+
+  genderTypesCountSync(
+    query?: Pick<$ObjectSet.Query<GenderType.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<GenderType, GenderType.Identifier>(
+      GenderType,
+      query,
+    );
+  }
+
+  async imageObject(
+    identifier: ImageObject.Identifier,
+  ): Promise<purify.Either<Error, ImageObject>> {
+    return this.imageObjectSync(identifier);
+  }
+
+  imageObjectSync(
+    identifier: ImageObject.Identifier,
+  ): purify.Either<Error, ImageObject> {
+    return this.imageObjectsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async imageObjectIdentifiers(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): Promise<purify.Either<Error, readonly ImageObject.Identifier[]>> {
+    return this.imageObjectIdentifiersSync(query);
+  }
+
+  imageObjectIdentifiersSync(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): purify.Either<Error, readonly ImageObject.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ImageObject, ImageObject.Identifier>(
+        ImageObject,
+        query,
+      ),
+    ]);
+  }
+
+  async imageObjects(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): Promise<readonly purify.Either<Error, ImageObject>[]> {
+    return this.imageObjectsSync(query);
+  }
+
+  imageObjectsSync(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): readonly purify.Either<Error, ImageObject>[] {
+    return [
+      ...this.$objectsSync<ImageObject, ImageObject.Identifier>(
+        ImageObject,
+        query,
+      ),
+    ];
+  }
+
+  async imageObjectsCount(
+    query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.imageObjectsCountSync(query);
+  }
+
+  imageObjectsCountSync(
+    query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ImageObject, ImageObject.Identifier>(
+      ImageObject,
+      query,
+    );
+  }
+
+  async intangible(
+    identifier: IntangibleStatic.Identifier,
+  ): Promise<purify.Either<Error, Intangible>> {
+    return this.intangibleSync(identifier);
+  }
+
+  intangibleSync(
+    identifier: IntangibleStatic.Identifier,
+  ): purify.Either<Error, Intangible> {
+    return this.intangiblesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async intangibleIdentifiers(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly IntangibleStatic.Identifier[]>> {
+    return this.intangibleIdentifiersSync(query);
+  }
+
+  intangibleIdentifiersSync(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): purify.Either<Error, readonly IntangibleStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Intangible, IntangibleStatic.Identifier>(
+        IntangibleStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async intangibles(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Intangible>[]> {
+    return this.intangiblesSync(query);
+  }
+
+  intangiblesSync(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): readonly purify.Either<Error, Intangible>[] {
+    return [
+      ...this.$objectsSync<Intangible, IntangibleStatic.Identifier>(
+        IntangibleStatic,
+        query,
+      ),
+    ];
+  }
+
+  async intangiblesCount(
+    query?: Pick<$ObjectSet.Query<IntangibleStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.intangiblesCountSync(query);
+  }
+
+  intangiblesCountSync(
+    query?: Pick<$ObjectSet.Query<IntangibleStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Intangible, IntangibleStatic.Identifier>(
+      IntangibleStatic,
+      query,
+    );
+  }
+
+  async intangibleStub(
+    identifier: IntangibleStubStatic.Identifier,
+  ): Promise<purify.Either<Error, IntangibleStub>> {
+    return this.intangibleStubSync(identifier);
+  }
+
+  intangibleStubSync(
+    identifier: IntangibleStubStatic.Identifier,
+  ): purify.Either<Error, IntangibleStub> {
+    return this.intangibleStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async intangibleStubIdentifiers(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly IntangibleStubStatic.Identifier[]>> {
+    return this.intangibleStubIdentifiersSync(query);
+  }
+
+  intangibleStubIdentifiersSync(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): purify.Either<Error, readonly IntangibleStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        IntangibleStub,
+        IntangibleStubStatic.Identifier
+      >(IntangibleStubStatic, query),
+    ]);
+  }
+
+  async intangibleStubs(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, IntangibleStub>[]> {
+    return this.intangibleStubsSync(query);
+  }
+
+  intangibleStubsSync(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): readonly purify.Either<Error, IntangibleStub>[] {
+    return [
+      ...this.$objectsSync<IntangibleStub, IntangibleStubStatic.Identifier>(
+        IntangibleStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async intangibleStubsCount(
+    query?: Pick<$ObjectSet.Query<IntangibleStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.intangibleStubsCountSync(query);
+  }
+
+  intangibleStubsCountSync(
+    query?: Pick<$ObjectSet.Query<IntangibleStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IntangibleStub,
+      IntangibleStubStatic.Identifier
+    >(IntangibleStubStatic, query);
+  }
+
+  async invoice(
+    identifier: Invoice.Identifier,
+  ): Promise<purify.Either<Error, Invoice>> {
+    return this.invoiceSync(identifier);
+  }
+
+  invoiceSync(identifier: Invoice.Identifier): purify.Either<Error, Invoice> {
+    return this.invoicesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async invoiceIdentifiers(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): Promise<purify.Either<Error, readonly Invoice.Identifier[]>> {
+    return this.invoiceIdentifiersSync(query);
+  }
+
+  invoiceIdentifiersSync(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): purify.Either<Error, readonly Invoice.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Invoice, Invoice.Identifier>(
+        Invoice,
+        query,
+      ),
+    ]);
+  }
+
+  async invoices(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): Promise<readonly purify.Either<Error, Invoice>[]> {
+    return this.invoicesSync(query);
+  }
+
+  invoicesSync(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): readonly purify.Either<Error, Invoice>[] {
+    return [...this.$objectsSync<Invoice, Invoice.Identifier>(Invoice, query)];
+  }
+
+  async invoicesCount(
+    query?: Pick<$ObjectSet.Query<Invoice.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.invoicesCountSync(query);
+  }
+
+  invoicesCountSync(
+    query?: Pick<$ObjectSet.Query<Invoice.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Invoice, Invoice.Identifier>(Invoice, query);
+  }
+
+  async invoiceStub(
+    identifier: InvoiceStub.Identifier,
+  ): Promise<purify.Either<Error, InvoiceStub>> {
+    return this.invoiceStubSync(identifier);
+  }
+
+  invoiceStubSync(
+    identifier: InvoiceStub.Identifier,
+  ): purify.Either<Error, InvoiceStub> {
+    return this.invoiceStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async invoiceStubIdentifiers(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly InvoiceStub.Identifier[]>> {
+    return this.invoiceStubIdentifiersSync(query);
+  }
+
+  invoiceStubIdentifiersSync(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): purify.Either<Error, readonly InvoiceStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<InvoiceStub, InvoiceStub.Identifier>(
+        InvoiceStub,
+        query,
+      ),
+    ]);
+  }
+
+  async invoiceStubs(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, InvoiceStub>[]> {
+    return this.invoiceStubsSync(query);
+  }
+
+  invoiceStubsSync(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): readonly purify.Either<Error, InvoiceStub>[] {
+    return [
+      ...this.$objectsSync<InvoiceStub, InvoiceStub.Identifier>(
+        InvoiceStub,
+        query,
+      ),
+    ];
+  }
+
+  async invoiceStubsCount(
+    query?: Pick<$ObjectSet.Query<InvoiceStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.invoiceStubsCountSync(query);
+  }
+
+  invoiceStubsCountSync(
+    query?: Pick<$ObjectSet.Query<InvoiceStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<InvoiceStub, InvoiceStub.Identifier>(
+      InvoiceStub,
+      query,
+    );
+  }
+
+  async itemList(
+    identifier: ItemList.Identifier,
+  ): Promise<purify.Either<Error, ItemList>> {
+    return this.itemListSync(identifier);
+  }
+
+  itemListSync(
+    identifier: ItemList.Identifier,
+  ): purify.Either<Error, ItemList> {
+    return this.itemListsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async itemListIdentifiers(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): Promise<purify.Either<Error, readonly ItemList.Identifier[]>> {
+    return this.itemListIdentifiersSync(query);
+  }
+
+  itemListIdentifiersSync(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): purify.Either<Error, readonly ItemList.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ItemList, ItemList.Identifier>(
+        ItemList,
+        query,
+      ),
+    ]);
+  }
+
+  async itemLists(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): Promise<readonly purify.Either<Error, ItemList>[]> {
+    return this.itemListsSync(query);
+  }
+
+  itemListsSync(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): readonly purify.Either<Error, ItemList>[] {
+    return [
+      ...this.$objectsSync<ItemList, ItemList.Identifier>(ItemList, query),
+    ];
+  }
+
+  async itemListsCount(
+    query?: Pick<$ObjectSet.Query<ItemList.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.itemListsCountSync(query);
+  }
+
+  itemListsCountSync(
+    query?: Pick<$ObjectSet.Query<ItemList.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ItemList, ItemList.Identifier>(
+      ItemList,
+      query,
+    );
+  }
+
+  async itemListStub(
+    identifier: ItemListStub.Identifier,
+  ): Promise<purify.Either<Error, ItemListStub>> {
+    return this.itemListStubSync(identifier);
+  }
+
+  itemListStubSync(
+    identifier: ItemListStub.Identifier,
+  ): purify.Either<Error, ItemListStub> {
+    return this.itemListStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async itemListStubIdentifiers(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ItemListStub.Identifier[]>> {
+    return this.itemListStubIdentifiersSync(query);
+  }
+
+  itemListStubIdentifiersSync(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): purify.Either<Error, readonly ItemListStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ItemListStub, ItemListStub.Identifier>(
+        ItemListStub,
+        query,
+      ),
+    ]);
+  }
+
+  async itemListStubs(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ItemListStub>[]> {
+    return this.itemListStubsSync(query);
+  }
+
+  itemListStubsSync(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): readonly purify.Either<Error, ItemListStub>[] {
+    return [
+      ...this.$objectsSync<ItemListStub, ItemListStub.Identifier>(
+        ItemListStub,
+        query,
+      ),
+    ];
+  }
+
+  async itemListStubsCount(
+    query?: Pick<$ObjectSet.Query<ItemListStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.itemListStubsCountSync(query);
+  }
+
+  itemListStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ItemListStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ItemListStub, ItemListStub.Identifier>(
+      ItemListStub,
+      query,
+    );
+  }
+
+  async listItem(
+    identifier: ListItem.Identifier,
+  ): Promise<purify.Either<Error, ListItem>> {
+    return this.listItemSync(identifier);
+  }
+
+  listItemSync(
+    identifier: ListItem.Identifier,
+  ): purify.Either<Error, ListItem> {
+    return this.listItemsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async listItemIdentifiers(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): Promise<purify.Either<Error, readonly ListItem.Identifier[]>> {
+    return this.listItemIdentifiersSync(query);
+  }
+
+  listItemIdentifiersSync(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): purify.Either<Error, readonly ListItem.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ListItem, ListItem.Identifier>(
+        ListItem,
+        query,
+      ),
+    ]);
+  }
+
+  async listItems(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): Promise<readonly purify.Either<Error, ListItem>[]> {
+    return this.listItemsSync(query);
+  }
+
+  listItemsSync(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): readonly purify.Either<Error, ListItem>[] {
+    return [
+      ...this.$objectsSync<ListItem, ListItem.Identifier>(ListItem, query),
+    ];
+  }
+
+  async listItemsCount(
+    query?: Pick<$ObjectSet.Query<ListItem.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.listItemsCountSync(query);
+  }
+
+  listItemsCountSync(
+    query?: Pick<$ObjectSet.Query<ListItem.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ListItem, ListItem.Identifier>(
+      ListItem,
+      query,
+    );
+  }
+
+  async listItemStub(
+    identifier: ListItemStub.Identifier,
+  ): Promise<purify.Either<Error, ListItemStub>> {
+    return this.listItemStubSync(identifier);
+  }
+
+  listItemStubSync(
+    identifier: ListItemStub.Identifier,
+  ): purify.Either<Error, ListItemStub> {
+    return this.listItemStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async listItemStubIdentifiers(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ListItemStub.Identifier[]>> {
+    return this.listItemStubIdentifiersSync(query);
+  }
+
+  listItemStubIdentifiersSync(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): purify.Either<Error, readonly ListItemStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ListItemStub, ListItemStub.Identifier>(
+        ListItemStub,
+        query,
+      ),
+    ]);
+  }
+
+  async listItemStubs(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ListItemStub>[]> {
+    return this.listItemStubsSync(query);
+  }
+
+  listItemStubsSync(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): readonly purify.Either<Error, ListItemStub>[] {
+    return [
+      ...this.$objectsSync<ListItemStub, ListItemStub.Identifier>(
+        ListItemStub,
+        query,
+      ),
+    ];
+  }
+
+  async listItemStubsCount(
+    query?: Pick<$ObjectSet.Query<ListItemStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.listItemStubsCountSync(query);
+  }
+
+  listItemStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ListItemStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ListItemStub, ListItemStub.Identifier>(
+      ListItemStub,
+      query,
+    );
+  }
+
+  async mediaObject(
+    identifier: MediaObjectStatic.Identifier,
+  ): Promise<purify.Either<Error, MediaObject>> {
+    return this.mediaObjectSync(identifier);
+  }
+
+  mediaObjectSync(
+    identifier: MediaObjectStatic.Identifier,
+  ): purify.Either<Error, MediaObject> {
+    return this.mediaObjectsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async mediaObjectIdentifiers(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly MediaObjectStatic.Identifier[]>> {
+    return this.mediaObjectIdentifiersSync(query);
+  }
+
+  mediaObjectIdentifiersSync(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): purify.Either<Error, readonly MediaObjectStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MediaObject, MediaObjectStatic.Identifier>(
+        MediaObjectStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async mediaObjects(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, MediaObject>[]> {
+    return this.mediaObjectsSync(query);
+  }
+
+  mediaObjectsSync(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): readonly purify.Either<Error, MediaObject>[] {
+    return [
+      ...this.$objectsSync<MediaObject, MediaObjectStatic.Identifier>(
+        MediaObjectStatic,
+        query,
+      ),
+    ];
+  }
+
+  async mediaObjectsCount(
+    query?: Pick<$ObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.mediaObjectsCountSync(query);
+  }
+
+  mediaObjectsCountSync(
+    query?: Pick<$ObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MediaObject, MediaObjectStatic.Identifier>(
+      MediaObjectStatic,
+      query,
+    );
+  }
+
+  async mediaObjectStub(
+    identifier: MediaObjectStubStatic.Identifier,
+  ): Promise<purify.Either<Error, MediaObjectStub>> {
+    return this.mediaObjectStubSync(identifier);
+  }
+
+  mediaObjectStubSync(
+    identifier: MediaObjectStubStatic.Identifier,
+  ): purify.Either<Error, MediaObjectStub> {
+    return this.mediaObjectStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async mediaObjectStubIdentifiers(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly MediaObjectStubStatic.Identifier[]>
+  > {
+    return this.mediaObjectStubIdentifiersSync(query);
+  }
+
+  mediaObjectStubIdentifiersSync(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): purify.Either<Error, readonly MediaObjectStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MediaObjectStub,
+        MediaObjectStubStatic.Identifier
+      >(MediaObjectStubStatic, query),
+    ]);
+  }
+
+  async mediaObjectStubs(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, MediaObjectStub>[]> {
+    return this.mediaObjectStubsSync(query);
+  }
+
+  mediaObjectStubsSync(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): readonly purify.Either<Error, MediaObjectStub>[] {
+    return [
+      ...this.$objectsSync<MediaObjectStub, MediaObjectStubStatic.Identifier>(
+        MediaObjectStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async mediaObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.mediaObjectStubsCountSync(query);
+  }
+
+  mediaObjectStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MediaObjectStub,
+      MediaObjectStubStatic.Identifier
+    >(MediaObjectStubStatic, query);
+  }
+
+  async message(
+    identifier: Message.Identifier,
+  ): Promise<purify.Either<Error, Message>> {
+    return this.messageSync(identifier);
+  }
+
+  messageSync(identifier: Message.Identifier): purify.Either<Error, Message> {
+    return this.messagesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async messageIdentifiers(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): Promise<purify.Either<Error, readonly Message.Identifier[]>> {
+    return this.messageIdentifiersSync(query);
+  }
+
+  messageIdentifiersSync(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): purify.Either<Error, readonly Message.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Message, Message.Identifier>(
+        Message,
+        query,
+      ),
+    ]);
+  }
+
+  async messages(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): Promise<readonly purify.Either<Error, Message>[]> {
+    return this.messagesSync(query);
+  }
+
+  messagesSync(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): readonly purify.Either<Error, Message>[] {
+    return [...this.$objectsSync<Message, Message.Identifier>(Message, query)];
+  }
+
+  async messagesCount(
+    query?: Pick<$ObjectSet.Query<Message.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.messagesCountSync(query);
+  }
+
+  messagesCountSync(
+    query?: Pick<$ObjectSet.Query<Message.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Message, Message.Identifier>(Message, query);
+  }
+
+  async messageStub(
+    identifier: MessageStub.Identifier,
+  ): Promise<purify.Either<Error, MessageStub>> {
+    return this.messageStubSync(identifier);
+  }
+
+  messageStubSync(
+    identifier: MessageStub.Identifier,
+  ): purify.Either<Error, MessageStub> {
+    return this.messageStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async messageStubIdentifiers(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MessageStub.Identifier[]>> {
+    return this.messageStubIdentifiersSync(query);
+  }
+
+  messageStubIdentifiersSync(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): purify.Either<Error, readonly MessageStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MessageStub, MessageStub.Identifier>(
+        MessageStub,
+        query,
+      ),
+    ]);
+  }
+
+  async messageStubs(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MessageStub>[]> {
+    return this.messageStubsSync(query);
+  }
+
+  messageStubsSync(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): readonly purify.Either<Error, MessageStub>[] {
+    return [
+      ...this.$objectsSync<MessageStub, MessageStub.Identifier>(
+        MessageStub,
+        query,
+      ),
+    ];
+  }
+
+  async messageStubsCount(
+    query?: Pick<$ObjectSet.Query<MessageStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.messageStubsCountSync(query);
+  }
+
+  messageStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MessageStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MessageStub, MessageStub.Identifier>(
+      MessageStub,
+      query,
+    );
+  }
+
+  async monetaryAmount(
+    identifier: MonetaryAmount.Identifier,
+  ): Promise<purify.Either<Error, MonetaryAmount>> {
+    return this.monetaryAmountSync(identifier);
+  }
+
+  monetaryAmountSync(
+    identifier: MonetaryAmount.Identifier,
+  ): purify.Either<Error, MonetaryAmount> {
+    return this.monetaryAmountsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async monetaryAmountIdentifiers(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): Promise<purify.Either<Error, readonly MonetaryAmount.Identifier[]>> {
+    return this.monetaryAmountIdentifiersSync(query);
+  }
+
+  monetaryAmountIdentifiersSync(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): purify.Either<Error, readonly MonetaryAmount.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MonetaryAmount, MonetaryAmount.Identifier>(
+        MonetaryAmount,
+        query,
+      ),
+    ]);
+  }
+
+  async monetaryAmounts(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): Promise<readonly purify.Either<Error, MonetaryAmount>[]> {
+    return this.monetaryAmountsSync(query);
+  }
+
+  monetaryAmountsSync(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): readonly purify.Either<Error, MonetaryAmount>[] {
+    return [
+      ...this.$objectsSync<MonetaryAmount, MonetaryAmount.Identifier>(
+        MonetaryAmount,
+        query,
+      ),
+    ];
+  }
+
+  async monetaryAmountsCount(
+    query?: Pick<$ObjectSet.Query<MonetaryAmount.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.monetaryAmountsCountSync(query);
+  }
+
+  monetaryAmountsCountSync(
+    query?: Pick<$ObjectSet.Query<MonetaryAmount.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MonetaryAmount, MonetaryAmount.Identifier>(
+      MonetaryAmount,
+      query,
+    );
+  }
+
+  async monetaryAmountStub(
+    identifier: MonetaryAmountStub.Identifier,
+  ): Promise<purify.Either<Error, MonetaryAmountStub>> {
+    return this.monetaryAmountStubSync(identifier);
+  }
+
+  monetaryAmountStubSync(
+    identifier: MonetaryAmountStub.Identifier,
+  ): purify.Either<Error, MonetaryAmountStub> {
+    return this.monetaryAmountStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async monetaryAmountStubIdentifiers(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MonetaryAmountStub.Identifier[]>> {
+    return this.monetaryAmountStubIdentifiersSync(query);
+  }
+
+  monetaryAmountStubIdentifiersSync(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): purify.Either<Error, readonly MonetaryAmountStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MonetaryAmountStub,
+        MonetaryAmountStub.Identifier
+      >(MonetaryAmountStub, query),
+    ]);
+  }
+
+  async monetaryAmountStubs(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]> {
+    return this.monetaryAmountStubsSync(query);
+  }
+
+  monetaryAmountStubsSync(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): readonly purify.Either<Error, MonetaryAmountStub>[] {
+    return [
+      ...this.$objectsSync<MonetaryAmountStub, MonetaryAmountStub.Identifier>(
+        MonetaryAmountStub,
+        query,
+      ),
+    ];
+  }
+
+  async monetaryAmountStubsCount(
+    query?: Pick<$ObjectSet.Query<MonetaryAmountStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.monetaryAmountStubsCountSync(query);
+  }
+
+  monetaryAmountStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MonetaryAmountStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MonetaryAmountStub,
+      MonetaryAmountStub.Identifier
+    >(MonetaryAmountStub, query);
+  }
+
+  async musicAlbum(
+    identifier: MusicAlbum.Identifier,
+  ): Promise<purify.Either<Error, MusicAlbum>> {
+    return this.musicAlbumSync(identifier);
+  }
+
+  musicAlbumSync(
+    identifier: MusicAlbum.Identifier,
+  ): purify.Either<Error, MusicAlbum> {
+    return this.musicAlbumsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicAlbumIdentifiers(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicAlbum.Identifier[]>> {
+    return this.musicAlbumIdentifiersSync(query);
+  }
+
+  musicAlbumIdentifiersSync(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): purify.Either<Error, readonly MusicAlbum.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MusicAlbum, MusicAlbum.Identifier>(
+        MusicAlbum,
+        query,
+      ),
+    ]);
+  }
+
+  async musicAlbums(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicAlbum>[]> {
+    return this.musicAlbumsSync(query);
+  }
+
+  musicAlbumsSync(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): readonly purify.Either<Error, MusicAlbum>[] {
+    return [
+      ...this.$objectsSync<MusicAlbum, MusicAlbum.Identifier>(
+        MusicAlbum,
+        query,
+      ),
+    ];
+  }
+
+  async musicAlbumsCount(
+    query?: Pick<$ObjectSet.Query<MusicAlbum.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicAlbumsCountSync(query);
+  }
+
+  musicAlbumsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicAlbum.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MusicAlbum, MusicAlbum.Identifier>(
+      MusicAlbum,
+      query,
+    );
+  }
+
+  async musicAlbumStub(
+    identifier: MusicAlbumStub.Identifier,
+  ): Promise<purify.Either<Error, MusicAlbumStub>> {
+    return this.musicAlbumStubSync(identifier);
+  }
+
+  musicAlbumStubSync(
+    identifier: MusicAlbumStub.Identifier,
+  ): purify.Either<Error, MusicAlbumStub> {
+    return this.musicAlbumStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicAlbumStubIdentifiers(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicAlbumStub.Identifier[]>> {
+    return this.musicAlbumStubIdentifiersSync(query);
+  }
+
+  musicAlbumStubIdentifiersSync(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): purify.Either<Error, readonly MusicAlbumStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MusicAlbumStub, MusicAlbumStub.Identifier>(
+        MusicAlbumStub,
+        query,
+      ),
+    ]);
+  }
+
+  async musicAlbumStubs(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]> {
+    return this.musicAlbumStubsSync(query);
+  }
+
+  musicAlbumStubsSync(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): readonly purify.Either<Error, MusicAlbumStub>[] {
+    return [
+      ...this.$objectsSync<MusicAlbumStub, MusicAlbumStub.Identifier>(
+        MusicAlbumStub,
+        query,
+      ),
+    ];
+  }
+
+  async musicAlbumStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicAlbumStubsCountSync(query);
+  }
+
+  musicAlbumStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MusicAlbumStub, MusicAlbumStub.Identifier>(
+      MusicAlbumStub,
+      query,
+    );
+  }
+
+  async musicComposition(
+    identifier: MusicComposition.Identifier,
+  ): Promise<purify.Either<Error, MusicComposition>> {
+    return this.musicCompositionSync(identifier);
+  }
+
+  musicCompositionSync(
+    identifier: MusicComposition.Identifier,
+  ): purify.Either<Error, MusicComposition> {
+    return this.musicCompositionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicCompositionIdentifiers(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicComposition.Identifier[]>> {
+    return this.musicCompositionIdentifiersSync(query);
+  }
+
+  musicCompositionIdentifiersSync(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): purify.Either<Error, readonly MusicComposition.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MusicComposition,
+        MusicComposition.Identifier
+      >(MusicComposition, query),
+    ]);
+  }
+
+  async musicCompositions(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicComposition>[]> {
+    return this.musicCompositionsSync(query);
+  }
+
+  musicCompositionsSync(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): readonly purify.Either<Error, MusicComposition>[] {
+    return [
+      ...this.$objectsSync<MusicComposition, MusicComposition.Identifier>(
+        MusicComposition,
+        query,
+      ),
+    ];
+  }
+
+  async musicCompositionsCount(
+    query?: Pick<$ObjectSet.Query<MusicComposition.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicCompositionsCountSync(query);
+  }
+
+  musicCompositionsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicComposition.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MusicComposition,
+      MusicComposition.Identifier
+    >(MusicComposition, query);
+  }
+
+  async musicCompositionStub(
+    identifier: MusicCompositionStub.Identifier,
+  ): Promise<purify.Either<Error, MusicCompositionStub>> {
+    return this.musicCompositionStubSync(identifier);
+  }
+
+  musicCompositionStubSync(
+    identifier: MusicCompositionStub.Identifier,
+  ): purify.Either<Error, MusicCompositionStub> {
+    return this.musicCompositionStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicCompositionStubIdentifiers(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicCompositionStub.Identifier[]>> {
+    return this.musicCompositionStubIdentifiersSync(query);
+  }
+
+  musicCompositionStubIdentifiersSync(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): purify.Either<Error, readonly MusicCompositionStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MusicCompositionStub,
+        MusicCompositionStub.Identifier
+      >(MusicCompositionStub, query),
+    ]);
+  }
+
+  async musicCompositionStubs(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]> {
+    return this.musicCompositionStubsSync(query);
+  }
+
+  musicCompositionStubsSync(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): readonly purify.Either<Error, MusicCompositionStub>[] {
+    return [
+      ...this.$objectsSync<
+        MusicCompositionStub,
+        MusicCompositionStub.Identifier
+      >(MusicCompositionStub, query),
+    ];
+  }
+
+  async musicCompositionStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicCompositionStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicCompositionStubsCountSync(query);
+  }
+
+  musicCompositionStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicCompositionStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MusicCompositionStub,
+      MusicCompositionStub.Identifier
+    >(MusicCompositionStub, query);
+  }
+
+  async musicGroup(
+    identifier: MusicGroup.Identifier,
+  ): Promise<purify.Either<Error, MusicGroup>> {
+    return this.musicGroupSync(identifier);
+  }
+
+  musicGroupSync(
+    identifier: MusicGroup.Identifier,
+  ): purify.Either<Error, MusicGroup> {
+    return this.musicGroupsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicGroupIdentifiers(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicGroup.Identifier[]>> {
+    return this.musicGroupIdentifiersSync(query);
+  }
+
+  musicGroupIdentifiersSync(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): purify.Either<Error, readonly MusicGroup.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MusicGroup, MusicGroup.Identifier>(
+        MusicGroup,
+        query,
+      ),
+    ]);
+  }
+
+  async musicGroups(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicGroup>[]> {
+    return this.musicGroupsSync(query);
+  }
+
+  musicGroupsSync(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): readonly purify.Either<Error, MusicGroup>[] {
+    return [
+      ...this.$objectsSync<MusicGroup, MusicGroup.Identifier>(
+        MusicGroup,
+        query,
+      ),
+    ];
+  }
+
+  async musicGroupsCount(
+    query?: Pick<$ObjectSet.Query<MusicGroup.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicGroupsCountSync(query);
+  }
+
+  musicGroupsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicGroup.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MusicGroup, MusicGroup.Identifier>(
+      MusicGroup,
+      query,
+    );
+  }
+
+  async musicGroupStub(
+    identifier: MusicGroupStub.Identifier,
+  ): Promise<purify.Either<Error, MusicGroupStub>> {
+    return this.musicGroupStubSync(identifier);
+  }
+
+  musicGroupStubSync(
+    identifier: MusicGroupStub.Identifier,
+  ): purify.Either<Error, MusicGroupStub> {
+    return this.musicGroupStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicGroupStubIdentifiers(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicGroupStub.Identifier[]>> {
+    return this.musicGroupStubIdentifiersSync(query);
+  }
+
+  musicGroupStubIdentifiersSync(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): purify.Either<Error, readonly MusicGroupStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MusicGroupStub, MusicGroupStub.Identifier>(
+        MusicGroupStub,
+        query,
+      ),
+    ]);
+  }
+
+  async musicGroupStubs(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicGroupStub>[]> {
+    return this.musicGroupStubsSync(query);
+  }
+
+  musicGroupStubsSync(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): readonly purify.Either<Error, MusicGroupStub>[] {
+    return [
+      ...this.$objectsSync<MusicGroupStub, MusicGroupStub.Identifier>(
+        MusicGroupStub,
+        query,
+      ),
+    ];
+  }
+
+  async musicGroupStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicGroupStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicGroupStubsCountSync(query);
+  }
+
+  musicGroupStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicGroupStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MusicGroupStub, MusicGroupStub.Identifier>(
+      MusicGroupStub,
+      query,
+    );
+  }
+
+  async musicPlaylist(
+    identifier: MusicPlaylist.Identifier,
+  ): Promise<purify.Either<Error, MusicPlaylist>> {
+    return this.musicPlaylistSync(identifier);
+  }
+
+  musicPlaylistSync(
+    identifier: MusicPlaylist.Identifier,
+  ): purify.Either<Error, MusicPlaylist> {
+    return this.musicPlaylistsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicPlaylistIdentifiers(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicPlaylist.Identifier[]>> {
+    return this.musicPlaylistIdentifiersSync(query);
+  }
+
+  musicPlaylistIdentifiersSync(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): purify.Either<Error, readonly MusicPlaylist.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MusicPlaylist, MusicPlaylist.Identifier>(
+        MusicPlaylist,
+        query,
+      ),
+    ]);
+  }
+
+  async musicPlaylists(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicPlaylist>[]> {
+    return this.musicPlaylistsSync(query);
+  }
+
+  musicPlaylistsSync(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): readonly purify.Either<Error, MusicPlaylist>[] {
+    return [
+      ...this.$objectsSync<MusicPlaylist, MusicPlaylist.Identifier>(
+        MusicPlaylist,
+        query,
+      ),
+    ];
+  }
+
+  async musicPlaylistsCount(
+    query?: Pick<$ObjectSet.Query<MusicPlaylist.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicPlaylistsCountSync(query);
+  }
+
+  musicPlaylistsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicPlaylist.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MusicPlaylist, MusicPlaylist.Identifier>(
+      MusicPlaylist,
+      query,
+    );
+  }
+
+  async musicPlaylistStub(
+    identifier: MusicPlaylistStub.Identifier,
+  ): Promise<purify.Either<Error, MusicPlaylistStub>> {
+    return this.musicPlaylistStubSync(identifier);
+  }
+
+  musicPlaylistStubSync(
+    identifier: MusicPlaylistStub.Identifier,
+  ): purify.Either<Error, MusicPlaylistStub> {
+    return this.musicPlaylistStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicPlaylistStubIdentifiers(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicPlaylistStub.Identifier[]>> {
+    return this.musicPlaylistStubIdentifiersSync(query);
+  }
+
+  musicPlaylistStubIdentifiersSync(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): purify.Either<Error, readonly MusicPlaylistStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MusicPlaylistStub,
+        MusicPlaylistStub.Identifier
+      >(MusicPlaylistStub, query),
+    ]);
+  }
+
+  async musicPlaylistStubs(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]> {
+    return this.musicPlaylistStubsSync(query);
+  }
+
+  musicPlaylistStubsSync(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): readonly purify.Either<Error, MusicPlaylistStub>[] {
+    return [
+      ...this.$objectsSync<MusicPlaylistStub, MusicPlaylistStub.Identifier>(
+        MusicPlaylistStub,
+        query,
+      ),
+    ];
+  }
+
+  async musicPlaylistStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicPlaylistStubsCountSync(query);
+  }
+
+  musicPlaylistStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MusicPlaylistStub,
+      MusicPlaylistStub.Identifier
+    >(MusicPlaylistStub, query);
+  }
+
+  async musicRecording(
+    identifier: MusicRecording.Identifier,
+  ): Promise<purify.Either<Error, MusicRecording>> {
+    return this.musicRecordingSync(identifier);
+  }
+
+  musicRecordingSync(
+    identifier: MusicRecording.Identifier,
+  ): purify.Either<Error, MusicRecording> {
+    return this.musicRecordingsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicRecordingIdentifiers(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicRecording.Identifier[]>> {
+    return this.musicRecordingIdentifiersSync(query);
+  }
+
+  musicRecordingIdentifiersSync(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): purify.Either<Error, readonly MusicRecording.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<MusicRecording, MusicRecording.Identifier>(
+        MusicRecording,
+        query,
+      ),
+    ]);
+  }
+
+  async musicRecordings(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicRecording>[]> {
+    return this.musicRecordingsSync(query);
+  }
+
+  musicRecordingsSync(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): readonly purify.Either<Error, MusicRecording>[] {
+    return [
+      ...this.$objectsSync<MusicRecording, MusicRecording.Identifier>(
+        MusicRecording,
+        query,
+      ),
+    ];
+  }
+
+  async musicRecordingsCount(
+    query?: Pick<$ObjectSet.Query<MusicRecording.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicRecordingsCountSync(query);
+  }
+
+  musicRecordingsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicRecording.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<MusicRecording, MusicRecording.Identifier>(
+      MusicRecording,
+      query,
+    );
+  }
+
+  async musicRecordingStub(
+    identifier: MusicRecordingStub.Identifier,
+  ): Promise<purify.Either<Error, MusicRecordingStub>> {
+    return this.musicRecordingStubSync(identifier);
+  }
+
+  musicRecordingStubSync(
+    identifier: MusicRecordingStub.Identifier,
+  ): purify.Either<Error, MusicRecordingStub> {
+    return this.musicRecordingStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicRecordingStubIdentifiers(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicRecordingStub.Identifier[]>> {
+    return this.musicRecordingStubIdentifiersSync(query);
+  }
+
+  musicRecordingStubIdentifiersSync(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): purify.Either<Error, readonly MusicRecordingStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MusicRecordingStub,
+        MusicRecordingStub.Identifier
+      >(MusicRecordingStub, query),
+    ]);
+  }
+
+  async musicRecordingStubs(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]> {
+    return this.musicRecordingStubsSync(query);
+  }
+
+  musicRecordingStubsSync(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): readonly purify.Either<Error, MusicRecordingStub>[] {
+    return [
+      ...this.$objectsSync<MusicRecordingStub, MusicRecordingStub.Identifier>(
+        MusicRecordingStub,
+        query,
+      ),
+    ];
+  }
+
+  async musicRecordingStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicRecordingStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicRecordingStubsCountSync(query);
+  }
+
+  musicRecordingStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicRecordingStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MusicRecordingStub,
+      MusicRecordingStub.Identifier
+    >(MusicRecordingStub, query);
+  }
+
+  async occupation(
+    identifier: Occupation.Identifier,
+  ): Promise<purify.Either<Error, Occupation>> {
+    return this.occupationSync(identifier);
+  }
+
+  occupationSync(
+    identifier: Occupation.Identifier,
+  ): purify.Either<Error, Occupation> {
+    return this.occupationsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async occupationIdentifiers(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): Promise<purify.Either<Error, readonly Occupation.Identifier[]>> {
+    return this.occupationIdentifiersSync(query);
+  }
+
+  occupationIdentifiersSync(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): purify.Either<Error, readonly Occupation.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Occupation, Occupation.Identifier>(
+        Occupation,
+        query,
+      ),
+    ]);
+  }
+
+  async occupations(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): Promise<readonly purify.Either<Error, Occupation>[]> {
+    return this.occupationsSync(query);
+  }
+
+  occupationsSync(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): readonly purify.Either<Error, Occupation>[] {
+    return [
+      ...this.$objectsSync<Occupation, Occupation.Identifier>(
+        Occupation,
+        query,
+      ),
+    ];
+  }
+
+  async occupationsCount(
+    query?: Pick<$ObjectSet.Query<Occupation.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.occupationsCountSync(query);
+  }
+
+  occupationsCountSync(
+    query?: Pick<$ObjectSet.Query<Occupation.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Occupation, Occupation.Identifier>(
+      Occupation,
+      query,
+    );
+  }
+
+  async order(
+    identifier: Order.Identifier,
+  ): Promise<purify.Either<Error, Order>> {
+    return this.orderSync(identifier);
+  }
+
+  orderSync(identifier: Order.Identifier): purify.Either<Error, Order> {
+    return this.ordersSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async orderIdentifiers(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): Promise<purify.Either<Error, readonly Order.Identifier[]>> {
+    return this.orderIdentifiersSync(query);
+  }
+
+  orderIdentifiersSync(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): purify.Either<Error, readonly Order.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Order, Order.Identifier>(Order, query),
+    ]);
+  }
+
+  async orders(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): Promise<readonly purify.Either<Error, Order>[]> {
+    return this.ordersSync(query);
+  }
+
+  ordersSync(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): readonly purify.Either<Error, Order>[] {
+    return [...this.$objectsSync<Order, Order.Identifier>(Order, query)];
+  }
+
+  async ordersCount(
+    query?: Pick<$ObjectSet.Query<Order.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.ordersCountSync(query);
+  }
+
+  ordersCountSync(
+    query?: Pick<$ObjectSet.Query<Order.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Order, Order.Identifier>(Order, query);
+  }
+
+  async orderStub(
+    identifier: OrderStub.Identifier,
+  ): Promise<purify.Either<Error, OrderStub>> {
+    return this.orderStubSync(identifier);
+  }
+
+  orderStubSync(
+    identifier: OrderStub.Identifier,
+  ): purify.Either<Error, OrderStub> {
+    return this.orderStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async orderStubIdentifiers(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly OrderStub.Identifier[]>> {
+    return this.orderStubIdentifiersSync(query);
+  }
+
+  orderStubIdentifiersSync(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): purify.Either<Error, readonly OrderStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<OrderStub, OrderStub.Identifier>(
+        OrderStub,
+        query,
+      ),
+    ]);
+  }
+
+  async orderStubs(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, OrderStub>[]> {
+    return this.orderStubsSync(query);
+  }
+
+  orderStubsSync(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): readonly purify.Either<Error, OrderStub>[] {
+    return [
+      ...this.$objectsSync<OrderStub, OrderStub.Identifier>(OrderStub, query),
+    ];
+  }
+
+  async orderStubsCount(
+    query?: Pick<$ObjectSet.Query<OrderStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.orderStubsCountSync(query);
+  }
+
+  orderStubsCountSync(
+    query?: Pick<$ObjectSet.Query<OrderStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<OrderStub, OrderStub.Identifier>(
+      OrderStub,
+      query,
+    );
+  }
+
+  async organization(
+    identifier: OrganizationStatic.Identifier,
+  ): Promise<purify.Either<Error, Organization>> {
+    return this.organizationSync(identifier);
+  }
+
+  organizationSync(
+    identifier: OrganizationStatic.Identifier,
+  ): purify.Either<Error, Organization> {
+    return this.organizationsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async organizationIdentifiers(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly OrganizationStatic.Identifier[]>> {
+    return this.organizationIdentifiersSync(query);
+  }
+
+  organizationIdentifiersSync(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): purify.Either<Error, readonly OrganizationStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        Organization,
+        OrganizationStatic.Identifier
+      >(OrganizationStatic, query),
+    ]);
+  }
+
+  async organizations(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Organization>[]> {
+    return this.organizationsSync(query);
+  }
+
+  organizationsSync(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): readonly purify.Either<Error, Organization>[] {
+    return [
+      ...this.$objectsSync<Organization, OrganizationStatic.Identifier>(
+        OrganizationStatic,
+        query,
+      ),
+    ];
+  }
+
+  async organizationsCount(
+    query?: Pick<$ObjectSet.Query<OrganizationStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.organizationsCountSync(query);
+  }
+
+  organizationsCountSync(
+    query?: Pick<$ObjectSet.Query<OrganizationStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Organization, OrganizationStatic.Identifier>(
+      OrganizationStatic,
+      query,
+    );
+  }
+
+  async organizationStub(
+    identifier: OrganizationStubStatic.Identifier,
+  ): Promise<purify.Either<Error, OrganizationStub>> {
+    return this.organizationStubSync(identifier);
+  }
+
+  organizationStubSync(
+    identifier: OrganizationStubStatic.Identifier,
+  ): purify.Either<Error, OrganizationStub> {
+    return this.organizationStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async organizationStubIdentifiers(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly OrganizationStubStatic.Identifier[]>
+  > {
+    return this.organizationStubIdentifiersSync(query);
+  }
+
+  organizationStubIdentifiersSync(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): purify.Either<Error, readonly OrganizationStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        OrganizationStub,
+        OrganizationStubStatic.Identifier
+      >(OrganizationStubStatic, query),
+    ]);
+  }
+
+  async organizationStubs(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, OrganizationStub>[]> {
+    return this.organizationStubsSync(query);
+  }
+
+  organizationStubsSync(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): readonly purify.Either<Error, OrganizationStub>[] {
+    return [
+      ...this.$objectsSync<OrganizationStub, OrganizationStubStatic.Identifier>(
+        OrganizationStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async organizationStubsCount(
+    query?: Pick<$ObjectSet.Query<OrganizationStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.organizationStubsCountSync(query);
+  }
+
+  organizationStubsCountSync(
+    query?: Pick<$ObjectSet.Query<OrganizationStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      OrganizationStub,
+      OrganizationStubStatic.Identifier
+    >(OrganizationStubStatic, query);
+  }
+
+  async performingGroup(
+    identifier: PerformingGroupStatic.Identifier,
+  ): Promise<purify.Either<Error, PerformingGroup>> {
+    return this.performingGroupSync(identifier);
+  }
+
+  performingGroupSync(
+    identifier: PerformingGroupStatic.Identifier,
+  ): purify.Either<Error, PerformingGroup> {
+    return this.performingGroupsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async performingGroupIdentifiers(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PerformingGroupStatic.Identifier[]>
+  > {
+    return this.performingGroupIdentifiersSync(query);
+  }
+
+  performingGroupIdentifiersSync(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): purify.Either<Error, readonly PerformingGroupStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        PerformingGroup,
+        PerformingGroupStatic.Identifier
+      >(PerformingGroupStatic, query),
+    ]);
+  }
+
+  async performingGroups(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PerformingGroup>[]> {
+    return this.performingGroupsSync(query);
+  }
+
+  performingGroupsSync(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): readonly purify.Either<Error, PerformingGroup>[] {
+    return [
+      ...this.$objectsSync<PerformingGroup, PerformingGroupStatic.Identifier>(
+        PerformingGroupStatic,
+        query,
+      ),
+    ];
+  }
+
+  async performingGroupsCount(
+    query?: Pick<$ObjectSet.Query<PerformingGroupStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.performingGroupsCountSync(query);
+  }
+
+  performingGroupsCountSync(
+    query?: Pick<$ObjectSet.Query<PerformingGroupStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      PerformingGroup,
+      PerformingGroupStatic.Identifier
+    >(PerformingGroupStatic, query);
+  }
+
+  async performingGroupStub(
+    identifier: PerformingGroupStubStatic.Identifier,
+  ): Promise<purify.Either<Error, PerformingGroupStub>> {
+    return this.performingGroupStubSync(identifier);
+  }
+
+  performingGroupStubSync(
+    identifier: PerformingGroupStubStatic.Identifier,
+  ): purify.Either<Error, PerformingGroupStub> {
+    return this.performingGroupStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async performingGroupStubIdentifiers(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PerformingGroupStubStatic.Identifier[]>
+  > {
+    return this.performingGroupStubIdentifiersSync(query);
+  }
+
+  performingGroupStubIdentifiersSync(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): purify.Either<Error, readonly PerformingGroupStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        PerformingGroupStub,
+        PerformingGroupStubStatic.Identifier
+      >(PerformingGroupStubStatic, query),
+    ]);
+  }
+
+  async performingGroupStubs(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]> {
+    return this.performingGroupStubsSync(query);
+  }
+
+  performingGroupStubsSync(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): readonly purify.Either<Error, PerformingGroupStub>[] {
+    return [
+      ...this.$objectsSync<
+        PerformingGroupStub,
+        PerformingGroupStubStatic.Identifier
+      >(PerformingGroupStubStatic, query),
+    ];
+  }
+
+  async performingGroupStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.performingGroupStubsCountSync(query);
+  }
+
+  performingGroupStubsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      PerformingGroupStub,
+      PerformingGroupStubStatic.Identifier
+    >(PerformingGroupStubStatic, query);
+  }
+
+  async person(
+    identifier: Person.Identifier,
+  ): Promise<purify.Either<Error, Person>> {
+    return this.personSync(identifier);
+  }
+
+  personSync(identifier: Person.Identifier): purify.Either<Error, Person> {
+    return this.peopleSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async personIdentifiers(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): Promise<purify.Either<Error, readonly Person.Identifier[]>> {
+    return this.personIdentifiersSync(query);
+  }
+
+  personIdentifiersSync(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): purify.Either<Error, readonly Person.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Person, Person.Identifier>(Person, query),
+    ]);
+  }
+
+  async people(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): Promise<readonly purify.Either<Error, Person>[]> {
+    return this.peopleSync(query);
+  }
+
+  peopleSync(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): readonly purify.Either<Error, Person>[] {
+    return [...this.$objectsSync<Person, Person.Identifier>(Person, query)];
+  }
+
+  async peopleCount(
+    query?: Pick<$ObjectSet.Query<Person.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.peopleCountSync(query);
+  }
+
+  peopleCountSync(
+    query?: Pick<$ObjectSet.Query<Person.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Person, Person.Identifier>(Person, query);
+  }
+
+  async personStub(
+    identifier: PersonStub.Identifier,
+  ): Promise<purify.Either<Error, PersonStub>> {
+    return this.personStubSync(identifier);
+  }
+
+  personStubSync(
+    identifier: PersonStub.Identifier,
+  ): purify.Either<Error, PersonStub> {
+    return this.personStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async personStubIdentifiers(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PersonStub.Identifier[]>> {
+    return this.personStubIdentifiersSync(query);
+  }
+
+  personStubIdentifiersSync(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): purify.Either<Error, readonly PersonStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<PersonStub, PersonStub.Identifier>(
+        PersonStub,
+        query,
+      ),
+    ]);
+  }
+
+  async personStubs(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PersonStub>[]> {
+    return this.personStubsSync(query);
+  }
+
+  personStubsSync(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): readonly purify.Either<Error, PersonStub>[] {
+    return [
+      ...this.$objectsSync<PersonStub, PersonStub.Identifier>(
+        PersonStub,
+        query,
+      ),
+    ];
+  }
+
+  async personStubsCount(
+    query?: Pick<$ObjectSet.Query<PersonStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.personStubsCountSync(query);
+  }
+
+  personStubsCountSync(
+    query?: Pick<$ObjectSet.Query<PersonStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<PersonStub, PersonStub.Identifier>(
+      PersonStub,
+      query,
+    );
+  }
+
+  async place(
+    identifier: Place.Identifier,
+  ): Promise<purify.Either<Error, Place>> {
+    return this.placeSync(identifier);
+  }
+
+  placeSync(identifier: Place.Identifier): purify.Either<Error, Place> {
+    return this.placesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async placeIdentifiers(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): Promise<purify.Either<Error, readonly Place.Identifier[]>> {
+    return this.placeIdentifiersSync(query);
+  }
+
+  placeIdentifiersSync(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): purify.Either<Error, readonly Place.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Place, Place.Identifier>(Place, query),
+    ]);
+  }
+
+  async places(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): Promise<readonly purify.Either<Error, Place>[]> {
+    return this.placesSync(query);
+  }
+
+  placesSync(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): readonly purify.Either<Error, Place>[] {
+    return [...this.$objectsSync<Place, Place.Identifier>(Place, query)];
+  }
+
+  async placesCount(
+    query?: Pick<$ObjectSet.Query<Place.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.placesCountSync(query);
+  }
+
+  placesCountSync(
+    query?: Pick<$ObjectSet.Query<Place.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Place, Place.Identifier>(Place, query);
+  }
+
+  async placeStub(
+    identifier: PlaceStub.Identifier,
+  ): Promise<purify.Either<Error, PlaceStub>> {
+    return this.placeStubSync(identifier);
+  }
+
+  placeStubSync(
+    identifier: PlaceStub.Identifier,
+  ): purify.Either<Error, PlaceStub> {
+    return this.placeStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async placeStubIdentifiers(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PlaceStub.Identifier[]>> {
+    return this.placeStubIdentifiersSync(query);
+  }
+
+  placeStubIdentifiersSync(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): purify.Either<Error, readonly PlaceStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<PlaceStub, PlaceStub.Identifier>(
+        PlaceStub,
+        query,
+      ),
+    ]);
+  }
+
+  async placeStubs(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PlaceStub>[]> {
+    return this.placeStubsSync(query);
+  }
+
+  placeStubsSync(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): readonly purify.Either<Error, PlaceStub>[] {
+    return [
+      ...this.$objectsSync<PlaceStub, PlaceStub.Identifier>(PlaceStub, query),
+    ];
+  }
+
+  async placeStubsCount(
+    query?: Pick<$ObjectSet.Query<PlaceStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.placeStubsCountSync(query);
+  }
+
+  placeStubsCountSync(
+    query?: Pick<$ObjectSet.Query<PlaceStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<PlaceStub, PlaceStub.Identifier>(
+      PlaceStub,
+      query,
+    );
+  }
+
+  async publicationEvent(
+    identifier: PublicationEventStatic.Identifier,
+  ): Promise<purify.Either<Error, PublicationEvent>> {
+    return this.publicationEventSync(identifier);
+  }
+
+  publicationEventSync(
+    identifier: PublicationEventStatic.Identifier,
+  ): purify.Either<Error, PublicationEvent> {
+    return this.publicationEventsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async publicationEventIdentifiers(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PublicationEventStatic.Identifier[]>
+  > {
+    return this.publicationEventIdentifiersSync(query);
+  }
+
+  publicationEventIdentifiersSync(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): purify.Either<Error, readonly PublicationEventStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        PublicationEvent,
+        PublicationEventStatic.Identifier
+      >(PublicationEventStatic, query),
+    ]);
+  }
+
+  async publicationEvents(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PublicationEvent>[]> {
+    return this.publicationEventsSync(query);
+  }
+
+  publicationEventsSync(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): readonly purify.Either<Error, PublicationEvent>[] {
+    return [
+      ...this.$objectsSync<PublicationEvent, PublicationEventStatic.Identifier>(
+        PublicationEventStatic,
+        query,
+      ),
+    ];
+  }
+
+  async publicationEventsCount(
+    query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.publicationEventsCountSync(query);
+  }
+
+  publicationEventsCountSync(
+    query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      PublicationEvent,
+      PublicationEventStatic.Identifier
+    >(PublicationEventStatic, query);
+  }
+
+  async publicationEventStub(
+    identifier: PublicationEventStub.Identifier,
+  ): Promise<purify.Either<Error, PublicationEventStub>> {
+    return this.publicationEventStubSync(identifier);
+  }
+
+  publicationEventStubSync(
+    identifier: PublicationEventStub.Identifier,
+  ): purify.Either<Error, PublicationEventStub> {
+    return this.publicationEventStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async publicationEventStubIdentifiers(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>> {
+    return this.publicationEventStubIdentifiersSync(query);
+  }
+
+  publicationEventStubIdentifiersSync(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): purify.Either<Error, readonly PublicationEventStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        PublicationEventStub,
+        PublicationEventStub.Identifier
+      >(PublicationEventStub, query),
+    ]);
+  }
+
+  async publicationEventStubs(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
+    return this.publicationEventStubsSync(query);
+  }
+
+  publicationEventStubsSync(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): readonly purify.Either<Error, PublicationEventStub>[] {
+    return [
+      ...this.$objectsSync<
+        PublicationEventStub,
+        PublicationEventStub.Identifier
+      >(PublicationEventStub, query),
+    ];
+  }
+
+  async publicationEventStubsCount(
+    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.publicationEventStubsCountSync(query);
+  }
+
+  publicationEventStubsCountSync(
+    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      PublicationEventStub,
+      PublicationEventStub.Identifier
+    >(PublicationEventStub, query);
+  }
+
+  async quantitativeValue(
+    identifier: QuantitativeValue.Identifier,
+  ): Promise<purify.Either<Error, QuantitativeValue>> {
+    return this.quantitativeValueSync(identifier);
+  }
+
+  quantitativeValueSync(
+    identifier: QuantitativeValue.Identifier,
+  ): purify.Either<Error, QuantitativeValue> {
+    return this.quantitativeValuesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async quantitativeValueIdentifiers(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): Promise<purify.Either<Error, readonly QuantitativeValue.Identifier[]>> {
+    return this.quantitativeValueIdentifiersSync(query);
+  }
+
+  quantitativeValueIdentifiersSync(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): purify.Either<Error, readonly QuantitativeValue.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        QuantitativeValue,
+        QuantitativeValue.Identifier
+      >(QuantitativeValue, query),
+    ]);
+  }
+
+  async quantitativeValues(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): Promise<readonly purify.Either<Error, QuantitativeValue>[]> {
+    return this.quantitativeValuesSync(query);
+  }
+
+  quantitativeValuesSync(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): readonly purify.Either<Error, QuantitativeValue>[] {
+    return [
+      ...this.$objectsSync<QuantitativeValue, QuantitativeValue.Identifier>(
+        QuantitativeValue,
+        query,
+      ),
+    ];
+  }
+
+  async quantitativeValuesCount(
+    query?: Pick<$ObjectSet.Query<QuantitativeValue.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.quantitativeValuesCountSync(query);
+  }
+
+  quantitativeValuesCountSync(
+    query?: Pick<$ObjectSet.Query<QuantitativeValue.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      QuantitativeValue,
+      QuantitativeValue.Identifier
+    >(QuantitativeValue, query);
+  }
+
+  async quantitativeValueStub(
+    identifier: QuantitativeValueStub.Identifier,
+  ): Promise<purify.Either<Error, QuantitativeValueStub>> {
+    return this.quantitativeValueStubSync(identifier);
+  }
+
+  quantitativeValueStubSync(
+    identifier: QuantitativeValueStub.Identifier,
+  ): purify.Either<Error, QuantitativeValueStub> {
+    return this.quantitativeValueStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async quantitativeValueStubIdentifiers(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly QuantitativeValueStub.Identifier[]>
+  > {
+    return this.quantitativeValueStubIdentifiersSync(query);
+  }
+
+  quantitativeValueStubIdentifiersSync(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): purify.Either<Error, readonly QuantitativeValueStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        QuantitativeValueStub,
+        QuantitativeValueStub.Identifier
+      >(QuantitativeValueStub, query),
+    ]);
+  }
+
+  async quantitativeValueStubs(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]> {
+    return this.quantitativeValueStubsSync(query);
+  }
+
+  quantitativeValueStubsSync(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): readonly purify.Either<Error, QuantitativeValueStub>[] {
+    return [
+      ...this.$objectsSync<
+        QuantitativeValueStub,
+        QuantitativeValueStub.Identifier
+      >(QuantitativeValueStub, query),
+    ];
+  }
+
+  async quantitativeValueStubsCount(
+    query?: Pick<$ObjectSet.Query<QuantitativeValueStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.quantitativeValueStubsCountSync(query);
+  }
+
+  quantitativeValueStubsCountSync(
+    query?: Pick<$ObjectSet.Query<QuantitativeValueStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      QuantitativeValueStub,
+      QuantitativeValueStub.Identifier
+    >(QuantitativeValueStub, query);
+  }
+
+  async radioBroadcastService(
+    identifier: RadioBroadcastService.Identifier,
+  ): Promise<purify.Either<Error, RadioBroadcastService>> {
+    return this.radioBroadcastServiceSync(identifier);
+  }
+
+  radioBroadcastServiceSync(
+    identifier: RadioBroadcastService.Identifier,
+  ): purify.Either<Error, RadioBroadcastService> {
+    return this.radioBroadcastServicesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async radioBroadcastServiceIdentifiers(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RadioBroadcastService.Identifier[]>
+  > {
+    return this.radioBroadcastServiceIdentifiersSync(query);
+  }
+
+  radioBroadcastServiceIdentifiersSync(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): purify.Either<Error, readonly RadioBroadcastService.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        RadioBroadcastService,
+        RadioBroadcastService.Identifier
+      >(RadioBroadcastService, query),
+    ]);
+  }
+
+  async radioBroadcastServices(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]> {
+    return this.radioBroadcastServicesSync(query);
+  }
+
+  radioBroadcastServicesSync(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): readonly purify.Either<Error, RadioBroadcastService>[] {
+    return [
+      ...this.$objectsSync<
+        RadioBroadcastService,
+        RadioBroadcastService.Identifier
+      >(RadioBroadcastService, query),
+    ];
+  }
+
+  async radioBroadcastServicesCount(
+    query?: Pick<$ObjectSet.Query<RadioBroadcastService.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.radioBroadcastServicesCountSync(query);
+  }
+
+  radioBroadcastServicesCountSync(
+    query?: Pick<$ObjectSet.Query<RadioBroadcastService.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      RadioBroadcastService,
+      RadioBroadcastService.Identifier
+    >(RadioBroadcastService, query);
+  }
+
+  async radioBroadcastServiceStub(
+    identifier: RadioBroadcastServiceStub.Identifier,
+  ): Promise<purify.Either<Error, RadioBroadcastServiceStub>> {
+    return this.radioBroadcastServiceStubSync(identifier);
+  }
+
+  radioBroadcastServiceStubSync(
+    identifier: RadioBroadcastServiceStub.Identifier,
+  ): purify.Either<Error, RadioBroadcastServiceStub> {
+    return this.radioBroadcastServiceStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async radioBroadcastServiceStubIdentifiers(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RadioBroadcastServiceStub.Identifier[]>
+  > {
+    return this.radioBroadcastServiceStubIdentifiersSync(query);
+  }
+
+  radioBroadcastServiceStubIdentifiersSync(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): purify.Either<Error, readonly RadioBroadcastServiceStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        RadioBroadcastServiceStub,
+        RadioBroadcastServiceStub.Identifier
+      >(RadioBroadcastServiceStub, query),
+    ]);
+  }
+
+  async radioBroadcastServiceStubs(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]> {
+    return this.radioBroadcastServiceStubsSync(query);
+  }
+
+  radioBroadcastServiceStubsSync(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): readonly purify.Either<Error, RadioBroadcastServiceStub>[] {
+    return [
+      ...this.$objectsSync<
+        RadioBroadcastServiceStub,
+        RadioBroadcastServiceStub.Identifier
+      >(RadioBroadcastServiceStub, query),
+    ];
+  }
+
+  async radioBroadcastServiceStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.radioBroadcastServiceStubsCountSync(query);
+  }
+
+  radioBroadcastServiceStubsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      RadioBroadcastServiceStub,
+      RadioBroadcastServiceStub.Identifier
+    >(RadioBroadcastServiceStub, query);
+  }
+
+  async radioEpisode(
+    identifier: RadioEpisode.Identifier,
+  ): Promise<purify.Either<Error, RadioEpisode>> {
+    return this.radioEpisodeSync(identifier);
+  }
+
+  radioEpisodeSync(
+    identifier: RadioEpisode.Identifier,
+  ): purify.Either<Error, RadioEpisode> {
+    return this.radioEpisodesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async radioEpisodeIdentifiers(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioEpisode.Identifier[]>> {
+    return this.radioEpisodeIdentifiersSync(query);
+  }
+
+  radioEpisodeIdentifiersSync(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): purify.Either<Error, readonly RadioEpisode.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<RadioEpisode, RadioEpisode.Identifier>(
+        RadioEpisode,
+        query,
+      ),
+    ]);
+  }
+
+  async radioEpisodes(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioEpisode>[]> {
+    return this.radioEpisodesSync(query);
+  }
+
+  radioEpisodesSync(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): readonly purify.Either<Error, RadioEpisode>[] {
+    return [
+      ...this.$objectsSync<RadioEpisode, RadioEpisode.Identifier>(
+        RadioEpisode,
+        query,
+      ),
+    ];
+  }
+
+  async radioEpisodesCount(
+    query?: Pick<$ObjectSet.Query<RadioEpisode.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.radioEpisodesCountSync(query);
+  }
+
+  radioEpisodesCountSync(
+    query?: Pick<$ObjectSet.Query<RadioEpisode.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<RadioEpisode, RadioEpisode.Identifier>(
+      RadioEpisode,
+      query,
+    );
+  }
+
+  async radioEpisodeStub(
+    identifier: RadioEpisodeStub.Identifier,
+  ): Promise<purify.Either<Error, RadioEpisodeStub>> {
+    return this.radioEpisodeStubSync(identifier);
+  }
+
+  radioEpisodeStubSync(
+    identifier: RadioEpisodeStub.Identifier,
+  ): purify.Either<Error, RadioEpisodeStub> {
+    return this.radioEpisodeStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async radioEpisodeStubIdentifiers(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioEpisodeStub.Identifier[]>> {
+    return this.radioEpisodeStubIdentifiersSync(query);
+  }
+
+  radioEpisodeStubIdentifiersSync(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): purify.Either<Error, readonly RadioEpisodeStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        RadioEpisodeStub,
+        RadioEpisodeStub.Identifier
+      >(RadioEpisodeStub, query),
+    ]);
+  }
+
+  async radioEpisodeStubs(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]> {
+    return this.radioEpisodeStubsSync(query);
+  }
+
+  radioEpisodeStubsSync(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): readonly purify.Either<Error, RadioEpisodeStub>[] {
+    return [
+      ...this.$objectsSync<RadioEpisodeStub, RadioEpisodeStub.Identifier>(
+        RadioEpisodeStub,
+        query,
+      ),
+    ];
+  }
+
+  async radioEpisodeStubsCount(
+    query?: Pick<$ObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.radioEpisodeStubsCountSync(query);
+  }
+
+  radioEpisodeStubsCountSync(
+    query?: Pick<$ObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      RadioEpisodeStub,
+      RadioEpisodeStub.Identifier
+    >(RadioEpisodeStub, query);
+  }
+
+  async radioSeries(
+    identifier: RadioSeries.Identifier,
+  ): Promise<purify.Either<Error, RadioSeries>> {
+    return this.radioSeriesSync(identifier);
+  }
+
+  radioSeriesSync(
+    identifier: RadioSeries.Identifier,
+  ): purify.Either<Error, RadioSeries> {
+    return this.radioSeriessSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async radioSeriesIdentifiers(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioSeries.Identifier[]>> {
+    return this.radioSeriesIdentifiersSync(query);
+  }
+
+  radioSeriesIdentifiersSync(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): purify.Either<Error, readonly RadioSeries.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<RadioSeries, RadioSeries.Identifier>(
+        RadioSeries,
+        query,
+      ),
+    ]);
+  }
+
+  async radioSeriess(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioSeries>[]> {
+    return this.radioSeriessSync(query);
+  }
+
+  radioSeriessSync(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): readonly purify.Either<Error, RadioSeries>[] {
+    return [
+      ...this.$objectsSync<RadioSeries, RadioSeries.Identifier>(
+        RadioSeries,
+        query,
+      ),
+    ];
+  }
+
+  async radioSeriessCount(
+    query?: Pick<$ObjectSet.Query<RadioSeries.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.radioSeriessCountSync(query);
+  }
+
+  radioSeriessCountSync(
+    query?: Pick<$ObjectSet.Query<RadioSeries.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<RadioSeries, RadioSeries.Identifier>(
+      RadioSeries,
+      query,
+    );
+  }
+
+  async radioSeriesStub(
+    identifier: RadioSeriesStub.Identifier,
+  ): Promise<purify.Either<Error, RadioSeriesStub>> {
+    return this.radioSeriesStubSync(identifier);
+  }
+
+  radioSeriesStubSync(
+    identifier: RadioSeriesStub.Identifier,
+  ): purify.Either<Error, RadioSeriesStub> {
+    return this.radioSeriesStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async radioSeriesStubIdentifiers(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioSeriesStub.Identifier[]>> {
+    return this.radioSeriesStubIdentifiersSync(query);
+  }
+
+  radioSeriesStubIdentifiersSync(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): purify.Either<Error, readonly RadioSeriesStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        RadioSeriesStub,
+        RadioSeriesStub.Identifier
+      >(RadioSeriesStub, query),
+    ]);
+  }
+
+  async radioSeriesStubs(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]> {
+    return this.radioSeriesStubsSync(query);
+  }
+
+  radioSeriesStubsSync(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): readonly purify.Either<Error, RadioSeriesStub>[] {
+    return [
+      ...this.$objectsSync<RadioSeriesStub, RadioSeriesStub.Identifier>(
+        RadioSeriesStub,
+        query,
+      ),
+    ];
+  }
+
+  async radioSeriesStubsCount(
+    query?: Pick<$ObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.radioSeriesStubsCountSync(query);
+  }
+
+  radioSeriesStubsCountSync(
+    query?: Pick<$ObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<RadioSeriesStub, RadioSeriesStub.Identifier>(
+      RadioSeriesStub,
+      query,
+    );
+  }
+
+  async report(
+    identifier: Report.Identifier,
+  ): Promise<purify.Either<Error, Report>> {
+    return this.reportSync(identifier);
+  }
+
+  reportSync(identifier: Report.Identifier): purify.Either<Error, Report> {
+    return this.reportsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async reportIdentifiers(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): Promise<purify.Either<Error, readonly Report.Identifier[]>> {
+    return this.reportIdentifiersSync(query);
+  }
+
+  reportIdentifiersSync(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): purify.Either<Error, readonly Report.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Report, Report.Identifier>(Report, query),
+    ]);
+  }
+
+  async reports(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): Promise<readonly purify.Either<Error, Report>[]> {
+    return this.reportsSync(query);
+  }
+
+  reportsSync(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): readonly purify.Either<Error, Report>[] {
+    return [...this.$objectsSync<Report, Report.Identifier>(Report, query)];
+  }
+
+  async reportsCount(
+    query?: Pick<$ObjectSet.Query<Report.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.reportsCountSync(query);
+  }
+
+  reportsCountSync(
+    query?: Pick<$ObjectSet.Query<Report.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Report, Report.Identifier>(Report, query);
+  }
+
+  async reportStub(
+    identifier: ReportStub.Identifier,
+  ): Promise<purify.Either<Error, ReportStub>> {
+    return this.reportStubSync(identifier);
+  }
+
+  reportStubSync(
+    identifier: ReportStub.Identifier,
+  ): purify.Either<Error, ReportStub> {
+    return this.reportStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async reportStubIdentifiers(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ReportStub.Identifier[]>> {
+    return this.reportStubIdentifiersSync(query);
+  }
+
+  reportStubIdentifiersSync(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): purify.Either<Error, readonly ReportStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ReportStub, ReportStub.Identifier>(
+        ReportStub,
+        query,
+      ),
+    ]);
+  }
+
+  async reportStubs(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ReportStub>[]> {
+    return this.reportStubsSync(query);
+  }
+
+  reportStubsSync(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): readonly purify.Either<Error, ReportStub>[] {
+    return [
+      ...this.$objectsSync<ReportStub, ReportStub.Identifier>(
+        ReportStub,
+        query,
+      ),
+    ];
+  }
+
+  async reportStubsCount(
+    query?: Pick<$ObjectSet.Query<ReportStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.reportStubsCountSync(query);
+  }
+
+  reportStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ReportStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ReportStub, ReportStub.Identifier>(
+      ReportStub,
+      query,
+    );
+  }
+
+  async role(identifier: Role.Identifier): Promise<purify.Either<Error, Role>> {
+    return this.roleSync(identifier);
+  }
+
+  roleSync(identifier: Role.Identifier): purify.Either<Error, Role> {
+    return this.rolesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async roleIdentifiers(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): Promise<purify.Either<Error, readonly Role.Identifier[]>> {
+    return this.roleIdentifiersSync(query);
+  }
+
+  roleIdentifiersSync(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): purify.Either<Error, readonly Role.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Role, Role.Identifier>(Role, query),
+    ]);
+  }
+
+  async roles(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): Promise<readonly purify.Either<Error, Role>[]> {
+    return this.rolesSync(query);
+  }
+
+  rolesSync(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): readonly purify.Either<Error, Role>[] {
+    return [...this.$objectsSync<Role, Role.Identifier>(Role, query)];
+  }
+
+  async rolesCount(
+    query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.rolesCountSync(query);
+  }
+
+  rolesCountSync(
+    query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Role, Role.Identifier>(Role, query);
+  }
+
+  async service(
+    identifier: ServiceStatic.Identifier,
+  ): Promise<purify.Either<Error, Service>> {
+    return this.serviceSync(identifier);
+  }
+
+  serviceSync(
+    identifier: ServiceStatic.Identifier,
+  ): purify.Either<Error, Service> {
+    return this.servicesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async serviceIdentifiers(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ServiceStatic.Identifier[]>> {
+    return this.serviceIdentifiersSync(query);
+  }
+
+  serviceIdentifiersSync(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): purify.Either<Error, readonly ServiceStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Service, ServiceStatic.Identifier>(
+        ServiceStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async services(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Service>[]> {
+    return this.servicesSync(query);
+  }
+
+  servicesSync(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): readonly purify.Either<Error, Service>[] {
+    return [
+      ...this.$objectsSync<Service, ServiceStatic.Identifier>(
+        ServiceStatic,
+        query,
+      ),
+    ];
+  }
+
+  async servicesCount(
+    query?: Pick<$ObjectSet.Query<ServiceStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.servicesCountSync(query);
+  }
+
+  servicesCountSync(
+    query?: Pick<$ObjectSet.Query<ServiceStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Service, ServiceStatic.Identifier>(
+      ServiceStatic,
+      query,
+    );
+  }
+
+  async serviceStub(
+    identifier: ServiceStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ServiceStub>> {
+    return this.serviceStubSync(identifier);
+  }
+
+  serviceStubSync(
+    identifier: ServiceStubStatic.Identifier,
+  ): purify.Either<Error, ServiceStub> {
+    return this.serviceStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async serviceStubIdentifiers(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ServiceStubStatic.Identifier[]>> {
+    return this.serviceStubIdentifiersSync(query);
+  }
+
+  serviceStubIdentifiersSync(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): purify.Either<Error, readonly ServiceStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ServiceStub, ServiceStubStatic.Identifier>(
+        ServiceStubStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async serviceStubs(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ServiceStub>[]> {
+    return this.serviceStubsSync(query);
+  }
+
+  serviceStubsSync(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): readonly purify.Either<Error, ServiceStub>[] {
+    return [
+      ...this.$objectsSync<ServiceStub, ServiceStubStatic.Identifier>(
+        ServiceStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async serviceStubsCount(
+    query?: Pick<$ObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.serviceStubsCountSync(query);
+  }
+
+  serviceStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ServiceStub, ServiceStubStatic.Identifier>(
+      ServiceStubStatic,
+      query,
+    );
+  }
+
+  async structuredValue(
+    identifier: StructuredValueStatic.Identifier,
+  ): Promise<purify.Either<Error, StructuredValue>> {
+    return this.structuredValueSync(identifier);
+  }
+
+  structuredValueSync(
+    identifier: StructuredValueStatic.Identifier,
+  ): purify.Either<Error, StructuredValue> {
+    return this.structuredValuesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async structuredValueIdentifiers(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StructuredValueStatic.Identifier[]>
+  > {
+    return this.structuredValueIdentifiersSync(query);
+  }
+
+  structuredValueIdentifiersSync(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): purify.Either<Error, readonly StructuredValueStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        StructuredValue,
+        StructuredValueStatic.Identifier
+      >(StructuredValueStatic, query),
+    ]);
+  }
+
+  async structuredValues(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, StructuredValue>[]> {
+    return this.structuredValuesSync(query);
+  }
+
+  structuredValuesSync(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): readonly purify.Either<Error, StructuredValue>[] {
+    return [
+      ...this.$objectsSync<StructuredValue, StructuredValueStatic.Identifier>(
+        StructuredValueStatic,
+        query,
+      ),
+    ];
+  }
+
+  async structuredValuesCount(
+    query?: Pick<$ObjectSet.Query<StructuredValueStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.structuredValuesCountSync(query);
+  }
+
+  structuredValuesCountSync(
+    query?: Pick<$ObjectSet.Query<StructuredValueStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      StructuredValue,
+      StructuredValueStatic.Identifier
+    >(StructuredValueStatic, query);
+  }
+
+  async structuredValueStub(
+    identifier: StructuredValueStubStatic.Identifier,
+  ): Promise<purify.Either<Error, StructuredValueStub>> {
+    return this.structuredValueStubSync(identifier);
+  }
+
+  structuredValueStubSync(
+    identifier: StructuredValueStubStatic.Identifier,
+  ): purify.Either<Error, StructuredValueStub> {
+    return this.structuredValueStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async structuredValueStubIdentifiers(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StructuredValueStubStatic.Identifier[]>
+  > {
+    return this.structuredValueStubIdentifiersSync(query);
+  }
+
+  structuredValueStubIdentifiersSync(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): purify.Either<Error, readonly StructuredValueStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        StructuredValueStub,
+        StructuredValueStubStatic.Identifier
+      >(StructuredValueStubStatic, query),
+    ]);
+  }
+
+  async structuredValueStubs(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, StructuredValueStub>[]> {
+    return this.structuredValueStubsSync(query);
+  }
+
+  structuredValueStubsSync(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): readonly purify.Either<Error, StructuredValueStub>[] {
+    return [
+      ...this.$objectsSync<
+        StructuredValueStub,
+        StructuredValueStubStatic.Identifier
+      >(StructuredValueStubStatic, query),
+    ];
+  }
+
+  async structuredValueStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.structuredValueStubsCountSync(query);
+  }
+
+  structuredValueStubsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      StructuredValueStub,
+      StructuredValueStubStatic.Identifier
+    >(StructuredValueStubStatic, query);
+  }
+
+  async textObject(
+    identifier: TextObject.Identifier,
+  ): Promise<purify.Either<Error, TextObject>> {
+    return this.textObjectSync(identifier);
+  }
+
+  textObjectSync(
+    identifier: TextObject.Identifier,
+  ): purify.Either<Error, TextObject> {
+    return this.textObjectsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async textObjectIdentifiers(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): Promise<purify.Either<Error, readonly TextObject.Identifier[]>> {
+    return this.textObjectIdentifiersSync(query);
+  }
+
+  textObjectIdentifiersSync(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): purify.Either<Error, readonly TextObject.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<TextObject, TextObject.Identifier>(
+        TextObject,
+        query,
+      ),
+    ]);
+  }
+
+  async textObjects(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): Promise<readonly purify.Either<Error, TextObject>[]> {
+    return this.textObjectsSync(query);
+  }
+
+  textObjectsSync(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): readonly purify.Either<Error, TextObject>[] {
+    return [
+      ...this.$objectsSync<TextObject, TextObject.Identifier>(
+        TextObject,
+        query,
+      ),
+    ];
+  }
+
+  async textObjectsCount(
+    query?: Pick<$ObjectSet.Query<TextObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.textObjectsCountSync(query);
+  }
+
+  textObjectsCountSync(
+    query?: Pick<$ObjectSet.Query<TextObject.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<TextObject, TextObject.Identifier>(
+      TextObject,
+      query,
+    );
+  }
+
+  async textObjectStub(
+    identifier: TextObjectStub.Identifier,
+  ): Promise<purify.Either<Error, TextObjectStub>> {
+    return this.textObjectStubSync(identifier);
+  }
+
+  textObjectStubSync(
+    identifier: TextObjectStub.Identifier,
+  ): purify.Either<Error, TextObjectStub> {
+    return this.textObjectStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async textObjectStubIdentifiers(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly TextObjectStub.Identifier[]>> {
+    return this.textObjectStubIdentifiersSync(query);
+  }
+
+  textObjectStubIdentifiersSync(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): purify.Either<Error, readonly TextObjectStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<TextObjectStub, TextObjectStub.Identifier>(
+        TextObjectStub,
+        query,
+      ),
+    ]);
+  }
+
+  async textObjectStubs(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, TextObjectStub>[]> {
+    return this.textObjectStubsSync(query);
+  }
+
+  textObjectStubsSync(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): readonly purify.Either<Error, TextObjectStub>[] {
+    return [
+      ...this.$objectsSync<TextObjectStub, TextObjectStub.Identifier>(
+        TextObjectStub,
+        query,
+      ),
+    ];
+  }
+
+  async textObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<TextObjectStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.textObjectStubsCountSync(query);
+  }
+
+  textObjectStubsCountSync(
+    query?: Pick<$ObjectSet.Query<TextObjectStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<TextObjectStub, TextObjectStub.Identifier>(
+      TextObjectStub,
+      query,
+    );
+  }
+
+  async thing(
+    identifier: ThingStatic.Identifier,
+  ): Promise<purify.Either<Error, Thing>> {
+    return this.thingSync(identifier);
+  }
+
+  thingSync(identifier: ThingStatic.Identifier): purify.Either<Error, Thing> {
+    return this.thingsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async thingIdentifiers(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ThingStatic.Identifier[]>> {
+    return this.thingIdentifiersSync(query);
+  }
+
+  thingIdentifiersSync(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): purify.Either<Error, readonly ThingStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Thing, ThingStatic.Identifier>(
+        ThingStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async things(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Thing>[]> {
+    return this.thingsSync(query);
+  }
+
+  thingsSync(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): readonly purify.Either<Error, Thing>[] {
+    return [
+      ...this.$objectsSync<Thing, ThingStatic.Identifier>(ThingStatic, query),
+    ];
+  }
+
+  async thingsCount(
+    query?: Pick<$ObjectSet.Query<ThingStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.thingsCountSync(query);
+  }
+
+  thingsCountSync(
+    query?: Pick<$ObjectSet.Query<ThingStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Thing, ThingStatic.Identifier>(
+      ThingStatic,
+      query,
+    );
+  }
+
+  async thingStub(
+    identifier: ThingStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ThingStub>> {
+    return this.thingStubSync(identifier);
+  }
+
+  thingStubSync(
+    identifier: ThingStubStatic.Identifier,
+  ): purify.Either<Error, ThingStub> {
+    return this.thingStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async thingStubIdentifiers(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ThingStubStatic.Identifier[]>> {
+    return this.thingStubIdentifiersSync(query);
+  }
+
+  thingStubIdentifiersSync(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): purify.Either<Error, readonly ThingStubStatic.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<ThingStub, ThingStubStatic.Identifier>(
+        ThingStubStatic,
+        query,
+      ),
+    ]);
+  }
+
+  async thingStubs(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ThingStub>[]> {
+    return this.thingStubsSync(query);
+  }
+
+  thingStubsSync(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): readonly purify.Either<Error, ThingStub>[] {
+    return [
+      ...this.$objectsSync<ThingStub, ThingStubStatic.Identifier>(
+        ThingStubStatic,
+        query,
+      ),
+    ];
+  }
+
+  async thingStubsCount(
+    query?: Pick<$ObjectSet.Query<ThingStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.thingStubsCountSync(query);
+  }
+
+  thingStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ThingStubStatic.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ThingStub, ThingStubStatic.Identifier>(
+      ThingStubStatic,
+      query,
+    );
+  }
+
+  async voteAction(
+    identifier: VoteAction.Identifier,
+  ): Promise<purify.Either<Error, VoteAction>> {
+    return this.voteActionSync(identifier);
+  }
+
+  voteActionSync(
+    identifier: VoteAction.Identifier,
+  ): purify.Either<Error, VoteAction> {
+    return this.voteActionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async voteActionIdentifiers(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): Promise<purify.Either<Error, readonly VoteAction.Identifier[]>> {
+    return this.voteActionIdentifiersSync(query);
+  }
+
+  voteActionIdentifiersSync(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): purify.Either<Error, readonly VoteAction.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<VoteAction, VoteAction.Identifier>(
+        VoteAction,
+        query,
+      ),
+    ]);
+  }
+
+  async voteActions(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): Promise<readonly purify.Either<Error, VoteAction>[]> {
+    return this.voteActionsSync(query);
+  }
+
+  voteActionsSync(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): readonly purify.Either<Error, VoteAction>[] {
+    return [
+      ...this.$objectsSync<VoteAction, VoteAction.Identifier>(
+        VoteAction,
+        query,
+      ),
+    ];
+  }
+
+  async voteActionsCount(
+    query?: Pick<$ObjectSet.Query<VoteAction.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.voteActionsCountSync(query);
+  }
+
+  voteActionsCountSync(
+    query?: Pick<$ObjectSet.Query<VoteAction.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<VoteAction, VoteAction.Identifier>(
+      VoteAction,
+      query,
+    );
+  }
+
+  async voteActionStub(
+    identifier: VoteActionStub.Identifier,
+  ): Promise<purify.Either<Error, VoteActionStub>> {
+    return this.voteActionStubSync(identifier);
+  }
+
+  voteActionStubSync(
+    identifier: VoteActionStub.Identifier,
+  ): purify.Either<Error, VoteActionStub> {
+    return this.voteActionStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async voteActionStubIdentifiers(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly VoteActionStub.Identifier[]>> {
+    return this.voteActionStubIdentifiersSync(query);
+  }
+
+  voteActionStubIdentifiersSync(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): purify.Either<Error, readonly VoteActionStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<VoteActionStub, VoteActionStub.Identifier>(
+        VoteActionStub,
+        query,
+      ),
+    ]);
+  }
+
+  async voteActionStubs(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, VoteActionStub>[]> {
+    return this.voteActionStubsSync(query);
+  }
+
+  voteActionStubsSync(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): readonly purify.Either<Error, VoteActionStub>[] {
+    return [
+      ...this.$objectsSync<VoteActionStub, VoteActionStub.Identifier>(
+        VoteActionStub,
+        query,
+      ),
+    ];
+  }
+
+  async voteActionStubsCount(
+    query?: Pick<$ObjectSet.Query<VoteActionStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.voteActionStubsCountSync(query);
+  }
+
+  voteActionStubsCountSync(
+    query?: Pick<$ObjectSet.Query<VoteActionStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<VoteActionStub, VoteActionStub.Identifier>(
+      VoteActionStub,
+      query,
+    );
+  }
+
+  *$objectIdentifiersSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<ObjectIdentifierT> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return;
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (query?.where) {
+      yield* query.where.identifiers.slice(offset, offset + limit);
+      return;
+    }
+
+    if (!objectType.fromRdfType) {
+      return;
+    }
+
+    let identifierCount = 0;
+    let identifierI = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      objectType.fromRdfType,
+    )) {
+      if (identifierI++ >= offset) {
+        yield resource.identifier as ObjectIdentifierT;
+        if (++identifierCount === limit) {
+          break;
+        }
+      }
+    }
+  }
+
+  *$objectsSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<purify.Either<Error, ObjectT>> {
+    for (const identifier of this.$objectIdentifiersSync<
+      ObjectT,
+      ObjectIdentifierT
+    >(objectType, query)) {
+      yield objectType.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      });
+    }
+  }
+
+  protected $objectsCountSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): purify.Either<Error, number> {
+    let count = 0;
+    for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(
+      objectType,
+      query,
+    )) {
+      count++;
+    }
+
+    return purify.Either.of(count);
+  }
+}
