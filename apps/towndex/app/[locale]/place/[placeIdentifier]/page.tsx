@@ -2,8 +2,8 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
@@ -26,7 +26,7 @@ export default async function PlacePage({
   setRequestLocale(locale);
 
   const place = (
-    await modelSet.model<Place>({
+    await objectSet.model<Place>({
       identifier: Identifier.fromString(decodeFileName(placeIdentifier)),
       type: "Place",
     })
@@ -59,7 +59,7 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await modelSet.model<PlaceStub>({
+    await objectSet.model<PlaceStub>({
       identifier: Identifier.fromString(decodeFileName(placeIdentifier)),
       type: "PlaceStub",
     })
@@ -77,7 +77,7 @@ export async function generateStaticParams(): Promise<PlacePageParams[]> {
 
   for (const locale of routing.locales) {
     for (const place of (
-      await modelSet.models<PlaceStub>("PlaceStub")
+      await objectSet.models<PlaceStub>("PlaceStub")
     ).unsafeCoerce()) {
       staticParams.push({
         placeIdentifier: encodeFileName(Identifier.toString(place.identifier)),

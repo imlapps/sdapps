@@ -7,8 +7,8 @@ import { PropertiesTable } from "@/lib/components/PropertiesTable";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
@@ -39,7 +39,7 @@ export default async function PersonPage({
   setRequestLocale(locale);
 
   const person = (
-    await modelSet.model<Person>({
+    await objectSet.model<Person>({
       identifier: Identifier.fromString(decodeFileName(personIdentifier)),
       type: "Person",
     })
@@ -84,7 +84,7 @@ export default async function PersonPage({
           ) : null}
           {person.subjectOf.length > 0 ? (
             <Fieldset legend={translations("Subject of")}>
-              <SubjectOfList modelSet={modelSet} thing={person} />
+              <SubjectOfList objectSet={objectSet} thing={person} />
             </Fieldset>
           ) : null}
         </Stack>
@@ -103,7 +103,7 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await modelSet.model<PersonStub>({
+    await objectSet.model<PersonStub>({
       identifier: Identifier.fromString(decodeFileName(personIdentifier)),
       type: "PersonStub",
     })
@@ -121,7 +121,7 @@ export async function generateStaticParams(): Promise<PersonPageParams[]> {
 
   for (const locale of routing.locales) {
     for (const person of (
-      await modelSet.models<PersonStub>("PersonStub")
+      await objectSet.models<PersonStub>("PersonStub")
     ).unsafeCoerce()) {
       staticParams.push({
         personIdentifier: encodeFileName(

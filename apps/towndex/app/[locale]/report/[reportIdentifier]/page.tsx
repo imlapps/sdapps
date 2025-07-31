@@ -8,8 +8,8 @@ import { QuantitativeValuesTable } from "@/lib/components/QuantitativeValuesTabl
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
@@ -41,7 +41,7 @@ export default async function ReportPage({
   setRequestLocale(locale);
 
   const report = (
-    await modelSet.model<Report>({
+    await objectSet.model<Report>({
       identifier: Identifier.fromString(decodeFileName(reportIdentifier)),
       type: "Report",
     })
@@ -86,7 +86,7 @@ export default async function ReportPage({
           <PropertiesTable properties={properties} />
           {report.subjectOf.length > 0 ? (
             <Fieldset legend={translations("Subject of")}>
-              <SubjectOfList modelSet={modelSet} thing={report} />
+              <SubjectOfList objectSet={objectSet} thing={report} />
             </Fieldset>
           ) : null}
           {report.authors.length > 0 ? (
@@ -122,7 +122,7 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await modelSet.model<ReportStub>({
+    await objectSet.model<ReportStub>({
       identifier: Identifier.fromString(decodeFileName(reportIdentifier)),
       type: "ReportStub",
     })
@@ -140,7 +140,7 @@ export async function generateStaticParams(): Promise<ReportPageParams[]> {
 
   for (const locale of routing.locales) {
     for (const report of (
-      await modelSet.models<ReportStub>("ReportStub")
+      await objectSet.models<ReportStub>("ReportStub")
     ).unsafeCoerce()) {
       staticParams.push({
         reportIdentifier: encodeFileName(

@@ -3,8 +3,8 @@ import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { OrganizationsTable } from "@/lib/components/OrganizationsTable";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { OrganizationStub } from "@sdapps/models";
 import { Metadata } from "next";
@@ -21,7 +21,7 @@ export default async function OrganizationsPage({
   setRequestLocale(locale);
 
   const organizations = (
-    await modelSet.models<OrganizationStub>("OrganizationStub")
+    await objectSet.models<OrganizationStub>("OrganizationStub")
   ).orDefault([]);
   const translations = await getTranslations("OrganizationsPage");
 

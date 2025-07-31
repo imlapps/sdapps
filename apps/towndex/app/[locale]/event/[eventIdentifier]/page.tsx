@@ -13,8 +13,8 @@ import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { VoteActionsTable } from "@/lib/components/VoteActionsTable";
 import { getHrefs } from "@/lib/getHrefs";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
@@ -49,7 +49,7 @@ export default async function EventPage({
   setRequestLocale(locale);
 
   const event = (
-    await modelSet.model<Event>({
+    await objectSet.model<Event>({
       identifier: Identifier.fromString(decodeFileName(eventIdentifier)),
       type: "Event",
     })
@@ -92,7 +92,7 @@ export default async function EventPage({
     switch (about.type) {
       case "InvoiceStub":
         (
-          await modelSet.model<Invoice>({
+          await objectSet.model<Invoice>({
             identifier: about.identifier,
             type: "Invoice",
           })
@@ -100,7 +100,7 @@ export default async function EventPage({
         break;
       case "MessageStub":
         (
-          await modelSet.model<Message>({
+          await objectSet.model<Message>({
             identifier: about.identifier,
             type: "Message",
           })
@@ -111,7 +111,7 @@ export default async function EventPage({
         break;
       case "ReportStub":
         (
-          await modelSet.model<Report>({
+          await objectSet.model<Report>({
             identifier: about.identifier,
             type: "Report",
           })
@@ -119,7 +119,7 @@ export default async function EventPage({
         break;
       case "VoteActionStub":
         (
-          await modelSet.model<VoteAction>({
+          await objectSet.model<VoteAction>({
             identifier: about.identifier,
             type: "VoteAction",
           })
@@ -138,7 +138,7 @@ export default async function EventPage({
           <PropertiesTable properties={properties} />
           {event.subjectOf.length > 0 ? (
             <Fieldset legend={translations("Subject of")}>
-              <SubjectOfList modelSet={modelSet} thing={event} />
+              <SubjectOfList objectSet={objectSet} thing={event} />
             </Fieldset>
           ) : null}
           {event.organizers.length > 0 || participants.length > 0 ? (
@@ -197,7 +197,7 @@ export default async function EventPage({
               key={Identifier.toString(invoice.identifier)}
               legend={displayLabel(invoice)}
             >
-              <InvoiceTable invoice={invoice} modelSet={modelSet} />
+              <InvoiceTable invoice={invoice} objectSet={objectSet} />
             </Fieldset>
           ))}
         </Stack>
@@ -216,7 +216,7 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await modelSet.model<EventStub>({
+    await objectSet.model<EventStub>({
       identifier: Identifier.fromString(decodeFileName(eventIdentifier)),
       type: "EventStub",
     })
@@ -234,7 +234,7 @@ export async function generateStaticParams(): Promise<EventPageParams[]> {
 
   for (const locale of routing.locales) {
     for (const event of (
-      await modelSet.models<EventStub>("EventStub")
+      await objectSet.models<EventStub>("EventStub")
     ).unsafeCoerce()) {
       staticParams.push({
         eventIdentifier: encodeFileName(Identifier.toString(event.identifier)),

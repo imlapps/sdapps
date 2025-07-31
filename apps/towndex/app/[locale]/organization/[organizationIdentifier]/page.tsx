@@ -5,8 +5,8 @@ import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
@@ -35,7 +35,7 @@ export default async function OrganizationPage({
   setRequestLocale(locale);
 
   const organization = (
-    await modelSet.model<Organization>({
+    await objectSet.model<Organization>({
       identifier: Identifier.fromString(decodeFileName(organizationIdentifier)),
       type: "Organization",
     })
@@ -58,7 +58,7 @@ export default async function OrganizationPage({
         <Stack>
           {organization.subjectOf.length > 0 ? (
             <Fieldset legend={translations("Subject of")}>
-              <SubjectOfList modelSet={modelSet} thing={organization} />
+              <SubjectOfList objectSet={objectSet} thing={organization} />
             </Fieldset>
           ) : null}
           {organization.members.length > 0 ? (
@@ -82,7 +82,7 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await modelSet.model<OrganizationStub>({
+    await objectSet.model<OrganizationStub>({
       identifier: Identifier.fromString(decodeFileName(organizationIdentifier)),
       type: "OrganizationStub",
     })
@@ -102,7 +102,7 @@ export async function generateStaticParams(): Promise<
 
   for (const locale of routing.locales) {
     for (const organization of (
-      await modelSet.models<OrganizationStub>("OrganizationStub")
+      await objectSet.models<OrganizationStub>("OrganizationStub")
     ).unsafeCoerce()) {
       staticParams.push({
         organizationIdentifier: encodeFileName(

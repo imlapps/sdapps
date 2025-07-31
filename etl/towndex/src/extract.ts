@@ -5,9 +5,9 @@ import { openai } from "@ai-sdk/openai";
 import { DatasetCore, DefaultGraph, NamedNode } from "@rdfjs/types";
 import { DocumentFactory, fileNameCodec, readRdfInput } from "@sdapps/etl";
 import {
+  $RdfjsDatasetObjectSet,
   TextObject as GeneratedTextObject,
   Identifier,
-  RdfjsDatasetModelSet,
 } from "@sdapps/models";
 import { _void } from "@tpluscode/rdf-ns-builders";
 import { CoreMessage, generateText } from "ai";
@@ -216,11 +216,11 @@ async function* extractTextObjects({
   cachesDirectoryPath: string;
   inputDataset: DatasetCore;
 }): AsyncIterable<TextObject> {
-  const modelSet = new RdfjsDatasetModelSet({ dataset: inputDataset });
-  for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
+  const objectSet = new $RdfjsDatasetObjectSet({ dataset: inputDataset });
+  for (const model of objectSet.modelsSync("TextObject").unsafeCoerce()) {
     const textObject = model as GeneratedTextObject;
 
-    const uriSpace = modelSet.resourceSet
+    const uriSpace = objectSet.resourceSet
       .resource(textObject.identifier)
       .value(_void.uriSpace)
       .chain((value) => value.toString());
