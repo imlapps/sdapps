@@ -529,6 +529,7 @@ schema:ItemList
     sh:property schema:ItemList-itemListElements .
 
 schema:ItemList-itemListElements
+    shaclmate:mutable true ;
     a sh:PropertyShape ;
     sh:name "itemListElements" ;
     sh:node sdapps:ListItemStub ;

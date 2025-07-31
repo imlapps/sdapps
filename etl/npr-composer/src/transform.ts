@@ -1,6 +1,8 @@
 import { DatasetCore } from "@rdfjs/types";
 import {
   BroadcastEvent,
+  ItemList,
+  ListItem,
   MusicAlbum,
   MusicComposition,
   MusicGroup,
@@ -59,6 +61,7 @@ async function* transformPlaylistJson({
     publishedOn: stubify(radioBroadcastService),
     startDate: new Date(playlistJson.start_utc),
   });
+  const radioEpisodeBroadcastEventStub = stubify(radioEpisodeBroadcastEvent);
 
   const radioSeries = new RadioSeries({
     identifier: Iris.program(playlistJson.program_id),
@@ -68,12 +71,10 @@ async function* transformPlaylistJson({
   const radioEpisode = new RadioEpisode({
     identifier: Iris.episode(playlistJson.episode_id),
     partOfSeries: stubify(radioSeries),
-    publication: [stubify(radioEpisodeBroadcastEvent)],
+    publication: [radioEpisodeBroadcastEventStub],
   });
   const radioEpisodeStub = stubify(radioEpisode);
-
   radioSeries.episodes.push(radioEpisodeStub);
-  yield radioSeries;
 
   const ucsUtcOffsetMs =
     Date.parse(`${playlistJson.date}T${playlistJson.start_time}:00.000Z`) -
@@ -88,6 +89,12 @@ async function* transformPlaylistJson({
   });
   const musicPlaylistStub = stubify(musicPlaylist);
   radioEpisode.hasParts.push(musicPlaylistStub);
+  const musicPlaylistItemList = new ItemList({
+    identifier: Iris.episodePlaylistItemList({
+      episodeId: playlistJson.episode_id,
+    }),
+  });
+  musicPlaylist.tracks.push(stubify(musicPlaylistItemList));
 
   for (const playlistItemJson of playlistJson.playlist) {
     // 05-05-2025 00:00:00
@@ -175,12 +182,38 @@ async function* transformPlaylistJson({
       yield musicComposition;
     }
 
-    musicPlaylist.tracks.push(musicRecordingStub);
+    const musicPlaylistItem = new ListItem({
+      identifier: Iris.episodePlaylistItem({
+        episodeId: playlistJson.episode_id,
+        playlistItemId: playlistItemJson.id,
+      }),
+      item: musicRecordingStub,
+      position: playlistItemJson.id, // The id's monotonically increase, so this can be used for sorting
+    });
+    yield musicPlaylistItem;
+    musicPlaylistItemList.itemListElements.push(stubify(musicPlaylistItem));
+
+    const musicRecordingBroadcastEvent = new BroadcastEvent({
+      endDate: new Date(startDate.getTime() + playlistItemJson._duration),
+      identifier: Iris.episodePlaylistItemBroadcastEvent({
+        episodeId: playlistJson.episode_id,
+        playlistItemId: playlistItemJson.id,
+      }),
+      publishedOn: stubify(radioBroadcastService),
+      startDate: startDate,
+      superEvent: radioEpisodeBroadcastEventStub,
+    });
+    yield musicRecordingBroadcastEvent;
+    radioEpisodeBroadcastEvent.subEvents.push(
+      stubify(musicRecordingBroadcastEvent),
+    );
   }
 
+  yield musicPlaylist;
+  yield musicPlaylistItemList;
   yield radioEpisode;
   yield radioEpisodeBroadcastEvent;
-  yield musicPlaylist;
+  yield radioSeries;
 }
 
 export async function* transform({

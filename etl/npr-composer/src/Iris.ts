@@ -54,7 +54,24 @@ export namespace Iris {
     playlistItemId,
   }: { episodeId: string; playlistItemId: string }) {
     return dataFactory.namedNode(
-      `${Iris.episode(episodeId).value}/playlist/${playlistItemId}`,
+      `${Iris.episodePlaylistItemList({ episodeId }).value}/${playlistItemId}`,
+    );
+  }
+
+  export function episodePlaylistItemBroadcastEvent({
+    episodeId,
+    playlistItemId,
+  }: { episodeId: string; playlistItemId: string }) {
+    return dataFactory.namedNode(
+      `${Iris.episodePlaylistItem({ episodeId, playlistItemId }).value}/broadcast-event`,
+    );
+  }
+
+  export function episodePlaylistItemList({
+    episodeId,
+  }: { episodeId: string }) {
+    return dataFactory.namedNode(
+      `${Iris.episodePlaylist({ episodeId }).value}/track`,
     );
   }
 

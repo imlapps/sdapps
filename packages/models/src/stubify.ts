@@ -8,6 +8,10 @@ import {
   CreativeWorkStub,
   EpisodeStub,
   Event,
+  ItemList,
+  ItemListStub,
+  ListItem,
+  ListItemStub,
   MediaObjectStub,
   MessageStub,
   MusicAlbum,
@@ -64,6 +68,10 @@ function stubifyThing(thing: Thing): {
 /**
  * Convert a model to its stub equivalent e.g., Organization to OrganizationStub.
  */
+export function stubify(model: ItemList): ItemListStub;
+
+export function stubify(model: ListItem): ListItemStub;
+
 export function stubify(model: MusicAlbum): MusicAlbumStub;
 
 export function stubify(model: MusicComposition): MusicCompositionStub;
@@ -93,6 +101,8 @@ export function stubify(model: CreativeWork): CreativeWorkStub;
 export function stubify(
   model:
     | CreativeWork
+    | ItemList
+    | ListItem
     | Organization
     | Person
     | PublicationEvent
@@ -101,6 +111,8 @@ export function stubify(
     | RadioSeries,
 ):
   | CreativeWorkStub
+  | ItemListStub
+  | ListItemStub
   | OrganizationStub
   | PersonStub
   | PublicationEventStub
@@ -118,6 +130,8 @@ export function stubify(
       return new EpisodeStub(stubifyThing(model));
     case "ImageObject":
       return new CreativeWorkStub(stubifyThing(model));
+    case "ItemList":
+      return new ItemListStub(stubifyThing(model));
     case "MediaObject":
       return new MediaObjectStub(stubifyThing(model));
     case "Message":
