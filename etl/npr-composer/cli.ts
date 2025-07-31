@@ -85,14 +85,15 @@ run(
         : dates.subDays(endDate, 30);
 
       await load(
-        transform(
-          await extract({
+        transform({
+          cachesDirectoryPath,
+          ...(await extract({
             cachesDirectoryPath,
             input: Maybe.fromNullable(input),
             endDate,
             startDate,
-          }),
-        ),
+          })),
+        }),
       );
     },
   }),

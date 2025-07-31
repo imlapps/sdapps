@@ -5,5 +5,6 @@ export * from "./DocumentFormatConverter.js";
 export * from "./DocumentTextExtractor.js";
 export * from "./encodeFileName.js";
 export * from "./fileNameCodec.js";
+export * from "./isSafeFileName.js";
 export * from "./readRdfInput.js";
 export * from "./RdfFileLoader.js";
