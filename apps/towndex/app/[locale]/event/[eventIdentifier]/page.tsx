@@ -20,8 +20,6 @@ import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Fieldset, Group, Stack } from "@mantine/core";
 import {
-  Event,
-  EventStub,
   Identifier,
   Invoice,
   Message,
@@ -33,6 +31,7 @@ import {
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Either } from "purify-ts";
 import { ReactNode } from "react";
 
 interface EventPageParams {
@@ -49,10 +48,9 @@ export default async function EventPage({
   setRequestLocale(locale);
 
   const event = (
-    await objectSet.model<Event>({
-      identifier: Identifier.fromString(decodeFileName(eventIdentifier)),
-      type: "Event",
-    })
+    await objectSet.event(
+      Identifier.fromString(decodeFileName(eventIdentifier)),
+    )
   )
     .toMaybe()
     .extractNullable();
@@ -91,39 +89,27 @@ export default async function EventPage({
   for (const about of event.about) {
     switch (about.type) {
       case "InvoiceStub":
-        (
-          await objectSet.model<Invoice>({
-            identifier: about.identifier,
-            type: "Invoice",
-          })
-        ).ifRight((invoice) => invoices.push(invoice));
+        (await objectSet.invoice(about.identifier)).ifRight((invoice) =>
+          invoices.push(invoice),
+        );
         break;
       case "MessageStub":
-        (
-          await objectSet.model<Message>({
-            identifier: about.identifier,
-            type: "Message",
-          })
-        ).ifRight((message) => messages.push(message));
+        (await objectSet.message(about.identifier)).ifRight((message) =>
+          messages.push(message),
+        );
         break;
       case "PersonStub":
         participants.push(about as PersonStub);
         break;
       case "ReportStub":
-        (
-          await objectSet.model<Report>({
-            identifier: about.identifier,
-            type: "Report",
-          })
-        ).ifRight((report) => reports.push(report));
+        (await objectSet.report(about.identifier)).ifRight((report) =>
+          reports.push(report),
+        );
         break;
       case "VoteActionStub":
-        (
-          await objectSet.model<VoteAction>({
-            identifier: about.identifier,
-            type: "VoteAction",
-          })
-        ).ifRight((voteAction) => voteActions.push(voteAction));
+        (await objectSet.voteAction(about.identifier)).ifRight((voteAction) =>
+          voteActions.push(voteAction),
+        );
         break;
     }
   }
@@ -216,10 +202,9 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await objectSet.model<EventStub>({
-      identifier: Identifier.fromString(decodeFileName(eventIdentifier)),
-      type: "EventStub",
-    })
+    await objectSet.eventStub(
+      Identifier.fromString(decodeFileName(eventIdentifier)),
+    )
   )
     .map((event) => pageMetadata.event(event))
     .orDefault({} satisfies Metadata);
@@ -233,9 +218,7 @@ export async function generateStaticParams(): Promise<EventPageParams[]> {
   const staticParams: EventPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const event of (
-      await objectSet.models<EventStub>("EventStub")
-    ).unsafeCoerce()) {
+    for (const event of Either.rights(await objectSet.eventStubs())) {
       staticParams.push({
         eventIdentifier: encodeFileName(Identifier.toString(event.identifier)),
         locale,

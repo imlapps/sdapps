@@ -6,9 +6,9 @@ import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
 import { Locale } from "@/lib/models/Locale";
 import { objectSet } from "@/lib/objectSet";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { OrganizationStub } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Either } from "purify-ts";
 
 interface OrganizationsPageParams {
   locale: Locale;
@@ -20,9 +20,7 @@ export default async function OrganizationsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const organizations = (
-    await objectSet.models<OrganizationStub>("OrganizationStub")
-  ).orDefault([]);
+  const organizations = Either.rights(await objectSet.organizationStubs());
   const translations = await getTranslations("OrganizationsPage");
 
   return (

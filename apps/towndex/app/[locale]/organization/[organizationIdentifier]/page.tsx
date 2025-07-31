@@ -11,15 +11,11 @@ import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Fieldset, Stack } from "@mantine/core";
-import {
-  Identifier,
-  Organization,
-  OrganizationStub,
-  displayLabel,
-} from "@sdapps/models";
+import { Identifier, displayLabel } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Either } from "purify-ts";
 
 interface OrganizationPageParams {
   locale: Locale;
@@ -35,10 +31,9 @@ export default async function OrganizationPage({
   setRequestLocale(locale);
 
   const organization = (
-    await objectSet.model<Organization>({
-      identifier: Identifier.fromString(decodeFileName(organizationIdentifier)),
-      type: "Organization",
-    })
+    await objectSet.organization(
+      Identifier.fromString(decodeFileName(organizationIdentifier)),
+    )
   )
     .toMaybe()
     .extractNullable();
@@ -82,10 +77,9 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await objectSet.model<OrganizationStub>({
-      identifier: Identifier.fromString(decodeFileName(organizationIdentifier)),
-      type: "OrganizationStub",
-    })
+    await objectSet.organizationStub(
+      Identifier.fromString(decodeFileName(organizationIdentifier)),
+    )
   )
     .map((organization) => pageMetadata.organization(organization))
     .orDefault({} satisfies Metadata);
@@ -101,9 +95,9 @@ export async function generateStaticParams(): Promise<
   const staticParams: OrganizationPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const organization of (
-      await objectSet.models<OrganizationStub>("OrganizationStub")
-    ).unsafeCoerce()) {
+    for (const organization of Either.rights(
+      await objectSet.organizationStubs(),
+    )) {
       staticParams.push({
         organizationIdentifier: encodeFileName(
           Identifier.toString(organization.identifier),

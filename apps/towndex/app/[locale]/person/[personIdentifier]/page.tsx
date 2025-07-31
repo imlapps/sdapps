@@ -14,15 +14,16 @@ import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Fieldset, Stack } from "@mantine/core";
 import {
+  CreativeWorkStub,
+  EventStub,
   Identifier,
-  Person,
-  PersonStub,
   compare,
   displayLabel,
 } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Either } from "purify-ts";
 import { ReactNode } from "react";
 
 interface PersonPageParams {
@@ -39,10 +40,9 @@ export default async function PersonPage({
   setRequestLocale(locale);
 
   const person = (
-    await objectSet.model<Person>({
-      identifier: Identifier.fromString(decodeFileName(personIdentifier)),
-      type: "Person",
-    })
+    await objectSet.person(
+      Identifier.fromString(decodeFileName(personIdentifier)),
+    )
   )
     .toMaybe()
     .extractNullable();
@@ -60,9 +60,11 @@ export default async function PersonPage({
   person.jobTitle.ifJust((jobTitle) => {
     properties.push({ label: translations("Job title"), value: jobTitle });
   });
-  const events = person.performerIn
+  const events = (
+    person.performerIn as readonly (CreativeWorkStub | EventStub)[]
+  )
     .concat(person.subjectOf.filter((_) => _.type === "EventStub"))
-    .toSorted(compare);
+    .toSorted(compare) as readonly EventStub[];
 
   return (
     <ClientProvidersServer>
@@ -103,10 +105,9 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await objectSet.model<PersonStub>({
-      identifier: Identifier.fromString(decodeFileName(personIdentifier)),
-      type: "PersonStub",
-    })
+    await objectSet.personStub(
+      Identifier.fromString(decodeFileName(personIdentifier)),
+    )
   )
     .map((person) => pageMetadata.person(person))
     .orDefault({} satisfies Metadata);
@@ -120,9 +121,7 @@ export async function generateStaticParams(): Promise<PersonPageParams[]> {
   const staticParams: PersonPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const person of (
-      await objectSet.models<PersonStub>("PersonStub")
-    ).unsafeCoerce()) {
+    for (const person of Either.rights(await objectSet.personStubs())) {
       staticParams.push({
         personIdentifier: encodeFileName(
           Identifier.toString(person.identifier),

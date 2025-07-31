@@ -18,13 +18,12 @@ import {
   Identifier,
   MonetaryAmountStub,
   QuantitativeValueStub,
-  Report,
-  ReportStub,
   displayLabel,
 } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Either } from "purify-ts";
 import { ReactNode } from "react";
 
 interface ReportPageParams {
@@ -41,10 +40,9 @@ export default async function ReportPage({
   setRequestLocale(locale);
 
   const report = (
-    await objectSet.model<Report>({
-      identifier: Identifier.fromString(decodeFileName(reportIdentifier)),
-      type: "Report",
-    })
+    await objectSet.report(
+      Identifier.fromString(decodeFileName(reportIdentifier)),
+    )
   )
     .toMaybe()
     .extractNullable();
@@ -122,10 +120,9 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await objectSet.model<ReportStub>({
-      identifier: Identifier.fromString(decodeFileName(reportIdentifier)),
-      type: "ReportStub",
-    })
+    await objectSet.reportStub(
+      Identifier.fromString(decodeFileName(reportIdentifier)),
+    )
   )
     .map((report) => pageMetadata.report(report))
     .orDefault({} satisfies Metadata);
@@ -139,9 +136,7 @@ export async function generateStaticParams(): Promise<ReportPageParams[]> {
   const staticParams: ReportPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const report of (
-      await objectSet.models<ReportStub>("ReportStub")
-    ).unsafeCoerce()) {
+    for (const report of Either.rights(await objectSet.reportStubs())) {
       staticParams.push({
         reportIdentifier: encodeFileName(
           Identifier.toString(report.identifier),

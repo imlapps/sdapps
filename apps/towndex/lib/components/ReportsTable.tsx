@@ -20,7 +20,7 @@ interface Row {
 }
 
 export function ReportsTable(json: {
-  reports: readonly ReturnType<Report["toJson"]>[];
+  reports: readonly Report.Json[];
 }) {
   const hrefs = useHrefs();
 

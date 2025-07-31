@@ -5,7 +5,6 @@ import {
   CreativeWorkStub,
   EventStub,
   Identifier,
-  TextObject,
   displayLabel,
 } from "@sdapps/models";
 import { IconExternalLink } from "@tabler/icons-react";
@@ -23,12 +22,7 @@ export async function SubjectOfList({
     if (subjectOf.type !== "TextObjectStub") {
       continue;
     }
-    const textObject = (
-      await objectSet.model<TextObject>({
-        identifier: subjectOf.identifier,
-        type: "TextObject",
-      })
-    )
+    const textObject = (await objectSet.textObject(subjectOf.identifier))
       .toMaybe()
       .extract();
     if (!textObject) {

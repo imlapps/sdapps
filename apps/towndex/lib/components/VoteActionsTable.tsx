@@ -20,7 +20,7 @@ interface Row {
 }
 
 export function VoteActionsTable(json: {
-  voteActions: readonly ReturnType<VoteAction["toJson"]>[];
+  voteActions: readonly VoteAction.Json[];
 }) {
   const hrefs = useHrefs();
 
