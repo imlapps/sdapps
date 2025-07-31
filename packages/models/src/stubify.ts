@@ -132,6 +132,12 @@ export function stubify(
       return new CreativeWorkStub(stubifyThing(model));
     case "ItemList":
       return new ItemListStub(stubifyThing(model));
+    case "ListItem":
+      return new ListItemStub({
+        ...stubifyThing(model),
+        item: model.item,
+        position: model.position,
+      });
     case "MediaObject":
       return new MediaObjectStub(stubifyThing(model));
     case "Message":

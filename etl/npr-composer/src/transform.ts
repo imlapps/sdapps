@@ -163,6 +163,22 @@ async function* transformPlaylistJson({
         })
       : undefined;
 
+    const musicRecordingBroadcastEvent = new BroadcastEvent({
+      endDate: new Date(startDate.getTime() + playlistItemJson._duration),
+      identifier: Iris.episodePlaylistItemBroadcastEvent({
+        episodeId: playlistJson.episode_id,
+        playlistItemId: playlistItemJson.id,
+      }),
+      publishedOn: stubify(radioBroadcastService),
+      startDate: startDate,
+      superEvent: radioEpisodeBroadcastEventStub,
+    });
+    yield musicRecordingBroadcastEvent;
+    const musicRecordingBroadcastEventStub = stubify(
+      musicRecordingBroadcastEvent,
+    );
+    radioEpisodeBroadcastEvent.subEvents.push(musicRecordingBroadcastEventStub);
+
     const musicRecording = new MusicRecording({
       duration: dates.formatISODuration(
         durationSecondsToDuration(playlistItemJson._duration / 1000),
@@ -172,6 +188,7 @@ async function* transformPlaylistJson({
       identifier: Iris.musicRecording(playlistItemJson),
       inPlaylists: [musicPlaylistStub],
       name: playlistItemJson.trackName,
+      publication: [musicRecordingBroadcastEventStub],
       recordingOf: musicComposition ? stubify(musicComposition) : undefined,
     });
     yield musicRecording;
@@ -192,21 +209,6 @@ async function* transformPlaylistJson({
     });
     yield musicPlaylistItem;
     musicPlaylistItemList.itemListElements.push(stubify(musicPlaylistItem));
-
-    const musicRecordingBroadcastEvent = new BroadcastEvent({
-      endDate: new Date(startDate.getTime() + playlistItemJson._duration),
-      identifier: Iris.episodePlaylistItemBroadcastEvent({
-        episodeId: playlistJson.episode_id,
-        playlistItemId: playlistItemJson.id,
-      }),
-      publishedOn: stubify(radioBroadcastService),
-      startDate: startDate,
-      superEvent: radioEpisodeBroadcastEventStub,
-    });
-    yield musicRecordingBroadcastEvent;
-    radioEpisodeBroadcastEvent.subEvents.push(
-      stubify(musicRecordingBroadcastEvent),
-    );
   }
 
   yield musicPlaylist;

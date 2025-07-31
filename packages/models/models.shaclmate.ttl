@@ -93,7 +93,7 @@ sdapps:InvoiceStub
 
 sdapps:ItemListStub
     shaclmate:name "ItemListStub" ;
-    shaclmate:rdfType schema:ItemListStub ;
+    shaclmate:rdfType schema:ItemList ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub ;
     sh:property schema:ItemList-itemListElements .
