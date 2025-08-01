@@ -12,7 +12,7 @@ describe("WikidataEntityResolver", () => {
   for (const [id, { input, expectedOutput }] of Object.entries(
     wikipediaEntityResolverTestData,
   )) {
-    it(id, async ({ expect }) => {
+    it(`resolve ${id}`, async ({ expect }) => {
       const actualEntities = (await sut.resolve(input)).unsafeCoerce();
       expect(actualEntities).toHaveLength(expectedOutput.length);
       for (const expectedEntity of expectedOutput) {

@@ -4,7 +4,7 @@ import { WikipediaEntityResolver } from "../src/WikipediaEntityResolver.js";
 import { cachesDirectoryPath } from "./paths.js";
 import { wikipediaEntityResolverTestData } from "./wikipediaEntityResolverTestData.js";
 
-describe("WikipediaEntityResolver", () => {
+describe("WikipediaEntity", () => {
   const sut = new WikipediaEntityResolver({ cachesDirectoryPath });
 
   dotenv.config();
@@ -12,16 +12,23 @@ describe("WikipediaEntityResolver", () => {
   for (const [id, { input, expectedOutput }] of Object.entries(
     wikipediaEntityResolverTestData,
   )) {
-    it(`resolve ${id}`, async ({ expect }) => {
+    it(`${id} wikidataEntity`, async ({ expect }) => {
       const actualEntities = (await sut.resolve(input)).unsafeCoerce();
       expect(actualEntities).toHaveLength(expectedOutput.length);
       for (const expectedEntity of expectedOutput) {
-        expect(
-          actualEntities.some(
-            (actualEntity) =>
-              actualEntity.urlTitle === expectedEntity.wikipediaUrlTitle,
-          ),
-        ).toStrictEqual(true);
+        let foundExpectedEntity = false;
+        for (const actualEntity of actualEntities) {
+          if (actualEntity.urlTitle === expectedEntity.wikipediaUrlTitle) {
+            expect(
+              (await actualEntity.wikidataEntity())
+                .unsafeCoerce()
+                .unsafeCoerce().id === expectedEntity.wikidataId,
+            );
+            foundExpectedEntity = true;
+            break;
+          }
+        }
+        expect(foundExpectedEntity).toStrictEqual(true);
       }
     });
   }
