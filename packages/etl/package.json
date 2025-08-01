@@ -33,6 +33,7 @@
   "devDependencies": {
     "@sdapps/tsconfig": "0.0.0",
     "@types/node": "^22.13.9",
+    "dotenv": "^16.4.5",
     "typescript": "5.8.2"
   },
   "exports": {

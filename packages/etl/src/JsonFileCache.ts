@@ -60,6 +60,7 @@ export class JsonFileCache<JsonT> {
 
   async set(key: string, value: JsonT): Promise<Either<Error, void>> {
     return EitherAsync(async () => {
+      await fs.mkdir(this.directoryPath, { recursive: true });
       await fs.writeFile(this.filePath(key), JSON.stringify(value));
     });
   }
