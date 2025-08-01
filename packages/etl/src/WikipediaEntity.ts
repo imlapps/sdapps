@@ -1,5 +1,4 @@
 import path from "node:path";
-import N3 from "n3";
 import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -107,17 +106,19 @@ export class WikipediaEntity {
       return Maybe.of(
         new WikidataEntity({
           cachesDirectoryPath: this.cachesDirectoryPath,
+          id: page.pageprops.wikibase_item,
           logger: this.logger,
-          iri: N3.DataFactory.namedNode(
-            `http://www.wikidata.org/entity/${page.pageprops.wikibase_item}`,
-          ),
         }),
       );
     });
   }
 
+  toString(): string {
+    return this.urlTitle;
+  }
+
   @Memoize()
-  private get urlTitle(): string {
+  get urlTitle(): string {
     return this.url.pathname.split("/").at(-1)!;
   }
 }
