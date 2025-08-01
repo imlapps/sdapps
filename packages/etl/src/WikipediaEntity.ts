@@ -32,7 +32,7 @@ import { WikidataEntity } from "./WikidataEntity.js";
 // }
 const pagepropsQueryResponseSchema = z.object({
   query: z.object({
-    pages: z.map(
+    pages: z.record(
       z.string(),
       z.object({
         pageprops: z.object({
