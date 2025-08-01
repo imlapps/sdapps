@@ -36,7 +36,7 @@ export class JsonFileCache<JsonT> {
 
       let fileStats: Stats | undefined;
       try {
-        fileStats = await fs.stat(this.filePath(key));
+        fileStats = await fs.stat(filePath);
         this.logger?.debug(`cache file ${filePath} exists`);
       } catch {
         this.logger?.debug(`cache file ${filePath} does not exist`);
