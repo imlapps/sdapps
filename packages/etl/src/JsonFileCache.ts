@@ -1,15 +1,10 @@
-import { Stats } from "node:fs";
-import fs from "node:fs/promises";
-import path from "node:path";
 import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
-import sanitizeFilename from "sanitize-filename";
-import { Memoize } from "typescript-memoize";
+import { TextFileCache } from "./TextFileCache.js";
 
 export class JsonFileCache<JsonT> {
-  private readonly directoryPath: string;
-  private readonly logger?: Logger;
   private readonly parseJson: (json: unknown) => Promise<Either<Error, JsonT>>;
+  private readonly textFileCache: TextFileCache;
 
   constructor({
     directoryPath,
@@ -20,38 +15,34 @@ export class JsonFileCache<JsonT> {
     logger?: Logger;
     parseJson: (json: unknown) => Promise<Either<Error, JsonT>>;
   }) {
-    this.directoryPath = directoryPath;
-    this.logger = logger;
     this.parseJson = parseJson;
-  }
-
-  @Memoize()
-  private filePath(key: string): string {
-    return path.join(this.directoryPath, `${sanitizeFilename(key)}.json`);
+    this.textFileCache = new TextFileCache({
+      directoryPath,
+      fileExtension: ".json",
+      logger,
+    });
   }
 
   async get(key: string): Promise<Either<Error, Maybe<JsonT>>> {
-    return EitherAsync(async () => {
-      const filePath = this.filePath(key);
-
-      let fileStats: Stats | undefined;
-      try {
-        fileStats = await fs.stat(filePath);
-        this.logger?.debug(`cache file ${filePath} exists`);
-      } catch {
-        this.logger?.debug(`cache file ${filePath} does not exist`);
+    return EitherAsync(async ({ liftEither }) => {
+      const textEither = await this.textFileCache.get(key);
+      if (textEither.isLeft()) {
+        return await liftEither(textEither);
       }
 
-      if (fileStats) {
-        const parseResult = await this.parseJson(
-          JSON.parse((await fs.readFile(filePath)).toString("utf-8")),
-        );
-        if (parseResult.isRight()) {
-          this.logger?.debug(
-            `successfully parsed cache file ${filePath}:\n${JSON.stringify(parseResult.unsafeCoerce())}`,
-          );
-          return parseResult.toMaybe();
-        }
+      const textMaybe = textEither.unsafeCoerce();
+      if (textMaybe.isNothing()) {
+        return textMaybe;
+      }
+
+      const parseResult = await this.parseJson(
+        JSON.parse(textMaybe.unsafeCoerce()),
+      );
+      if (parseResult.isRight()) {
+        // this.logger?.trace(
+        //   `successfully parsed cache file ${filePath}:\n${JSON.stringify(parseResult.unsafeCoerce())}`,
+        // );
+        return parseResult.toMaybe();
       }
 
       return Maybe.empty();
@@ -59,9 +50,6 @@ export class JsonFileCache<JsonT> {
   }
 
   async set(key: string, value: JsonT): Promise<Either<Error, void>> {
-    return EitherAsync(async () => {
-      await fs.mkdir(this.directoryPath, { recursive: true });
-      await fs.writeFile(this.filePath(key), JSON.stringify(value));
-    });
+    return this.textFileCache.set(key, JSON.stringify(value));
   }
 }
