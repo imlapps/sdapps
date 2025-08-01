@@ -1,5 +1,5 @@
-import { DatasetCore } from "@rdfjs/types";
-import {} from "@sdapps/etl";
+import { DatasetCore, NamedNode } from "@rdfjs/types";
+import { WikidataEntityResolver } from "@sdapps/etl";
 import {
   BroadcastEvent,
   ItemList,
@@ -15,20 +15,12 @@ import {
   Thing,
   stubify,
 } from "@sdapps/models";
+import {} from "@tpluscode/rdf-ns-builders";
 import * as dates from "date-fns";
-
-import { Stats } from "node:fs";
-import fs from "node:fs/promises";
-import { generateObject } from "ai";
-import N3, { NamedNode } from "n3";
+import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
-import sanitizeFilename from "sanitize-filename";
-import { z } from "zod";
-
-import path from "node:path";
-import { openai } from "@ai-sdk/openai";
-import { Either, EitherAsync } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { z } from "zod";
 import { ExtractResult } from "./ExtractResult";
 import { Iris } from "./Iris";
 import { logger } from "./logger";
@@ -52,6 +44,16 @@ function durationSecondsToDuration(durationSeconds: number): dates.Duration {
   return duration;
 }
 
+function modelToDataset(model: Thing): DatasetCore {
+  return model.toRdf({
+    mutateGraph: N3.DataFactory.defaultGraph(),
+    resourceSet: new MutableResourceSet({
+      dataFactory: N3.DataFactory,
+      dataset: new N3.Store(),
+    }),
+  }).dataset;
+}
+
 async function* transformPlaylistJson({
   cachesDirectoryPath,
   playlistJson,
@@ -62,7 +64,7 @@ async function* transformPlaylistJson({
   playlistJson: PlaylistJson;
   radioBroadcastService: RadioBroadcastService;
   ucsId: string;
-}): AsyncIterable<Thing> {
+}): AsyncIterable<DatasetCore> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
     endDate: new Date(playlistJson.end_utc),
     identifier: Iris.episodeBroadcastEvent({
@@ -106,6 +108,11 @@ async function* transformPlaylistJson({
   });
   musicPlaylist.tracks.push(stubify(musicPlaylistItemList));
 
+  const wikidataEntityResolver = new WikidataEntityResolver({
+    cachesDirectoryPath,
+    logger,
+  });
+
   for (const playlistItemJson of playlistJson.playlist) {
     // 05-05-2025 00:00:00
     const startDate = dates.parse(
@@ -116,40 +123,41 @@ async function* transformPlaylistJson({
 
     let composerMusicGroup: MusicGroup | undefined;
     const musicGroups: MusicGroup[] = [];
-    const musicGroupUnqualifiedNames = new Set<string>();
+    const musicGroupNames = new Set<string>();
 
-    for (const [qualifier, unqualifiedName] of Object.entries({
+    for (const [role, name] of Object.entries({
       "": playlistItemJson.artistName,
       composer: playlistItemJson.composerName,
       conductor: playlistItemJson.conductor,
       ensembles: playlistItemJson.ensembles,
       soloists: playlistItemJson.soloists,
     })) {
-      if (!unqualifiedName || musicGroupUnqualifiedNames.has(unqualifiedName)) {
+      if (!name || musicGroupNames.has(name)) {
         continue;
       }
-      const qualifiedName =
-        qualifier.length > 0
-          ? `${unqualifiedName} (${qualifier})`
-          : unqualifiedName;
+      const qualifiedName = role.length > 0 ? `${name} (${role})` : name;
+
+      const sameAs: NamedNode[] = [];
+      const wikidataEntities =
+        role === "composer" && name === "George Frideric Handel"
+          ? (await wikidataEntityResolver.resolve({ name, role })).orDefault([])
+          : [];
+      for (const wikidataEntity of wikidataEntities) {
+        const datasetEither = await wikidataEntity.filteredDataset();
+        if (datasetEither.isRight()) {
+          sameAs.push(wikidataEntity.iri);
+          yield datasetEither.unsafeCoerce();
+        }
+      }
+
       const musicGroup = new MusicGroup({
         identifier: Iris.musicGroup({ name: qualifiedName }),
         name: qualifiedName,
-        sameAs:
-          qualifier === "composer" &&
-          unqualifiedName === "George Frideric Handel"
-            ? (
-                await wikidataEntityIris({
-                  cachesDirectoryPath,
-                  entityName: unqualifiedName,
-                  entityType: qualifier,
-                })
-              ).orDefault([])
-            : undefined,
+        sameAs: sameAs.length > 0 ? sameAs : undefined,
       });
-      yield musicGroup;
+      yield modelToDataset(musicGroup);
       musicGroups.push(musicGroup);
-      if (qualifier === "composer") {
+      if (role === "composer") {
         composerMusicGroup = musicGroup;
       }
     }
@@ -172,7 +180,7 @@ async function* transformPlaylistJson({
         })
       : undefined;
     if (musicAlbum) {
-      yield musicAlbum;
+      yield modelToDataset(musicAlbum);
     }
 
     const musicComposition = composerMusicGroup
@@ -195,7 +203,7 @@ async function* transformPlaylistJson({
       startDate: startDate,
       superEvent: radioEpisodeBroadcastEventStub,
     });
-    yield musicRecordingBroadcastEvent;
+    yield modelToDataset(musicRecordingBroadcastEvent);
     const musicRecordingBroadcastEventStub = stubify(
       musicRecordingBroadcastEvent,
     );
@@ -213,12 +221,12 @@ async function* transformPlaylistJson({
       publication: [musicRecordingBroadcastEventStub],
       recordingOf: musicComposition ? stubify(musicComposition) : undefined,
     });
-    yield musicRecording;
+    yield modelToDataset(musicRecording);
     const musicRecordingStub = stubify(musicRecording);
 
     if (musicComposition) {
       musicComposition.recordedAs.push(musicRecordingStub);
-      yield musicComposition;
+      yield modelToDataset(musicComposition);
     }
 
     const musicPlaylistItem = new ListItem({
@@ -229,15 +237,15 @@ async function* transformPlaylistJson({
       item: musicRecordingStub,
       position: playlistItemJson.id, // The id's monotonically increase, so this can be used for sorting
     });
-    yield musicPlaylistItem;
+    yield modelToDataset(musicPlaylistItem);
     musicPlaylistItemList.itemListElements.push(stubify(musicPlaylistItem));
   }
 
-  yield musicPlaylist;
-  yield musicPlaylistItemList;
-  yield radioEpisode;
-  yield radioEpisodeBroadcastEvent;
-  yield radioSeries;
+  yield modelToDataset(musicPlaylist);
+  yield modelToDataset(musicPlaylistItemList);
+  yield modelToDataset(radioEpisode);
+  yield modelToDataset(radioEpisodeBroadcastEvent);
+  yield modelToDataset(radioSeries);
 }
 
 export async function* transform({
@@ -263,134 +271,16 @@ export async function* transform({
     }
 
     for (const playlistJson of parseResult.data.playlist) {
-      for await (const model of transformPlaylistJson({
+      for await (const dataset of transformPlaylistJson({
         cachesDirectoryPath,
         playlistJson,
         radioBroadcastService: extractResult.radioBroadcastService,
         ucsId: extractResult.ucsIdentifier,
       })) {
-        yield model.toRdf({
-          mutateGraph: N3.DataFactory.defaultGraph(),
-          resourceSet: new MutableResourceSet({
-            dataFactory: N3.DataFactory,
-            dataset: new N3.Store(),
-          }),
-        }).dataset;
+        yield dataset;
       }
     }
   }
-}
-
-const wikidataEntityObjectSchema = z.object({
-  ids: z.array(z.string()),
-});
-
-async function wikidataEntityIris({
-  cachesDirectoryPath,
-  entityName,
-  entityType,
-}: {
-  cachesDirectoryPath: string;
-  entityName: string;
-  entityType: "composer" | "conductor";
-}): Promise<Either<Error, readonly NamedNode[]>> {
-  return EitherAsync(async () => {
-    const entityCacheDirectoryPath = path.join(
-      cachesDirectoryPath,
-      "wikidata",
-      "entity-id",
-      entityType,
-    );
-    await fs.mkdir(entityCacheDirectoryPath, { recursive: true });
-
-    // Do minimal encoding of the entity name
-    // sanitize-filename can produce the same output for different inputs, like "file?" and "file*" both producing "file"
-    // It's not reversible.
-    // That's probably acceptable in this case. Legibility of the file names is more important.
-    const entityCacheFilePath = path.join(
-      entityCacheDirectoryPath,
-      `${sanitizeFilename(entityName)}.json`,
-    );
-
-    let entityCacheFileStats: Stats | undefined;
-    try {
-      entityCacheFileStats = await fs.stat(entityCacheFilePath);
-      logger.debug(`Wikidata entity cache file ${entityCacheFilePath} exists`);
-    } catch {
-      logger.debug(
-        `Wikidata entity cache file ${entityCacheFilePath} does not exist`,
-      );
-    }
-
-    let generatedObject: z.infer<typeof wikidataEntityObjectSchema> | undefined;
-    if (entityCacheFileStats) {
-      const parseResult = await wikidataEntityObjectSchema.safeParseAsync(
-        JSON.parse((await fs.readFile(entityCacheFilePath)).toString("utf-8")),
-      );
-      if (parseResult.data) {
-        logger.debug(
-          `successfully parsed Wikidata entity cache file ${entityCacheFilePath}:\n${JSON.stringify(parseResult.data)}`,
-        );
-        generatedObject = parseResult.data;
-      } else {
-        logger.debug(
-          `unable to parse Wikidata entity cache file ${entityCacheFilePath}:\n${parseResult.error}`,
-        );
-      }
-    }
-
-    if (!generatedObject) {
-      const result = await generateObject({
-        messages: [
-          {
-            content: `\
-You will be given the names of one or more people or organizations as well as their role in a music recording, then asked to resolve the appropriate Wikidata entity ID(s).
-
-Please return the response as JSON with this structure: { "ids": [unqualified entity ID's] }
-If you can't match the name(s) with high confidence, do not return an unqualified Wikidata entity ID for that name(s).
-
-Here are some examples of inputs and expected outputs:
-"Jean Philippe Rameau (composer)" --> { "ids": ["Q1145"] }
-"Leonard Bernstein (conductor)" --> { "ids": ["Q152505"] }
-"Philadelphia Orchestra (ensemble)" --> { "ids": ["Q659181"] }
-"Vienna Phil Orch,Levine, James (artist)" --> { "ids": ["Q154685", "Q336388"] }
-"Lonesome Poppycock (composer)" --> { "ids": [] }
-"Vienna Philharmonic Orchestra,Lonesome Poppycock (artist)" --> { "ids": ["Q154685"] }
-`,
-            role: "system",
-          },
-          {
-            content: `${entityName} (${entityType})`,
-            role: "user",
-          },
-        ],
-        model: openai("gpt-4o"),
-        schema: wikidataEntityObjectSchema,
-      });
-      generatedObject = result.object;
-
-      await fs.writeFile(
-        entityCacheFilePath,
-        JSON.stringify(generatedObject, undefined, 2),
-        { encoding: "utf-8" },
-      );
-      logger.debug(`wrote Wikidata entity cache file ${entityCacheFilePath}`);
-    }
-
-    const result: NamedNode[] = [];
-    for (const id of generatedObject.ids) {
-      if (id.startsWith("http://") || id.startsWith("https://")) {
-        result.push(N3.DataFactory.namedNode(id));
-      } else if (id.startsWith("Q")) {
-        result.push(
-          N3.DataFactory.namedNode(`http://www.wikidata.org/entity/${id}`),
-        );
-      } else {
-        logger.warn(`invalid Wikidata entity ID: ${id}`);
-      }
-    }
-    return result;
-  });
 }
 
 const playlistJsonSchema = z.object({

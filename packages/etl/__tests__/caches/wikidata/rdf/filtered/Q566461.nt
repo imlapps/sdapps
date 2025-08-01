@@ -1,0 +1,381 @@
+<http://www.wikidata.org/entity/Q566461> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@de .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@fr .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@en .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@nl .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "アンナー・ビルスマ"@ja .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@gl .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@tr .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@it .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@es .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@fi .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "ان بيلسما"@arz .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Аннер Билсма"@ru .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@nb .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@da .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@nn .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@sv .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@ca .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "אנר בילסמה"@he .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@sl .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@cs .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@sk .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "畢爾斯瑪"@zh .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bylsma"@sq .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@an .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@ast .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@cy .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@de-at .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@de-ch .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@ga .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@io .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@jut .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@pms .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@pt .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@pt-br .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@ro .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@sc .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@sco .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/name> "Anner Bijlsma"@sje .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P21> <http://www.wikidata.org/entity/Q6581097> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P214> "165467776" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P214> <http://viaf.org/viaf/165467776> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P213> "0000000119456962" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P434> "68ff4d23-dbd3-459a-a295-df867b8ce9b9" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P434> <http://musicbrainz.org/artist/68ff4d23-dbd3-459a-a295-df867b8ce9b9> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P227> "124060501" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P227> <https://d-nb.info/gnd/124060501> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q5> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P646> "/m/01q23w" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P569> "1934-02-17T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P27> <http://www.wikidata.org/entity/Q29999> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P106> <http://www.wikidata.org/entity/Q13219637> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P19> <http://www.wikidata.org/entity/Q36600> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P108> <http://www.wikidata.org/entity/Q13371> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P108> <http://www.wikidata.org/entity/Q827768> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P108> <http://www.wikidata.org/entity/Q1127380> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P108> <http://www.wikidata.org/entity/Q18245> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1006> "071264094" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P1006> <http://data.bibliotheken.nl/id/thes/p071264094> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P244> "n81072541" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P244> <http://id.loc.gov/authorities/names/n81072541> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P103> <http://www.wikidata.org/entity/Q7411> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P856> <http://www.bylsmafencing.com/> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P2163> "1449015" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P2163> <http://id.worldcat.org/fast/1449015> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1303> <http://www.wikidata.org/entity/Q8371> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1741> "79744" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P1741> <http://data.beeldengeluid.nl/gtaa/79744> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P40> <http://www.wikidata.org/entity/Q16199253> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P3430> "w6h43v1s" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1953> "898403" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P802> <http://www.wikidata.org/entity/Q2198093> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P69> <http://www.wikidata.org/entity/Q18245> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P269> "035376236" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P269> <http://www.idref.fr/035376236/id> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1412> <http://www.wikidata.org/entity/Q7411> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P950> "XX870381" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P950> <https://datos.bne.es/resource/XX870381> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P268> "13185363b" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P268> <http://data.bnf.fr/ark:/12148/cb13185363b#about> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P691> "xx0071824" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1343> <http://www.wikidata.org/entity/Q51955019> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P570> "2019-07-25T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P20> <http://www.wikidata.org/entity/Q727> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1728> "mn0002196868" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P4104> "31717" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P4104> <https://data.carnegiehall.org/names/31717/about> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P7704> "agent/base/148274" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P7704> <http://data.europeana.eu/agent/base/148274> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P136> <http://www.wikidata.org/entity/Q9730> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P7902> "124060501" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1207> "n2007010341" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P7293> "9810625836405606" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P8851> "30087527" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P8980> "000206925" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P8980> <http://urn.fi/URN:NBN:fi:au:finaf:000206925> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P9098> "679" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P6412> "13770" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P5404> "anner-bylsma" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P8313> "Anner_Bylsma" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P166> <http://www.wikidata.org/entity/Q1818405> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P9995> "36332" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P5882> "M00000244896" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P8591> "42448" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P8591> <http://dx.doi.org/10.1093/gmo/9781561592630.article.42448> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P8189> "987007455163505171" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P10780> "anner-bylsma" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P7303> "anner-bylsma/8667" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P11496> "1140282266602104832" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P11496> <https://cir.nii.ac.jp/crid/1140282266602104832.rdf> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P271> "DA07955362" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct-normalized/P271> <https://ci.nii.ac.jp/author/DA07955362#entity> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P3368> "2589166" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P10832> "E39PCjwhMFjhwbBbW9wXjyDXh3" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P10832> "E39PBJrC9xk9fG8bxFrJpmYgKd" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P1368> "000202971" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P13049> "124060501" .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P734> <http://www.wikidata.org/entity/Q21507070> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P735> <http://www.wikidata.org/entity/Q47860848> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P264> <http://www.wikidata.org/entity/Q7562453> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P264> <http://www.wikidata.org/entity/Q59343449> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P264> <http://www.wikidata.org/entity/Q1536003> .
+<http://www.wikidata.org/entity/Q566461> <http://www.wikidata.org/prop/direct/P13591> "person/d260d5e2-4d39-4321-9023-284874b4856d" .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "violoncellista olandese"@it .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "нидерландский виолончелист"@ru .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "Nederlands cellist"@nl .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "niederländischer Cellist"@de .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "Dutch cellist (1934-2019)"@en .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "عازف تشيلو هولندي"@ar .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "nizozemský violoncellista"@cs .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "alankomaalainen sellisti"@fi .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "violoncelliste néerlandais"@fr .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "عازف كمنجه جهير من مملكه نيديرلاند"@arz .
+<http://www.wikidata.org/entity/Q566461> <http://schema.org/description> "violonchelista neerlandés"@es .
+<http://www.wikidata.org/entity/Q6581097> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q6581097> <http://schema.org/name> "male"@en .
+<http://www.wikidata.org/entity/Q6581097> <http://schema.org/description> "to be used in \"sex or gender\" (P21) to indicate that the human subject is a male or \"semantic gender\" (P10339) to indicate that a word refers to a male person"@en .
+<http://www.wikidata.org/entity/Q5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q5> <http://schema.org/name> "human"@en .
+<http://www.wikidata.org/entity/Q5> <http://schema.org/description> "any single member of Homo sapiens, unique extant species of the genus Homo"@en .
+<http://www.wikidata.org/entity/Q29999> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q29999> <http://schema.org/name> "Kingdom of the Netherlands"@en .
+<http://www.wikidata.org/entity/Q29999> <http://schema.org/description> "transcontinental sovereign state and constitutional monarchy"@en .
+<http://www.wikidata.org/entity/Q13219637> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q13219637> <http://schema.org/name> "cellist"@en .
+<http://www.wikidata.org/entity/Q13219637> <http://schema.org/description> "musician who plays the cello"@en .
+<http://www.wikidata.org/entity/Q36600> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q36600> <http://schema.org/name> "The Hague"@en .
+<http://www.wikidata.org/entity/Q36600> <http://schema.org/description> "city and municipality in the Netherlands, seat of the Dutch government"@en .
+<http://www.wikidata.org/entity/Q13371> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q13371> <http://schema.org/name> "Harvard University"@en .
+<http://www.wikidata.org/entity/Q13371> <http://schema.org/description> "private university in Cambridge, Massachusetts"@en .
+<http://www.wikidata.org/entity/Q827768> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q827768> <http://schema.org/name> "Royal Concertgebouw Orchestra"@en .
+<http://www.wikidata.org/entity/Q827768> <http://schema.org/description> "symphony orchestra of the Netherlands, based in Amsterdam"@en .
+<http://www.wikidata.org/entity/Q1127380> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q1127380> <http://schema.org/name> "Conservatorium van Amsterdam"@en .
+<http://www.wikidata.org/entity/Q1127380> <http://schema.org/description> "Dutch academy of music"@en .
+<http://www.wikidata.org/entity/Q18245> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q18245> <http://schema.org/name> "Royal Conservatory of The Hague"@en .
+<http://www.wikidata.org/entity/Q18245> <http://schema.org/description> "conservatory in The Hague, Netherlands"@en .
+<http://www.wikidata.org/entity/Q7411> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q7411> <http://schema.org/name> "Dutch"@en .
+<http://www.wikidata.org/entity/Q7411> <http://schema.org/description> "West Germanic language"@en .
+<http://www.wikidata.org/entity/Q8371> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q8371> <http://schema.org/name> "cello"@en .
+<http://www.wikidata.org/entity/Q8371> <http://schema.org/description> "musical instrument"@en .
+<http://www.wikidata.org/entity/Q16199253> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q16199253> <http://schema.org/name> "Carine Bijlsma"@en .
+<http://www.wikidata.org/entity/Q16199253> <http://schema.org/description> "Dutch filmmaker"@en .
+<http://www.wikidata.org/entity/Q2198093> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q2198093> <http://schema.org/name> "Lucia Swarts"@en .
+<http://www.wikidata.org/entity/Q2198093> <http://schema.org/name> "Lucia Swarts"@mul .
+<http://www.wikidata.org/entity/Q2198093> <http://schema.org/description> "Dutch cellist"@en .
+<http://www.wikidata.org/entity/Q51955019> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q51955019> <http://schema.org/name> "BEIC Digital Library"@en .
+<http://www.wikidata.org/entity/Q51955019> <http://schema.org/description> "digital library of the Biblioteca Europea di Informazione e Cultura Foundation, Milan"@en .
+<http://www.wikidata.org/entity/Q727> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q727> <http://schema.org/name> "Amsterdam"@en .
+<http://www.wikidata.org/entity/Q727> <http://schema.org/description> "capital and most populous city of the Netherlands"@en .
+<http://www.wikidata.org/entity/Q9730> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q9730> <http://schema.org/name> "classical music"@en .
+<http://www.wikidata.org/entity/Q9730> <http://schema.org/description> "broad tradition of Western art music"@en .
+<http://www.wikidata.org/entity/Q1818405> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q1818405> <http://schema.org/name> "Knight of the Order of the Netherlands Lion"@en .
+<http://www.wikidata.org/entity/Q1818405> <http://schema.org/description> "class of the Order of the Netherlands Lion‎"@en .
+<http://www.wikidata.org/entity/Q21507070> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q21507070> <http://schema.org/name> "Bylsma"@en .
+<http://www.wikidata.org/entity/Q21507070> <http://schema.org/name> "Bylsma"@mul .
+<http://www.wikidata.org/entity/Q21507070> <http://schema.org/description> "family name"@en .
+<http://www.wikidata.org/entity/Q47860848> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q47860848> <http://schema.org/name> "Anne"@en .
+<http://www.wikidata.org/entity/Q47860848> <http://schema.org/name> "Anne"@mul .
+<http://www.wikidata.org/entity/Q47860848> <http://schema.org/description> "male given name"@en .
+<http://www.wikidata.org/entity/Q7562453> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q7562453> <http://schema.org/name> "Sony Classical"@en .
+<http://www.wikidata.org/entity/Q7562453> <http://schema.org/description> "US record label founded 1990"@en .
+<http://www.wikidata.org/entity/Q59343449> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q59343449> <http://schema.org/name> "Telefunken"@en .
+<http://www.wikidata.org/entity/Q59343449> <http://schema.org/description> "German record label; imprint of Telefunkenplatte GmbH"@en .
+<http://www.wikidata.org/entity/Q1536003> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q1536003> <http://schema.org/name> "Philips Records"@en .
+<http://www.wikidata.org/entity/Q1536003> <http://schema.org/name> "Philips Records"@mul .
+<http://www.wikidata.org/entity/Q1536003> <http://schema.org/description> "Dutch international record label; imprint of Philips Phonografische Industrie"@en .
+<http://www.wikidata.org/entity/Q19938912> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q19938912> <http://schema.org/name> "BnF authorities"@en .
+<http://www.wikidata.org/entity/Q19938912> <http://schema.org/description> "authority file for persons, organisations, works, topics, and geographic places, of the French National Library"@en .
+<http://www.wikidata.org/value/b2995751623614f950797f80606ddb60> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/b2995751623614f950797f80606ddb60> <http://wikiba.se/ontology#timeValue> "2015-10-10T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/b2995751623614f950797f80606ddb60> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/b2995751623614f950797f80606ddb60> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/b2995751623614f950797f80606ddb60> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q36578> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q36578> <http://schema.org/name> "Integrated Authority File"@en .
+<http://www.wikidata.org/entity/Q36578> <http://schema.org/description> "German National Library authority file for personal names, subject headings and corporate bodies"@en .
+<http://www.wikidata.org/value/27c0c212fde1219694e562a70fd8a564> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/27c0c212fde1219694e562a70fd8a564> <http://wikiba.se/ontology#timeValue> "2024-06-23T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/27c0c212fde1219694e562a70fd8a564> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/27c0c212fde1219694e562a70fd8a564> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/27c0c212fde1219694e562a70fd8a564> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q328> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q328> <http://schema.org/name> "English Wikipedia"@en .
+<http://www.wikidata.org/entity/Q328> <http://schema.org/name> "English Wikipedia"@mul .
+<http://www.wikidata.org/entity/Q328> <http://schema.org/description> "English-language edition of Wikipedia"@en .
+<http://www.wikidata.org/entity/Q14005> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q14005> <http://schema.org/name> "MusicBrainz"@en .
+<http://www.wikidata.org/entity/Q14005> <http://schema.org/name> "MusicBrainz"@mul .
+<http://www.wikidata.org/entity/Q14005> <http://schema.org/description> "online music metadata database"@en .
+<http://www.wikidata.org/value/f80050226c3b55901763184358206481> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/f80050226c3b55901763184358206481> <http://wikiba.se/ontology#timeValue> "2021-09-16T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/f80050226c3b55901763184358206481> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/f80050226c3b55901763184358206481> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/f80050226c3b55901763184358206481> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q1266546> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q1266546> <http://schema.org/name> "record linkage"@en .
+<http://www.wikidata.org/entity/Q1266546> <http://schema.org/description> "joining records or entities from different data sets that may or may not share a common identifier and matching the entities based on their properties"@en .
+<http://www.wikidata.org/entity/Q423048> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q423048> <http://schema.org/name> "International Standard Name Identifier"@en .
+<http://www.wikidata.org/entity/Q423048> <http://schema.org/name> "International Standard Name Identifier"@mul .
+<http://www.wikidata.org/entity/Q423048> <http://schema.org/description> "authority file with 16-digit identifier for people and organisations"@en .
+<http://www.wikidata.org/entity/Q48183> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q48183> <http://schema.org/name> "German Wikipedia"@en .
+<http://www.wikidata.org/entity/Q48183> <http://schema.org/description> "German-language edition of Wikipedia"@en .
+<http://www.wikidata.org/entity/Q50358336> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q50358336> <http://schema.org/name> "datos.bne.es"@en .
+<http://www.wikidata.org/entity/Q50358336> <http://schema.org/name> "datos.bne.es"@mul .
+<http://www.wikidata.org/entity/Q50358336> <http://schema.org/description> "open data platform of the Biblioteca Nacional de España"@en .
+<http://www.wikidata.org/value/6e9f19e2943cddf16d81b5bfe2072b14> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/6e9f19e2943cddf16d81b5bfe2072b14> <http://wikiba.se/ontology#timeValue> "2024-02-25T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/6e9f19e2943cddf16d81b5bfe2072b14> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/6e9f19e2943cddf16d81b5bfe2072b14> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/6e9f19e2943cddf16d81b5bfe2072b14> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q15241312> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q15241312> <http://schema.org/name> "Freebase Data Dumps"@en .
+<http://www.wikidata.org/entity/Q15241312> <http://schema.org/description> "dumps of the public part of Google's Knowledge Graph"@en .
+<http://www.wikidata.org/value/f987783e1f9c9fa0cb0b774d330af52d> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/f987783e1f9c9fa0cb0b774d330af52d> <http://wikiba.se/ontology#timeValue> "2013-10-28T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/f987783e1f9c9fa0cb0b774d330af52d> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/f987783e1f9c9fa0cb0b774d330af52d> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/f987783e1f9c9fa0cb0b774d330af52d> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/14262638694892f507d31626a14d93c8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/14262638694892f507d31626a14d93c8> <http://wikiba.se/ontology#timeValue> "1934-02-17T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/14262638694892f507d31626a14d93c8> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/14262638694892f507d31626a14d93c8> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/14262638694892f507d31626a14d93c8> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/4534f0712ee229e88bfc808949596c63> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/4534f0712ee229e88bfc808949596c63> <http://wikiba.se/ontology#timeValue> "2014-05-03T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/4534f0712ee229e88bfc808949596c63> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/4534f0712ee229e88bfc808949596c63> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/4534f0712ee229e88bfc808949596c63> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q29861311> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q29861311> <http://schema.org/name> "SNAC"@en .
+<http://www.wikidata.org/entity/Q29861311> <http://schema.org/description> "online resource that helps users discover biographical and historical information about persons, families, and organizations that created or are documented in historical resources (primary source documents) and their connections to one another"@en .
+<http://www.wikidata.org/value/b3795d3425e0bbdd474f3138cad4a069> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/b3795d3425e0bbdd474f3138cad4a069> <http://wikiba.se/ontology#timeValue> "2017-10-09T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/b3795d3425e0bbdd474f3138cad4a069> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/b3795d3425e0bbdd474f3138cad4a069> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/b3795d3425e0bbdd474f3138cad4a069> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q9684> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q9684> <http://schema.org/name> "The New York Times"@en .
+<http://www.wikidata.org/entity/Q9684> <http://schema.org/name> "The New York Times"@mul .
+<http://www.wikidata.org/entity/Q9684> <http://schema.org/description> "American daily newspaper (founded 1851)"@en .
+<http://www.wikidata.org/value/b2de0bfb7f4d343517dda250334903db> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/b2de0bfb7f4d343517dda250334903db> <http://wikiba.se/ontology#timeValue> "2019-08-09T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/b2de0bfb7f4d343517dda250334903db> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/b2de0bfb7f4d343517dda250334903db> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/b2de0bfb7f4d343517dda250334903db> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/8fd4ad12b5f24d12e4c607f92960e3b4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/8fd4ad12b5f24d12e4c607f92960e3b4> <http://wikiba.se/ontology#timeValue> "2014-12-15T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/8fd4ad12b5f24d12e4c607f92960e3b4> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/8fd4ad12b5f24d12e4c607f92960e3b4> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/8fd4ad12b5f24d12e4c607f92960e3b4> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/5390505a0205351772f5b6c360421cb3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/5390505a0205351772f5b6c360421cb3> <http://wikiba.se/ontology#timeValue> "1962-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/5390505a0205351772f5b6c360421cb3> <http://wikiba.se/ontology#timePrecision> 9 .
+<http://www.wikidata.org/value/5390505a0205351772f5b6c360421cb3> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/5390505a0205351772f5b6c360421cb3> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/23a11f433153417fd4e9f924c08d94c5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/23a11f433153417fd4e9f924c08d94c5> <http://wikiba.se/ontology#timeValue> "1968-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/23a11f433153417fd4e9f924c08d94c5> <http://wikiba.se/ontology#timePrecision> 9 .
+<http://www.wikidata.org/value/23a11f433153417fd4e9f924c08d94c5> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/23a11f433153417fd4e9f924c08d94c5> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q54919> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q54919> <http://schema.org/name> "Virtual International Authority File"@en .
+<http://www.wikidata.org/entity/Q54919> <http://schema.org/name> "Virtual International Authority File"@mul .
+<http://www.wikidata.org/entity/Q54919> <http://schema.org/description> "OCLC dataset and service that virtually combines multiple name authority files into a single name authority service"@en .
+<http://www.wikidata.org/value/76e897091f8a5423320262325216a9c2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/76e897091f8a5423320262325216a9c2> <http://wikiba.se/ontology#timeValue> "2014-12-16T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/76e897091f8a5423320262325216a9c2> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/76e897091f8a5423320262325216a9c2> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/76e897091f8a5423320262325216a9c2> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q8449> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q8449> <http://schema.org/name> "Spanish Wikipedia"@en .
+<http://www.wikidata.org/entity/Q8449> <http://schema.org/description> "Spanish-language edition of Wikipedia"@en .
+<http://www.wikidata.org/value/dbedf6c3618028bd4e394187424e64fa> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/dbedf6c3618028bd4e394187424e64fa> <http://wikiba.se/ontology#timeValue> "2015-08-26T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/dbedf6c3618028bd4e394187424e64fa> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/dbedf6c3618028bd4e394187424e64fa> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/dbedf6c3618028bd4e394187424e64fa> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/70d666aa88140f3d03060e8dc66c626a> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/70d666aa88140f3d03060e8dc66c626a> <http://wikiba.se/ontology#timeValue> "2018-10-07T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/70d666aa88140f3d03060e8dc66c626a> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/70d666aa88140f3d03060e8dc66c626a> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/70d666aa88140f3d03060e8dc66c626a> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/432436cb329abde1d47d04c2250391cb> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/432436cb329abde1d47d04c2250391cb> <http://wikiba.se/ontology#timeValue> "2018-12-23T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/432436cb329abde1d47d04c2250391cb> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/432436cb329abde1d47d04c2250391cb> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/432436cb329abde1d47d04c2250391cb> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/da0c21ede30373788e41e7523c765914> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/da0c21ede30373788e41e7523c765914> <http://wikiba.se/ontology#timeValue> "2019-07-25T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/da0c21ede30373788e41e7523c765914> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/da0c21ede30373788e41e7523c765914> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/da0c21ede30373788e41e7523c765914> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/45a41cf07f404c420c246c57a2f73cb6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/45a41cf07f404c420c246c57a2f73cb6> <http://wikiba.se/ontology#timeValue> "2019-07-26T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/45a41cf07f404c420c246c57a2f73cb6> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/45a41cf07f404c420c246c57a2f73cb6> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/45a41cf07f404c420c246c57a2f73cb6> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q1860> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q1860> <http://schema.org/name> "English"@en .
+<http://www.wikidata.org/entity/Q1860> <http://schema.org/description> "West Germanic language"@en .
+<http://www.wikidata.org/value/168868901f54290520405ee5b8780e56> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/168868901f54290520405ee5b8780e56> <http://wikiba.se/ontology#timeValue> "2019-12-25T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/168868901f54290520405ee5b8780e56> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/168868901f54290520405ee5b8780e56> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/168868901f54290520405ee5b8780e56> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/8f7ed12a27fbcdf03ebf19605912688b> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/8f7ed12a27fbcdf03ebf19605912688b> <http://wikiba.se/ontology#timeValue> "2020-09-02T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/8f7ed12a27fbcdf03ebf19605912688b> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/8f7ed12a27fbcdf03ebf19605912688b> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/8f7ed12a27fbcdf03ebf19605912688b> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/11341d0590d585820d45647ea24ed0b7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/11341d0590d585820d45647ea24ed0b7> <http://wikiba.se/ontology#timeValue> "2014-09-26T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/11341d0590d585820d45647ea24ed0b7> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/11341d0590d585820d45647ea24ed0b7> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/11341d0590d585820d45647ea24ed0b7> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q106509962> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q106509962> <http://schema.org/name> "National Library of Israel Names and Subjects Authority File"@en .
+<http://www.wikidata.org/entity/Q106509962> <http://schema.org/description> "National Library of Israel authorities database"@en .
+<http://www.wikidata.org/entity/Q115920372> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q115920372> <http://schema.org/name> "CiNii Research"@en .
+<http://www.wikidata.org/entity/Q115920372> <http://schema.org/description> "Japanese academic information database"@en .
+<http://www.wikidata.org/value/65e7335910b84539c4ae9724d3771de0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/65e7335910b84539c4ae9724d3771de0> <http://wikiba.se/ontology#timeValue> "2023-03-16T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/65e7335910b84539c4ae9724d3771de0> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/65e7335910b84539c4ae9724d3771de0> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/65e7335910b84539c4ae9724d3771de0> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/value/9b7f8091ac8158320d1d1007c031c06d> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/9b7f8091ac8158320d1d1007c031c06d> <http://wikiba.se/ontology#timeValue> "2024-04-19T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/9b7f8091ac8158320d1d1007c031c06d> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/9b7f8091ac8158320d1d1007c031c06d> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/9b7f8091ac8158320d1d1007c031c06d> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .
+<http://www.wikidata.org/entity/Q13219454> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#Item> .
+<http://www.wikidata.org/entity/Q13219454> <http://schema.org/name> "Library of Congress Authorities"@en .
+<http://www.wikidata.org/entity/Q13219454> <http://schema.org/description> "browsable database to view authority headings for subject, name, title and name/title combinations"@en .
+<http://www.wikidata.org/value/e0391665d6c8768d447dfd39a981154e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wikiba.se/ontology#TimeValue> .
+<http://www.wikidata.org/value/e0391665d6c8768d447dfd39a981154e> <http://wikiba.se/ontology#timeValue> "2024-06-06T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://www.wikidata.org/value/e0391665d6c8768d447dfd39a981154e> <http://wikiba.se/ontology#timePrecision> 11 .
+<http://www.wikidata.org/value/e0391665d6c8768d447dfd39a981154e> <http://wikiba.se/ontology#timeTimezone> 0 .
+<http://www.wikidata.org/value/e0391665d6c8768d447dfd39a981154e> <http://wikiba.se/ontology#timeCalendarModel> <http://www.wikidata.org/entity/Q1985727> .

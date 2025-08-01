@@ -1,7 +1,15 @@
 // tsco:ignore
 
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { _void, rdf, rdfs, schema, sh, xsd } from "@tpluscode/rdf-ns-builders";
+import {
+  _void,
+  owl,
+  rdf,
+  rdfs,
+  schema,
+  sh,
+  xsd,
+} from "@tpluscode/rdf-ns-builders";
 
 import N3 from "n3";
 
@@ -46,6 +54,7 @@ export namespace RdfFileLoader {
     | "text/turtle";
 
   export const PREFIXES_DEFAULT = {
+    owl: owl[""],
     rdf: rdf[""],
     rdfs: rdfs[""],
     schema: schema[""],

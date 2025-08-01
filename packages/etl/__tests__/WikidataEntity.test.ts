@@ -19,5 +19,16 @@ describe("WikidataEntity", () => {
         expect([...dataset.match(actualEntity.iri)]).not.toHaveLength(0);
       }
     });
+
+    it(`${id} filteredDataset`, async ({ expect }) => {
+      for (const actualEntity of (await sut.resolve(input)).unsafeCoerce()) {
+        const dataset = (await actualEntity.dataset()).unsafeCoerce();
+        expect(dataset.size).not.toStrictEqual(0);
+        const filteredDataset = (
+          await actualEntity.filteredDataset()
+        ).unsafeCoerce();
+        expect(filteredDataset.size).toBeLessThan(dataset.size);
+      }
+    });
   }
 });
