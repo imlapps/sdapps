@@ -91,7 +91,7 @@ export const wikipediaEntities: Record<
       {
         wikidata: {
           id: "Q566461",
-          name: "Anner Byslma",
+          name: "Anner Bylsma",
         },
         wikipedia: {
           url: new URL("https://en.wikipedia.org/wiki/Anner_Bylsma"),
