@@ -1,0 +1,1025 @@
+{
+  "ucsNow": "06-16-2025 18:20:00",
+  "playlist": [
+    {
+      "episode_id": "677ef8dcb9a094616cf5fce7",
+      "program_id": "677ef89f9ea18c2245c61375",
+      "name": "Music from the WMHT Catalog",
+      "program_format": "Classical",
+      "date": "2025-06-14",
+      "start_utc": "2025-06-14T04:00:00.000Z",
+      "end_utc": "2025-06-14T10:00:00.000Z",
+      "start_time": "00:00",
+      "end_time": "06:00",
+      "playlist": [
+        {
+          "id": "684b21d0980418d8c2acbc2c",
+          "_duration": 338000,
+          "_start_time": "06-14-2025 00:00:08",
+          "trackName": "Da Pacem Domine (Give Peace, Lord)",
+          "composerName": "Arvo Part",
+          "conductor": "Paul Hillier",
+          "collectionName": "Arvo Part: Da Pacem",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc2d",
+          "_duration": 554000,
+          "_start_time": "06-14-2025 00:05:55",
+          "trackName": "The Four Duets",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Findlay Cockrell, piano",
+          "soloists": "Findlay Cockrell, piano",
+          "collectionName": "The Well Tempered Steinway",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc31",
+          "_duration": 366000,
+          "_start_time": "06-14-2025 00:16:09",
+          "trackName": "Pavane for a dead princess",
+          "composerName": "Maurice Ravel",
+          "conductor": "Oue, Eiji",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc34",
+          "_duration": 1548000,
+          "_start_time": "06-14-2025 00:22:15",
+          "trackName": "Piano Concerto 2 D Min, Op.23 (1885)",
+          "composerName": "Edward MacDowell",
+          "artistName": "Andre Watts",
+          "conductor": "Andrew Litton",
+          "soloists": "Andre Watts",
+          "collectionName": "MacDowell - Piano Concerto - Liszt - Piano Concertos Nos. 1& 2",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc36",
+          "_duration": 498000,
+          "_start_time": "06-14-2025 00:48:03",
+          "trackName": "Sonata Decima Settima in A Minor",
+          "composerName": "Francesco Mancini",
+          "artistName": "Rebel",
+          "conductor": "Jorg-Michael Schwarz",
+          "soloists": "Rebel",
+          "collectionName": "Concerti di Napoli",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc3a",
+          "_duration": 254000,
+          "_start_time": "06-14-2025 01:00:06",
+          "trackName": "Serenade for String Orchestra in E ( I )",
+          "composerName": "Antonin Dvorak",
+          "conductor": "Vassil Kazandjiev",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc3d",
+          "_duration": 619000,
+          "_start_time": "06-14-2025 01:04:32",
+          "trackName": "On the Town: Three Dance Episodes",
+          "composerName": "Leonard Bernstein",
+          "conductor": "Leonard Bernstein",
+          "collectionName": "Classic Performances: Bernstein's America",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc41",
+          "_duration": 540000,
+          "_start_time": "06-14-2025 01:15:54",
+          "trackName": "Soledad",
+          "composerName": "Astor Piazzolla",
+          "artistName": "Yo Yo Ma-Cello",
+          "conductor": "Octavio Brunetti, piano",
+          "soloists": "Yo Yo Ma-Cello",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc44",
+          "_duration": 1267000,
+          "_start_time": "06-14-2025 01:25:40",
+          "trackName": "String Quartet in E-Flat Major",
+          "composerName": "Fanny Mendelssohn-Hensel",
+          "artistName": "Chaos String Quartet",
+          "soloists": "Chaos String Quartet",
+          "collectionName": "Haydn-Ligeti-Hensel",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc4a",
+          "_duration": 693000,
+          "_start_time": "06-14-2025 01:47:01",
+          "trackName": "Song of the Fates, Op.89",
+          "composerName": "Johannes Brahms",
+          "conductor": "Herbert Blomstedt",
+          "collectionName": "Brahms: Works for Chorus and Orchestra",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc4c",
+          "_duration": 254000,
+          "_start_time": "06-14-2025 02:00:00",
+          "trackName": "China Gates",
+          "composerName": "John Adams",
+          "artistName": "Daniil Trifonov, piano",
+          "soloists": "Daniil Trifonov, piano",
+          "collectionName": "My American Story - North",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc51",
+          "_duration": 639000,
+          "_start_time": "06-14-2025 02:04:14",
+          "trackName": "Five Variants of Dives and Lazarus",
+          "composerName": "Ralph Vaughan Williams",
+          "artistName": "Audrey Douglas, harp",
+          "conductor": "William Boughton",
+          "soloists": "Audrey Douglas, harp",
+          "collectionName": "A Portrait of Vaughan Williams",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc54",
+          "_duration": 380000,
+          "_start_time": "06-14-2025 02:15:53",
+          "trackName": "Concerto for Strings in G",
+          "composerName": "Georg Philipp Telemann",
+          "conductor": "Goebel, Reinhard",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc55",
+          "_duration": 1651000,
+          "_start_time": "06-14-2025 02:22:13",
+          "trackName": "Piano Concerto 4 C Min, Op.46 (1875)",
+          "composerName": "Camille Saint-Saens",
+          "artistName": "Aldo Ciccolini, piano",
+          "conductor": "Serge Baudo",
+          "soloists": "Aldo Ciccolini, piano",
+          "collectionName": "Saint-Saens: Concertos Pour Piano 1-5",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc57",
+          "_duration": 428000,
+          "_start_time": "06-14-2025 02:49:44",
+          "trackName": "Mass for Gentle Mary - Kyrie",
+          "composerName": "Jakob Obrecht",
+          "conductor": "Peter Philips",
+          "collectionName": "Jacob Obrecht: Missa Maria Zart",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc59",
+          "_duration": 230000,
+          "_start_time": "06-14-2025 03:00:06",
+          "trackName": "Ecce Cor Meum:  Interlude (Lament)",
+          "composerName": "Paul McCartney",
+          "artistName": "Theodore, David,London Voices,Boys of Magdalen College Choir, Oxford,Boys of King's College choir",
+          "conductor": "Gavin Greenway",
+          "soloists": "Theodore, David,London Voices,Boys of Magdalen College Choir, Oxford,Boys of King's College choir",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc5c",
+          "_duration": 546000,
+          "_start_time": "06-14-2025 03:04:11",
+          "trackName": "Piano Sonata 17 in D Minor \"The Tempest\" - iii.Allegretto",
+          "composerName": "Ludwig van Beethoven",
+          "artistName": "Richter, Sviatoslav-piano",
+          "soloists": "Richter, Sviatoslav-piano",
+          "collectionName": "Great Moments at Carnegie Hall",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc60",
+          "_duration": 2586000,
+          "_start_time": "06-14-2025 03:14:17",
+          "trackName": "Symphony 4 F Min, Op.36",
+          "composerName": "Peter Ilyich Tchaikovsky",
+          "conductor": "Seiji Ozawa",
+          "collectionName": "Tschaikowsky: Symphonie NR. 4",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc62",
+          "_duration": 157000,
+          "_start_time": "06-14-2025 03:57:23",
+          "trackName": "Argentinian Dance #2",
+          "composerName": "Alberto Ginastera",
+          "artistName": "Brown, Ryan",
+          "soloists": "Brown, Ryan",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc64",
+          "_duration": 379000,
+          "_start_time": "06-14-2025 04:00:00",
+          "trackName": "Concerto Grosso Op.3/6 D",
+          "composerName": "George Frideric Handel",
+          "artistName": "Northern Sinfonia Orch,Creswick, Bradley",
+          "conductor": "Bradley Creswick",
+          "soloists": "Northern Sinfonia Orch,Creswick, Bradley",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc66",
+          "_duration": 662000,
+          "_start_time": "06-14-2025 04:06:19",
+          "trackName": "Nocturne 1 in C \"For the King of Naples\"",
+          "composerName": "Franz Joseph Haydn",
+          "artistName": "Mozzafiato Ensemble",
+          "soloists": "Mozzafiato Ensemble",
+          "collectionName": "Haydn: 8 Notturni for the King of Naples",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc69",
+          "_duration": 627000,
+          "_start_time": "06-14-2025 04:17:21",
+          "trackName": "Macbeth (1847): Ballet Music (Act 3)",
+          "composerName": "Giuseppe Verdi",
+          "conductor": "Roberto Abbado",
+          "collectionName": "Verdi Ballet Music",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc6a",
+          "_duration": 1263000,
+          "_start_time": "06-14-2025 04:27:48",
+          "trackName": "Violin Sonata 3 D Min, Op.108",
+          "composerName": "Johannes Brahms",
+          "artistName": "Pamela Frank, violin",
+          "conductor": "Peter Serkin, piano",
+          "soloists": "Pamela Frank, violin",
+          "collectionName": "Brahms: The Violin Sonatas",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc6b",
+          "_duration": 477000,
+          "_start_time": "06-14-2025 04:48:51",
+          "trackName": "Skaters' Waltz, Op.183",
+          "composerName": "Emil Waldteufel",
+          "artistName": "St Martin-In-The-Fields Acad,Marriner, Neville",
+          "conductor": "Sir Neville Marriner",
+          "soloists": "St Martin-In-The-Fields Acad,Marriner, Neville",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc6d",
+          "_duration": 145000,
+          "_start_time": "06-14-2025 05:00:00",
+          "trackName": "Cantata 147 \"Jesu Joy of Man's Desiring\"",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Monteverdi C",
+          "conductor": "John Eliot Gardiner",
+          "soloists": "Monteverdi C",
+          "collectionName": "Baroque Gold",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc70",
+          "_duration": 502000,
+          "_start_time": "06-14-2025 05:02:52",
+          "trackName": "Ballade, Op.6",
+          "composerName": "Amy Beach",
+          "artistName": "Anna Shelest, piano",
+          "soloists": "Anna Shelest, piano",
+          "collectionName": "Donna Voce",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc73",
+          "_duration": 270000,
+          "_start_time": "06-14-2025 05:12:52",
+          "trackName": "Fantasia on Greensleeves",
+          "composerName": "Ralph Vaughan Williams",
+          "conductor": "Sir Charles Groves",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc75",
+          "_duration": 1917000,
+          "_start_time": "06-14-2025 05:17:59",
+          "trackName": "Symphony 3 E, Op.51",
+          "composerName": "Max Bruch",
+          "conductor": "Kurt Masur",
+          "collectionName": "Bruch: The Complete Symphonies: Masur",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc76",
+          "_duration": 417000,
+          "_start_time": "06-14-2025 05:49:56",
+          "trackName": "Symphonic Sonata 2, Op.3/2",
+          "composerName": "Jean-Joseph Cassanea de Mondonville",
+          "conductor": "Marc Minkowski",
+          "collectionName": "Mondonville: 6 Sonates Op.3",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "666bd8ce2dd9970d3d0821c6",
+      "program_id": "51892595e1c81d34d1474a72",
+      "name": "Ward Jacobson",
+      "program_format": "Classical",
+      "date": "2025-06-14",
+      "start_utc": "2025-06-14T10:00:00.000Z",
+      "end_utc": "2025-06-14T14:00:00.000Z",
+      "start_time": "06:00",
+      "end_time": "10:00",
+      "playlist": [
+        {
+          "id": "684dc02b980418d8c2bcb872",
+          "_duration": 75000,
+          "_start_time": "06-14-2025 06:00:00",
+          "trackName": "Six Variations on an Original Theme",
+          "composerName": "Ludwig van Beethoven",
+          "artistName": "Louis Lortie, piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc02b980418d8c2bcb873",
+          "_duration": 310000,
+          "_start_time": "06-14-2025 06:01:15",
+          "trackName": "Seville",
+          "composerName": "Isaac Albeniz",
+          "artistName": "Christopher Parkening, guitar",
+          "buy": {}
+        },
+        {
+          "id": "684dc02b980418d8c2bcb874",
+          "_duration": 765000,
+          "_start_time": "06-14-2025 06:06:25",
+          "trackName": "Swan Lake: Dance of the Swans",
+          "composerName": "Peter Tchaikovsky",
+          "artistName": "Barry Griffiths, violin",
+          "ensembles": "Royal Philharmonic Orchestra",
+          "conductor": "Charles Mackerras",
+          "buy": {}
+        },
+        {
+          "id": "684dc02b980418d8c2bcb875",
+          "_duration": 605000,
+          "_start_time": "06-14-2025 06:19:10",
+          "trackName": "Flute Concertino",
+          "composerName": "Cecile Chaminade",
+          "artistName": "Manuela Wiesler, flute",
+          "ensembles": "Helsingborg Symphony Orchestra",
+          "conductor": "Philippe Auguin",
+          "buy": {}
+        },
+        {
+          "id": "684dc02b980418d8c2bcb876",
+          "_duration": 870000,
+          "_start_time": "06-14-2025 06:29:15",
+          "trackName": "Serenade No. 6 \"Serenata Notturna\"",
+          "composerName": "Wolfgang Amadeus Mozart",
+          "ensembles": "Academy of St Martin in the Fields",
+          "conductor": "Neville Marriner",
+          "buy": {}
+        },
+        {
+          "id": "684dc02b980418d8c2bcb878",
+          "_duration": 975000,
+          "_start_time": "06-14-2025 06:43:45",
+          "trackName": "Rapsodie espagnole",
+          "composerName": "Maurice Ravel",
+          "ensembles": "Buffalo Philharmonic Orchestra",
+          "conductor": "JoAnn Falletta",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "647a120bd48bf95ff9d770b4",
+      "program_id": "6421ff66f2a64f2eda7434e1",
+      "name": "Bonnie North",
+      "program_format": "Classical",
+      "date": "2025-06-14",
+      "start_utc": "2025-06-14T11:00:00.000Z",
+      "end_utc": "2025-06-14T17:00:00.000Z",
+      "start_time": "07:00",
+      "end_time": "13:00",
+      "playlist": [
+        {
+          "id": "684dc037980418d8c2bcc774",
+          "_duration": 73000,
+          "_start_time": "06-14-2025 07:00:00",
+          "trackName": "Rapsodie espagnole",
+          "composerName": "Maurice Ravel",
+          "ensembles": "Buffalo Philharmonic Orchestra",
+          "conductor": "JoAnn Falletta",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc775",
+          "_duration": 312000,
+          "_start_time": "06-14-2025 07:01:13",
+          "trackName": "Symphony No. 1: Menuetto",
+          "composerName": "Louise Farrenc",
+          "ensembles": "European Soloists, Luxembourg",
+          "conductor": "Christoph Konig",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc776",
+          "_duration": 333000,
+          "_start_time": "06-14-2025 07:06:25",
+          "trackName": "Tarantella",
+          "composerName": "David Popper",
+          "artistName": "Werner Thomas, cello",
+          "ensembles": "Munich Chamber Orchestra",
+          "conductor": "Hans Stadlmair",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc778",
+          "_duration": 459000,
+          "_start_time": "06-14-2025 07:11:58",
+          "trackName": "Magnolia Suite: The Place Where the Rainbow Ends",
+          "composerName": "Nathaniel Dett",
+          "artistName": "Lara Downes, piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc779",
+          "_duration": 661000,
+          "_start_time": "06-14-2025 07:19:37",
+          "trackName": "Prince Igor: Overture",
+          "composerName": "Alexander Borodin",
+          "ensembles": "Atlanta Symphony Orchestra",
+          "conductor": "Robert Shaw",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc77a",
+          "_duration": 555000,
+          "_start_time": "06-14-2025 07:30:38",
+          "trackName": "Four Illustrations for the Legend of Rhiannon: The Nuptial Feast",
+          "composerName": "Grace Williams",
+          "ensembles": "BBC Philharmonic",
+          "conductor": "John Andrews",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc77b",
+          "_duration": 1272000,
+          "_start_time": "06-14-2025 07:39:53",
+          "trackName": "Variations on a Theme by Haydn \"St. Antoni Chorale\"",
+          "composerName": "Johannes Brahms",
+          "ensembles": "Dresden State Orchestra",
+          "conductor": "Kurt Sanderling",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc77c",
+          "_duration": 320000,
+          "_start_time": "06-14-2025 08:01:05",
+          "trackName": "Barcarolle",
+          "composerName": "Mel Bonis",
+          "artistName": "Myriam Barbaux-Cohen, piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc77d",
+          "_duration": 633000,
+          "_start_time": "06-14-2025 08:06:25",
+          "trackName": "Sleeping Beauty: Three Pictures",
+          "composerName": "Engelbert Humperdinck",
+          "ensembles": "Bamberg Symphony Orchestra",
+          "conductor": "Karl Anton Rickenbacher",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc77e",
+          "_duration": 2023000,
+          "_start_time": "06-14-2025 08:16:58",
+          "trackName": "Pictures at an Exhibition",
+          "composerName": "Modest Mussorgsky",
+          "ensembles": "Minnesota Orchestra",
+          "conductor": "Eiji Oue",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc780",
+          "_duration": 634000,
+          "_start_time": "06-14-2025 08:50:41",
+          "trackName": "Danse Macabre",
+          "composerName": "Camille Saint-Saens",
+          "artistName": "Yuja Wang, piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc782",
+          "_duration": 310000,
+          "_start_time": "06-14-2025 09:01:15",
+          "trackName": "Robin Hood Suite: March of the Bowmen",
+          "composerName": "Frederic Curzon",
+          "ensembles": "East of England Orchestra",
+          "conductor": "Malcolm Nabarro",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc783",
+          "_duration": 249000,
+          "_start_time": "06-14-2025 09:06:25",
+          "trackName": "The Stars and Stripes Forever",
+          "composerName": "John Philip Sousa",
+          "ensembles": "United States Marine Band",
+          "conductor": "Jack Kline",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc784",
+          "_duration": 294000,
+          "_start_time": "06-14-2025 09:10:34",
+          "trackName": "Armed Forces Medley",
+          "composerName": "Medley",
+          "ensembles": "Cincinnati Pops Orchestra",
+          "conductor": "Erich Kunzel",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc785",
+          "_duration": 1287000,
+          "_start_time": "06-14-2025 09:15:28",
+          "trackName": "American Suite",
+          "composerName": "Antonin Dvorak",
+          "ensembles": "Budapest Festival Orchestra",
+          "conductor": "Ivan Fischer",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc787",
+          "_duration": 1385000,
+          "_start_time": "06-14-2025 09:36:55",
+          "trackName": "Flute Concerto No. 1",
+          "composerName": "August Muller",
+          "artistName": "Tatjana Ruhland, flute",
+          "ensembles": "South German Chamber Orchestra Pforzheim",
+          "conductor": "Timo Handschuh",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "65aaf99e52b8087c7ce56bc3",
+      "program_id": "65a7ed0f52b8087c7ce4bd5b",
+      "name": "Charlotte Wilson",
+      "program_format": "Classical",
+      "date": "2025-06-14",
+      "start_utc": "2025-06-14T14:00:00.000Z",
+      "end_utc": "2025-06-14T18:00:00.000Z",
+      "start_time": "10:00",
+      "end_time": "14:00",
+      "playlist": [
+        {
+          "id": "684dc037980418d8c2bcc788",
+          "_duration": 208000,
+          "_start_time": "06-14-2025 10:00:30",
+          "trackName": "Aria Sopra La Bergamasca",
+          "composerName": "Marco Uccellini",
+          "artistName": "Palladian Ensemble",
+          "soloists": "Palladian Ensemble",
+          "collectionName": "An Excess of Pleasure",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc78a",
+          "_duration": 745000,
+          "_start_time": "06-14-2025 10:04:18",
+          "trackName": "Violin Sonata  9 A, Op.47 \"Kreutzer\" (3)",
+          "composerName": "Ludwig van Beethoven",
+          "artistName": "Lara St. John, violin",
+          "conductor": "Matt Herskowitz, piano",
+          "soloists": "Lara St. John, violin",
+          "collectionName": "Key of A",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc78b",
+          "_duration": 375000,
+          "_start_time": "06-14-2025 10:18:18",
+          "trackName": "The Fellowship of the Ring: May It Be & Themes from The Lord of the Rings",
+          "composerName": "Howard Shore",
+          "conductor": "Erich Kunzel",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc78c",
+          "_duration": 2137000,
+          "_start_time": "06-14-2025 10:24:53",
+          "trackName": "Symphony in C Min",
+          "composerName": "Edvard Grieg",
+          "conductor": "Bjarte Engeset",
+          "collectionName": "Grieg: Symphony in C Minor - Sigurd Jorsalfar",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc78d",
+          "_duration": 422000,
+          "_start_time": "06-14-2025 11:00:30",
+          "trackName": "Carmina Burana: O Fortuna, In taberna, Tanz",
+          "composerName": "Carl Orff",
+          "artistName": "Shinyukai Choir",
+          "conductor": "Seiji Ozawa",
+          "soloists": "Shinyukai Choir",
+          "collectionName": "Orff: Carmina Burana",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc78f",
+          "_duration": 903000,
+          "_start_time": "06-14-2025 11:07:47",
+          "trackName": "Double Concerto G, Op.17 (1.Allegro con brio)",
+          "composerName": "Johann Nepomuk Hummel",
+          "artistName": "Solomiya Ivakhiv, violin,Antonio Pompa-Baldi, piano",
+          "conductor": "Theodore Kuchar",
+          "soloists": "Solomiya Ivakhiv, violin,Antonio Pompa-Baldi, piano",
+          "collectionName": "Solomiya Ivakhiv - Haydn & Hummel",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc790",
+          "_duration": 608000,
+          "_start_time": "06-14-2025 11:24:25",
+          "trackName": "Miserere",
+          "composerName": "Gregorio Allegri",
+          "artistName": "Oxford Camerata",
+          "conductor": "Jeremy Summerly",
+          "soloists": "Oxford Camerata",
+          "collectionName": "Great Sacred Masterpieces",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc791",
+          "_duration": 857000,
+          "_start_time": "06-14-2025 11:34:53",
+          "trackName": "Capriccio Italien, Op.45",
+          "composerName": "Peter Ilyich Tchaikovsky",
+          "conductor": "Jansons, Mariss",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc793",
+          "_duration": 505000,
+          "_start_time": "06-14-2025 11:49:30",
+          "trackName": "The Planets, Op. 32 Saturn, the Bringer of Old Age",
+          "composerName": "Gustav Holst",
+          "artistName": "Boston Pops",
+          "conductor": "John Williams",
+          "soloists": "Boston Pops",
+          "collectionName": "Holst: The Planets: Boston Pops: John Williams",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc794",
+          "_duration": 167000,
+          "_start_time": "06-14-2025 12:06:30",
+          "trackName": "Partita 3 E, BWV.1006 - (3) Gavotte en Rondeau",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Bell, Joshua",
+          "soloists": "Bell, Joshua",
+          "collectionName": "Joshua Bell: Bach",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc795",
+          "_duration": 844000,
+          "_start_time": "06-14-2025 12:09:37",
+          "trackName": "Wind Quintet in B-Flat Major",
+          "composerName": "Antonio Salieri",
+          "artistName": "Italian Woodwind Ensemble",
+          "soloists": "Italian Woodwind Ensemble",
+          "collectionName": "Salieri Music for Wind Ensemble",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc796",
+          "_duration": 365000,
+          "_start_time": "06-14-2025 12:25:21",
+          "trackName": "Bassoon Concerto (1728)",
+          "composerName": "Joseph Bodin de Boismortier",
+          "artistName": "Laurent Le Chenadec, bassoon",
+          "conductor": "Niquet, Herve",
+          "soloists": "Laurent Le Chenadec, bassoon",
+          "collectionName": "Boismortier: Serenades francaises",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc797",
+          "_duration": 699000,
+          "_start_time": "06-14-2025 12:31:46",
+          "trackName": "The War Lord Suite",
+          "composerName": "Jerome Moross",
+          "conductor": "Paul Bateman",
+          "collectionName": "The Valley of Gwangi - The Classic Film Music of Jerome Moross",
+          "buy": {}
+        },
+        {
+          "id": "684dc037980418d8c2bcc798",
+          "_duration": 859000,
+          "_start_time": "06-14-2025 12:43:45",
+          "trackName": "Rounds For String Orchestra",
+          "composerName": "David Diamond",
+          "artistName": "Seattle Sym Orch,Schwarz, Gerard",
+          "conductor": "Gerard Schwarz",
+          "soloists": "Seattle Sym Orch,Schwarz, Gerard",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf17",
+          "_duration": 498000,
+          "_start_time": "06-14-2025 13:00:30",
+          "trackName": "Violin Sonata in E-Flat major, Op 18 (2.Improvisation. Andante cantabile)",
+          "composerName": "Richard Strauss",
+          "artistName": "Svetlin Roussev, violin",
+          "soloists": "Svetlin Roussev, violin",
+          "collectionName": "Love Music",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf19",
+          "_duration": 764000,
+          "_start_time": "06-14-2025 13:09:08",
+          "trackName": "Piano Concerto 22 E-Flat, K.482 (1)",
+          "composerName": "Wolfgang Amadeus Mozart",
+          "artistName": "John O'Conor-Piano",
+          "conductor": "Mackerras, Charles",
+          "soloists": "John O'Conor-Piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf1a",
+          "_duration": 317000,
+          "_start_time": "06-14-2025 13:23:27",
+          "trackName": "Recorder Suite A Min (3.\"L'Italienne\")",
+          "composerName": "Georg Philipp Telemann",
+          "artistName": "Jiri Stivin, recorder",
+          "conductor": "Richard Edlinger",
+          "soloists": "Jiri Stivin, recorder",
+          "collectionName": "The Best of Telemann",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf1c",
+          "_duration": 1856000,
+          "_start_time": "06-14-2025 13:29:04",
+          "trackName": "Violin Concerto 1 D",
+          "composerName": "Florence Price",
+          "artistName": "Randall Goosby, violin",
+          "conductor": "Yannick Nezet-Seguin",
+          "soloists": "Randall Goosby, violin",
+          "collectionName": "Bruch: Violin Concerto 1; Florence Price: Violin Concertos",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "677ef9a693407e689473a780",
+      "program_id": "51892596e1c81d34d1474a7c",
+      "name": "Lynn Warfel",
+      "program_format": "Classical",
+      "date": "2025-06-14",
+      "start_utc": "2025-06-14T18:00:00.000Z",
+      "end_utc": "2025-06-14T21:00:00.000Z",
+      "start_time": "14:00",
+      "end_time": "17:00",
+      "playlist": [
+        {
+          "id": "684dc04d980418d8c2bcdf24",
+          "_duration": 70000,
+          "_start_time": "06-14-2025 14:00:00",
+          "trackName": "Idomeneo: Ballet Music: Selections",
+          "composerName": "Wolfgang Amadeus Mozart",
+          "ensembles": "Netherlands Chamber Orchestra",
+          "conductor": "David Zinman",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf25",
+          "_duration": 315000,
+          "_start_time": "06-14-2025 14:01:10",
+          "trackName": "Symphony No. 2",
+          "composerName": "William Boyce",
+          "ensembles": "Menuhin Festival Orchestra",
+          "conductor": "Yehudi Menuhin",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf27",
+          "_duration": 718000,
+          "_start_time": "06-14-2025 14:06:25",
+          "trackName": "Spiegel im Spiegel (Mirror in the Mirror)",
+          "composerName": "Arvo Part",
+          "artistName": "Daniel Hope, violin",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf29",
+          "_duration": 2052000,
+          "_start_time": "06-14-2025 14:18:23",
+          "trackName": "String Quintet \"American\"",
+          "composerName": "Antonin Dvorak",
+          "artistName": "Paul Neubauer, viola",
+          "ensembles": "Emerson String Quartet",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf2a",
+          "_duration": 515000,
+          "_start_time": "06-14-2025 14:52:35",
+          "trackName": "Variations on Lift Every Voice and Sing",
+          "composerName": "Lettie B. Alston",
+          "artistName": "Lara Downes, piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf2b",
+          "_duration": 315000,
+          "_start_time": "06-14-2025 15:01:10",
+          "trackName": "Symphonic Suite for Strings: Prelude",
+          "composerName": "Marion Bauer",
+          "ensembles": "Ambache Chamber Orchestra and Ensemble",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf2d",
+          "_duration": 737000,
+          "_start_time": "06-14-2025 15:06:25",
+          "trackName": "Miniature Suite",
+          "composerName": "Cyril Rootham",
+          "artistName": "Martin Roscoe, piano",
+          "ensembles": "Guildhall Strings",
+          "conductor": "Robert Salter",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf2e",
+          "_duration": 292000,
+          "_start_time": "06-14-2025 15:18:42",
+          "trackName": "Danse rythmique",
+          "composerName": "Ida Presti",
+          "artistName": "Berta Rojas, guitar",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf2f",
+          "_duration": 1258000,
+          "_start_time": "06-14-2025 15:23:34",
+          "trackName": "Serenade",
+          "composerName": "Julius Rontgen",
+          "ensembles": "Brandenburg State Orchestra Frankfurt",
+          "conductor": "David Porcelijn",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf31",
+          "_duration": 232000,
+          "_start_time": "06-14-2025 15:44:32",
+          "trackName": "Chronicles",
+          "composerName": "Ola Gjeilo",
+          "artistName": "Ola Gjeilo, piano",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf32",
+          "_duration": 771000,
+          "_start_time": "06-14-2025 15:48:24",
+          "trackName": "The Dream of Gunnar",
+          "composerName": "Carl Nielsen",
+          "ensembles": "Danish Radio Symphony Orchestra",
+          "conductor": "Gennady Rozhdestvensky",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf33",
+          "_duration": 310000,
+          "_start_time": "06-14-2025 16:01:15",
+          "trackName": "Violin Sonata: Scherzo",
+          "composerName": "Amy Beach",
+          "artistName": "Gabrielle Lester, violin",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf34",
+          "_duration": 432000,
+          "_start_time": "06-14-2025 16:06:25",
+          "trackName": "There Will Come",
+          "composerName": "Rebecca Dale",
+          "artistName": "Steven Isserlis, cello",
+          "ensembles": "Philharmonia Orchestra",
+          "conductor": "Michael Collins",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf36",
+          "_duration": 1792000,
+          "_start_time": "06-14-2025 16:13:37",
+          "trackName": "String Quartet No. 4",
+          "composerName": "Felix Mendelssohn",
+          "ensembles": "Eroica Quartet",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf37",
+          "_duration": 317000,
+          "_start_time": "06-14-2025 16:43:29",
+          "trackName": "Suite of Three Pieces: Idylle",
+          "composerName": "Benjamin Godard",
+          "artistName": "William Bennett, flute",
+          "ensembles": "English Chamber Orchestra",
+          "conductor": "Steuart Bedford",
+          "buy": {}
+        },
+        {
+          "id": "684dc04d980418d8c2bcdf38",
+          "_duration": 674000,
+          "_start_time": "06-14-2025 16:48:46",
+          "trackName": "The Oceanides",
+          "composerName": "Jean Sibelius",
+          "ensembles": "BBC National Orchestra of Wales",
+          "conductor": "Thomas Sondergard",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "677ef8bcb9a094616cf5f848",
+      "program_id": "677ef89f9ea18c2245c61375",
+      "name": "Music from the WMHT Catalog",
+      "program_format": "Classical",
+      "date": "2025-06-14",
+      "start_utc": "2025-06-15T03:00:00.000Z",
+      "end_utc": "2025-06-15T04:00:00.000Z",
+      "start_time": "23:00",
+      "end_time": "24:00",
+      "playlist": [
+        {
+          "id": "684b21d0980418d8c2acbc85",
+          "_duration": 410000,
+          "_start_time": "06-14-2025 23:00:00",
+          "trackName": "Passacaglia on a theme by Handel",
+          "composerName": "Johan Halvorsen",
+          "artistName": "Madalyn Parnas, violin",
+          "conductor": "Cicely Parnas-cello",
+          "soloists": "Madalyn Parnas, violin",
+          "collectionName": "Parnas Double",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc93",
+          "_duration": 505000,
+          "_start_time": "06-14-2025 23:07:06",
+          "trackName": "Piano Concerto 2 F Min, Op.21 (3.Allegro)",
+          "composerName": "Frederic Chopin",
+          "artistName": "Benjamin Grosvenor, piano",
+          "conductor": "Elim Chan",
+          "soloists": "Benjamin Grosvenor, piano",
+          "collectionName": "Benjamin Grosvenor_ Chopin Piano Concertos",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc95",
+          "_duration": 320000,
+          "_start_time": "06-14-2025 23:15:49",
+          "trackName": "Let's Get Lost/I Didn't Understand",
+          "composerName": "Christopher O'Riley/Elliott Smith",
+          "artistName": "O'Riley, Christopher",
+          "soloists": "O'Riley, Christopher",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc96",
+          "_duration": 1504000,
+          "_start_time": "06-14-2025 23:22:35",
+          "trackName": "Cello Sonata 3 in A, Op.69 (1808)",
+          "composerName": "Ludwig van Beethoven",
+          "artistName": "Wu Han, Piano",
+          "conductor": "David Finckel-cello",
+          "soloists": "Wu Han, Piano",
+          "collectionName": "Beethoven: Complete Works for Piano & Cello",
+          "buy": {}
+        },
+        {
+          "id": "684b21d0980418d8c2acbc9a",
+          "_duration": 529000,
+          "_start_time": "06-14-2025 23:47:39",
+          "trackName": "Sonata in B Min",
+          "composerName": "Jean Baptiste Loeillet",
+          "artistName": "Eroica Trio",
+          "soloists": "Eroica Trio",
+          "collectionName": "Eroica Trio - Baroque",
+          "buy": {}
+        }
+      ]
+    }
+  ],
+  "dateFilterUsed": "06-14-2025 00:00:00",
+  "shouldCheckForNowPlaying": false
+}

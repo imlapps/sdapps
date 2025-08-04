@@ -1,0 +1,761 @@
+{
+  "ucsNow": "07-31-2025 15:38:21",
+  "playlist": [
+    {
+      "episode_id": "677ef8dcb9a094616cf5fd02",
+      "program_id": "677ef89f9ea18c2245c61375",
+      "name": "Classical WMHT",
+      "program_format": "Classical",
+      "date": "2025-07-11",
+      "start_utc": "2025-07-11T04:00:00.000Z",
+      "end_utc": "2025-07-11T10:00:00.000Z",
+      "start_time": "00:00",
+      "end_time": "06:00",
+      "playlist": [
+        {
+          "id": "68710d136c98f8b3a8fd977d",
+          "_duration": 533000,
+          "_start_time": "07-11-2025 00:00:00",
+          "trackName": "Flute Concerto E Min",
+          "composerName": "Saverio Mercadante",
+          "artistName": "Griminelli, Andrea-flute",
+          "conductor": "Rampal, Jean-Pierre",
+          "soloists": "Griminelli, Andrea-flute",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd977e",
+          "_duration": 3007000,
+          "_start_time": "07-11-2025 00:09:53",
+          "trackName": "Symphony 3 E-Flat, Op.55 \"Eroica\"",
+          "composerName": "Ludwig van Beethoven",
+          "conductor": "Sir Simon Rattle",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd977f",
+          "_duration": 352000,
+          "_start_time": "07-11-2025 01:00:00",
+          "trackName": "Violin Concerto 2 E, Bwv 1042 (2)",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Bell, Joshua",
+          "soloists": "Bell, Joshua",
+          "collectionName": "Joshua Bell: Bach",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9780",
+          "_duration": 610000,
+          "_start_time": "07-11-2025 01:05:52",
+          "trackName": "Rhapsodie D'auvergne, Op.73",
+          "composerName": "Camille Saint-Saens",
+          "artistName": "Collard, Jean-Philippe-piano",
+          "conductor": "Previn, Andre",
+          "soloists": "Collard, Jean-Philippe-piano",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9781",
+          "_duration": 464000,
+          "_start_time": "07-11-2025 01:17:08",
+          "trackName": "Magnificat",
+          "composerName": "Josquin Desprez",
+          "conductor": "Peter Urquhart",
+          "collectionName": "The Early Josquin",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9782",
+          "_duration": 1536000,
+          "_start_time": "07-11-2025 01:25:12",
+          "trackName": "Scuola di ballo (The Dance School Ballet)",
+          "composerName": "Jean Francaix",
+          "artistName": "Ulster Orchestra",
+          "conductor": "Thierry Fischer",
+          "soloists": "Ulster Orchestra",
+          "collectionName": "Francaix: Scuola di Ballo; Symphony in G &c",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9784",
+          "_duration": 338000,
+          "_start_time": "07-11-2025 01:50:48",
+          "trackName": "Nocturne C Min, Op.48/1",
+          "composerName": "Frederic Chopin",
+          "artistName": "Leif Ove Andsnes, piano",
+          "soloists": "Leif Ove Andsnes, piano",
+          "collectionName": "Chopin: Ballades & Nocturnes",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9787",
+          "_duration": 859000,
+          "_start_time": "07-11-2025 02:00:00",
+          "trackName": "String Sonata 5 E-Flat (1804)",
+          "composerName": "Gioachino Rossini",
+          "conductor": "Thomas Furi",
+          "collectionName": "Camerata Bern: That Special Something",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9788",
+          "_duration": 624000,
+          "_start_time": "07-11-2025 02:14:35",
+          "trackName": "Symphony C (Badley C8)",
+          "composerName": "Leopold Hofmann",
+          "conductor": "Ward, Nicholas",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9789",
+          "_duration": 272000,
+          "_start_time": "07-11-2025 02:26:10",
+          "trackName": "Sonata in C Minor",
+          "composerName": "Johann Georg Pisendel",
+          "artistName": "Musica Antiqua Koln",
+          "conductor": "Reinhard Goebel",
+          "soloists": "Musica Antiqua Koln",
+          "collectionName": "Concerti \"Per L'Orchestra di Dresda\"",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd978b",
+          "_duration": 1727000,
+          "_start_time": "07-11-2025 02:31:13",
+          "trackName": "Variations on Balkan Themes, Op.60 (1904)",
+          "composerName": "Amy Beach",
+          "artistName": "Mary Louise Boehm, piano",
+          "soloists": "Mary Louise Boehm, piano",
+          "collectionName": "Mary Louis Boehm: Three American Romantics",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd978c",
+          "_duration": 102000,
+          "_start_time": "07-11-2025 03:00:00",
+          "trackName": "Concerto Grosso, Op.8/4 \"Winter\" (2)",
+          "composerName": "Antonio Vivaldi",
+          "artistName": "Yo Yo Ma-Cello",
+          "conductor": "Ton Koopman",
+          "soloists": "Yo Yo Ma-Cello",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd978d",
+          "_duration": 558000,
+          "_start_time": "07-11-2025 03:01:50",
+          "trackName": "Symphony 3 A Min (2)",
+          "composerName": "Alexander Borodin",
+          "conductor": "Jarvi, Neeme",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd978e",
+          "_duration": 294000,
+          "_start_time": "07-11-2025 03:12:08",
+          "trackName": "Cello Concerto  9 B-Flat, G.482 (3)",
+          "composerName": "Luigi Boccherini",
+          "artistName": "Yo Yo Ma-Cello",
+          "conductor": "Pinchas Zukerman",
+          "soloists": "Yo Yo Ma-Cello",
+          "collectionName": "Yo Yo Ma Plays Cello Masterworks",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9790",
+          "_duration": 2578000,
+          "_start_time": "07-11-2025 03:17:02",
+          "trackName": "Symphony 5 in B-Flat, Op.100",
+          "composerName": "Sergei Prokofiev",
+          "conductor": "Seiji Ozawa",
+          "collectionName": "Prokofiev: Symphonie Nr. 5",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9791",
+          "_duration": 335000,
+          "_start_time": "07-11-2025 04:00:00",
+          "trackName": "The Art of Fugue BWV1080 (1&2)",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Pierre-Laurent Aimard, piano",
+          "soloists": "Pierre-Laurent Aimard, piano",
+          "collectionName": "J.S.Bach: The Art of Fugue",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9793",
+          "_duration": 608000,
+          "_start_time": "07-11-2025 04:05:35",
+          "trackName": "Violin Concerto G",
+          "composerName": "Jan Jiri Benda",
+          "artistName": "Suk, Josef-violin",
+          "conductor": "Benda, Christian",
+          "soloists": "Suk, Josef-violin",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9794",
+          "_duration": 440000,
+          "_start_time": "07-11-2025 04:16:43",
+          "trackName": "String Concerto G, Op.7/4",
+          "composerName": "Tomaso Albinoni",
+          "artistName": "I Musici",
+          "soloists": "I Musici",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9795",
+          "_duration": 2141000,
+          "_start_time": "07-11-2025 04:24:19",
+          "trackName": "Piano Trio 2 in E Min, Op.92 (1892)",
+          "composerName": "Camille Saint-Saens",
+          "artistName": "Neave Trio",
+          "soloists": "Neave Trio",
+          "collectionName": "La Mer -- French Works for Piano Trio -- Neave Trio",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9797",
+          "_duration": 546000,
+          "_start_time": "07-11-2025 05:00:00",
+          "trackName": "Anacreon Overture",
+          "composerName": "Luigi Cherubini",
+          "conductor": "Goodman, Roy",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9798",
+          "_duration": 2733000,
+          "_start_time": "07-11-2025 05:10:06",
+          "trackName": "Piano Quartet 2 A, Op.26 (1862)",
+          "composerName": "Johannes Brahms",
+          "artistName": "Krystian Zimerman, piano",
+          "conductor": "Maria Nowak, violin",
+          "soloists": "Krystian Zimerman, piano",
+          "collectionName": "Brahms: Piano Quartets Nos. 2 & 3",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9799",
+          "_duration": 184000,
+          "_start_time": "07-11-2025 05:55:39",
+          "trackName": "Chi Passa (1579)",
+          "composerName": "John Johnson",
+          "artistName": "Baltimore Consort",
+          "soloists": "Baltimore Consort",
+          "collectionName": "The Ladyes Delight - The Baltimore Consort",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "668f7149a614da5e0d183085",
+      "program_id": "51892595e1c81d34d1474a73",
+      "name": "Bach's Lunch",
+      "program_format": "Classical",
+      "date": "2025-07-11",
+      "start_utc": "2025-07-11T16:00:00.000Z",
+      "end_utc": "2025-07-11T17:00:00.000Z",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "playlist": [
+        {
+          "id": "6866cccb6c98f8b3a8eb66fc",
+          "_duration": 380000,
+          "_start_time": "07-11-2025 12:06:00",
+          "trackName": "Sonata Flute 4 in A",
+          "composerName": "Johann Christian Bach",
+          "artistName": "Lincoln, Stoddard (PF)",
+          "soloists": "Katherine Hoover",
+          "buy": {}
+        },
+        {
+          "id": "6866cccb6c98f8b3a8eb66fd",
+          "_duration": 571000,
+          "_start_time": "07-11-2025 12:14:00",
+          "trackName": "Concerto Trumpet in D",
+          "composerName": "Giuseppe Tartini",
+          "artistName": "Schmidt Baroque Sextet",
+          "soloists": "Carl-Friedrich Schmidt",
+          "buy": {}
+        },
+        {
+          "id": "6866cccb6c98f8b3a8eb66ff",
+          "_duration": 537000,
+          "_start_time": "07-11-2025 12:25:00",
+          "trackName": "Musique De Table 3 - Quartet in E Min",
+          "composerName": "Georg Philipp Telemann",
+          "artistName": "Orchestra of the Golden Age",
+          "buy": {}
+        },
+        {
+          "id": "6866cccb6c98f8b3a8eb6700",
+          "_duration": 660000,
+          "_start_time": "07-11-2025 12:35:00",
+          "trackName": "Aria Variata",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Harp Consort",
+          "conductor": "Andrew Lawrence-King",
+          "buy": {}
+        },
+        {
+          "id": "6866cccb6c98f8b3a8eb6703",
+          "_duration": 660000,
+          "_start_time": "07-11-2025 12:48:00",
+          "trackName": "Concerto Violin 12 in F Op. 4",
+          "composerName": "Pietro Locatelli",
+          "artistName": "Musica Antiqua Koln",
+          "conductor": "Reinhard Goebel",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "65a7ebe652b8087c7ce4aa69",
+      "program_id": "54832201cbc21d650c307def",
+      "name": "Rob Brown",
+      "program_format": "Classical",
+      "date": "2025-07-11",
+      "start_utc": "2025-07-11T17:00:00.000Z",
+      "end_utc": "2025-07-11T20:00:00.000Z",
+      "start_time": "13:00",
+      "end_time": "16:00",
+      "playlist": [
+        {
+          "id": "68710d126c98f8b3a8fd9734",
+          "_duration": 2544000,
+          "_start_time": "07-11-2025 13:00:30",
+          "trackName": "Symphony 6 F, Op.68 \"Pastoral\"",
+          "composerName": "Ludwig van Beethoven",
+          "conductor": "Andris Nelsons",
+          "collectionName": "Beethoven: Complete Symphonies",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd9736",
+          "_duration": 928000,
+          "_start_time": "07-11-2025 13:42:54",
+          "trackName": "Lady Godiva Overture, Op.41 (1907)",
+          "composerName": "Vitezslav Novak",
+          "conductor": "JoAnn Falletta",
+          "collectionName": "Novak: In the Tatra Mountains",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd9737",
+          "_duration": 1800000,
+          "_start_time": "07-11-2025 14:01:00",
+          "trackName": "Symphony 40 G Minor K550",
+          "composerName": "Wolfgang Amadeus Mozart",
+          "artistName": "Bard Baroque Ensemble",
+          "conductor": "Renee Anne Louprette",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd973c",
+          "_duration": 570000,
+          "_start_time": "07-11-2025 14:31:00",
+          "trackName": "Albany Pro Musica Festival Preview",
+          "composerName": "Interview with Jose Daniel Flores-Caraballo Rex Smith & Sam Guarnaccia",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd973f",
+          "_duration": 493000,
+          "_start_time": "07-11-2025 14:42:42",
+          "trackName": "StarSong \"The Mystic Trumpeter\"",
+          "composerName": "Bradley Ellingboe",
+          "artistName": "Dann Coakwell, tenor",
+          "conductor": "Jose Daniel Flores-Caraballo",
+          "soloists": "Dann Coakwell, tenor",
+          "collectionName": "Bradley Ellingboe: StarSong",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd9746",
+          "_duration": 405000,
+          "_start_time": "07-11-2025 14:51:15",
+          "trackName": "Concerto G, Op.10/4, RV.435",
+          "composerName": "Antonio Vivaldi",
+          "artistName": "Beznosiuk, Lisa-flute",
+          "conductor": "Pinnock, Trevor",
+          "soloists": "Beznosiuk, Lisa-flute",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd9749",
+          "_duration": 308000,
+          "_start_time": "07-11-2025 15:00:30",
+          "trackName": "Baile (Dance) - symphonic painting (1953)",
+          "composerName": "Carlos Chavez",
+          "conductor": "Enrique Batiz",
+          "collectionName": "Chavez: Three Symphonies Batiz",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd974a",
+          "_duration": 1041000,
+          "_start_time": "07-11-2025 15:05:53",
+          "trackName": "Youth (Mladi): Suite for Wind Sextet",
+          "composerName": "Leos Janacek",
+          "artistName": "Orpheus Ch Ens",
+          "soloists": "Orpheus Ch Ens",
+          "collectionName": "Bartok: Divertimento; Rumanische Volkstanze",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd974b",
+          "_duration": 509000,
+          "_start_time": "07-11-2025 15:24:49",
+          "trackName": "Trio Sonata 6 D, HWV.385",
+          "composerName": "George Frideric Handel",
+          "artistName": "Convivium",
+          "soloists": "Convivium",
+          "collectionName": "Handel: Trio Sonatas for Oboe and Violin",
+          "buy": {}
+        },
+        {
+          "id": "68710d126c98f8b3a8fd974c",
+          "_duration": 1582000,
+          "_start_time": "07-11-2025 15:33:38",
+          "trackName": "Variations on a Hungarian Folksong \"The Peacock\"",
+          "composerName": "Zoltan Kodaly",
+          "conductor": "Sir Georg Solti",
+          "collectionName": "Elgar: Enigma Variations, etc.",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "65a7ed1152b8087c7ce4bee0",
+      "program_id": "65a7ed0f52b8087c7ce4bd5b",
+      "name": "Charlotte Wilson",
+      "program_format": "Classical",
+      "date": "2025-07-11",
+      "start_utc": "2025-07-11T20:00:00.000Z",
+      "end_utc": "2025-07-12T00:00:00.000Z",
+      "start_time": "16:00",
+      "end_time": "20:00",
+      "playlist": [
+        {
+          "id": "68710d136c98f8b3a8fd9805",
+          "_duration": 168000,
+          "_start_time": "07-11-2025 16:06:30",
+          "trackName": "Elizabethan Dance Suite: Gigue",
+          "composerName": "Anthony Holborne",
+          "artistName": "Rolf Smedvig, trumpet",
+          "soloists": "Rolf Smedvig, trumpet",
+          "collectionName": "Rolf Smedvig: Virtuoso Trumpet",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9806",
+          "_duration": 1414000,
+          "_start_time": "07-11-2025 16:09:38",
+          "trackName": "7 Fantasy Pieces, Op.116",
+          "composerName": "Johannes Brahms",
+          "artistName": "Alexander Melnikov, piano",
+          "soloists": "Alexander Melnikov, piano",
+          "collectionName": "Brahms: Horn Trio; Violin Sonata; Fantasies",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9807",
+          "_duration": 133000,
+          "_start_time": "07-11-2025 16:34:52",
+          "trackName": "Cello Suite 1 G, BWV.1007 (1.Prelude)",
+          "composerName": "Johann Sebastian Bach",
+          "artistName": "Haimovitz, Matt",
+          "soloists": "Haimovitz, Matt",
+          "collectionName": "The Cello Suites",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9809",
+          "_duration": 683000,
+          "_start_time": "07-11-2025 16:37:35",
+          "trackName": "Piano Concerto 2 C Min, Op.18 (2)",
+          "composerName": "Sergei Rachmaninov",
+          "artistName": "Karl Vinter-Piano",
+          "conductor": "Davis, Carl",
+          "soloists": "Karl Vinter-Piano",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd980a",
+          "_duration": 513000,
+          "_start_time": "07-11-2025 16:49:18",
+          "trackName": "Stabat Mater (1. Stabat Mater)",
+          "composerName": "Gioachino Rossini",
+          "artistName": "Netherlands Radio Choir",
+          "conductor": "Riccardo Chailly",
+          "soloists": "Netherlands Radio Choir",
+          "collectionName": "Rossini: Stabat Mater",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd980c",
+          "_duration": 125000,
+          "_start_time": "07-11-2025 17:06:30",
+          "trackName": "Musical Moments, Op.94/3 \"Air Russe\"",
+          "composerName": "Franz Schubert",
+          "artistName": "London Sym Orch,Stokowski, Leopold",
+          "conductor": "Leopold Stokowski",
+          "soloists": "London Sym Orch,Stokowski, Leopold",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd980d",
+          "_duration": 855000,
+          "_start_time": "07-11-2025 17:08:55",
+          "trackName": "Trio Sonata Op.9/3 in D",
+          "composerName": "Jean Marie Leclair",
+          "artistName": "Convivium",
+          "soloists": "Convivium",
+          "collectionName": "Leclair: Sonatas from the Quatrieme Livre de Sonates, Op.9",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd980e",
+          "_duration": 313000,
+          "_start_time": "07-11-2025 17:24:50",
+          "trackName": "Piano Concerto  1 F, K.37 (1)",
+          "composerName": "Wolfgang Amadeus Mozart",
+          "artistName": "Daniel Barenboim, piano",
+          "conductor": "Daniel Barenboim",
+          "soloists": "Daniel Barenboim, piano",
+          "collectionName": "Mozart: The Complete Piano Concertos",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd980f",
+          "_duration": 475000,
+          "_start_time": "07-11-2025 17:30:23",
+          "trackName": "Egmont, Op.84",
+          "composerName": "Ludwig van Beethoven",
+          "conductor": "Levi, Yoel",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9810",
+          "_duration": 653000,
+          "_start_time": "07-11-2025 17:38:48",
+          "trackName": "Hungarian Rhapsody 6 D",
+          "composerName": "Franz Liszt",
+          "conductor": "Fischer, Ivan",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9813",
+          "_duration": 462000,
+          "_start_time": "07-11-2025 17:50:01",
+          "trackName": "Sinfonia D, Op.3/3",
+          "composerName": "Johann Adolf Hasse",
+          "conductor": "Reinhard Goebel",
+          "collectionName": "Johann Adolf Hasse: Salve Regina Etc.",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9814",
+          "_duration": 277000,
+          "_start_time": "07-11-2025 18:06:30",
+          "trackName": "String Quartet 2 D (2. Scherzo)",
+          "composerName": "Alexander Borodin",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9815",
+          "_duration": 527000,
+          "_start_time": "07-11-2025 18:11:27",
+          "trackName": "Concerto Grosso E Min, Op.3/6",
+          "composerName": "Francesco Geminiani",
+          "conductor": "Thomas Furi",
+          "collectionName": "Camerata Bern: That Special Something",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9817",
+          "_duration": 260000,
+          "_start_time": "07-11-2025 18:21:54",
+          "trackName": "Poetic Tone Pictures, Op.85 - 10.Bacchanale",
+          "composerName": "Antonin Dvorak",
+          "artistName": "Leif Ove Andsnes, piano",
+          "soloists": "Leif Ove Andsnes, piano",
+          "collectionName": "Dvorak: Poetic Tone Pictures, Op.85",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9818",
+          "_duration": 767000,
+          "_start_time": "07-11-2025 18:26:34",
+          "trackName": "Piano Concerto C, Op.13/1",
+          "composerName": "Johann Christian Bach",
+          "artistName": "Halstead, Anthony-piano",
+          "conductor": "Hanover Band",
+          "soloists": "Halstead, Anthony-piano",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd9819",
+          "_duration": 1083000,
+          "_start_time": "07-11-2025 18:39:41",
+          "trackName": "Concerto for Orchestra (1948)",
+          "composerName": "Ulysses Kay",
+          "conductor": "Kellen Gray",
+          "collectionName": "African American Voices II",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd981a",
+          "_duration": 267000,
+          "_start_time": "07-11-2025 19:00:30",
+          "trackName": "March F, K.248",
+          "composerName": "Wolfgang Amadeus Mozart",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd981c",
+          "_duration": 687000,
+          "_start_time": "07-11-2025 19:05:17",
+          "trackName": "Variations on a Theme by Robert Schumann, Op.20",
+          "composerName": "Clara Schumann",
+          "artistName": "Benjamin Grosvenor, piano",
+          "soloists": "Benjamin Grosvenor, piano",
+          "collectionName": "Schumann & Brahms: Benjamin Grosvenor",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd981d",
+          "_duration": 297000,
+          "_start_time": "07-11-2025 19:18:19",
+          "trackName": "Cello Concerto D",
+          "composerName": "Giuseppe Tartini",
+          "artistName": "Zanerini, Severino-cello",
+          "conductor": "Scimone, Claudio",
+          "soloists": "Zanerini, Severino-cello",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd981e",
+          "_duration": 2184000,
+          "_start_time": "07-11-2025 19:23:36",
+          "trackName": "Also Sprach Zarathustra, Op.30",
+          "composerName": "Richard Strauss",
+          "conductor": "Andris Nelsons",
+          "collectionName": "Andris Nelsons - Strauss",
+          "buy": {}
+        }
+      ]
+    },
+    {
+      "episode_id": "677ef8a09ea18c2245c61414",
+      "program_id": "677ef89f9ea18c2245c61375",
+      "name": "Classical WMHT",
+      "program_format": "Classical",
+      "date": "2025-07-11",
+      "start_utc": "2025-07-12T02:00:00.000Z",
+      "end_utc": "2025-07-12T04:00:00.000Z",
+      "start_time": "22:00",
+      "end_time": "24:00",
+      "playlist": [
+        {
+          "id": "68710d136c98f8b3a8fd97d4",
+          "_duration": 303000,
+          "_start_time": "07-11-2025 22:00:00",
+          "trackName": "On hearing the first Cuckoo in Spring (1912)",
+          "composerName": "Frederick Delius",
+          "conductor": "Sir Neville Marriner",
+          "collectionName": "English Seasons",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97d5",
+          "_duration": 495000,
+          "_start_time": "07-11-2025 22:05:03",
+          "trackName": "Roman Carnival, Op.9",
+          "composerName": "Hector Berlioz",
+          "conductor": "Levine, James",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97d6",
+          "_duration": 402000,
+          "_start_time": "07-11-2025 22:14:18",
+          "trackName": "Impromptus, D.899/4 A-Flat",
+          "composerName": "Franz Schubert",
+          "artistName": "Curzon, Clifford-piano",
+          "soloists": "Curzon, Clifford-piano",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97d8",
+          "_duration": 1840000,
+          "_start_time": "07-11-2025 22:21:08",
+          "trackName": "Violin Concerto in D Min, Op.8",
+          "composerName": "Richard Strauss",
+          "artistName": "Sarah Chang, violin",
+          "conductor": "Wolfgang Sawallisch",
+          "soloists": "Sarah Chang, violin",
+          "collectionName": "R. Strauss: Violin Concerto: Sonata",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97da",
+          "_duration": 312000,
+          "_start_time": "07-11-2025 22:51:48",
+          "trackName": "Christmas Oratorio, BWV.248 Sinfonia",
+          "composerName": "Johann Sebastian Bach",
+          "conductor": "Christopher Hogwood",
+          "collectionName": "Baroque Gold",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97db",
+          "_duration": 577000,
+          "_start_time": "07-11-2025 23:00:08",
+          "trackName": "Souvenir, Op. 42: Meditation",
+          "composerName": "Peter Ilyich Tchaikovsky",
+          "artistName": "Bell, Joshua",
+          "conductor": "Michael Tilson Thomas",
+          "soloists": "Bell, Joshua",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97e1",
+          "_duration": 550000,
+          "_start_time": "07-11-2025 23:10:12",
+          "trackName": "Oboe Concerto 1 B-Flat",
+          "composerName": "George Frideric Handel",
+          "artistName": "Holliger, Heinz-oboe",
+          "conductor": "Leppard, Raymond",
+          "soloists": "Holliger, Heinz-oboe",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97e4",
+          "_duration": 842000,
+          "_start_time": "07-11-2025 23:19:39",
+          "trackName": "Estampes",
+          "composerName": "Claude Debussy",
+          "artistName": "Tomsic, Dubravka-piano",
+          "soloists": "Tomsic, Dubravka-piano",
+          "buy": {}
+        },
+        {
+          "id": "68710d136c98f8b3a8fd97e8",
+          "_duration": 1303000,
+          "_start_time": "07-11-2025 23:35:19",
+          "trackName": "Piano Concerto in G",
+          "composerName": "Maurice Ravel",
+          "artistName": "Helene Grimaud, piano",
+          "conductor": "Jesus Lopez-Cobos",
+          "soloists": "Helene Grimaud, piano",
+          "collectionName": "Rachmaninoff: Piano Concerto No.2, etc.",
+          "buy": {}
+        }
+      ]
+    }
+  ],
+  "dateFilterUsed": "07-11-2025 00:00:00",
+  "shouldCheckForNowPlaying": false
+}
