@@ -1,5 +1,5 @@
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { WikidataEntityResolver } from "@sdapps/etl";
+import { WikidataEntityRecognizer } from "@sdapps/etl";
 import {
   BroadcastEvent,
   ItemList,
@@ -108,7 +108,7 @@ async function* transformPlaylistJson({
   });
   musicPlaylist.tracks.push(stubify(musicPlaylistItemList));
 
-  const wikidataEntityResolver = new WikidataEntityResolver({
+  const wikidataEntityRecognizer = new WikidataEntityRecognizer({
     cachesDirectoryPath,
     logger,
   });
@@ -140,7 +140,9 @@ async function* transformPlaylistJson({
       const sameAs: NamedNode[] = [];
       const wikidataEntities =
         role === "composer" && name === "George Frideric Handel"
-          ? (await wikidataEntityResolver.resolve({ name, role })).orDefault([])
+          ? (await wikidataEntityRecognizer.resolve({ name, role })).orDefault(
+              [],
+            )
           : [];
       for (const wikidataEntity of wikidataEntities) {
         const datasetEither = await wikidataEntity.filteredDataset();

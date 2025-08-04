@@ -1,160 +1,50 @@
-import path from "node:path";
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { owl, rdf, rdfs, schema, skos } from "@tpluscode/rdf-ns-builders";
-import N3 from "n3";
+import { Person, Thing } from "@sdapps/models";
+import { owl, schema } from "@tpluscode/rdf-ns-builders";
+import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
-import { Either, EitherAsync } from "purify-ts";
+import { Either, EitherAsync, Maybe } from "purify-ts";
+import { Resource } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
-import { TextFileCache } from "./TextFileCache.js";
+import { WikidataEntityCache } from "./WikidataEntityCache.js";
+
+const wd = DataFactory.namedNode("http://www.wikidata.org/entity/");
+
+namespace wdt {
+  export const subClassOf: NamedNode = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P279",
+  );
+
+  export const type = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P31",
+  );
+}
 
 export class WikidataEntity {
-  private readonly cachesDirectoryPath: string;
+  private readonly dataset: DatasetCore;
+  private readonly cache: WikidataEntityCache;
   readonly id: string;
   private readonly logger?: Logger;
 
   constructor({
-    cachesDirectoryPath,
+    cache,
+    dataset,
     id,
     logger,
-  }: { cachesDirectoryPath: string; id: string; logger?: Logger }) {
-    this.cachesDirectoryPath = cachesDirectoryPath;
+  }: {
+    cache: WikidataEntityCache;
+    dataset: DatasetCore;
+    id: string;
+    logger?: Logger;
+  }) {
+    this.cache = cache;
+    this.dataset = dataset;
     this.id = id;
     this.logger = logger;
   }
 
-  async dataset(): Promise<Either<Error, DatasetCore>> {
-    return EitherAsync(async ({ liftEither }) => {
-      const cache = new TextFileCache({
-        directoryPath: path.join(
-          this.cachesDirectoryPath,
-          "wikidata",
-          "rdf",
-          "raw",
-        ),
-        fileExtension: ".ttl",
-        logger: this.logger,
-      });
-
-      const dataset = new N3.Store();
-      const parser = new N3.Parser();
-
-      const cachedTtl = await liftEither(await cache.get(this.id));
-      if (cachedTtl.isJust()) {
-        for (const quad of parser.parse(cachedTtl.unsafeCoerce())) {
-          dataset.add(quad);
-        }
-        return dataset;
-      }
-
-      this.logger?.trace(`fetching ${this.iri.value} Turtle`);
-      const response = await fetch(`${this.iri.value}.ttl`);
-      const responseText = await response.text();
-      this.logger?.trace(`fetched ${this.iri.value} Turtle`);
-      for (const quad of parser.parse(responseText)) {
-        dataset.add(quad);
-      }
-      await cache.set(this.id, responseText);
-      return dataset;
-    });
-  }
-
-  async filteredDataset(): Promise<Either<Error, DatasetCore>> {
-    return EitherAsync(async ({ liftEither }) => {
-      const cache = new TextFileCache({
-        directoryPath: path.join(
-          this.cachesDirectoryPath,
-          "wikidata",
-          "rdf",
-          "filtered",
-        ),
-        fileExtension: ".nt",
-        logger: this.logger,
-      });
-
-      const cachedNt = await liftEither(await cache.get(this.id));
-      if (cachedNt.isJust()) {
-        const filteredDataset = new N3.Store();
-        const parser = new N3.Parser({ format: "nt" });
-        for (const quad of parser.parse(cachedNt.unsafeCoerce())) {
-          filteredDataset.add(quad);
-        }
-        return filteredDataset;
-      }
-
-      const dataset = await liftEither(await this.dataset());
-
-      const filteredDataset: DatasetCore = new N3.Store();
-      for (const quad of dataset) {
-        if (
-          quad.object.termType === "BlankNode" ||
-          quad.subject.termType === "BlankNode"
-        ) {
-          continue;
-        }
-
-        if (
-          quad.object.termType === "NamedNode" &&
-          (quad.object.value.startsWith(owl[""].value) ||
-            quad.object.value.startsWith(
-              "http://www.wikidata.org/entity/statement/",
-            ))
-        ) {
-          continue;
-        }
-
-        filteredDataset.add(quad);
-      }
-
-      for (const redundantPredicate of [
-        N3.DataFactory.namedNode("http://wikiba.se/ontology#wikiGroup"),
-        rdfs.label, // Duplicates schema:name
-        skos.prefLabel, // Duplicates schema:name
-        skos.altLabel, // Generally duplicates the skos:prefLabel in other languages
-        // Keep schema:name and schema:description
-      ]) {
-        for (const deleteQuad of filteredDataset.match(
-          null,
-          redundantPredicate,
-          null,
-        )) {
-          filteredDataset.delete(deleteQuad);
-        }
-      }
-
-      for (const rdfType of [
-        // Delete all property definitions
-        N3.DataFactory.namedNode("http://wikiba.se/ontology#Property"),
-        // Delete all references
-        N3.DataFactory.namedNode("http://wikiba.se/ontology#Reference"),
-        // Delete all full statements
-        N3.DataFactory.namedNode("http://wikiba.se/ontology#Statement"),
-        // Delete all schema:Article's
-        schema.Article,
-        // Delete the schema:Dataset
-        schema.Dataset,
-      ]) {
-        for (const rdfTypeQuad of filteredDataset.match(
-          null,
-          rdf.type,
-          rdfType,
-        )) {
-          for (const deleteQuad of filteredDataset.match(
-            rdfTypeQuad.subject,
-            null,
-            null,
-          )) {
-            filteredDataset.delete(deleteQuad);
-          }
-        }
-      }
-
-      await cache.set(
-        this.id,
-        new N3.Writer({ format: "nt" }).quadsToString([...filteredDataset]),
-      );
-
-      return filteredDataset;
-    });
+  get description(): Maybe<string> {
+    return this.stringProperty(schema.description);
   }
 
   @Memoize()
@@ -164,7 +54,104 @@ export class WikidataEntity {
     );
   }
 
+  get name(): Maybe<string> {
+    return this.stringProperty(schema.name);
+  }
+
+  @Memoize()
+  private get resource(): Resource<NamedNode> {
+    return new Resource<NamedNode>({
+      dataset: this.dataset,
+      identifier: this.iri,
+    });
+  }
+
+  private stringProperty(predicate: NamedNode): Maybe<string> {
+    return Maybe.fromNullable(
+      this.resource
+        .values(predicate)
+        .flatMap((value) => value.toLiteral().toMaybe().toList())
+        .find((value) => value.language.length === 0 || value.language === "en")
+        ?.value,
+    );
+  }
+
   toString(): string {
     return this.id;
+  }
+
+  async toThing(): Promise<Either<Error, Thing>> {
+    return EitherAsync(async ({ liftEither }) => {
+      const wikidataEntityType = async (
+        wikidataEntity: WikidataEntity,
+        visitingWikidataEntityIds: Set<string>,
+      ): Promise<"Person" | "Thing"> => {
+        if (visitingWikidataEntityIds.has(wikidataEntity.id)) {
+          return "Thing";
+        }
+
+        visitingWikidataEntityIds.add(wikidataEntity.id);
+        try {
+          switch (wikidataEntity.id) {
+            case "Q5": // "human"
+              return "Person";
+          }
+
+          // An "instance" entity will have type/instance of but not subClassOf or sameAs.
+          // A "class" entity will have sameAs xor subClassOf.
+          for (const directClaimPredicate of [
+            owl.sameAs,
+            wdt.subClassOf,
+            wdt.type,
+          ]) {
+            for (const quad of wikidataEntity.dataset.match(
+              wikidataEntity.iri,
+              directClaimPredicate,
+            )) {
+              if (quad.object.termType !== "NamedNode") {
+                continue;
+              }
+              if (!quad.object.value.startsWith(wd.value)) {
+                this.logger?.warn(
+                  `${this.iri} related (${directClaimPredicate.value}) to non-Wikidata entity: ${quad.object.value}`,
+                );
+                continue;
+              }
+
+              const relatedWikidataEntityType = await wikidataEntityType(
+                await liftEither(
+                  await this.cache.get(
+                    quad.object.value.substring(wd.value.length),
+                  ),
+                ),
+                visitingWikidataEntityIds,
+              );
+
+              if (relatedWikidataEntityType !== "Thing") {
+                return relatedWikidataEntityType;
+              }
+            }
+          }
+
+          return "Thing";
+        } finally {
+          visitingWikidataEntityIds.delete(wikidataEntity.id);
+        }
+      };
+
+      const type = await wikidataEntityType(this, new Set());
+      const kwds = {
+        description: this.description,
+        identifier: this.iri,
+        name: this.name,
+      };
+
+      switch (type) {
+        case "Person":
+          return new Person(kwds);
+        case "Thing":
+          return new Thing(kwds);
+      }
+    });
   }
 }

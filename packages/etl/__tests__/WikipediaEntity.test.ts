@@ -1,16 +1,16 @@
 import * as dotenv from "dotenv";
 import { describe, it } from "vitest";
-import { WikipediaEntityResolver } from "../src/WikipediaEntityResolver.js";
+import { WikipediaEntityRecognizer } from "../src/WikipediaEntityRecognizer.js";
 import { cachesDirectoryPath } from "./paths.js";
-import { wikipediaEntityResolverTestData } from "./wikipediaEntityResolverTestData.js";
+import { wikipediaEntityRecognizerTestData } from "./wikipediaEntityRecognizerTestData.js";
 
 describe("WikipediaEntity", () => {
-  const sut = new WikipediaEntityResolver({ cachesDirectoryPath });
+  const sut = new WikipediaEntityRecognizer({ cachesDirectoryPath });
 
   dotenv.config();
 
   for (const [id, { input, expectedOutput }] of Object.entries(
-    wikipediaEntityResolverTestData,
+    wikipediaEntityRecognizerTestData,
   )) {
     it(`${id} wikidataEntity`, async ({ expect }) => {
       const actualEntities = (await sut.resolve(input)).unsafeCoerce();

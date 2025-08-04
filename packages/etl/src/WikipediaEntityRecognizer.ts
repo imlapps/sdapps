@@ -31,7 +31,7 @@ const examples: Record<string, readonly string[]> = {
   ],
 };
 
-export class WikipediaEntityResolver {
+export class WikipediaEntityRecognizer {
   private readonly cache: JsonFileCache<z.infer<typeof schema>>;
   private readonly cachesDirectoryPath: string;
   private readonly logger?: Logger;

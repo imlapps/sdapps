@@ -11,6 +11,6 @@ export * from "./readRdfInput.js";
 export * from "./RdfFileLoader.js";
 export * from "./TextFileCache.js";
 export * from "./WikidataEntity.js";
-export * from "./WikidataEntityResolver.js";
+export * from "./WikidataEntityRecognizer.js";
 export * from "./WikipediaEntity.js";
-export * from "./WikipediaEntityResolver.js";
+export * from "./WikipediaEntityRecognizer.js";

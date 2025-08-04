@@ -1,9 +1,9 @@
-import { WikipediaEntityResolver } from "../src/WikipediaEntityResolver";
+import { WikipediaEntityRecognizer } from "../src/WikipediaEntityRecognizer.js";
 
-export const wikipediaEntityResolverTestData: Record<
+export const wikipediaEntityRecognizerTestData: Record<
   string,
   {
-    input: Parameters<WikipediaEntityResolver["resolve"]>[0];
+    input: Parameters<WikipediaEntityRecognizer["resolve"]>[0];
     expectedOutput: readonly {
       readonly wikidataId: string;
       readonly wikipediaUrlTitle: string;
