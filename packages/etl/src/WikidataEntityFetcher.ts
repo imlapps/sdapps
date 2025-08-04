@@ -5,7 +5,7 @@ import { Either, EitherAsync } from "purify-ts";
 import { TextFileCache } from "./TextFileCache.js";
 import { WikidataEntity } from "./WikidataEntity.js";
 
-export class WikidataEntityCache {
+export class WikidataEntityFetcher {
   private readonly logger?: Logger;
   private readonly fileCache: TextFileCache;
   private readonly memoryCache: Record<string, WikidataEntity> = {};
@@ -22,7 +22,7 @@ export class WikidataEntityCache {
     });
   }
 
-  async get(id: string): Promise<Either<Error, WikidataEntity>> {
+  async fetch(id: string): Promise<Either<Error, WikidataEntity>> {
     return EitherAsync(async ({ liftEither }) => {
       {
         const entry = this.memoryCache[id];

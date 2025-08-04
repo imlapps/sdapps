@@ -1,11 +1,11 @@
 import { Logger } from "pino";
 import { Either } from "purify-ts";
 import { WikidataEntity } from "./WikidataEntity.js";
-import { WikidataEntityCache } from "./WikidataEntityCache.js";
+import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 import { WikipediaEntityRecognizer } from "./WikipediaEntityRecognizer.js";
 
 export class WikidataEntityRecognizer {
-  private readonly wikidataEntityCache: WikidataEntityCache;
+  private readonly wikidataEntityCache: WikidataEntityFetcher;
   private readonly wikipediaEntityRecognizer: WikipediaEntityRecognizer;
 
   constructor({
@@ -15,7 +15,7 @@ export class WikidataEntityRecognizer {
     cachesDirectoryPath: string;
     logger?: Logger;
   }) {
-    this.wikidataEntityCache = new WikidataEntityCache({
+    this.wikidataEntityCache = new WikidataEntityFetcher({
       cachesDirectoryPath,
       logger,
     });
@@ -25,11 +25,11 @@ export class WikidataEntityRecognizer {
     });
   }
 
-  async resolve(
-    parameters: Parameters<WikipediaEntityRecognizer["resolve"]>[0],
+  async recognize(
+    parameters: Parameters<WikipediaEntityRecognizer["recognize"]>[0],
   ): Promise<Either<Error, readonly WikidataEntity[]>> {
     const wikipediaEntities =
-      await this.wikipediaEntityRecognizer.resolve(parameters);
+      await this.wikipediaEntityRecognizer.recognize(parameters);
     if (wikipediaEntities.isLeft()) {
       return wikipediaEntities;
     }

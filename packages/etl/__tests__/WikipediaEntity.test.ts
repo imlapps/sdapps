@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 import { describe, it } from "vitest";
 import { WikipediaEntityRecognizer } from "../src/WikipediaEntityRecognizer.js";
 import { cachesDirectoryPath } from "./paths.js";
-import { wikipediaEntityRecognizerTestData } from "./wikipediaEntityRecognizerTestData.js";
 
 describe("WikipediaEntity", () => {
   const sut = new WikipediaEntityRecognizer({ cachesDirectoryPath });

@@ -53,7 +53,7 @@ export class WikipediaEntityRecognizer {
     this.logger = logger;
   }
 
-  async resolve({
+  async recognize({
     name,
     role,
   }: { name: string; role?: string }): Promise<

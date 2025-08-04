@@ -6,7 +6,7 @@ import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
-import { WikidataEntityCache } from "./WikidataEntityCache.js";
+import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 
 const wd = DataFactory.namedNode("http://www.wikidata.org/entity/");
 
@@ -22,7 +22,7 @@ namespace wdt {
 
 export class WikidataEntity {
   private readonly dataset: DatasetCore;
-  private readonly cache: WikidataEntityCache;
+  private readonly cache: WikidataEntityFetcher;
   readonly id: string;
   private readonly logger?: Logger;
 
@@ -32,7 +32,7 @@ export class WikidataEntity {
     id,
     logger,
   }: {
-    cache: WikidataEntityCache;
+    cache: WikidataEntityFetcher;
     dataset: DatasetCore;
     id: string;
     logger?: Logger;
@@ -120,7 +120,7 @@ export class WikidataEntity {
 
               const relatedWikidataEntityType = await wikidataEntityType(
                 await liftEither(
-                  await this.cache.get(
+                  await this.cache.fetch(
                     quad.object.value.substring(wd.value.length),
                   ),
                 ),
