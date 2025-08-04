@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import { describe, it } from "vitest";
 import { WikidataEntityFetcher } from "../src/WikidataEntityFetcher.js";
 import { wikipediaEntities as testData } from "./data/wikipediaEntities.js";
@@ -6,8 +5,6 @@ import { cachesDirectoryPath } from "./paths.js";
 
 describe("WikidataEntity", () => {
   const sut = new WikidataEntityFetcher({ cachesDirectoryPath });
-
-  dotenv.config();
 
   for (const [id, { entities }] of Object.entries(testData)) {
     it(`${id} name`, async ({ expect }) => {

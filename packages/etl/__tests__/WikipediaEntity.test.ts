@@ -1,33 +1,20 @@
-import * as dotenv from "dotenv";
 import { describe, it } from "vitest";
-import { WikipediaEntityRecognizer } from "../src/WikipediaEntityRecognizer.js";
+import { WikipediaEntityFetcher } from "../src/WikipediaEntityFetcher.js";
+import { wikipediaEntities as testData } from "./data/wikipediaEntities.js";
 import { cachesDirectoryPath } from "./paths.js";
 
 describe("WikipediaEntity", () => {
-  const sut = new WikipediaEntityRecognizer({ cachesDirectoryPath });
+  const sut = new WikipediaEntityFetcher({ cachesDirectoryPath });
 
-  dotenv.config();
-
-  for (const [id, { input, expectedOutput }] of Object.entries(
-    wikipediaEntityRecognizerTestData,
-  )) {
-    it(`${id} wikidataEntity`, async ({ expect }) => {
-      const actualEntities = (await sut.resolve(input)).unsafeCoerce();
-      expect(actualEntities).toHaveLength(expectedOutput.length);
-      for (const expectedEntity of expectedOutput) {
-        let foundExpectedEntity = false;
-        for (const actualEntity of actualEntities) {
-          if (actualEntity.urlTitle === expectedEntity.wikipediaUrlTitle) {
-            expect(
-              (await actualEntity.wikidataEntity())
-                .unsafeCoerce()
-                .unsafeCoerce().id === expectedEntity.wikidataId,
-            );
-            foundExpectedEntity = true;
-            break;
-          }
-        }
-        expect(foundExpectedEntity).toStrictEqual(true);
+  for (const [id, { entities }] of Object.entries(testData)) {
+    it(`${id} wikidataEntityId`, async ({ expect }) => {
+      for (const expectedEntity of entities) {
+        const actualEntity = (
+          await sut.fetch(expectedEntity.wikipedia.url)
+        ).unsafeCoerce();
+        expect(actualEntity.wikidataEntityId).toStrictEqual(
+          expectedEntity.wikidata.id,
+        );
       }
     });
   }

@@ -5,7 +5,7 @@ import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 import { WikipediaEntityRecognizer } from "./WikipediaEntityRecognizer.js";
 
 export class WikidataEntityRecognizer {
-  private readonly wikidataEntityCache: WikidataEntityFetcher;
+  private readonly wikidataEntityFetcher: WikidataEntityFetcher;
   private readonly wikipediaEntityRecognizer: WikipediaEntityRecognizer;
 
   constructor({
@@ -15,7 +15,7 @@ export class WikidataEntityRecognizer {
     cachesDirectoryPath: string;
     logger?: Logger;
   }) {
-    this.wikidataEntityCache = new WikidataEntityFetcher({
+    this.wikidataEntityFetcher = new WikidataEntityFetcher({
       cachesDirectoryPath,
       logger,
     });

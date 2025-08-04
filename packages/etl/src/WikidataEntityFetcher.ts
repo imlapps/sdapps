@@ -8,7 +8,8 @@ import { WikidataEntity } from "./WikidataEntity.js";
 export class WikidataEntityFetcher {
   private readonly logger?: Logger;
   private readonly fileCache: TextFileCache;
-  private readonly memoryCache: Record<string, WikidataEntity> = {};
+  private readonly memoryCache: Record<string, Either<Error, WikidataEntity>> =
+    {};
 
   constructor({
     cachesDirectoryPath,
@@ -23,44 +24,46 @@ export class WikidataEntityFetcher {
   }
 
   async fetch(id: string): Promise<Either<Error, WikidataEntity>> {
-    return EitherAsync(async ({ liftEither }) => {
-      {
-        const entry = this.memoryCache[id];
-        if (entry) {
-          return entry;
-        }
+    {
+      const result = this.memoryCache[id];
+      if (result) {
+        return result;
       }
+    }
 
-      const dataset = new N3.Store();
-      const parser = new N3.Parser();
+    const result = await EitherAsync<Error, WikidataEntity>(
+      async ({ liftEither }) => {
+        const dataset = new N3.Store();
+        const parser = new N3.Parser();
 
-      const cachedTtl = await liftEither(await this.fileCache.get(id));
-      if (cachedTtl.isJust()) {
-        for (const quad of parser.parse(cachedTtl.unsafeCoerce())) {
-          dataset.add(quad);
+        const cachedTtl = await liftEither(await this.fileCache.get(id));
+        if (cachedTtl.isJust()) {
+          for (const quad of parser.parse(cachedTtl.unsafeCoerce())) {
+            dataset.add(quad);
+          }
+        } else {
+          const url = `http://www.wikidata.org/entity/${id}`;
+          this.logger?.trace(`fetching ${id} Turtle`);
+          const response = await fetch(`${url}.ttl`);
+          const responseText = await response.text();
+          for (const quad of parser.parse(responseText)) {
+            dataset.add(quad);
+          }
+          this.logger?.trace(`fetched ${id} Turtle with ${dataset.size} quads`);
+          await this.fileCache.set(id, responseText);
         }
-      } else {
-        const url = `http://www.wikidata.org/entity/${id}`;
-        this.logger?.trace(`fetching ${id} Turtle`);
-        const response = await fetch(`${url}.ttl`);
-        const responseText = await response.text();
-        this.logger?.trace(`fetched ${id} Turtle`);
-        for (const quad of parser.parse(responseText)) {
-          dataset.add(quad);
-        }
-        await this.fileCache.set(id, responseText);
-      }
 
-      const entry = new WikidataEntity({
-        cache: this,
-        dataset,
-        id,
-        logger: this.logger,
-      });
+        return new WikidataEntity({
+          cache: this,
+          dataset,
+          id,
+          logger: this.logger,
+        });
+      },
+    );
 
-      this.memoryCache[id] = entry;
+    this.memoryCache[id] = result;
 
-      return entry;
-    });
+    return result;
   }
 }

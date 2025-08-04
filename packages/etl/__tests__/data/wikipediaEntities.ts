@@ -10,6 +10,7 @@ export const wikipediaEntities: Record<
         readonly name: string;
       };
       readonly wikipedia: {
+        readonly url: URL;
         readonly urlTitle: string;
       }
     }[];
@@ -24,6 +25,7 @@ export const wikipediaEntities: Record<
           name: "Jean-Philippe Rameau",
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/Jean-Philippe_Rameau"),
           urlTitle: "Jean-Philippe_Rameau",
         }
       },
@@ -39,6 +41,7 @@ export const wikipediaEntities: Record<
           name: "George Frideric Handel"
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/George_Frideric_Handel"),
           urlTitle: "George_Frideric_Handel"
         }
       },
@@ -62,6 +65,7 @@ export const wikipediaEntities: Record<
           name: "James Levine",
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/James_Levine"),
           urlTitle: "James_Levine",
         }
       },
@@ -71,6 +75,7 @@ export const wikipediaEntities: Record<
           name: "Vienna Philharmonic"
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/Vienna_Philharmonic"),
           urlTitle: "Vienna_Philharmonic",
         }
       },
@@ -89,6 +94,7 @@ export const wikipediaEntities: Record<
           name: "Anner Byslma",
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/Anner_Bylsma"),
           urlTitle: "Anner_Bylsma",
         }
       },
@@ -98,6 +104,7 @@ export const wikipediaEntities: Record<
           name: "Jeanne Lamon",
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/Jeanne_Lamon"),
           urlTitle: "Jeanne_Lamon",
         }
       },
@@ -107,6 +114,7 @@ export const wikipediaEntities: Record<
           name: "Tafelmusik Baroque Orchestra"
         },
         wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/Tafelmusik_Baroque_Orchestra"),
           urlTitle: "Tafelmusik_Baroque_Orchestra",
         }
       },
@@ -120,8 +128,14 @@ export const wikipediaEntities: Record<
     },
     entities: [
       {
-        wikidataId: "Q154685",
-        wikipediaUrlTitle: "Vienna_Philharmonic",
+        wikidata: {
+          id: "Q154685",
+          name: "Vienna Philharmonic"
+        },
+        wikipedia: {
+          url: new URL("https://en.wikipedia.org/wiki/Vienna_Philharmonic"),
+          urlTitle: "Vienna_Philharmonic",
+        }
       },
     ],
   },
