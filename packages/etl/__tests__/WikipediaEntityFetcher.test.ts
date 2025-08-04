@@ -33,4 +33,14 @@ describe("WikipediaEntityFetcher", () => {
       }
     });
   }
+
+  it("fetch non-extant + memory cache", async ({ expect }) => {
+    const sut = new WikipediaEntityFetcher({ cachesDirectoryPath });
+    for (let i = 0; i < 2; i++) {
+      const result = await sut.fetch(
+        new URL("https://en.wikipedia.org/wiki/Jimbo_Puddlesworth"),
+      );
+      expect(result.isLeft()).toStrictEqual(true);
+    }
+  });
 });
