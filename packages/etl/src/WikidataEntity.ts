@@ -5,7 +5,7 @@ import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
-import invariant from "ts-invariant";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 
@@ -101,7 +101,7 @@ export class WikidataEntity {
             case "Q5": // "human"
               return "Person";
             default:
-              this.logger?.debug(
+              this.logger?.trace(
                 `unrecognized Wikidata entity ${wikidataEntity.id} (name=${wikidataEntity.name.extract()})`,
               );
               break;
@@ -153,7 +153,7 @@ export class WikidataEntity {
               const relatedWikidataEntity = await liftEither(
                 await this.fetcher.fetch(relatedWikidataEntityId),
               );
-              this.logger?.debug(
+              this.logger?.trace(
                 `fetched related Wikidata entity ${relatedWikidataEntity.id} (name=${relatedWikidataEntity.name.extract()})`,
               );
 
@@ -175,7 +175,7 @@ export class WikidataEntity {
       };
 
       const type = await wikidataEntityType(this, new Set());
-      const kwds = {
+      const kwds: ConstructorParameters<typeof Thing>[0] = {
         description: this.description,
         identifier: this.iri,
         name: this.name,

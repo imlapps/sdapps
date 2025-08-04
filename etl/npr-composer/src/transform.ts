@@ -1,4 +1,4 @@
-import { DatasetCore, NamedNode } from "@rdfjs/types";
+import { DatasetCore } from "@rdfjs/types";
 import { WikidataEntityRecognizer } from "@sdapps/etl";
 import {
   BroadcastEvent,
@@ -9,6 +9,8 @@ import {
   MusicGroup,
   MusicPlaylist,
   MusicRecording,
+  Organization,
+  Person,
   RadioBroadcastService,
   RadioEpisode,
   RadioSeries,
@@ -44,16 +46,6 @@ function durationSecondsToDuration(durationSeconds: number): dates.Duration {
   return duration;
 }
 
-function modelToDataset(model: Thing): DatasetCore {
-  return model.toRdf({
-    mutateGraph: N3.DataFactory.defaultGraph(),
-    resourceSet: new MutableResourceSet({
-      dataFactory: N3.DataFactory,
-      dataset: new N3.Store(),
-    }),
-  }).dataset;
-}
-
 async function* transformPlaylistJson({
   cachesDirectoryPath,
   playlistJson,
@@ -64,7 +56,7 @@ async function* transformPlaylistJson({
   playlistJson: PlaylistJson;
   radioBroadcastService: RadioBroadcastService;
   ucsId: string;
-}): AsyncIterable<DatasetCore> {
+}): AsyncIterable<Thing> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
     endDate: new Date(playlistJson.end_utc),
     identifier: Iris.episodeBroadcastEvent({
@@ -121,9 +113,9 @@ async function* transformPlaylistJson({
       new Date(),
     );
 
-    let composerMusicGroup: MusicGroup | undefined;
-    const musicGroups: MusicGroup[] = [];
-    const musicGroupNames = new Set<string>();
+    let composer: (Organization | Person) | undefined;
+    const artists: (MusicGroup | Person)[] = [];
+    const artistNames = new Set<string>();
 
     for (const [role, name] of Object.entries({
       "": playlistItemJson.artistName,
@@ -132,63 +124,112 @@ async function* transformPlaylistJson({
       ensembles: playlistItemJson.ensembles,
       soloists: playlistItemJson.soloists,
     })) {
-      if (!name || musicGroupNames.has(name)) {
+      if (!name || artistNames.has(name)) {
         continue;
       }
       const qualifiedName = role.length > 0 ? `${name} (${role})` : name;
 
-      const sameAs: NamedNode[] = [];
       const wikidataEntities =
         role === "composer" && name === "George Frideric Handel"
-          ? (await wikidataEntityRecognizer.resolve({ name, role })).orDefault(
-              [],
-            )
+          ? (
+              await wikidataEntityRecognizer.recognize({ name, role })
+            ).orDefault([])
           : [];
+
+      const wikidataArtists: (MusicGroup | Person)[] = [];
       for (const wikidataEntity of wikidataEntities) {
-        const datasetEither = await wikidataEntity.filteredDataset();
-        if (datasetEither.isRight()) {
-          sameAs.push(wikidataEntity.iri);
-          yield datasetEither.unsafeCoerce();
-        }
+        (await wikidataEntity.toThing())
+          .ifLeft((error) =>
+            logger.warn(
+              `error converting Wikidata entity ${wikidataEntity.id} to schema.org: ${error.message}`,
+            ),
+          )
+          .ifRight((thing) => {
+            switch (thing.type) {
+              case "MusicGroup":
+              case "Person":
+                wikidataArtists.push(thing as MusicGroup | Person);
+                break;
+              default:
+                logger.warn(
+                  `Wikidata entity ${wikidataEntity.id} converted to a ${thing.type}`,
+                );
+                break;
+            }
+          });
       }
 
-      const musicGroup = new MusicGroup({
-        identifier: Iris.musicGroup({ name: qualifiedName }),
-        name: qualifiedName,
-        sameAs: sameAs.length > 0 ? sameAs : undefined,
-      });
-      yield modelToDataset(musicGroup);
-      musicGroups.push(musicGroup);
-      if (role === "composer") {
-        composerMusicGroup = musicGroup;
+      if (
+        wikidataArtists.length > 0 &&
+        wikidataArtists.length === wikidataEntities.length
+      ) {
+        const wikidataEntitiesString = wikidataEntities
+          .map(
+            (wikidataEntity, i) =>
+              `${wikidataEntity.id} (${wikidataArtists[i].name.extract()})`,
+          )
+          .join(", ");
+        logger.info(
+          `recognized Wikidata entities in "${qualifiedName}": ${wikidataEntitiesString}`,
+        );
+        artists.push(...wikidataArtists);
+        yield* wikidataArtists;
+        if (role === "composer") {
+          if (wikidataArtists.length > 1) {
+            logger.warn(
+              `more than one composer recognized in "${qualifiedName}": ${wikidataEntitiesString}`,
+            );
+          }
+          composer = wikidataArtists[0];
+        }
+      } else {
+        // logger.warn(
+        //   `unable to recognize Wikidata entities in "${qualifiedName}", synthesizing MusicGroup`,
+        // );
+        const syntheticMusicGroup = new MusicGroup({
+          identifier: Iris.musicGroup({ name: qualifiedName }),
+          name: qualifiedName,
+        });
+        artists.push(syntheticMusicGroup);
+        yield syntheticMusicGroup;
+        if (role === "composer") {
+          composer = syntheticMusicGroup;
+        }
       }
     }
 
-    if (musicGroups.length === 0) {
+    if (artists.length === 0) {
       logger.debug(
         `playlist item ${playlistItemJson.id} has no group names, skipping: ${JSON.stringify(playlistItemJson)}`,
       );
       continue;
     }
-    const musicGroupStubs = musicGroups.map((musicGroup) =>
-      stubify(musicGroup),
-    );
+    const artistStubs = artists.map((artist) => {
+      switch (artist.type) {
+        case "MusicGroup":
+          return stubify(artist);
+        case "Person":
+          return stubify(artist);
+      }
+    });
 
     const musicAlbum = playlistItemJson.collectionName
       ? new MusicAlbum({
-          byArtists: musicGroupStubs,
+          byArtists: artistStubs,
           identifier: Iris.musicAlbum(playlistItemJson),
           name: playlistItemJson.collectionName,
         })
       : undefined;
     if (musicAlbum) {
-      yield modelToDataset(musicAlbum);
+      yield musicAlbum;
     }
 
-    const musicComposition = composerMusicGroup
+    const musicComposition = composer
       ? new MusicComposition({
-          composer: composerMusicGroup
-            ? stubify(composerMusicGroup)
+          composer: composer
+            ? composer.type === "Person"
+              ? stubify(composer)
+              : stubify(composer)
             : undefined,
           identifier: Iris.musicComposition(playlistItemJson),
           name: playlistItemJson.trackName,
@@ -205,7 +246,7 @@ async function* transformPlaylistJson({
       startDate: startDate,
       superEvent: radioEpisodeBroadcastEventStub,
     });
-    yield modelToDataset(musicRecordingBroadcastEvent);
+    yield musicRecordingBroadcastEvent;
     const musicRecordingBroadcastEventStub = stubify(
       musicRecordingBroadcastEvent,
     );
@@ -215,7 +256,7 @@ async function* transformPlaylistJson({
       duration: dates.formatISODuration(
         durationSecondsToDuration(playlistItemJson._duration / 1000),
       ),
-      byArtists: musicGroupStubs,
+      byArtists: artistStubs,
       inAlbum: musicAlbum ? stubify(musicAlbum) : undefined,
       identifier: Iris.musicRecording(playlistItemJson),
       inPlaylists: [musicPlaylistStub],
@@ -223,12 +264,12 @@ async function* transformPlaylistJson({
       publication: [musicRecordingBroadcastEventStub],
       recordingOf: musicComposition ? stubify(musicComposition) : undefined,
     });
-    yield modelToDataset(musicRecording);
+    yield musicRecording;
     const musicRecordingStub = stubify(musicRecording);
 
     if (musicComposition) {
       musicComposition.recordedAs.push(musicRecordingStub);
-      yield modelToDataset(musicComposition);
+      yield musicComposition;
     }
 
     const musicPlaylistItem = new ListItem({
@@ -239,15 +280,15 @@ async function* transformPlaylistJson({
       item: musicRecordingStub,
       position: playlistItemJson.id, // The id's monotonically increase, so this can be used for sorting
     });
-    yield modelToDataset(musicPlaylistItem);
+    yield musicPlaylistItem;
     musicPlaylistItemList.itemListElements.push(stubify(musicPlaylistItem));
   }
 
-  yield modelToDataset(musicPlaylist);
-  yield modelToDataset(musicPlaylistItemList);
-  yield modelToDataset(radioEpisode);
-  yield modelToDataset(radioEpisodeBroadcastEvent);
-  yield modelToDataset(radioSeries);
+  yield musicPlaylist;
+  yield musicPlaylistItemList;
+  yield radioEpisode;
+  yield radioEpisodeBroadcastEvent;
+  yield radioSeries;
 }
 
 export async function* transform({
@@ -273,13 +314,19 @@ export async function* transform({
     }
 
     for (const playlistJson of parseResult.data.playlist) {
-      for await (const dataset of transformPlaylistJson({
+      for await (const model of transformPlaylistJson({
         cachesDirectoryPath,
         playlistJson,
         radioBroadcastService: extractResult.radioBroadcastService,
         ucsId: extractResult.ucsIdentifier,
       })) {
-        yield dataset;
+        yield model.toRdf({
+          mutateGraph: N3.DataFactory.defaultGraph(),
+          resourceSet: new MutableResourceSet({
+            dataFactory: N3.DataFactory,
+            dataset: new N3.Store(),
+          }),
+        }).dataset;
       }
     }
   }
