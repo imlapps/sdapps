@@ -13,7 +13,9 @@ describe("WikidataEntity", () => {
         const actualEntity = (
           await fetcher.fetch(expectedEntity.wikidata.id)
         ).unsafeCoerce();
-        expect(actualEntity.name).toStrictEqual(expectedEntity.wikidata.name);
+        expect(actualEntity.name.unsafeCoerce()).toStrictEqual(
+          expectedEntity.wikidata.name,
+        );
       }
     });
   }
