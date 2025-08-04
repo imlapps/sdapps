@@ -1,5 +1,5 @@
 import { Logger } from "pino";
-import { Either } from "purify-ts";
+import { Either, EitherAsync } from "purify-ts";
 import { WikidataEntity } from "./WikidataEntity.js";
 import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 import { WikipediaEntityRecognizer } from "./WikipediaEntityRecognizer.js";
@@ -28,22 +28,22 @@ export class WikidataEntityRecognizer {
   async recognize(
     parameters: Parameters<WikipediaEntityRecognizer["recognize"]>[0],
   ): Promise<Either<Error, readonly WikidataEntity[]>> {
-    const wikipediaEntities =
-      await this.wikipediaEntityRecognizer.recognize(parameters);
-    if (wikipediaEntities.isLeft()) {
-      return wikipediaEntities;
-    }
+    return EitherAsync(async ({ liftEither }) => {
+      const wikipediaEntities = await liftEither(
+        await this.wikipediaEntityRecognizer.recognize(parameters),
+      );
 
-    const wikidataEntities: WikidataEntity[] = [];
-    for (const wikipediaEntity of wikipediaEntities.unsafeCoerce()) {
-      const wikidataEntity = await wikipediaEntity.wikidataEntity();
-      if (wikidataEntity.isLeft()) {
-        return wikidataEntity;
+      const wikidataEntities: WikidataEntity[] = [];
+      for (const wikipediaEntity of wikipediaEntities) {
+        wikidataEntities.push(
+          await liftEither(
+            await this.wikidataEntityFetcher.fetch(
+              wikipediaEntity.wikidataEntityId,
+            ),
+          ),
+        );
       }
-      wikidataEntity
-        .unsafeCoerce()
-        .ifJust((wikidataEntity) => wikidataEntities.push(wikidataEntity));
-    }
-    return Either.of(wikidataEntities);
+      return wikidataEntities;
+    });
   }
 }

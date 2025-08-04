@@ -6,6 +6,7 @@ import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
 import { JsonFileCache } from "./JsonFileCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
+import { WikipediaEntityFetcher } from "./WikipediaEntityFetcher.js";
 
 const schema = z.object({
   wikipedia: z.array(z.string().url()),
@@ -33,8 +34,8 @@ const examples: Record<string, readonly string[]> = {
 
 export class WikipediaEntityRecognizer {
   private readonly cache: JsonFileCache<z.infer<typeof schema>>;
-  private readonly cachesDirectoryPath: string;
   private readonly logger?: Logger;
+  private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
     cachesDirectoryPath,
@@ -49,8 +50,11 @@ export class WikipediaEntityRecognizer {
       parseJson: async (json: unknown) =>
         EitherAsync(() => schema.parseAsync(json)),
     });
-    this.cachesDirectoryPath = cachesDirectoryPath;
     this.logger = logger;
+    this.wikipediaEntityFetcher = new WikipediaEntityFetcher({
+      cachesDirectoryPath,
+      logger,
+    });
   }
 
   async recognize({
@@ -96,14 +100,17 @@ ${Object.entries(examples).map(
         await this.cache.set(qualifiedName, generatedObject);
       }
 
-      return generatedObject.wikipedia.map(
-        (url) =>
-          new WikipediaEntity({
-            cachesDirectoryPath: this.cachesDirectoryPath,
-            logger: this.logger,
-            url: new URL(url),
-          }),
-      );
+      const wikipediaEntries: WikipediaEntity[] = [];
+      for (const wikipediaEntityUrl of generatedObject.wikipedia) {
+        wikipediaEntries.push(
+          await liftEither(
+            await this.wikipediaEntityFetcher.fetch(
+              new URL(wikipediaEntityUrl),
+            ),
+          ),
+        );
+      }
+      return wikipediaEntries;
     });
   }
 }
