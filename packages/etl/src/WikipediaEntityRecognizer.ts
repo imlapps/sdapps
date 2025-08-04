@@ -34,7 +34,6 @@ const examples: Record<string, readonly string[]> = {
 
 export class WikipediaEntityRecognizer {
   private readonly cache: JsonFileCache<z.infer<typeof schema>>;
-  private readonly logger?: Logger;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
@@ -50,7 +49,6 @@ export class WikipediaEntityRecognizer {
       parseJson: async (json: unknown) =>
         EitherAsync(() => schema.parseAsync(json)),
     });
-    this.logger = logger;
     this.wikipediaEntityFetcher = new WikipediaEntityFetcher({
       cachesDirectoryPath,
       logger,
