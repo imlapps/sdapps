@@ -130,7 +130,7 @@ async function* transformPlaylistJson({
       const qualifiedName = role.length > 0 ? `${name} (${role})` : name;
 
       const wikidataEntities =
-        role === "composer" && name === "George Frideric Handel"
+        role === "composer"
           ? (
               await wikidataEntityRecognizer.recognize({ name, role })
             ).orDefault([])
