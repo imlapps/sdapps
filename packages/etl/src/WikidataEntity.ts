@@ -5,6 +5,7 @@ import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
+import invariant from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 
@@ -106,21 +107,37 @@ export class WikidataEntity {
 
           // An "instance" entity will have type/instance of but not subClassOf or sameAs.
           // A "class" entity will have sameAs xor subClassOf.
-          for (const directClaimPredicate of [
-            owl.sameAs,
-            wdt.subClassOf,
-            wdt.type,
-          ]) {
-            for (const quad of wikidataEntity.dataset.match(
-              wikidataEntity.iri,
-              directClaimPredicate,
-            )) {
+          const sameAsQuads = [
+            ...wikidataEntity.dataset.match(wikidataEntity.iri, owl.sameAs),
+          ];
+          const subClassOfQuads = [
+            ...wikidataEntity.dataset.match(wikidataEntity.iri, wdt.subClassOf),
+          ];
+          let typeQuads = [
+            ...wikidataEntity.dataset.match(wikidataEntity.iri, wdt.type),
+          ];
+          if (sameAsQuads.length > 0) {
+            invariant(subClassOfQuads.length === 0);
+            invariant(typeQuads.length === 0);
+          }
+          if (subClassOfQuads.length > 0) {
+            invariant(sameAsQuads.length === 0);
+            // Ignore the type of classes (metaclasses)
+            typeQuads = [];
+          }
+          if (typeQuads.length > 0) {
+            invariant(sameAsQuads.length === 0);
+            invariant(subClassOfQuads.length === 0);
+          }
+
+          for (const quads of [sameAsQuads, subClassOfQuads, typeQuads]) {
+            for (const quad of quads) {
               if (quad.object.termType !== "NamedNode") {
                 continue;
               }
               if (!quad.object.value.startsWith(wd.value)) {
                 this.logger?.warn(
-                  `${this.iri} related (${directClaimPredicate.value}) to non-Wikidata entity: ${quad.object.value}`,
+                  `${this.iri} related to non-Wikidata entity: ${quad.object.value}`,
                 );
                 continue;
               }
