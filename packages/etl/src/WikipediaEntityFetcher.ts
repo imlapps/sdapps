@@ -1,7 +1,6 @@
 import path from "node:path";
 import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 import { z } from "zod";
 import { JsonFileCache } from "./JsonFileCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
@@ -130,14 +129,5 @@ export class WikipediaEntityFetcher {
 
     this.memoryCache[urlString] = result;
     return result;
-  }
-
-  toString(): string {
-    return this.urlTitle;
-  }
-
-  @Memoize()
-  get urlTitle(): string {
-    return this.url.pathname.split("/").at(-1)!;
   }
 }
