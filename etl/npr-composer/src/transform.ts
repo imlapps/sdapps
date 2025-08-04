@@ -273,6 +273,7 @@ async function* transformPlaylistJson({
     }
 
     const musicPlaylistItem = new ListItem({
+      disambiguatingDescription: JSON.stringify(playlistItemJson),
       identifier: Iris.episodePlaylistItem({
         episodeId: playlistJson.episode_id,
         playlistItemId: playlistItemJson.id,

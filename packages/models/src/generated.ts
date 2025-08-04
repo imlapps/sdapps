@@ -693,6 +693,7 @@ export class Thing extends Model {
     | "TextObject"
     | "VoteAction" = "Thing";
   readonly description: purify.Maybe<string>;
+  readonly disambiguatingDescription: purify.Maybe<string>;
   readonly localIdentifiers: readonly string[];
   readonly name: purify.Maybe<string>;
   readonly order: purify.Maybe<number>;
@@ -704,6 +705,7 @@ export class Thing extends Model {
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
       readonly description?: purify.Maybe<string> | string;
+      readonly disambiguatingDescription?: purify.Maybe<string> | string;
       readonly localIdentifiers?: readonly string[];
       readonly name?: purify.Maybe<string> | string;
       readonly order?: number | purify.Maybe<number>;
@@ -730,6 +732,19 @@ export class Thing extends Model {
       this.description = purify.Maybe.empty();
     } else {
       this.description = parameters.description satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.disambiguatingDescription)) {
+      this.disambiguatingDescription = parameters.disambiguatingDescription;
+    } else if (typeof parameters.disambiguatingDescription === "string") {
+      this.disambiguatingDescription = purify.Maybe.of(
+        parameters.disambiguatingDescription,
+      );
+    } else if (typeof parameters.disambiguatingDescription === "undefined") {
+      this.disambiguatingDescription = purify.Maybe.empty();
+    } else {
+      this.disambiguatingDescription =
+        parameters.disambiguatingDescription satisfies never;
     }
 
     if (typeof parameters.localIdentifiers === "undefined") {
@@ -807,6 +822,18 @@ export class Thing extends Model {
           left: this,
           right: other,
           propertyName: "description",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.disambiguatingDescription,
+          other.disambiguatingDescription,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "disambiguatingDescription",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -1004,6 +1031,9 @@ export class Thing extends Model {
     this.description.ifJust((_value0) => {
       _hasher.update(_value0);
     });
+    this.disambiguatingDescription.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
     for (const _item0 of this.localIdentifiers) {
       _hasher.update(_item0);
     }
@@ -1061,6 +1091,9 @@ export class Thing extends Model {
       JSON.stringify({
         ...super.toJson(),
         description: this.description.map((_item) => _item).extract(),
+        disambiguatingDescription: this.disambiguatingDescription
+          .map((_item) => _item)
+          .extract(),
         localIdentifiers: this.localIdentifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
         order: this.order.map((_item) => _item).extract(),
@@ -1103,6 +1136,10 @@ export class Thing extends Model {
       this.description,
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/disambiguatingDescription"),
+      this.disambiguatingDescription,
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/identifier"),
       this.localIdentifiers.map((_item) => _item),
     );
@@ -1140,6 +1177,7 @@ export namespace ThingStatic {
   export const Identifier = ModelStatic.Identifier;
   export type Json = {
     readonly description: string | undefined;
+    readonly disambiguatingDescription: string | undefined;
     readonly localIdentifiers: readonly string[];
     readonly name: string | undefined;
     readonly order: number | undefined;
@@ -1156,6 +1194,7 @@ export namespace ThingStatic {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       description: purify.Maybe<string>;
+      disambiguatingDescription: purify.Maybe<string>;
       localIdentifiers: readonly string[];
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
@@ -1180,6 +1219,9 @@ export namespace ThingStatic {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const description = purify.Maybe.fromNullable(_jsonObject["description"]);
+    const disambiguatingDescription = purify.Maybe.fromNullable(
+      _jsonObject["disambiguatingDescription"],
+    );
     const localIdentifiers = _jsonObject["localIdentifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
     const order = purify.Maybe.fromNullable(_jsonObject["order"]);
@@ -1198,6 +1240,7 @@ export namespace ThingStatic {
       ..._super0,
       identifier,
       description,
+      disambiguatingDescription,
       localIdentifiers,
       name,
       order,
@@ -1249,6 +1292,10 @@ export namespace ThingStatic {
       elements: [
         ModelStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/description`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/disambiguatingDescription`,
+          type: "Control",
+        },
         {
           scope: `${scopePrefix}/properties/localIdentifiers`,
           type: "Control",
@@ -1314,6 +1361,7 @@ export namespace ThingStatic {
           "VoteAction",
         ]),
         description: zod.string().optional(),
+        disambiguatingDescription: zod.string().optional(),
         localIdentifiers: zod
           .string()
           .array()
@@ -1352,6 +1400,7 @@ export namespace ThingStatic {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       description: purify.Maybe<string>;
+      disambiguatingDescription: purify.Maybe<string>;
       localIdentifiers: readonly string[];
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
@@ -1413,6 +1462,25 @@ export namespace ThingStatic {
     }
 
     const description = _descriptionEither.unsafeCoerce();
+    const _disambiguatingDescriptionEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(
+          dataFactory.namedNode("http://schema.org/disambiguatingDescription"),
+          { unique: true },
+        )
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_disambiguatingDescriptionEither.isLeft()) {
+      return _disambiguatingDescriptionEither;
+    }
+
+    const disambiguatingDescription =
+      _disambiguatingDescriptionEither.unsafeCoerce();
     const _localIdentifiersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly string[]
@@ -1563,6 +1631,7 @@ export namespace ThingStatic {
       ..._super0,
       identifier,
       description,
+      disambiguatingDescription,
       localIdentifiers,
       name,
       order,
@@ -1634,6 +1703,11 @@ export namespace ThingStatic {
   export const rdfProperties = [
     ...ModelStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/description") },
+    {
+      path: dataFactory.namedNode(
+        "http://schema.org/disambiguatingDescription",
+      ),
+    },
     { path: dataFactory.namedNode("http://schema.org/identifier") },
     { path: dataFactory.namedNode("http://schema.org/name") },
     { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
