@@ -54,7 +54,7 @@ export class WikidataEntityFetcher {
         }
 
         return new WikidataEntity({
-          cache: this,
+          fetcher: this,
           dataset,
           id,
           logger: this.logger,

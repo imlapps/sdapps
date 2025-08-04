@@ -1,5 +1,5 @@
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { Person, Thing } from "@sdapps/models";
+import { MusicGroup, Person, Thing } from "@sdapps/models";
 import { owl, schema } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
@@ -22,22 +22,22 @@ namespace wdt {
 
 export class WikidataEntity {
   private readonly dataset: DatasetCore;
-  private readonly cache: WikidataEntityFetcher;
+  private readonly fetcher: WikidataEntityFetcher;
   readonly id: string;
   private readonly logger?: Logger;
 
   constructor({
-    cache,
     dataset,
+    fetcher,
     id,
     logger,
   }: {
-    cache: WikidataEntityFetcher;
     dataset: DatasetCore;
+    fetcher: WikidataEntityFetcher;
     id: string;
     logger?: Logger;
   }) {
-    this.cache = cache;
+    this.fetcher = fetcher;
     this.dataset = dataset;
     this.id = id;
     this.logger = logger;
@@ -85,7 +85,7 @@ export class WikidataEntity {
       const wikidataEntityType = async (
         wikidataEntity: WikidataEntity,
         visitingWikidataEntityIds: Set<string>,
-      ): Promise<"Person" | "Thing"> => {
+      ): Promise<"MusicGroup" | "Person" | "Thing"> => {
         if (visitingWikidataEntityIds.has(wikidataEntity.id)) {
           return "Thing";
         }
@@ -93,8 +93,15 @@ export class WikidataEntity {
         visitingWikidataEntityIds.add(wikidataEntity.id);
         try {
           switch (wikidataEntity.id) {
+            case "Q2088357": // musical ensemble
+              return "MusicGroup";
             case "Q5": // "human"
               return "Person";
+            default:
+              this.logger?.debug(
+                `unrecognized Wikidata entity ${wikidataEntity.id} (name=${wikidataEntity.name.extract()})`,
+              );
+              break;
           }
 
           // An "instance" entity will have type/instance of but not subClassOf or sameAs.
@@ -118,12 +125,21 @@ export class WikidataEntity {
                 continue;
               }
 
+              const relatedWikidataEntityId = quad.object.value.substring(
+                wd.value.length,
+              );
+              this.logger?.trace(
+                `fetching related Wikidata entity ${relatedWikidataEntityId}`,
+              );
+              const relatedWikidataEntity = await liftEither(
+                await this.fetcher.fetch(relatedWikidataEntityId),
+              );
+              this.logger?.debug(
+                `fetched related Wikidata entity ${relatedWikidataEntity.id} (name=${relatedWikidataEntity.name.extract()})`,
+              );
+
               const relatedWikidataEntityType = await wikidataEntityType(
-                await liftEither(
-                  await this.cache.fetch(
-                    quad.object.value.substring(wd.value.length),
-                  ),
-                ),
+                relatedWikidataEntity,
                 visitingWikidataEntityIds,
               );
 
@@ -147,6 +163,8 @@ export class WikidataEntity {
       };
 
       switch (type) {
+        case "MusicGroup":
+          return new MusicGroup(kwds);
         case "Person":
           return new Person(kwds);
         case "Thing":
