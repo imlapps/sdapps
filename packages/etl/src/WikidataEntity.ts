@@ -1,5 +1,5 @@
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { MusicGroup, Person, Thing } from "@sdapps/models";
+import { MusicGroup, Organization, Person, Thing } from "@sdapps/models";
 import { owl, schema } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
@@ -86,7 +86,7 @@ export class WikidataEntity {
       const wikidataEntityType = async (
         wikidataEntity: WikidataEntity,
         visitingWikidataEntityIds: Set<string>,
-      ): Promise<"MusicGroup" | "Person" | "Thing"> => {
+      ): Promise<"MusicGroup" | "Organization" | "Person" | "Thing"> => {
         if (visitingWikidataEntityIds.has(wikidataEntity.id)) {
           return "Thing";
         }
@@ -96,6 +96,8 @@ export class WikidataEntity {
           switch (wikidataEntity.id) {
             case "Q2088357": // musical ensemble
               return "MusicGroup";
+            case "Q43229": // organization
+              return "Organization";
             case "Q5": // "human"
               return "Person";
             default:
@@ -182,9 +184,14 @@ export class WikidataEntity {
       switch (type) {
         case "MusicGroup":
           return new MusicGroup(kwds);
+        case "Organization":
+          return new Organization(kwds);
         case "Person":
           return new Person(kwds);
         case "Thing":
+          this.logger?.warn(
+            `unable to infer schema.org type for Wikidata entity ${this.id}, defaulting to Thing`,
+          );
           return new Thing(kwds);
       }
     });
