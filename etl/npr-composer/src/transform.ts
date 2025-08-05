@@ -113,7 +113,7 @@ async function* transformPlaylistJson({
       new Date(),
     );
 
-    let composer: (Organization | Person) | undefined;
+    const composers: (Organization | Person)[] = [];
     const artists: (MusicGroup | Person)[] = [];
     const artistNames = new Set<string>();
 
@@ -169,18 +169,13 @@ async function* transformPlaylistJson({
               `${wikidataEntity.id} (${wikidataArtists[i].name.extract()})`,
           )
           .join(", ");
-        logger.info(
+        logger.debug(
           `recognized Wikidata entities in "${qualifiedName}": ${wikidataEntitiesString}`,
         );
         artists.push(...wikidataArtists);
         yield* wikidataArtists;
         if (role === "composer") {
-          if (wikidataArtists.length > 1) {
-            logger.warn(
-              `more than one composer recognized in "${qualifiedName}": ${wikidataEntitiesString}`,
-            );
-          }
-          composer = wikidataArtists[0];
+          composers.push(...wikidataArtists);
         }
       } else {
         // logger.warn(
@@ -193,7 +188,7 @@ async function* transformPlaylistJson({
         artists.push(syntheticMusicGroup);
         yield syntheticMusicGroup;
         if (role === "composer") {
-          composer = syntheticMusicGroup;
+          composers.push(syntheticMusicGroup);
         }
       }
     }
@@ -224,17 +219,18 @@ async function* transformPlaylistJson({
       yield musicAlbum;
     }
 
-    const musicComposition = composer
-      ? new MusicComposition({
-          composer: composer
-            ? composer.type === "Person"
-              ? stubify(composer)
-              : stubify(composer)
-            : undefined,
-          identifier: Iris.musicComposition(playlistItemJson),
-          name: playlistItemJson.trackName,
-        })
-      : undefined;
+    const musicComposition =
+      composers.length > 0
+        ? new MusicComposition({
+            composers: composers.map((composer) =>
+              composer.type === "Person"
+                ? stubify(composer)
+                : stubify(composer),
+            ),
+            identifier: Iris.musicComposition(playlistItemJson),
+            name: playlistItemJson.trackName,
+          })
+        : undefined;
 
     const musicRecordingBroadcastEvent = new BroadcastEvent({
       endDate: new Date(startDate.getTime() + playlistItemJson._duration),

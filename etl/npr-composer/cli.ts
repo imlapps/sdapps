@@ -82,7 +82,7 @@ run(
           );
       const startDate = startDateString
         ? dates.parseISO(startDateString)
-        : dates.subDays(endDate, 30);
+        : dates.subDays(endDate, 3);
 
       await load(
         transform({

@@ -656,12 +656,11 @@ schema:MusicComposition
     shaclmate:name "MusicComposition" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:CreativeWork ;
-    sh:property schema:MusicComposition-composer, schema:MusicComposition-recordedAs .
+    sh:property schema:MusicComposition-composers, schema:MusicComposition-recordedAs .
 
-schema:MusicComposition-composer
+schema:MusicComposition-composers
     a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:name "composer" ;
+    sh:name "composers" ;
     sh:node sdapps:AgentStub ;
     sh:path schema:composer .
 
