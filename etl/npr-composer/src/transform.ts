@@ -138,7 +138,16 @@ async function* transformPlaylistJson({
 
       const wikidataArtists: (MusicGroup | Person)[] = [];
       for (const wikidataEntity of wikidataEntities) {
-        (await wikidataEntity.toThing())
+        (
+          await wikidataEntity.toThing({
+            alternateNames:
+              wikidataEntities.length === 1 &&
+              wikidataEntities[0].name.isJust() &&
+              wikidataEntities[0].name.unsafeCoerce() !== name
+                ? [name]
+                : undefined,
+          })
+        )
           .ifLeft((error) =>
             logger.warn(
               `error converting Wikidata entity ${wikidataEntity.id} to schema.org: ${error.message}`,

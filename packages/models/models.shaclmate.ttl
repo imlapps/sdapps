@@ -990,7 +990,13 @@ schema:Thing
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:Model ;
-    sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
+    sh:property sdapps:Thing-order, schema:Thing-alternateNames, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
+
+schema:Thing-alternateNames
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "alternateNames" ;
+    sh:path schema:alternateName .
 
 schema:Thing-description
     a sh:PropertyShape ;

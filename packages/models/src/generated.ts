@@ -100,34 +100,6 @@ export function $strictEquals<T extends bigint | boolean | number | string>(
   return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
-export function $maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return $EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
-
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return $EqualsResult.Equal;
-}
 export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
@@ -186,6 +158,34 @@ export function $arrayEquals<T>(
       });
     }
     // Else there was a right element equal to the left element, continue to the next left element
+  }
+
+  return $EqualsResult.Equal;
+}
+export function $maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return $EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
   }
 
   return $EqualsResult.Equal;
@@ -692,6 +692,7 @@ export class Thing extends Model {
     | "StructuredValue"
     | "TextObject"
     | "VoteAction" = "Thing";
+  readonly alternateNames: readonly string[];
   readonly description: purify.Maybe<string>;
   readonly disambiguatingDescription: purify.Maybe<string>;
   readonly localIdentifiers: readonly string[];
@@ -704,6 +705,7 @@ export class Thing extends Model {
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly alternateNames?: readonly string[];
       readonly description?: purify.Maybe<string> | string;
       readonly disambiguatingDescription?: purify.Maybe<string> | string;
       readonly localIdentifiers?: readonly string[];
@@ -722,6 +724,14 @@ export class Thing extends Model {
     } else if (typeof parameters.identifier === "undefined") {
     } else {
       this._identifier = parameters.identifier satisfies never;
+    }
+
+    if (typeof parameters.alternateNames === "undefined") {
+      this.alternateNames = [];
+    } else if (typeof parameters.alternateNames === "object") {
+      this.alternateNames = parameters.alternateNames;
+    } else {
+      this.alternateNames = parameters.alternateNames satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.description)) {
@@ -814,6 +824,18 @@ export class Thing extends Model {
   override equals(other: Thing): $EqualsResult {
     return super
       .equals(other)
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
+          this.alternateNames,
+          other.alternateNames,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "alternateNames",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
       .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.description,
@@ -1028,6 +1050,10 @@ export class Thing extends Model {
     },
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
+    for (const _item0 of this.alternateNames) {
+      _hasher.update(_item0);
+    }
+
     this.description.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -1090,6 +1116,7 @@ export class Thing extends Model {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
+        alternateNames: this.alternateNames.map((_item) => _item),
         description: this.description.map((_item) => _item).extract(),
         disambiguatingDescription: this.disambiguatingDescription
           .map((_item) => _item)
@@ -1131,6 +1158,10 @@ export class Thing extends Model {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/alternateName"),
+      this.alternateNames.map((_item) => _item),
+    );
     _resource.add(
       dataFactory.namedNode("http://schema.org/description"),
       this.description,
@@ -1176,6 +1207,7 @@ export namespace ThingStatic {
   export type Identifier = ModelStatic.Identifier;
   export const Identifier = ModelStatic.Identifier;
   export type Json = {
+    readonly alternateNames: readonly string[];
     readonly description: string | undefined;
     readonly disambiguatingDescription: string | undefined;
     readonly localIdentifiers: readonly string[];
@@ -1189,10 +1221,13 @@ export namespace ThingStatic {
     readonly url: { readonly "@id": string } | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      alternateNames: readonly string[];
       description: purify.Maybe<string>;
       disambiguatingDescription: purify.Maybe<string>;
       localIdentifiers: readonly string[];
@@ -1218,6 +1253,7 @@ export namespace ThingStatic {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
+    const alternateNames = _jsonObject["alternateNames"];
     const description = purify.Maybe.fromNullable(_jsonObject["description"]);
     const disambiguatingDescription = purify.Maybe.fromNullable(
       _jsonObject["disambiguatingDescription"],
@@ -1239,6 +1275,7 @@ export namespace ThingStatic {
     return purify.Either.of({
       ..._super0,
       identifier,
+      alternateNames,
       description,
       disambiguatingDescription,
       localIdentifiers,
@@ -1291,6 +1328,7 @@ export namespace ThingStatic {
     return {
       elements: [
         ModelStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/alternateNames`, type: "Control" },
         { scope: `${scopePrefix}/properties/description`, type: "Control" },
         {
           scope: `${scopePrefix}/properties/disambiguatingDescription`,
@@ -1360,6 +1398,10 @@ export namespace ThingStatic {
           "TextObject",
           "VoteAction",
         ]),
+        alternateNames: zod
+          .string()
+          .array()
+          .default(() => []),
         description: zod.string().optional(),
         disambiguatingDescription: zod.string().optional(),
         localIdentifiers: zod
@@ -1399,6 +1441,7 @@ export namespace ThingStatic {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      alternateNames: readonly string[];
       description: purify.Maybe<string>;
       disambiguatingDescription: purify.Maybe<string>;
       localIdentifiers: readonly string[];
@@ -1445,6 +1488,28 @@ export namespace ThingStatic {
     }
 
     const identifier: ThingStatic.Identifier = _resource.identifier;
+    const _alternateNamesEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly string[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/alternateName"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toString())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_alternateNamesEither.isLeft()) {
+      return _alternateNamesEither;
+    }
+
+    const alternateNames = _alternateNamesEither.unsafeCoerce();
     const _descriptionEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -1630,6 +1695,7 @@ export namespace ThingStatic {
     return purify.Either.of({
       ..._super0,
       identifier,
+      alternateNames,
       description,
       disambiguatingDescription,
       localIdentifiers,
@@ -1702,6 +1768,7 @@ export namespace ThingStatic {
 
   export const rdfProperties = [
     ...ModelStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/alternateName") },
     { path: dataFactory.namedNode("http://schema.org/description") },
     {
       path: dataFactory.namedNode(
@@ -2267,7 +2334,9 @@ export namespace Role {
     readonly startDate: string | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3014,7 +3083,9 @@ export namespace CreativeWorkStatic {
     readonly publication: readonly PublicationEventStub.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3807,7 +3878,9 @@ export namespace MediaObjectStatic {
     readonly width: QuantitativeValue.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4570,7 +4643,9 @@ export namespace GenderType {
 
   export type Json = EnumerationStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -5112,7 +5187,9 @@ export namespace EventStatic {
     readonly superEvent: EventStubStatic.Json | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5587,19 +5664,21 @@ export class PublicationEvent extends Event {
   }
 
   override equals(other: PublicationEvent): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.publishedOn,
-        other.publishedOn,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "publishedOn",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.publishedOn,
+          other.publishedOn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "publishedOn",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -5679,7 +5758,9 @@ export namespace PublicationEventStatic {
     readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
   } & EventStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6287,7 +6368,9 @@ export namespace ActionStatic {
     readonly startTime: string | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7338,7 +7421,9 @@ export namespace ThingStubStatic {
     readonly order: number | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8454,18 +8539,20 @@ export class TextObject extends MediaObject {
   }
 
   override equals(other: TextObject): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.uriSpace,
-        other.uriSpace,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "uriSpace",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.uriSpace,
+          other.uriSpace,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "uriSpace",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -8543,7 +8630,9 @@ export namespace TextObject {
     readonly uriSpace: string | undefined;
   } & MediaObjectStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10804,19 +10893,21 @@ export class RadioSeries extends CreativeWorkSeries {
   }
 
   override equals(other: RadioSeries): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.episodes,
-        other.episodes,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "episodes",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.episodes,
+          other.episodes,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "episodes",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -10897,7 +10988,9 @@ export namespace RadioSeries {
     readonly episodes: readonly RadioEpisodeStub.Json[];
   } & CreativeWorkSeriesStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11486,19 +11579,21 @@ export class Episode extends CreativeWork {
   }
 
   override equals(other: Episode): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfSeries,
-        other.partOfSeries,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfSeries",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfSeries,
+          other.partOfSeries,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfSeries",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -11580,7 +11675,9 @@ export namespace EpisodeStatic {
     readonly partOfSeries: CreativeWorkSeriesStubStatic.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12344,18 +12441,20 @@ export class BroadcastService extends Service {
   }
 
   override equals(other: BroadcastService): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.callSign,
-        other.callSign,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "callSign",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.callSign,
+          other.callSign,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "callSign",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -12433,7 +12532,9 @@ export namespace BroadcastServiceStatic {
     readonly callSign: string | undefined;
   } & ServiceStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13819,7 +13920,9 @@ export namespace QuantitativeValue {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14365,7 +14468,9 @@ export namespace QuantitativeValueStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14718,7 +14823,9 @@ export namespace EventStubStatic {
     readonly superEvent: { readonly "@id": string } | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15943,7 +16050,9 @@ export namespace Person {
     readonly performerIn: readonly EventStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16626,7 +16735,9 @@ export namespace OrganizationStatic {
     readonly subOrganizations: readonly OrganizationStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17129,19 +17240,21 @@ export class Order extends Intangible {
   }
 
   override equals(other: Order): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfInvoice,
-        other.partOfInvoice,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfInvoice",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfInvoice,
+          other.partOfInvoice,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfInvoice",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -17223,7 +17336,9 @@ export namespace Order {
     readonly partOfInvoice: InvoiceStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17922,7 +18037,9 @@ export namespace MusicRecording {
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18643,7 +18760,9 @@ export namespace MusicPlaylist {
     readonly tracks: readonly (MusicRecordingStub.Json | ItemListStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19950,7 +20069,9 @@ export namespace MusicComposition {
     readonly recordedAs: readonly MusicRecordingStub.Json[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20505,7 +20626,9 @@ export namespace MusicAlbum {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21032,7 +21155,9 @@ export namespace MonetaryAmount {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21355,7 +21480,9 @@ export namespace MonetaryAmountStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21560,18 +21687,20 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
-        this.sender,
-        other.sender,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "sender",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
+          this.sender,
+          other.sender,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "sender",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -21653,7 +21782,9 @@ export namespace Message {
       | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22177,7 +22308,9 @@ export namespace ListItem {
     readonly position: (number | string) | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22556,7 +22689,9 @@ export namespace ListItemStub {
     readonly position: (number | string) | undefined;
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22780,19 +22915,21 @@ export class ItemList extends Intangible {
   }
 
   override equals(other: ItemList): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.itemListElements,
-        other.itemListElements,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "itemListElements",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -22873,7 +23010,9 @@ export namespace ItemList {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23069,19 +23208,21 @@ export class ItemListStub extends IntangibleStub {
   }
 
   override equals(other: ItemListStub): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.itemListElements,
-        other.itemListElements,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "itemListElements",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -23162,7 +23303,9 @@ export namespace ItemListStub {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23566,7 +23709,9 @@ export namespace Invoice {
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24050,18 +24195,20 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.jobTitle,
-        other.jobTitle,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "jobTitle",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -24139,7 +24286,9 @@ export namespace PersonStub {
     readonly jobTitle: string | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;

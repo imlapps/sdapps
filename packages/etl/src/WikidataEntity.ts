@@ -81,7 +81,9 @@ export class WikidataEntity {
     return this.id;
   }
 
-  async toThing(): Promise<Either<Error, Thing>> {
+  async toThing(parameters?: { alternateNames?: readonly string[] }): Promise<
+    Either<Error, Thing>
+  > {
     return EitherAsync(async ({ liftEither }) => {
       const wikidataEntityType = async (
         wikidataEntity: WikidataEntity,
@@ -176,6 +178,7 @@ export class WikidataEntity {
 
       const type = await wikidataEntityType(this, new Set());
       const kwds: ConstructorParameters<typeof Thing>[0] = {
+        alternateNames: parameters?.alternateNames,
         description: this.description,
         identifier: this.iri,
         name: this.name,
