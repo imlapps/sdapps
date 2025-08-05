@@ -25,7 +25,10 @@ radio:wmht a schema:RadioBroadcastService;
     schema:name "Lang, Lang".
 wd:Q255 a schema:Person;
     schema:name "Ludwig van Beethoven";
-    schema:description "German composer (1770–1827)".
+    schema:description "German composer (1770–1827)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Beethoven.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Beethoven.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Beethoven.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/5ff9f6551ccc1946c3b252a0b94dee127dde57307f46f0e376dc029c3a40ba34> a schema:MusicGroup;
     schema:name "Christoph Eschenbach (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/22fe9913a15a6cd5d81b85aca4c3f69f8778451497223f19363e5f12f5b715f5> a schema:MusicGroup;
@@ -62,7 +65,10 @@ wd:Q255 a schema:Person;
     schema:name "Lara Downes, piano".
 wd:Q1894804 a schema:Person;
     schema:name "Margaret Bonds";
-    schema:description "American composer and pianist (1913–1917)".
+    schema:description "American composer and pianist (1913–1917)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Margaret%20Bonds.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Margaret%20Bonds.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Margaret%20Bonds.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/e6f361bfc74158a4091986f7bc8fc209b7436317e639d1289cf674dcfa3e9a22> a schema:MusicGroup;
     schema:name "Lara Downes, piano (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/7c7d71b2f92047df017bd257ec8750ce10ceb64f17aa4540c09a95b0454e26de> a schema:MusicAlbum;
@@ -92,7 +98,10 @@ wd:Q1894804 a schema:Person;
 wd:Q80135 a schema:Person;
     schema:name "Dmitri Shostakovich";
     schema:description "Soviet composer and pianist (1906-1975)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Dmitri%20Shostakovich%20credit%20Deutsche%20Fotothek%20adjusted.jpg>;
     schema:alternateName "D'mitri Shostakovich".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Dmitri%20Shostakovich%20credit%20Deutsche%20Fotothek%20adjusted.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Dmitri%20Shostakovich%20credit%20Deutsche%20Fotothek%20adjusted.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/4979ca5fe30288edd1a189d9bc033c3616c594b622c974a2ed47b37b2d80407d> a schema:MusicGroup;
     schema:name "Leonard Bernstein (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/46fc2a87718ca55c83857388332f71c44feec5d209ce8e83877859d1dad499de> a schema:MusicAlbum;
@@ -121,7 +130,10 @@ wd:Q80135 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f10e".
 wd:Q212692 a schema:Person;
     schema:name "Arthur Sullivan";
-    schema:description "English composer of the Gilbert & Sullivan duo (1842-1900)".
+    schema:description "English composer of the Gilbert & Sullivan duo (1842-1900)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Sullivan%201898cr.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Sullivan%201898cr.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Sullivan%201898cr.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d802a89676d66b225392ccfda123f6c64169f76789cd3b84328f3837165e792f> a schema:MusicGroup;
     schema:name "Sir Neville Marriner (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/f776b5c62abec1e93c61863bb851bd368fafe6c1d92ce6b1233638efec29ba07> a schema:MusicAlbum;
@@ -153,7 +165,10 @@ wd:Q212692 a schema:Person;
 wd:Q1339 a schema:Person;
     schema:name "Johann Sebastian Bach";
     schema:description "German composer (1685–1750)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Sebastian%20Bach.png>;
     schema:alternateName "Johann Sebastian Bach (1685-1750)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Sebastian%20Bach.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Sebastian%20Bach.png>.
 <http://purl.org/sdapps/instance/radio/music-group/ffb74e20e719ef2b87e7ee81dfe2a5b9a55403a1347d9b5f13df57b8b1ef5773> a schema:MusicGroup;
     schema:name "Andras Schiff (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/c59d585de362b89c14fac754ce455a246270a91a933fc1556f86ae90b2bc76fc> a schema:MusicGroup;
@@ -186,7 +201,10 @@ wd:Q1339 a schema:Person;
     schema:name "Maria Duenas, violin".
 wd:Q57226 a schema:Person;
     schema:name "Louis Spohr";
-    schema:description "German composer, violinist and conductor".
+    schema:description "German composer, violinist and conductor";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Ludwig%20Spohr%20portrait.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Ludwig%20Spohr%20portrait.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Ludwig%20Spohr%20portrait.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/7d2c51fecbe5a9da0d040fb7c6b759b5a7075f75be1dce5feafe744830a4a795> a schema:MusicGroup;
     schema:name "Manfred Honeck (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/b6d66ed3e53476114ae59d2cb1d144d2dc885767f60caf9eb845142a15d5fc9b> a schema:MusicGroup;
@@ -220,7 +238,10 @@ wd:Q57226 a schema:Person;
 wd:Q150445 a schema:Person;
     schema:name "Camille Saint-Saëns";
     schema:description "French composer, organist, conductor and pianist (1835–1921)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Camille%20Saint-Saens%20b%20Meurisse%201921.jpg>;
     schema:alternateName "Camille Saint-Saens".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Camille%20Saint-Saens%20b%20Meurisse%201921.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Camille%20Saint-Saens%20b%20Meurisse%201921.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/12378b7f7e90120c935e31edb5459ed431b272680833c27d3554da3609553715> a schema:MusicGroup;
     schema:name "Serge Baudo (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/1969d894f809405fc0ed9004869ecef572ba892db05af3e4512f56e5db6ebd2f> a schema:MusicGroup;
@@ -253,7 +274,10 @@ wd:Q150445 a schema:Person;
     schema:name "Jarrett, Keith".
 wd:Q76428 a schema:Person;
     schema:name "Carl Philipp Emanuel Bach";
-    schema:description "German composer (1714–1788)".
+    schema:description "German composer (1714–1788)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Carl%20Philipp%20Emanuel%20Bach.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Carl%20Philipp%20Emanuel%20Bach.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Carl%20Philipp%20Emanuel%20Bach.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/8afdf15387dd5309ff4b36865864970e01f575ed404c8acd0e6ec583859557c7> a schema:MusicGroup;
     schema:name "Jarrett, Keith (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/00841655f92bf0254a8c3bb92fe5cf72987f6c65b5911f4ce81541c6d0100cd3> a schema:MusicAlbum;
@@ -282,7 +306,12 @@ wd:Q76428 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f115".
 wd:Q13894 a schema:Person;
     schema:name "Richard Strauss";
-    schema:description "German composer and orchestra director (1864–1949)".
+    schema:description "German composer and orchestra director (1864–1949)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Postcard-1910%20Strauss%20Richard.jpg>, <http://commons.wikimedia.org/wiki/Special:FilePath/Strauss3.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Postcard-1910%20Strauss%20Richard.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Postcard-1910%20Strauss%20Richard.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Strauss3.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Strauss3.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d75d1aadbc9e78614d55bf3c4db5afa858f5b5e2b5cd94eb606f48671b56eaf8> a schema:MusicGroup;
     schema:name "Andris Nelsons (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/1753da2f3a11867e9bba0a659ea834801ba8d4ea94b247b8a6e9688c1806d38d> a schema:MusicAlbum;
@@ -313,7 +342,10 @@ wd:Q13894 a schema:Person;
     schema:name "Krystian Zimerman, piano".
 wd:Q7294 a schema:Person;
     schema:name "Johannes Brahms";
-    schema:description "German composer (1833–1897)".
+    schema:description "German composer (1833–1897)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/JohannesBrahms.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/JohannesBrahms.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/JohannesBrahms.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/647eee3ca9fd1de8227d99bff0200a7383299b6d42974d18b9906ec269cb53a6> a schema:MusicGroup;
     schema:name "Maria Nowak, violin (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/07ffb5bd5e578d7ab01517680e4992f43ee1ae17e54fb812080d6c7b07621e66> a schema:MusicGroup;
@@ -345,7 +377,10 @@ wd:Q7294 a schema:Person;
 wd:Q7349 a schema:Person;
     schema:name "Joseph Haydn";
     schema:description "Austrian composer (1732–1809)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Haydn%2C%20m%C3%A5lning%20av%20Thomas%20Hardy%20fr%C3%A5n%201792.jpg>;
     schema:alternateName "Franz Joseph Haydn".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Haydn%2C%20m%C3%A5lning%20av%20Thomas%20Hardy%20fr%C3%A5n%201792.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Haydn%2C%20m%C3%A5lning%20av%20Thomas%20Hardy%20fr%C3%A5n%201792.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/18773b0c41c64e2654f943f15dc8e1ccd3c55788220b2c815ef478f66848eb24> a schema:MusicGroup;
     schema:name "Wordsworth, Barry (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/b1da4fa1062ca33ba99bd48f811ece45ceb812266f404a6936daa01c2951f9a1> a schema:MusicAlbum;
@@ -403,7 +438,10 @@ wd:Q7349 a schema:Person;
 wd:Q7315 a schema:Person;
     schema:name "Pyotr Ilyich Tchaikovsky";
     schema:description "Russian composer (1840–1893)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Portr%C3%A4t%20des%20Komponisten%20Pjotr%20I.%20Tschaikowski%20%281840-1893%29.jpg>;
     schema:alternateName "Peter Ilyich Tchaikovsky".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Portr%C3%A4t%20des%20Komponisten%20Pjotr%20I.%20Tschaikowski%20%281840-1893%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Portr%C3%A4t%20des%20Komponisten%20Pjotr%20I.%20Tschaikowski%20%281840-1893%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/6f365d2e2c98c6ae48b796bc86a85c9f0893d151fc323e81898e84629721dc66> a schema:MusicGroup;
     schema:name "Seiji Ozawa (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/c76f8a3117373c7c358c54590ccd3321bf00827809e33f12331112567f469a68> a schema:MusicAlbum;
@@ -463,7 +501,10 @@ wd:Q7315 a schema:Person;
 wd:Q7298 a schema:Person;
     schema:name "Antonín Dvořák";
     schema:description "Czech composer (1841–1904)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Dvorak.jpg>;
     schema:alternateName "Antonin Dvorak".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Dvorak.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Dvorak.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/12eb982a188865e365e6f12f566e4d0bc75c7c5cabbf6a32e4cc29cedc4661c6> a schema:MusicGroup;
     schema:name "Raphael Trio (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/9e66b4b79aa8c40c01ae30da3b78f18dec9963dfe40c9873f7a793a9767ce160> a schema:MusicAlbum;
@@ -514,7 +555,10 @@ wd:Q7298 a schema:Person;
 wd:Q1340 a schema:Person;
     schema:name "Antonio Vivaldi";
     schema:description "Italian composer and violinist (1678-1741)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Vivaldi.jpg>;
     schema:alternateName "Antonio Vivaldi (1678-1741)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Vivaldi.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Vivaldi.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/094dfde975593adcadaa3f49837c1a81f74ade581e908cac93a66af68312e101> a schema:MusicGroup;
     schema:name "Trevor Pinnock (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/e4cc33e02d5523657cdfe0eac31e3920047aa6af5b9840f2030ec1dd604829cd> a schema:MusicAlbum;
@@ -565,7 +609,10 @@ wd:Q1340 a schema:Person;
 wd:Q83309 a schema:Person;
     schema:name "Johann Strauss II";
     schema:description "Austrian composer (1825-1899)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Strauss%20II%20%283%29.jpg>;
     schema:alternateName "Johann Strauss, Jr.".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Strauss%20II%20%283%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Strauss%20II%20%283%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/a161f7c9450a2526d481e92f16f0049be2e1ce073430a5cc3074df8f5153a030> a schema:MusicGroup;
     schema:name "Franz Welser-Most (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/270a3e1668ad997d4bbce893b2a79e973bb43456bdf8207c3f5aa5642393c789> a schema:MusicAlbum;
@@ -596,7 +643,10 @@ wd:Q83309 a schema:Person;
     schema:name "Tianwa Yang, violin".
 wd:Q377558 a schema:Person;
     schema:name "Mario Castelnuovo-Tedesco";
-    schema:description "Italian composer (1895–1968)".
+    schema:description "Italian composer (1895–1968)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Castelnuovo-Tedesco.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Castelnuovo-Tedesco.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Castelnuovo-Tedesco.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/9f8a666b1847de6ac8a4c92a66e4c15593867bd53badc50566a7614624f33e90> a schema:MusicGroup;
     schema:name "Pieter-Jelle de Boer (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/b97665e9a7000999bb085bda555cc7383188c800c9d2f747e1bc03a38e543a79> a schema:MusicGroup;
@@ -628,7 +678,10 @@ wd:Q377558 a schema:Person;
 wd:Q75854 a schema:Person;
     schema:name "Georg Philipp Telemann";
     schema:description "German composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Telemann.jpg>;
     schema:alternateName "Georg Philipp Telemann (1681-1767)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Telemann.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Telemann.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/7287efe30eba3bb6d0d1f11465e91b1e59917a736fbb66f89b598649eec7d27c> a schema:MusicGroup;
     schema:name "Goebel, Reinhard (conductor)".
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fd1a/playlist/track/688b8e7b6c98f8b3a827f12e/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -731,7 +784,10 @@ wd:Q366756 a schema:Person;
     schema:name "Hilary Hahn, violin".
 wd:Q714325 a schema:Person;
     schema:name "Max Richter";
-    schema:description "British composer (born 1966)".
+    schema:description "British composer (born 1966)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Max-Richter-3%20%28cropped%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Max-Richter-3%20%28cropped%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Max-Richter-3%20%28cropped%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d04cb3af2e3c4c4810751bb88bfcb71148d0efbab8bc1c44489eb5e9a3f39c42> a schema:MusicGroup;
     schema:name "Cory Smythe, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/4d4bbdd3c95029454374d0c67add16d80d640a625f7d6be7f3dd2cfe8a73a9c6> a schema:MusicGroup;
@@ -762,7 +818,10 @@ wd:Q714325 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f15f".
 wd:Q107277 a schema:Person;
     schema:name "Wilhelm Friedemann Bach";
-    schema:description "German composer, organist, harpsichordist (1710-1784)".
+    schema:description "German composer, organist, harpsichordist (1710-1784)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Wilhelm%20Friedeman%20Bach.png>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Wilhelm%20Friedeman%20Bach.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Wilhelm%20Friedeman%20Bach.png>.
 <http://purl.org/sdapps/instance/radio/music-group/68e57474d226f4a5146aee23e2a1874fff590177e5acb67c517c593d29de4afc> a schema:MusicGroup;
     schema:name "Jean Lamon (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/9112cfa51ad870de178ae9c0a11c93ed7ee740794c144b8d0cf329c30aa433a1> a schema:MusicAlbum;
@@ -793,7 +852,10 @@ wd:Q107277 a schema:Person;
     schema:name "James Galway, flute".
 wd:Q296828 a schema:Person;
     schema:name "Jacques Ibert";
-    schema:description "French composer".
+    schema:description "French composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Ibert.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Ibert.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Ibert.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d845792d5f0a7901ad24a279c5c2316725010929da1144c10ea27c7a35b43170> a schema:MusicGroup;
     schema:name "Phillip Moll, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/d69b760afa95934d88d1c33c5479a5844edd2c793a8482f33a1f3b95533ad3e5> a schema:MusicGroup;
@@ -826,7 +888,10 @@ wd:Q296828 a schema:Person;
     schema:name "Eroica Quartet".
 wd:Q46096 a schema:Person;
     schema:name "Felix Mendelssohn";
-    schema:description "German composer, pianist, organist and conductor of Jewish descent (1809–1847)".
+    schema:description "German composer, pianist, organist and conductor of Jewish descent (1809–1847)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Felix%20Mendelssohn%20Bartholdy.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Felix%20Mendelssohn%20Bartholdy.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Felix%20Mendelssohn%20Bartholdy.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/f1c711c551e591cd7eb688c12b4870ea6d105700de7bd142d63b98abdcc2b019> a schema:MusicGroup;
     schema:name "Eroica Quartet (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/418300400c235ef773d7080f44729b9e3dc893ba5562875fff85c07474461716> a schema:MusicAlbum;
@@ -918,7 +983,12 @@ wd:Q16728141 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f176".
 wd:Q164475 a schema:Person;
     schema:name "Arcangelo Corelli";
-    schema:description "Italian violinist and composer".
+    schema:description "Italian violinist and composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Arcangelo%20Corelli%2C%20portrait%20by%20Hugh%20Howard%20%281697%29%20-%202.jpg>, <http://commons.wikimedia.org/wiki/Special:FilePath/Arcangelo%20Corelli%202.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Arcangelo%20Corelli%2C%20portrait%20by%20Hugh%20Howard%20%281697%29%20-%202.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Arcangelo%20Corelli%2C%20portrait%20by%20Hugh%20Howard%20%281697%29%20-%202.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Arcangelo%20Corelli%202.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Arcangelo%20Corelli%202.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/0b55ed188d4ebfd053b0b4fe7316c2641f81c3f92a2719a7f5dbc6afff5c04a8> a schema:MusicAlbum;
     schema:name "Corelli: Triosonaten";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/094dfde975593adcadaa3f49837c1a81f74ade581e908cac93a66af68312e101>, wd:Q164475.
@@ -946,7 +1016,10 @@ wd:Q164475 a schema:Person;
 wd:Q184933 a schema:Person;
     schema:name "Leoš Janáček";
     schema:description "Czech composer (1854–1928)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Leo%C5%A1%20Jan%C3%A1%C4%8Dek.jpg>;
     schema:alternateName "Leos Janacek".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Leo%C5%A1%20Jan%C3%A1%C4%8Dek.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Leo%C5%A1%20Jan%C3%A1%C4%8Dek.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/37decf5b4695ea4b8e03855e3b8f6fd80a845de158c22936006bc2ed680458fd> a schema:MusicGroup;
     schema:name "Francois Huybrechts (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/a535d5b645b6abbe230acbe37a45e1e2f239f9b2b4055c32f0d56dc783794c87> a schema:MusicAlbum;
@@ -975,7 +1048,10 @@ wd:Q184933 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f17a".
 wd:Q124772 a schema:Person;
     schema:name "Pietro Locatelli";
-    schema:description "Italian Baroque composer and violinist (1695-1764)".
+    schema:description "Italian Baroque composer and violinist (1695-1764)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Portret%20van%20Pietro%20Antonio%20Locatelli%2C%20RP-P-1910-1512.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Portret%20van%20Pietro%20Antonio%20Locatelli%2C%20RP-P-1910-1512.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Portret%20van%20Pietro%20Antonio%20Locatelli%2C%20RP-P-1910-1512.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/4da21a8924d2a1fbfe92d209ebef6e38098fe6740e9efccfe5409f7ffb847ce5> a schema:MusicAlbum;
     schema:name "Locatelli Concerti Grossi Concerto Koln";
     schema:byArtist wd:Q124772.
@@ -1028,7 +1104,10 @@ wd:Q124772 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f17e".
 wd:Q7304 a schema:Person;
     schema:name "Gustav Mahler";
-    schema:description "Austrian late-Romantic composer (1860–1911)".
+    schema:description "Austrian late-Romantic composer (1860–1911)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Photo%20of%20Gustav%20Mahler%20by%20Moritz%20N%C3%A4hr%2001.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Photo%20of%20Gustav%20Mahler%20by%20Moritz%20N%C3%A4hr%2001.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Photo%20of%20Gustav%20Mahler%20by%20Moritz%20N%C3%A4hr%2001.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/8df2dc3b2179e01e26836aa4a7c304caf385b11430bb3427bbafbc28b866a88d> a schema:MusicGroup;
     schema:name "Riccardo Chailly (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/e429195ec092a036a45be6f2805d121d1c5e85755979fe303173074511787ae1> a schema:MusicAlbum;
@@ -1081,7 +1160,10 @@ wd:Q7304 a schema:Person;
     schema:name "Bruce Nolan, clarinet".
 wd:Q254 a schema:Person;
     schema:name "Wolfgang Amadeus Mozart";
-    schema:description "Austrian composer of the Classical period (1756–1791)".
+    schema:description "Austrian composer of the Classical period (1756–1791)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Wolfgang-amadeus-mozart%201.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Wolfgang-amadeus-mozart%201.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Wolfgang-amadeus-mozart%201.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/cbbe14f7fe710caa000d926109b3e6411484358b53cd7bfcf9b0f8d1dce3a64c> a schema:MusicGroup;
     schema:name "Robert Spillman, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/e60d59aab313e045de1540d8a6b371cddf9b03c14a4be47904790d8a705b846e> a schema:MusicGroup;
@@ -1173,7 +1255,10 @@ wd:Q440156 a schema:Person;
     schema:name "Yo Yo Ma-Cello".
 wd:Q189766 a schema:Person;
     schema:name "Luigi Boccherini";
-    schema:description "Italian composer and cellist (1743–1805)".
+    schema:description "Italian composer and cellist (1743–1805)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/LBoccherini.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/LBoccherini.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/LBoccherini.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/a06d07f9a9899a27995597c8bd09dc26aa9089f25bd1bbffb8943e4e6f7bd061> a schema:MusicGroup;
     schema:name "Pinchas Zukerman (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/835f66cbff52b79bdccaf22d19745bd84bf260c854411d33da5540315f0a8578> a schema:MusicGroup;
@@ -1230,7 +1315,10 @@ wd:Q189766 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f191".
 wd:Q1275145 a schema:Person;
     schema:name "Victor Herbert";
-    schema:description "American composer (1859–1924)".
+    schema:description "American composer (1859–1924)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Victor%20Herbert.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Victor%20Herbert.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Victor%20Herbert.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/13a548098d129b7a2cc5070f8a11682eae2067aac1eecba526267244cd2569ea> a schema:MusicGroup;
     schema:name "Keith Brion (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/bb7ff9724f04834539d82d88088e784b73c81e3c0b598bb90eeeebabbdb80157> a schema:MusicAlbum;
@@ -1262,7 +1350,10 @@ wd:Q1275145 a schema:Person;
 wd:Q185812 a schema:Person;
     schema:name "Isaac Albéniz";
     schema:description "Spanish composer (1860-1909)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Isaac%20Alb%C3%A9niz%2C%20de%20Napoleon.jpg>;
     schema:alternateName "Isaac Albeniz".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Isaac%20Alb%C3%A9niz%2C%20de%20Napoleon.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Isaac%20Alb%C3%A9niz%2C%20de%20Napoleon.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/2eea51b42c3769bb4e1d0fa90d8da059c16dfb5c9b585ad9d2d298659c16712a> a schema:MusicGroup;
     schema:name "Helene Grimaud, piano (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/fa2b5a11a81322c5b4fabdb427f122c7524f6fa614443e507503347d6747b43c> a schema:MusicAlbum;
@@ -1291,7 +1382,10 @@ wd:Q185812 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f197".
 wd:Q105487 a schema:Person;
     schema:name "Maurice Jarre";
-    schema:description "French composer and conductor (1924-2009)".
+    schema:description "French composer and conductor (1924-2009)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Identite-MauriceJarre-1950-Sacem.png>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Identite-MauriceJarre-1950-Sacem.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Identite-MauriceJarre-1950-Sacem.png>.
 <http://purl.org/sdapps/instance/radio/music-group/ff0e73d7fbf0fbe79ab674a415fb89b4e0d7dd652148680f5db1ff199c2d16e1> a schema:MusicGroup;
     schema:name "John Williams (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/989a4dfa206196540f4999f6580f128402e9a9e016be4f6ce35fd6820aa70556> a schema:MusicAlbum;
@@ -1322,7 +1416,10 @@ wd:Q105487 a schema:Person;
     schema:name "Frank Huang, violin".
 wd:Q216870 a schema:Person;
     schema:name "Samuel Barber";
-    schema:description "American composer (1910-1981)".
+    schema:description "American composer (1910-1981)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20Barber.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20Barber.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20Barber.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/a03d61dd02d11eb58ae7da701721466daeead7476e58ff7e77100136792160a7> a schema:MusicGroup;
     schema:name "Juraj Valcuha (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/91e9817410d67aa823af40dcf3cc4f07defd6de6a2b8d71a015d15e00d3121d5> a schema:MusicGroup;
@@ -1404,7 +1501,10 @@ wd:Q216870 a schema:Person;
     schema:name "Nash Ensemble".
 wd:Q191408 a schema:Person;
     schema:name "Francis Poulenc";
-    schema:description "French composer and pianist (1899–1963)".
+    schema:description "French composer and pianist (1899–1963)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Francis%20Poulenc%20and%20Wanda%20Landowska%20%28cropped%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Francis%20Poulenc%20and%20Wanda%20Landowska%20%28cropped%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Francis%20Poulenc%20and%20Wanda%20Landowska%20%28cropped%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/2b65d421eec0b1c8ea3cbc20cdab55339ce07c9ca6b13f55ac1d1db35d15ad5c> a schema:MusicGroup;
     schema:name "Nash Ensemble (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/d0a40b922b908794dbdf8c5f54556d2ccc6c8b0b4be90b798c2dd8156eaf0c1f> a schema:MusicAlbum;
@@ -1435,7 +1535,10 @@ wd:Q191408 a schema:Person;
     schema:name "Mstislav Rostropovich, cello".
 wd:Q7312 a schema:Person;
     schema:name "Franz Schubert";
-    schema:description "Austrian composer (1797–1828)".
+    schema:description "Austrian composer (1797–1828)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Franz%20Schubert%20by%20Wilhelm%20August%20Rieder%201875%20larger%20version.png>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Franz%20Schubert%20by%20Wilhelm%20August%20Rieder%201875%20larger%20version.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Franz%20Schubert%20by%20Wilhelm%20August%20Rieder%201875%20larger%20version.png>.
 <http://purl.org/sdapps/instance/radio/music-group/0b237961dd76da8c64c25389ce1dffbbe8b2804b0dfa5b7cba3effec7a14bdf4> a schema:MusicGroup;
     schema:name "Mstislav Rostropovich, cello (soloists)".
 <https://api.composer.nprstations.org/v1/episode/66af163eb01ef67f944e9a3d/playlist/track/688b8e7b6c98f8b3a827f1ba/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -1460,7 +1563,12 @@ wd:Q7312 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f1ba".
 wd:Q192185 a schema:Person;
     schema:name "Aaron Copland";
-    schema:description "American composer, composition teacher, writer, and conductor (1900-1990)".
+    schema:description "American composer, composition teacher, writer, and conductor (1900-1990)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Aaron%20Copland%20in%201962.jpg>, <http://commons.wikimedia.org/wiki/Special:FilePath/Aaron%20Copland%201970.JPG>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Aaron%20Copland%20in%201962.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Aaron%20Copland%20in%201962.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Aaron%20Copland%201970.JPG> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Aaron%20Copland%201970.JPG>.
 <http://purl.org/sdapps/instance/radio/music-group/7e30e387c71fcd00a738839f13e64336bcaa63be7303767b8ded4701947f6316> a schema:MusicGroup;
     schema:name "Aaron Copland (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/445a5cd7988a6876065063143ce48a569bd89a4a655c48b8d76e339fc33bcedf> a schema:MusicAlbum;
@@ -1501,7 +1609,10 @@ wd:Q192185 a schema:Person;
 wd:Q1145 a schema:Person;
     schema:name "Jean-Philippe Rameau";
     schema:description "French composer and music theorist (1683–1764)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Attribu%C3%A9%20%C3%A0%20Joseph%20Aved%2C%20Portrait%20de%20Jean-Philippe%20Rameau%20%28vers%201728%29%20-%20001.jpg>;
     schema:alternateName "Jean Philippe Rameau", "Jean-Philippe Rameau (1683-1764)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Attribu%C3%A9%20%C3%A0%20Joseph%20Aved%2C%20Portrait%20de%20Jean-Philippe%20Rameau%20%28vers%201728%29%20-%20001.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Attribu%C3%A9%20%C3%A0%20Joseph%20Aved%2C%20Portrait%20de%20Jean-Philippe%20Rameau%20%28vers%201728%29%20-%20001.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/0428836279b14b3946481f7e37f52835bd7aecc6a2b5118b3893aafa4dbb25e5> a schema:MusicGroup;
     schema:name "Sigiswald Kuijken (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/a51bd3ee2751f7df6f924cffa119c2c6ea0b5748b86a7a9f10fa36a04dea3134> a schema:MusicGroup;
@@ -1648,7 +1759,10 @@ wd:Q502321 a schema:Person;
 wd:Q7302 a schema:Person;
     schema:name "George Frideric Handel";
     schema:description "German-British Baroque composer (1685–1759)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/George%20Frideric%20Handel%20by%20Balthasar%20Denner.jpg>;
     schema:alternateName "George Frideric Handel (1685-1759)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/George%20Frideric%20Handel%20by%20Balthasar%20Denner.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/George%20Frideric%20Handel%20by%20Balthasar%20Denner.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d86df59014accc7750bc811a8dc9e07441ddf3b887862cb793c94e0a258ce3d0> a schema:MusicGroup;
     schema:name "Robert Salter (conductor)".
 <https://api.composer.nprstations.org/v1/episode/66af163eb01ef67f944e9a35/playlist/track/688cee846c98f8b3a8c44635/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -1740,7 +1854,12 @@ wd:Q7302 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f14d".
 wd:Q45682 a schema:Person;
     schema:name "Jean Sibelius";
-    schema:description "Finnish composer (1865–1957)".
+    schema:description "Finnish composer (1865–1957)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Sibelius%20in%201890%20%28cropped%29.jpg>, <http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Sibelius%201939.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Sibelius%20in%201890%20%28cropped%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Sibelius%20in%201890%20%28cropped%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Sibelius%201939.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Sibelius%201939.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/56596310fd3b36f2ced26683274582de4ac06c33582d5edf965c5e700121ff3c> a schema:MusicGroup;
     schema:name "Paavo Berglund (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/dd0967e8a46d0aa8e6d8959361e47b3f5188732a06b31443b9f68b48ca1916be> a schema:MusicAlbum;
@@ -1829,7 +1948,10 @@ wd:Q45682 a schema:Person;
     schema:name "Ola Gjeilo, piano".
 wd:Q1184931 a schema:Person;
     schema:name "Ola Gjeilo";
-    schema:description "Norwegian composer and pianist".
+    schema:description "Norwegian composer and pianist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Ola%20Gjeilo%20400px.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Ola%20Gjeilo%20400px.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Ola%20Gjeilo%20400px.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/b6798dc6ecc2b970ac11af3d2cd789b6fb1a846d339df41e563bb1a25bdc21e3> a schema:MusicGroup;
     schema:name "Rupert Gough (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/7ae3abf770c347e7f4995e1b07629118bb5c7f1cb8598eae6b9e895d49cb36f1> a schema:MusicGroup;
@@ -1862,7 +1984,10 @@ wd:Q1184931 a schema:Person;
     schema:name "Simon Mulligan, Piano".
 wd:Q733299 a schema:Person;
     schema:name "Ned Rorem";
-    schema:description "American composer and diarist (1923–2022)".
+    schema:description "American composer and diarist (1923–2022)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Ned-Rorem-1968.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Ned-Rorem-1968.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Ned-Rorem-1968.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/b5c6d01f0b799062fbd8070f7acc91e830b012cc2721e74cefe5509118042efa> a schema:MusicGroup;
     schema:name "Jose Serebrier (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/e7ed019a591ee0f17829cf64d99327139055f458c859f67b8ba49d157aec5187> a schema:MusicGroup;
@@ -1947,7 +2072,10 @@ wd:Q733299 a schema:Person;
     schema:name "Michael Barenboim, violin".
 wd:Q4700 a schema:Person;
     schema:name "Claude Debussy";
-    schema:description "French classical composer (1862–1918)".
+    schema:description "French classical composer (1862–1918)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Claude%20Debussy%20by%20Atelier%20Nadar.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Claude%20Debussy%20by%20Atelier%20Nadar.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Claude%20Debussy%20by%20Atelier%20Nadar.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d531b1d9a34e303dcdec118dc41b429bb780748f3f6f87ab9ab6a2cc10461416> a schema:MusicGroup;
     schema:name "Daniel Barenboim, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/f787f4f4f39dcd7308ff966f0c81ee4b7b70df8791f5237bb17f9b57ddae9768> a schema:MusicGroup;
@@ -2008,7 +2136,10 @@ wd:Q4700 a schema:Person;
     schema:name "Andre Watts".
 wd:Q450467 a schema:Person;
     schema:name "Edward MacDowell";
-    schema:description "American composer (1860–1908)".
+    schema:description "American composer (1860–1908)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Edward%20A.%20MacDowell.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Edward%20A.%20MacDowell.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Edward%20A.%20MacDowell.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/b60a40f6d1e5a5236104a6afdfc106a8f79ad1005bcda194fd0353aa315b2824> a schema:MusicGroup;
     schema:name "Andrew Litton (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/9499b5ecb1c6425e5e5a0a5b6f27a80e034858daca85074ffde4c2ca145c0156> a schema:MusicGroup;
@@ -2133,7 +2264,10 @@ wd:Q450467 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f194".
 wd:Q174606 a schema:Person;
     schema:name "Tomaso Albinoni";
-    schema:description "Italian composer and violinist (1671–1751)".
+    schema:description "Italian composer and violinist (1671–1751)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Albinoni.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Albinoni.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Albinoni.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/400f12c1bb0fe44818ec1297f19304f636e8e258dfdcfccda30272e7afbd59e8> a schema:MusicGroup;
     schema:name "I Musici (conductor)".
 <https://api.composer.nprstations.org/v1/episode/65a7ed1152b8087c7ce4bef0/playlist/track/688b8e7b6c98f8b3a827f196/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -2184,7 +2318,10 @@ wd:Q174606 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f198".
 wd:Q25872 a schema:Person;
     schema:name "Alexander Glazunov";
-    schema:description "Russian composer, music teacher and conductor (1865-1936)".
+    schema:description "Russian composer, music teacher and conductor (1865-1936)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/AlexanderGlazounov.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/AlexanderGlazounov.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/AlexanderGlazounov.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/381ccaa387e358600a33e1c2b66bc63c8d18fff27355c662b752ed7dfe753ab0> a schema:MusicGroup;
     schema:name "Lovro von Matacic (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/59ac5fa82eea4703f70608eee31112c5a14d46291c2b4db28ed23f5a887e0a71> a schema:MusicAlbum;
@@ -2244,7 +2381,10 @@ wd:Q2748374 a schema:Person;
     schema:name "Findlay Cockrell, piano".
 wd:Q123829 a schema:Person;
     schema:name "George Gershwin";
-    schema:description "American composer and pianist (1898–1937)".
+    schema:description "American composer and pianist (1898–1937)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/George%20Gershwin%201937.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/George%20Gershwin%201937.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/George%20Gershwin%201937.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/1139d903d4cb50499e5b397c1a3e3e95779618a32029621c904aea21274b932f> a schema:MusicGroup;
     schema:name "Findlay Cockrell, piano (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/e4784dd680fb6c0938b25006c64656dc4f0c459341da2a33387396546f3374e0> a schema:MusicAlbum;
@@ -2353,7 +2493,10 @@ wd:Q123829 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f1ab".
 wd:Q131285 a schema:Person;
     schema:name "John Williams";
-    schema:description "American composer and conductor (born 1932)".
+    schema:description "American composer and conductor (born 1932)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/John%20Williams%202024.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/John%20Williams%202024.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/John%20Williams%202024.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/5fa5870ea1508245bc32f74df3d8eff3c8cc6ce834da61f6d7fd4ca58cc75769> a schema:MusicAlbum;
     schema:name "A Celebration: John Williams Boston Pops";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/ff0e73d7fbf0fbe79ab674a415fb89b4e0d7dd652148680f5db1ff199c2d16e1>, wd:Q131285.
@@ -2429,7 +2572,10 @@ wd:Q131285 a schema:Person;
     schema:name "Smaro Gregoriadou, guitar".
 wd:Q150767 a schema:Person;
     schema:name "Benjamin Britten";
-    schema:description "English composer, conductor, and pianist (1913-1976)".
+    schema:description "English composer, conductor, and pianist (1913-1976)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Benjamin%20Britten%2C%20London%20Records%201968%20publicity%20photo%20for%20Wikipedia%20%28restored%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Benjamin%20Britten%2C%20London%20Records%201968%20publicity%20photo%20for%20Wikipedia%20%28restored%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Benjamin%20Britten%2C%20London%20Records%201968%20publicity%20photo%20for%20Wikipedia%20%28restored%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/c6ea25b12af5b20d6872c8c25e15756ea7345fe405cf3342729da26aea89efc7> a schema:MusicGroup;
     schema:name "Smaro Gregoriadou, guitar (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/a1ae3e083befa661b6caa7cd97a112cabed71a219e05f4ecf1c83fac2e124876> a schema:MusicAlbum;
@@ -2458,7 +2604,10 @@ wd:Q150767 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f1b5".
 wd:Q105237 a schema:Person;
     schema:name "Giacomo Meyerbeer";
-    schema:description "German-French composer".
+    schema:description "German-French composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Meyerbeer%20d%27apr%C3%A8s%20P.%20Petit%20b%201865.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Meyerbeer%20d%27apr%C3%A8s%20P.%20Petit%20b%201865.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Meyerbeer%20d%27apr%C3%A8s%20P.%20Petit%20b%201865.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/aaef2a1da36a7bc0f57bd34af0caeb337036aa2af69fad7fb063980df604c244> a schema:MusicGroup;
     schema:name "Darrell Ang (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/66e2afbb1190dd8dbd069ebbf54113480a2c52227496ba850b424ae3c5cf3e08> a schema:MusicAlbum;
@@ -2606,7 +2755,10 @@ wd:Q105237 a schema:Person;
     schema:name "Grace Davidson, soprano".
 wd:Q726206 a schema:Person;
     schema:name "Eric Whitacre";
-    schema:description "American composer".
+    schema:description "American composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Eric%20Whitacre.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Eric%20Whitacre.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Eric%20Whitacre.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/0aab766c3e7d56b17699992895b9239e202ffa6bafaa787d7827f87ebf8a20a7> a schema:MusicGroup;
     schema:name "Eric Whitacre (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/20c8d7eacd9f4122fcdcf2012d9aaf71dc774937d59499f592d90cfa07efd4c2> a schema:MusicGroup;
@@ -2666,7 +2818,10 @@ wd:Q726206 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f1a6".
 wd:Q200867 a schema:Person;
     schema:name "Gustav Holst";
-    schema:description "British composer".
+    schema:description "British composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Gustav%20Holst.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Gustav%20Holst.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Gustav%20Holst.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/2ab79e64a863a631cff83b700aacaf3e3b09852f9d4d466c5cab6b249baeb774> a schema:MusicGroup;
     schema:name "Zubin Mehta (conductor)".
 <https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c61428/playlist/track/688b8e7b6c98f8b3a827f1a9/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -2720,7 +2875,10 @@ wd:Q200867 a schema:Person;
 wd:Q33550 a schema:Person;
     schema:name "Frederick II of Prussia";
     schema:description "King of Prussia from 1740 to 1786";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Friedrich%20Zweite%20Alt.jpg>;
     schema:alternateName "Frederick the Great of Prussia".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Friedrich%20Zweite%20Alt.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Friedrich%20Zweite%20Alt.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/e0c9ef74f126ade4a437a9fdee2d07b4366000bbf4db1f427cc5e019367543a6> a schema:MusicGroup;
     schema:name "Hartmut Haenchen (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/482a9092b28af41a89195fd2ee3aa648696349263b16b1827029bfa6c79a35d5> a schema:MusicAlbum;
@@ -2751,7 +2909,10 @@ wd:Q33550 a schema:Person;
     schema:name "Tashi Quartet".
 wd:Q151593 a schema:Person;
     schema:name "Olivier Messiaen";
-    schema:description "French composer, organist and ornithologist (1908–1992)".
+    schema:description "French composer, organist and ornithologist (1908–1992)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Lezing%20Franse%20compoist%20Olivier%20Messiaen%20in%20Koninklijk%20Conservatorium%20in%20Den%20Haa%2C%20Bestanddeelnr%20933-8262.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Lezing%20Franse%20compoist%20Olivier%20Messiaen%20in%20Koninklijk%20Conservatorium%20in%20Den%20Haa%2C%20Bestanddeelnr%20933-8262.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Lezing%20Franse%20compoist%20Olivier%20Messiaen%20in%20Koninklijk%20Conservatorium%20in%20Den%20Haa%2C%20Bestanddeelnr%20933-8262.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/1d946c485321a26abc231b55d9d8f8a56fa60d8ac2744c3e051895d202c3fb37> a schema:MusicGroup;
     schema:name "Tashi Quartet (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/3bc0d00e54c9708913b40f2c814dae7d33ac9ca4e6ad097e2c06dede0cf6364e> a schema:MusicAlbum;
@@ -2929,7 +3090,10 @@ wd:Q151593 a schema:Person;
 wd:Q57286 a schema:Person;
     schema:name "Fanny Mendelssohn";
     schema:description "German pianist and composer (1805–1847)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Fannymendelssohn-improved.jpg>;
     schema:alternateName "Fanny Mendelssohn-Hensel".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Fannymendelssohn-improved.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Fannymendelssohn-improved.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/10f8e7971781a1fdaffbb06b642af775c444e8892f749b818f81a698126b780b> a schema:MusicGroup;
     schema:name "Chaos String Quartet (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/ed387a4507c2d09ac8f428f7131ad14dbadbd98065722d74a76bd916efa265ac> a schema:MusicAlbum;
@@ -2960,7 +3124,10 @@ wd:Q57286 a schema:Person;
     schema:name "O'Conor, John-piano".
 wd:Q7351 a schema:Person;
     schema:name "Robert Schumann";
-    schema:description "German composer, pianist and critic (1810–1856)".
+    schema:description "German composer, pianist and critic (1810–1856)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Robert-schumann.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Robert-schumann.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Robert-schumann.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/abda63820221b44fc132fbbc907185d7365d71e5a36cf955d46a44fa0c1094ff> a schema:MusicGroup;
     schema:name "O'Conor, John-piano (soloists)".
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fd19/playlist/track/688b8e7b6c98f8b3a827f038/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -3059,7 +3226,10 @@ wd:Q7351 a schema:Person;
     schema:name "Kennedy, Nigel".
 wd:Q187192 a schema:Person;
     schema:name "Erik Satie";
-    schema:description "French composer and pianist (1866-1925)".
+    schema:description "French composer and pianist (1866-1925)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Satie-erik-4ff9d0bde1749.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Satie-erik-4ff9d0bde1749.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Satie-erik-4ff9d0bde1749.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/a808a4fdb05a7526814c834c29f074ee1ebbacd2d6bf9e85c2e313378e1adf71> a schema:MusicGroup;
     schema:name "Paul Barritt (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/0b61e088da3bb8a1f730cff16614f261f6c7c57edb9b42541a337dc72780a18e> a schema:MusicGroup;
@@ -3171,7 +3341,10 @@ wd:Q187192 a schema:Person;
 wd:Q50187 a schema:Person;
     schema:name "César Franck";
     schema:description "Belgian-French composer and organist (1822–1890)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/C%C3%A9sar%20Franck%20by%20Pierre%20Petit.jpg>;
     schema:alternateName "Cesar Franck".
+<http://commons.wikimedia.org/wiki/Special:FilePath/C%C3%A9sar%20Franck%20by%20Pierre%20Petit.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/C%C3%A9sar%20Franck%20by%20Pierre%20Petit.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/c87a9beddc2987263b1d13eb6d93463d5a0e2682733799b9189ca1c9dccc795b> a schema:MusicGroup;
     schema:name "Vladimir Viardo (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/22cc9a5ab83ba22a45dd608ac39c10cebc65af5ea9e6abd94460f1f2724ec2ee> a schema:MusicAlbum;
@@ -3329,7 +3502,10 @@ wd:Q657453 a schema:Person;
     schema:name "London Symphony Orchestra".
 wd:Q93227 a schema:Person;
     schema:name "Nikolai Rimsky-Korsakov";
-    schema:description "Russian composer (1844–1908)".
+    schema:description "Russian composer (1844–1908)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Nikolai%20A.%20Rimsky-Korsakov.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Nikolai%20A.%20Rimsky-Korsakov.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Nikolai%20A.%20Rimsky-Korsakov.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/e42fa54c765e23f4b0658ca88f0f80421b8e6a87b61a7497eedf73a0464d79fe> a schema:MusicGroup;
     schema:name "Sir Charles Mackeras (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/2a0877fae6b657cf3076105a75af94112c73496b1af96d766f59eb52ccbe26eb> a schema:MusicGroup;
@@ -3542,7 +3718,10 @@ wd:Q713025 a schema:Person;
 wd:Q207789 a schema:Person;
     schema:name "Thomas Tallis";
     schema:description "English composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Tallis.jpg>;
     schema:alternateName "Thomas Tallis (c.1505-1585)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Tallis.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Tallis.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/4f334dfb7579d617498a1d8bb2113f0ad9e04fc07c8b38b5689585181ff9a4db> a schema:MusicAlbum;
     schema:name "THOMAS TALLIS THE COMPLETE WORKS VOL.7-MUSIC FOR QUEEN ELIZABETH";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/36a547d321da289eeb55de9df2d203858256379e77104f377451116beba4eb7e>, wd:Q207789.
@@ -3601,7 +3780,10 @@ wd:Q207789 a schema:Person;
 wd:Q947941 a schema:Person;
     schema:name "Matthew Locke";
     schema:description "English Baroque composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20Locke.jpg>;
     schema:alternateName "Matthew Locke (1621/2-1677)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20Locke.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20Locke.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/fa8f6208940fe1f020b74fb5332902feff871def63bfcf27955c3db382a81847> a schema:MusicAlbum;
     schema:name "MATTHEW LOCKE CONSORTS IN TWO PARTS";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/b60f60466836dba2ac185b1095de94176f43b5d17f76bf5c202c11f5a4681349>, wd:Q947941.
@@ -3631,7 +3813,10 @@ wd:Q947941 a schema:Person;
 wd:Q179277 a schema:Person;
     schema:name "Giovanni Pierluigi da Palestrina";
     schema:description "Italian Renaissance composer (c. 1525–1594)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Giovanni%20Pierluigi%20da%20Palestrina.jpg>;
     schema:alternateName "Giovanni Pierluigi Da Palestrina (c.1525-1594)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Giovanni%20Pierluigi%20da%20Palestrina.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Giovanni%20Pierluigi%20da%20Palestrina.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/5ea6122c469a2035dc4c83690301fe4ac6fe7a5a8c79d777cbc8c852c4e1c2d7> a schema:MusicAlbum;
     schema:name "THE GLORY OF GABRIELI - ANTIPHONAL MUSIC FOR BRASS CHOIRS";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/e6731d07a3f905a547652aeb09cc98cdea3114c56fc3aef59d2051affb95fffb>, wd:Q179277.
@@ -3691,7 +3876,10 @@ wd:Q170401 a schema:Person;
 wd:Q57829 a schema:Person;
     schema:name "Johann Christoph Bach I";
     schema:description "German composer and organist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Christoph%20Bach.jpg>;
     schema:alternateName "/Johann Christoph Bach (1642-1703)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Christoph%20Bach.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Johann%20Christoph%20Bach.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/e3840a2cdc0c4ff8b3b2ad8155ae04ab12838aa265f4432f663051fba80fc13b> a schema:MusicAlbum;
     schema:name "PEACE IN OUR TIME";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/f6f794cc7ac9cd8cd48d0100de7cd262f5759b34c70580ac0cbf77ff8e60165a>, wd:Q57829.
@@ -3747,7 +3935,10 @@ wd:Q57829 a schema:Person;
 wd:Q1236164 a schema:Person;
     schema:name "William Croft";
     schema:description "English composer and organist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/WilliamCroftChoirboy.jpg>;
     schema:alternateName "William Croft (1678-1727)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/WilliamCroftChoirboy.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/WilliamCroftChoirboy.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/555ca1c6bcbdaf865206de1b84c8c7a2843febb9710d456290dfd0d2024c9612> a schema:MusicAlbum;
     schema:name "WILLIAM CROFT BURIAL SERVICE & ANTHEMS";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/ab4be67b5afcb28dc49b06ad7ccb701f83a6e43854a00942b2e24e6ee0b4a409>, wd:Q1236164.
@@ -3803,7 +3994,10 @@ wd:Q1236164 a schema:Person;
 wd:Q313152 a schema:Person;
     schema:name "William Boyce";
     schema:description "English composer and organist (1711-1779)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/William%20Boyce.jpg>;
     schema:alternateName "William Boyce (1711-1779)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/William%20Boyce.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/William%20Boyce.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/28af353995c906297ba74cc4de43f96bcbcf42811d2cc68f5f3603e97d11dfbb> a schema:MusicAlbum;
     schema:name "\"HIGH, BRIGHT, LIGHT AND CLEAR\"";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/d4ad32d03d274526813f88df69721dd11701cde3578d720ed37a4f5ab4c80612>, wd:Q313152.
@@ -3833,7 +4027,10 @@ wd:Q313152 a schema:Person;
 wd:Q726286 a schema:Person;
     schema:name "John Stanley";
     schema:description "English composer and organist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/John%20Stanley.jpg>;
     schema:alternateName "John Stanley (1712-1786)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/John%20Stanley.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/John%20Stanley.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/195cfa63267a1f6f89bcd9d05bacbbda22518486754e244b5527599b355ddab1> a schema:MusicAlbum;
     schema:name "\"JOHN STANLEY 6 CONCERTOS IN 7 PARTS, OP. 2\"";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/6912f43225436d472575d0030eb57c150cd990bbf5cb4c82e9a3645e55bd29a1>, wd:Q726286.
@@ -3863,7 +4060,10 @@ wd:Q726286 a schema:Person;
 wd:Q615819 a schema:Person;
     schema:name "Maurice Greene";
     schema:description "English composer and organist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Maurice%20Greene%20by%20Francis%20Hayman.jpg>;
     schema:alternateName "Maurice Greene (1696-1755)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Maurice%20Greene%20by%20Francis%20Hayman.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Maurice%20Greene%20by%20Francis%20Hayman.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/cb21b502500e5aa32ecf1fdfa80a3d3abdb098d079c4a6c100a5d440ff55558f> a schema:MusicAlbum;
     schema:name "MAURICE GREENE OVERTURES";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/e9e634e8bc6b38cdbae1aff1fcd9ad95cb13639ca54d4647824bb43021335464>, wd:Q615819.
@@ -4071,7 +4271,10 @@ wd:Q1356310 a schema:Person;
 wd:Q50186 a schema:Person;
     schema:name "François Couperin";
     schema:description "French Baroque composer, organist and harpsichordist (1668–1733)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Fran%C3%A7ois%20Couperin.jpg>;
     schema:alternateName "Francois Couperin (1668-1733)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Fran%C3%A7ois%20Couperin.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Fran%C3%A7ois%20Couperin.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/d4f31dddd5e829c134da28cd3585366ff3d05392bdbbef60110df4b4c05cfa8b> a schema:MusicAlbum;
     schema:name "F.COUPERIN - PRELUDES & MISCELLANEOUS WORKS";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/af1ce8a130668124e03aebb9ff5c9b89cff1f06768068ba91888895c331a86f9>, wd:Q50186.
@@ -4263,7 +4466,10 @@ wd:Q50186 a schema:Person;
 wd:Q167837 a schema:Person;
     schema:name "Domenico Scarlatti";
     schema:description "Italian composer, son of Alessandro Scarlatti";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Retrato%20de%20Domenico%20Scarlatti.jpg>;
     schema:alternateName "Domenico Scarlatti (1685-1757)".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Retrato%20de%20Domenico%20Scarlatti.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Retrato%20de%20Domenico%20Scarlatti.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/9d2b1e8d5dfdae318ce712ebf2c7f80e0c6a23aca129f4d4977fb92d66c8e7a1> a schema:MusicAlbum;
     schema:name "KATONA TWINS";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/483204f90f3b751544511e5e8e4c3a11a57a0a08ec9981783c19f570378d36ea>, wd:Q167837.
@@ -4374,7 +4580,10 @@ wd:Q167837 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f05d".
 wd:Q158078 a schema:Person;
     schema:name "Alfred Schnittke";
-    schema:description "Soviet-born Russian composer (1934–1998)".
+    schema:description "Soviet-born Russian composer (1934–1998)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%20%D0%90%D0%BB%D1%8C%D1%84%D1%80%D0%B5%D0%B4%D0%BE%D0%BC%20%D0%A8%D0%BD%D0%B8%D1%82%D0%BA%D0%B5%20%28cropped%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%20%D0%90%D0%BB%D1%8C%D1%84%D1%80%D0%B5%D0%B4%D0%BE%D0%BC%20%D0%A8%D0%BD%D0%B8%D1%82%D0%BA%D0%B5%20%28cropped%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/%D0%A1%20%D0%90%D0%BB%D1%8C%D1%84%D1%80%D0%B5%D0%B4%D0%BE%D0%BC%20%D0%A8%D0%BD%D0%B8%D1%82%D0%BA%D0%B5%20%28cropped%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/3bac0276e8f47bb173c92f47f9fc87fc218f750f5e6603fa132996e0be85ad9c> a schema:MusicGroup;
     schema:name "Vladimir Spivakov (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/c998ce8be478ca34cb87289c8d973c8f85351fd624cc8014ed707453fa1419e2> a schema:MusicAlbum;
@@ -4405,7 +4614,10 @@ wd:Q158078 a schema:Person;
     schema:name "Joshua Bell, violin".
 wd:Q78517 a schema:Person;
     schema:name "Fritz Kreisler";
-    schema:description "Austrian violinist and composer (1875-1962)".
+    schema:description "Austrian violinist and composer (1875-1962)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Kreisler.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Kreisler.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Kreisler.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/6e5ca67b498330b679156c8f78eea46ad49804ba581f00cf88bd6d6c7567ddb1> a schema:MusicGroup;
     schema:name "Paul Coker, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/70e1f530cde1165cfa466e0321ea2c95bb2e4568667246f212d72795c8a8cce3> a schema:MusicGroup;
@@ -4464,7 +4676,10 @@ wd:Q78517 a schema:Person;
     schema:name "Inna Leoni, flute".
 wd:Q3561877 a schema:Person;
     schema:name "Vladimir Tsybin";
-    schema:description "Russian musician (1877–1949)".
+    schema:description "Russian musician (1877–1949)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%20%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D0%B5%D0%B2%D0%B8%D1%87%20%D0%A6%D1%8B%D0%B1%D0%B8%D0%BD.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%20%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D0%B5%D0%B2%D0%B8%D1%87%20%D0%A6%D1%8B%D0%B1%D0%B8%D0%BD.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%20%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D0%B5%D0%B2%D0%B8%D1%87%20%D0%A6%D1%8B%D0%B1%D0%B8%D0%BD.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d40f97682fe3dc51ab1b6c365df3cf1938bbe489c5ed4cbbc010f5358d9f0b44> a schema:MusicGroup;
     schema:name "Brian Gilmore, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/4d59a4a04cf2a02a99cc44e39ee0b75c124ec1c6efab09fdebead38928c9659c> a schema:MusicGroup;
@@ -4496,7 +4711,10 @@ wd:Q3561877 a schema:Person;
 wd:Q104919 a schema:Person;
     schema:name "Gabriel Fauré";
     schema:description "French composer, organist, pianist and teacher (1845–1924)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Faur%C3%A9Pirou1905.jpg>;
     schema:alternateName "Gabriel Faure".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Faur%C3%A9Pirou1905.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Faur%C3%A9Pirou1905.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/991f616aee7722e64c1f01145be4f6b2442ccd2ccf1c08d6b782b9ea6fdc57ae> a schema:MusicGroup;
     schema:name "Ozawa, Seiji (conductor)".
 <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f07c/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -4523,7 +4741,10 @@ wd:Q104919 a schema:Person;
     schema:name "Ambache Chamber Ensemble".
 wd:Q442198 a schema:Person;
     schema:name "Louise Farrenc";
-    schema:description "French composer, pianist and teacher (1804–1875)".
+    schema:description "French composer, pianist and teacher (1804–1875)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Louise%20Farrenc%20painting.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Louise%20Farrenc%20painting.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Louise%20Farrenc%20painting.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/278ebbf1f234c5c833966e7c47ef5845d925b65be25caedff995064eaa73171e> a schema:MusicGroup;
     schema:name "Ambache Chamber Ensemble (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/5f31e8560a1fd1b3ead2d6622d0a47b4b4edb6e57499e027a8dad8153b4358f7> a schema:MusicAlbum;
@@ -4555,7 +4776,10 @@ wd:Q442198 a schema:Person;
 wd:Q189534 a schema:Person;
     schema:name "Arvo Pärt";
     schema:description "Estonian composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Arvo%20P%C3%A4rt.jpg>;
     schema:alternateName "Arvo Part".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Arvo%20P%C3%A4rt.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Arvo%20P%C3%A4rt.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/65b4e7cefae7f7296c02d66bb2d814f3b7c06c0e591036e044a8c375b8f1b32c> a schema:MusicGroup;
     schema:name "Arthur Jussen, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/d1b05d20ca2dfd585612251058785cbcba1fe968de2360b9c18ecd37f77f6eb3> a schema:MusicGroup;
@@ -4620,7 +4844,10 @@ wd:Q544385 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f084".
 wd:Q321630 a schema:Person;
     schema:name "Florent Schmitt";
-    schema:description "French composer (1870-1958)".
+    schema:description "French composer (1870-1958)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Florent%20Schmitt%201900.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Florent%20Schmitt%201900.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Florent%20Schmitt%201900.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/2bb77ce07ab20f5882cc5527091d51349232449e382726986d9d37b7f8e855b0> a schema:MusicGroup;
     schema:name "JoAnn Falletta (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/3e33db923bc38bd75e859a1c3d11a8fec9c0afa59f2e617e890e21e47a350cc7> a schema:MusicAlbum;
@@ -4649,7 +4876,10 @@ wd:Q321630 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f088".
 wd:Q213519 a schema:Person;
     schema:name "Marin Marais";
-    schema:description "French composer and viol player".
+    schema:description "French composer and viol player";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Marin-marais.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Marin-marais.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Marin-marais.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/5cf68f98f2558e5f42bc684631f49162e1594253b5521d1653b8275347ddb2c6> a schema:MusicGroup;
     schema:name "Charles Medlam (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/de5493927de79a7aa464106a9eb29d8d1d7b3683a2db465714efd359854fd916> a schema:MusicAlbum;
@@ -4678,7 +4908,10 @@ wd:Q213519 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f089".
 wd:Q522261 a schema:Person;
     schema:name "Franz Ignaz Beck";
-    schema:description "German composer (1734-1809)".
+    schema:description "German composer (1734-1809)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Franz%20Ignaz%20Beck%20Commposer%20in%20old%20age.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Franz%20Ignaz%20Beck%20Commposer%20in%20old%20age.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Franz%20Ignaz%20Beck%20Commposer%20in%20old%20age.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/4eebb5ebb88409cc23f0c1bb28b27400e2733ca04933a53a138d2d5be2b2350d> a schema:MusicGroup;
     schema:name "Michael Schneider (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/8cfd21920a568e6dacbaab76e1c9547f6e9794d5431be54a361dbb3aeaa6e543> a schema:MusicAlbum;
@@ -4830,7 +5063,10 @@ wd:Q1174956 a schema:Person;
     schema:name "Carol Jantsch, tuba".
 wd:Q2251665 a schema:Person;
     schema:name "Michael Daugherty";
-    schema:description "American composer, pianist, and teacher".
+    schema:description "American composer, pianist, and teacher";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Daugherty.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Daugherty.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Daugherty.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/415e7da35e21a39b4206c899bdba725c1419fcfe558c6d09ed865212cb0ec14a> a schema:MusicGroup;
     schema:name "David Alan Miller (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/1826bf3e50409e8f50d83ecd68f64d1bc9d849a2d3f24732f0f7281767f7def3> a schema:MusicGroup;
@@ -4867,7 +5103,10 @@ wd:Q2251665 a schema:Person;
     schema:itemListElement <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f05d>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f068>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f074>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f078>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f07a>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f07c>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f07e>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f080>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f084>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f088>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f089>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f08d>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f08f>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f092>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f094>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f097>, <https://api.composer.nprstations.org/v1/episode/65b427ab1359175e321ef7cd/playlist/track/688b8e7b6c98f8b3a827f098>.
 wd:Q7317 a schema:Person;
     schema:name "Giuseppe Verdi";
-    schema:description "Italian opera composer (1813–1901)".
+    schema:description "Italian opera composer (1813–1901)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Verdi%20by%20Giovanni%20Boldini.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Verdi%20by%20Giovanni%20Boldini.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Verdi%20by%20Giovanni%20Boldini.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/4eb40a98aa0e4f5ea1e492bbadc7f070ec0d7740cd6df06c93f93a94d4cdc43b> a schema:MusicGroup;
     schema:name "David Parry (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/2e08ccad5197672ccd552f7bf944d31c85f6a9940b38ebe513dac773b3e51d3c> a schema:MusicAlbum;
@@ -4904,7 +5143,10 @@ wd:Q7317 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f0c5".
 wd:Q311625 a schema:Person;
     schema:name "Francesco Geminiani";
-    schema:description "Italian composer and violinist".
+    schema:description "Italian composer and violinist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Francesco%20Geminiani.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Francesco%20Geminiani.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Francesco%20Geminiani.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/a4a664fd2c2d39c7e2e2edb7c4dbe4747e2c71f1297bf36d1d09dc69a47ad07c> a schema:MusicGroup;
     schema:name "Kuijken, Sigiswald (conductor)".
 <https://api.composer.nprstations.org/v1/episode/68669d15e6573131045855b0/playlist/track/688b8e7b6c98f8b3a827f0c8/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -5012,7 +5254,10 @@ wd:Q311625 a schema:Person;
 wd:Q1268 a schema:Person;
     schema:name "Frédéric Chopin";
     schema:description "Polish composer and pianist (1810–1849)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Chopin%20photo.jpeg>;
     schema:alternateName "Frederic Chopin".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Chopin%20photo.jpeg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Chopin%20photo.jpeg>.
 <http://purl.org/sdapps/instance/radio/music-group/b00e80c6cf0dfbd055a31cfd70f3e47cafaf9f8786cb6c8b864c4b7d8d93985c> a schema:MusicGroup;
     schema:name "Feltsman, Vladimir-piano (soloists)".
 <https://api.composer.nprstations.org/v1/episode/68669d15e6573131045855b0/playlist/track/688b8e7b6c98f8b3a827f0cf/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -5039,7 +5284,10 @@ wd:Q1268 a schema:Person;
     schema:name "Ensemble Doulce Memoire".
 wd:Q108278 a schema:Person;
     schema:name "Michael Praetorius";
-    schema:description "German composer, organist, and music theorist".
+    schema:description "German composer, organist, and music theorist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Praetorius.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Praetorius.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Praetorius.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/7f57b3a824d78edaa7c51be57a4497615ce4adc1b3f68b573cfec65086f786a8> a schema:MusicGroup;
     schema:name "Ensemble Doulce Memoire (soloists)".
 <https://api.composer.nprstations.org/v1/episode/68669d15e6573131045855b0/playlist/track/688b8e7b6c98f8b3a827f0d0/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -5064,7 +5312,10 @@ wd:Q108278 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827f0d0".
 wd:Q296804 a schema:Person;
     schema:name "Bernard Herrmann";
-    schema:description "American composer and conductor".
+    schema:description "American composer and conductor";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Bernard-Herrmann.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Bernard-Herrmann.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Bernard-Herrmann.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/b1bc7e0f690574304bf2c1a8546b02ba663d45817f994d6c83af39cabcff323f> a schema:MusicGroup;
     schema:name "Joel McNeely (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/92da3dfba977e2f04dbd14f5492b79ce9fd2b6b76c72abfd24fed27c6bad66ae> a schema:MusicAlbum;
@@ -5095,7 +5346,10 @@ wd:Q296804 a schema:Person;
     schema:name "Hae-Won, Chang-piano".
 wd:Q151953 a schema:Person;
     schema:name "Johann Nepomuk Hummel";
-    schema:description "Austrian composer and pianist".
+    schema:description "Austrian composer and pianist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/JNHummel%202.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/JNHummel%202.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/JNHummel%202.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/54fefea133b12d755aff4811d00718355d0130688551ca2db58ba4ec04d66422> a schema:MusicGroup;
     schema:name "Pal, Tamas (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/c6c2c8934443a8386e158b9aa5d9f61b1f95c3a72abd2b504d2fdc23c76a524f> a schema:MusicGroup;
@@ -5279,7 +5533,10 @@ wd:Q57807 a schema:Person;
     schema:episode <https://api.composer.nprstations.org/v1/episode/66adc3c7be4b6d4df5bea31f>.
 wd:Q310939 a schema:Person;
     schema:name "William Walton";
-    schema:description "English composer (1902–1983)".
+    schema:description "English composer (1902–1983)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/William%20Walton%20%281976%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/William%20Walton%20%281976%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/William%20Walton%20%281976%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/8241af6fc88ee41590b526c1a211d8213e234f2af6f8c269a714bbf82b3882ab> a schema:MusicGroup;
     schema:name "Paul Daniel (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/23c37c8e8962e147bf9540a6db9d3aa7b26e3b1865d0041da5723eccfd95185f> a schema:MusicAlbum;
@@ -5458,7 +5715,10 @@ wd:Q310939 a schema:Person;
     schema:name "Marsalis, Wynton-trumpet".
 wd:Q207532 a schema:Person;
     schema:name "Giuseppe Torelli";
-    schema:description "Italian violist, violinist, teacher and composer (1658–1709)".
+    schema:description "Italian violist, violinist, teacher and composer (1658–1709)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Giuseppe%20Torelli.png>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Giuseppe%20Torelli.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Giuseppe%20Torelli.png>.
 <http://purl.org/sdapps/instance/radio/music-group/f89a82adda49dd07a1acd6b471774d226f8cad3d564ebd900e4a05e656d08bea> a schema:MusicGroup;
     schema:name "Newman, Anthony (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/c9005a69ec0487759db6fab4303b31d9c1dd0356248ce898b66ac4698f8000de> a schema:MusicGroup;
@@ -5615,7 +5875,10 @@ wd:Q207532 a schema:Person;
     schema:name "Mondelci, Federico,Orbelian, Constantine,Moscow Ch Orch".
 wd:Q172505 a schema:Person;
     schema:name "Astor Piazzolla";
-    schema:description "Argentine tango composer, bandoneon player and arranger".
+    schema:description "Argentine tango composer, bandoneon player and arranger";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Astor%20Piazzolla.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Astor%20Piazzolla.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Astor%20Piazzolla.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/be86f10bc0891c9ecf6852325048368eed1d9b86d060746a20c2fc99a98c8cdd> a schema:MusicGroup;
     schema:name "Mondelci, Federico,Orbelian, Constantine,Moscow Ch Orch (soloists)".
 <https://api.composer.nprstations.org/v1/episode/677ef8dcb9a094616cf5fd18/playlist/track/688b8e7b6c98f8b3a827ef32/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -5781,7 +6044,10 @@ wd:Q172505 a schema:Person;
     schema:name "Anastasia Kobekina, cello".
 wd:Q569003 a schema:Person;
     schema:name "Brian Eno";
-    schema:description "British musician, music producer, music theorist and visual artist (born 1948)".
+    schema:description "British musician, music producer, music theorist and visual artist (born 1948)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Brian%20Eno%202015.png>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Brian%20Eno%202015.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Brian%20Eno%202015.png>.
 <http://purl.org/sdapps/instance/radio/music-group/13f9eb662eb6ee27e45da13b1fdb8e52955368e9c0d2d0c5da92dbbb189b3f78> a schema:MusicGroup;
     schema:name "Anastasia Kobekina, cello (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/90c281ff328f9f282963875fe61d5d34b4c01238d6729a43cd72df8a13c8bf43> a schema:MusicAlbum;
@@ -5811,7 +6077,10 @@ wd:Q569003 a schema:Person;
 wd:Q354250 a schema:Person;
     schema:name "Hubert Parry";
     schema:description "British composer, teacher and historian (1848–1918)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Hubert%20Parry%20c1893cr.jpg>;
     schema:alternateName "Charles Hubert Parry".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Hubert%20Parry%20c1893cr.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Hubert%20Parry%20c1893cr.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/1e4fd55d71ce8bdfce2dae068fc481f8f4629dcbfe018fa388d80087f7af25fc> a schema:MusicGroup;
     schema:name "Matthias Bamert (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/dd80f440ad0e2a9e0f11876a3783ed6fe1848ff76aca76e60ba325242348100e> a schema:MusicAlbum;
@@ -5842,7 +6111,10 @@ wd:Q354250 a schema:Person;
     schema:name "Fretwork".
 wd:Q9695 a schema:Person;
     schema:name "Henry Purcell";
-    schema:description "English composer (1659–1695)".
+    schema:description "English composer (1659–1695)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Henry%20Purcell%20by%20John%20Closterman.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Henry%20Purcell%20by%20John%20Closterman.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Henry%20Purcell%20by%20John%20Closterman.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/6cf6ac535349b12b780afe8e972d2128b644f1fbb2fc659b2acac9e36dd0de02> a schema:MusicGroup;
     schema:name "Fretwork (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/bdcb1f1aee31e361c3eba1eca9cdd5fa63874a02b89e0bfba5cb066041dc9737> a schema:MusicAlbum;
@@ -5898,7 +6170,10 @@ wd:Q9695 a schema:Person;
 wd:Q143100 a schema:Person;
     schema:name "Josquin des Prez";
     schema:description "composer of the Renaissance (c. 1450–1521)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Josquin%20des%20Prez.jpg>;
     schema:alternateName "Josquin Desprez".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Josquin%20des%20Prez.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Josquin%20des%20Prez.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/70a92517df7e14a5f5386505b75354018ac0ddab7a89a96996e4264e5b68eb80> a schema:MusicGroup;
     schema:name "Edward Wickham (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/8d94fbf9c6a6e1e27b4a114357d9a412c49bce204c1b324f53e1eb8185d2ddbf> a schema:MusicAlbum;
@@ -5929,7 +6204,10 @@ wd:Q143100 a schema:Person;
     schema:name "O'Riley, Christopher".
 wd:Q139223 a schema:Person;
     schema:name "Peter Maxwell Davies";
-    schema:description "English composer and conductor (1934-2016)".
+    schema:description "English composer and conductor (1934-2016)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Maxwell%20Davies.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Maxwell%20Davies.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Maxwell%20Davies.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/d532cc73c1458bae0fba9f096974d9c3db8232f7d69f0cc6bc126175b7877d4a> a schema:MusicGroup;
     schema:name "O'Riley, Christopher (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/aa5056876692a3e2c2ce69ae148c0b8f9118ed0e4cf224c7f34ff826c1c4afa4> a schema:MusicAlbum;
@@ -6030,7 +6308,10 @@ wd:Q139223 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827ef5b".
 wd:Q382748 a schema:Person;
     schema:name "Howard Hanson";
-    schema:description "American composer, conductor, educator and music theorist (1896–1981)".
+    schema:description "American composer, conductor, educator and music theorist (1896–1981)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Howard%20Hanson%20%281959%20still%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Howard%20Hanson%20%281959%20still%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Howard%20Hanson%20%281959%20still%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/e964eab7bdb311a4f0b20e735f40375de7f99e7aed9666eb9e8d4c405a9c5930> a schema:MusicAlbum;
     schema:name "Hanson: Symphony No.4/ Serenade/ Lament";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/5dd2cae8b00d51976b77403b574e6026047422fc0cb1de51902d00f4daa5ec07>, wd:Q382748.
@@ -6117,7 +6398,10 @@ wd:Q382748 a schema:Person;
     schema:name "Jonah Kim, cello".
 wd:Q80621 a schema:Person;
     schema:name "Edvard Grieg";
-    schema:description "Norwegian composer and pianist (1843–1907)".
+    schema:description "Norwegian composer and pianist (1843–1907)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/%28Edvard%20Grieg%20portrait%29%20%283470673354%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/%28Edvard%20Grieg%20portrait%29%20%283470673354%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/%28Edvard%20Grieg%20portrait%29%20%283470673354%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/3a56ce61006bcaf792b0499f8296c8af609a17a3200b3a508cc422767401fee0> a schema:MusicGroup;
     schema:name "Robert Koenig, piano (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/cbd325971882e6d2a30dc86f60eafbcf8784b952027b1e6fd5215f8a9857c73d> a schema:MusicGroup;
@@ -6150,7 +6434,10 @@ wd:Q80621 a schema:Person;
     schema:name "William Bennet, flute".
 wd:Q207947 a schema:Person;
     schema:name "Ralph Vaughan Williams";
-    schema:description "English composer (1872-1958)".
+    schema:description "English composer (1872-1958)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Ralph%20Vaughan%20Williams%201913.jpeg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Ralph%20Vaughan%20Williams%201913.jpeg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Ralph%20Vaughan%20Williams%201913.jpeg>.
 <http://purl.org/sdapps/instance/radio/music-group/d68c2a71b9380d6f3df75333bea2096970e195d671c708af53420130b4a2e895> a schema:MusicGroup;
     schema:name "William Bennet, flute (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/e2a06657173ee50fe994645c483bce93d4002b90c58ba85e04459991d68df681> a schema:MusicAlbum;
@@ -6295,7 +6582,10 @@ wd:Q207947 a schema:Person;
     schema:name "Glass, Philip".
 wd:Q189729 a schema:Person;
     schema:name "Philip Glass";
-    schema:description "American composer (born 1937)".
+    schema:description "American composer (born 1937)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Philip%20Glass%20018%20crop.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Philip%20Glass%20018%20crop.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Philip%20Glass%20018%20crop.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/0b8bebef3fd120a798abc160196496d1aaf096c01f689895fb6ef5510bb78ad0> a schema:MusicGroup;
     schema:name "Glass, Philip (soloists)".
 <https://api.composer.nprstations.org/v1/episode/68669ce52740563fc119946c/playlist/track/688b8e7b6c98f8b3a827ef8c/broadcast-event> a schema:BroadcastEvent, schema:PublicationEvent;
@@ -6456,7 +6746,10 @@ wd:Q189729 a schema:Person;
     schema:name "Pepe Romero".
 wd:Q379560 a schema:Person;
     schema:name "Mauro Giuliani";
-    schema:description "Italian guitarist, cellist, singer, and composer".
+    schema:description "Italian guitarist, cellist, singer, and composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Mauro%20Giuliani.jpeg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Mauro%20Giuliani.jpeg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Mauro%20Giuliani.jpeg>.
 <http://purl.org/sdapps/instance/radio/music-group/a980ecd77fa7496074c7705ba5a8a900b3c305ecf3ff92f56f560d646afac460> a schema:MusicGroup;
     schema:name "Pepe Romero (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/ad1bdd8d3d789f8b8de4055d70ee57058e11b184bab184f966f1994784143dd5> a schema:MusicAlbum;
@@ -6678,7 +6971,10 @@ wd:Q33530326 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827efb0".
 wd:Q1192 a schema:Person;
     schema:name "Jean-Baptiste Lully";
-    schema:description "Italian-born French composer (1632–1687)".
+    schema:description "Italian-born French composer (1632–1687)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Jean-Baptiste%20Lully.jpeg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Jean-Baptiste%20Lully.jpeg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Jean-Baptiste%20Lully.jpeg>.
 <http://purl.org/sdapps/instance/radio/music-group/bf32af79a41e52f1270a5945fd7b615b7233db3b667ee6ef800548366d1de76c> a schema:MusicGroup;
     schema:name "Pederson, Ilonna (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/6eda9170194d5a082072ecc0cfab5954d9a4c62458332ba4449bdc0daf71ba6e> a schema:MusicAlbum;
@@ -6834,7 +7130,10 @@ wd:Q317350 a schema:Person;
     schema:name "Uncredited Instrumental Ensemble".
 wd:Q44086 a schema:Person;
     schema:name "Carl Orff";
-    schema:description "German composer (1895–1982)".
+    schema:description "German composer (1895–1982)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Carl%20Orff%20um%201970.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Carl%20Orff%20um%201970.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Carl%20Orff%20um%201970.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/26fb53859415f7449f70ab15c2fff5541aa53f66e92f380a52bbf67730e00386> a schema:MusicGroup;
     schema:name "Carl Orff (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/0ac9a0ad38bc4e88870d24f66e21bd296ef94b0f9a2abeefd7a732369ed51009> a schema:MusicGroup;
@@ -6893,7 +7192,10 @@ wd:Q44086 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827efd8".
 wd:Q56158 a schema:Person;
     schema:name "Georges Bizet";
-    schema:description "French composer (1838–1875)".
+    schema:description "French composer (1838–1875)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Georges%20bizet.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Georges%20bizet.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Georges%20bizet.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/73557c7edc61911fae7f341e70d0da665d49f2c3685b39868086292d4852d6f3> a schema:MusicGroup;
     schema:name "Mark Ermler (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/f633465b21457d3ce8e796b38a7478c2fd7ab6eb7763648736d035c655ca078b> a schema:MusicAlbum;
@@ -6946,7 +7248,10 @@ wd:Q56158 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827efdc".
 wd:Q152293 a schema:Person;
     schema:name "Aram Khachaturian";
-    schema:description "Soviet Armenian composer (1903–1978)".
+    schema:description "Soviet Armenian composer (1903–1978)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Aram%20Khachaturian%2C%20Pic%2C%2017.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Aram%20Khachaturian%2C%20Pic%2C%2017.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Aram%20Khachaturian%2C%20Pic%2C%2017.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/b13510e694b322e899039f3e02a108124186c135a01d8f7ec1a04ce861636818> a schema:MusicGroup;
     schema:name "Aram Khachaturian (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/a274e125464087f8f858879387d2ddbcd1fb246b9494729bdca7d40690c68eca> a schema:MusicAlbum;
@@ -7003,7 +7308,10 @@ wd:Q152293 a schema:Person;
     schema:name "Anderson, John-oboe".
 wd:Q336137 a schema:Person;
     schema:name "Alessandro Marcello";
-    schema:description "Italian composer".
+    schema:description "Italian composer";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Marcello.png>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Marcello.png> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Marcello.png>.
 <http://purl.org/sdapps/instance/radio/music-group/fe36f5ab8bd3a7bfd1e586e94acac5f0b6ebe1c3a6ffd73e3e49bd67b4694f5e> a schema:MusicGroup;
     schema:name "Wright, Simon (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/7dece8018dedf2add6d1c000b729ff91dc12e9c631503e923a0c615daa7f133b> a schema:MusicGroup;
@@ -7055,7 +7363,10 @@ wd:Q336137 a schema:Person;
 wd:Q130759 a schema:Person;
     schema:name "Christoph Willibald von Gluck";
     schema:description "opera composer (1714–1787)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Siffred%20Duplessis%20-%20Christoph%20Willibald%20Gluck%20-%20Google%20Art%20Project.jpg>;
     schema:alternateName "Christoph Willibald Gluck".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Siffred%20Duplessis%20-%20Christoph%20Willibald%20Gluck%20-%20Google%20Art%20Project.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Siffred%20Duplessis%20-%20Christoph%20Willibald%20Gluck%20-%20Google%20Art%20Project.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/03c2aebb0eebe6b32a3d5ba4432560bdb5923f1f4de341ce4434ea62067d8fe6> a schema:MusicGroup;
     schema:name "Alexander Tharaud, piano (soloists)".
 <http://purl.org/sdapps/instance/radio/music-album/90a8833117080e572b43127f281946b914c142e7982479a8484973a445f562cd> a schema:MusicAlbum;
@@ -7143,7 +7454,10 @@ wd:Q130759 a schema:Person;
 wd:Q379571 a schema:Person;
     schema:name "Sylvius Leopold Weiss";
     schema:description "German composer and lutenist";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Silvius%20Leopold%20Weiss.jpg>;
     schema:alternateName "Silvius Leopold Weiss".
+<http://commons.wikimedia.org/wiki/Special:FilePath/Silvius%20Leopold%20Weiss.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Silvius%20Leopold%20Weiss.jpg>.
 <http://purl.org/sdapps/instance/radio/music-album/c4d591cb54af779709132126cb61fc05f08c33646eb21102d198adcfe3407db1> a schema:MusicAlbum;
     schema:name "A Distant Shore";
     schema:byArtist <http://purl.org/sdapps/instance/radio/music-group/b13e54e897e55b2f6849b24f97618fb21d00effb940d8c72a7f7389608141849>, <http://purl.org/sdapps/instance/radio/music-group/eee0a888210fda7510c7588c4fd36e2f04145244142aeff2526dab19d663a001>, wd:Q379571.
@@ -7194,7 +7508,10 @@ wd:Q379571 a schema:Person;
     schema:position "688b8e7b6c98f8b3a827eff2".
 wd:Q9726 a schema:Person;
     schema:name "Gioachino Rossini";
-    schema:description "Italian opera composer (1792–1868)".
+    schema:description "Italian opera composer (1792–1868)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Composer%20Rossini%20G%201865%20by%20Carjat.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Composer%20Rossini%20G%201865%20by%20Carjat.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Composer%20Rossini%20G%201865%20by%20Carjat.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/51ee09f89df50fc91d370c9ce7ab16092663fd5b23a69575f437ffe07b763c7c> a schema:MusicGroup;
     schema:name "Michael Halasz (conductor)".
 <http://purl.org/sdapps/instance/radio/music-album/3853414062d4c90d982be3b5dc029c2e8ddb40ace075585b00a01a68e62786f2> a schema:MusicAlbum;
@@ -7225,7 +7542,10 @@ wd:Q9726 a schema:Person;
     schema:name "Daniil Trifonov, piano".
 wd:Q131861 a schema:Person;
     schema:name "Sergei Rachmaninoff";
-    schema:description "Russian composer, pianist and conductor (1873–1943)".
+    schema:description "Russian composer, pianist and conductor (1873–1943)";
+    schema:image <http://commons.wikimedia.org/wiki/Special:FilePath/Sergei%20Rachmaninoff%2C%20pianist%20%28SAYRE%201608%29%20%28restored%29.jpg>.
+<http://commons.wikimedia.org/wiki/Special:FilePath/Sergei%20Rachmaninoff%2C%20pianist%20%28SAYRE%201608%29%20%28restored%29.jpg> a schema:ImageObject;
+    schema:contentUrl <http://commons.wikimedia.org/wiki/Special:FilePath/Sergei%20Rachmaninoff%2C%20pianist%20%28SAYRE%201608%29%20%28restored%29.jpg>.
 <http://purl.org/sdapps/instance/radio/music-group/eeefc9f0b8b1b65e863793a76d24d4a9fd7e462a8f5897bfb8cc673f0a863f62> a schema:MusicGroup;
     schema:name "Yannick Nezet-Seguin (conductor)".
 <http://purl.org/sdapps/instance/radio/music-group/eece8daa7f00298ac4aa62f125adfa656a212702eeabb3faa2444c60c9394fd1> a schema:MusicGroup;

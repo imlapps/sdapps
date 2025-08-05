@@ -225,6 +225,7 @@ export abstract class Model {
     | "EventStub"
     | "GenderType"
     | "ImageObject"
+    | "ImageObjectStub"
     | "Intangible"
     | "IntangibleStub"
     | "Invoice"
@@ -403,6 +404,7 @@ export namespace ModelStatic {
       | "EventStub"
       | "GenderType"
       | "ImageObject"
+      | "ImageObjectStub"
       | "Intangible"
       | "IntangibleStub"
       | "Invoice"
@@ -545,6 +547,7 @@ export namespace ModelStatic {
         "EventStub",
         "GenderType",
         "ImageObject",
+        "ImageObjectStub",
         "Intangible",
         "IntangibleStub",
         "Invoice",
@@ -695,6 +698,7 @@ export class Thing extends Model {
   readonly alternateNames: readonly string[];
   readonly description: purify.Maybe<string>;
   readonly disambiguatingDescription: purify.Maybe<string>;
+  readonly images: readonly ImageObjectStub[];
   readonly localIdentifiers: readonly string[];
   readonly name: purify.Maybe<string>;
   readonly order: purify.Maybe<number>;
@@ -708,6 +712,7 @@ export class Thing extends Model {
       readonly alternateNames?: readonly string[];
       readonly description?: purify.Maybe<string> | string;
       readonly disambiguatingDescription?: purify.Maybe<string> | string;
+      readonly images?: readonly ImageObjectStub[];
       readonly localIdentifiers?: readonly string[];
       readonly name?: purify.Maybe<string> | string;
       readonly order?: number | purify.Maybe<number>;
@@ -755,6 +760,14 @@ export class Thing extends Model {
     } else {
       this.disambiguatingDescription =
         parameters.disambiguatingDescription satisfies never;
+    }
+
+    if (typeof parameters.images === "undefined") {
+      this.images = [];
+    } else if (typeof parameters.images === "object") {
+      this.images = parameters.images;
+    } else {
+      this.images = parameters.images satisfies never;
     }
 
     if (typeof parameters.localIdentifiers === "undefined") {
@@ -861,6 +874,19 @@ export class Thing extends Model {
         })),
       )
       .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.images,
+          other.images,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "images",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) => $arrayEquals(left, right, $strictEquals))(
           this.localIdentifiers,
           other.localIdentifiers,
@@ -933,6 +959,12 @@ export class Thing extends Model {
                 return ((left, right) => left.equals(right))(left, right);
               }
               if (left.type === "EpisodeStub" && right.type === "EpisodeStub") {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
+                left.type === "ImageObjectStub" &&
+                right.type === "ImageObjectStub"
+              ) {
                 return ((left, right) => left.equals(right))(left, right);
               }
               if (
@@ -1060,6 +1092,10 @@ export class Thing extends Model {
     this.disambiguatingDescription.ifJust((_value0) => {
       _hasher.update(_value0);
     });
+    for (const _item0 of this.images) {
+      _item0.hash(_hasher);
+    }
+
     for (const _item0 of this.localIdentifiers) {
       _hasher.update(_item0);
     }
@@ -1081,6 +1117,7 @@ export class Thing extends Model {
         case "ArticleStub":
         case "CreativeWorkSeriesStub":
         case "EpisodeStub":
+        case "ImageObjectStub":
         case "MediaObjectStub":
         case "MessageStub":
         case "MusicAlbumStub":
@@ -1121,6 +1158,7 @@ export class Thing extends Model {
         disambiguatingDescription: this.disambiguatingDescription
           .map((_item) => _item)
           .extract(),
+        images: this.images.map((_item) => _item.toJson()),
         localIdentifiers: this.localIdentifiers.map((_item) => _item),
         name: this.name.map((_item) => _item).extract(),
         order: this.order.map((_item) => _item).extract(),
@@ -1171,6 +1209,12 @@ export class Thing extends Model {
       this.disambiguatingDescription,
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/image"),
+      this.images.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/identifier"),
       this.localIdentifiers.map((_item) => _item),
     );
@@ -1210,6 +1254,7 @@ export namespace ThingStatic {
     readonly alternateNames: readonly string[];
     readonly description: string | undefined;
     readonly disambiguatingDescription: string | undefined;
+    readonly images: readonly ImageObjectStub.Json[];
     readonly localIdentifiers: readonly string[];
     readonly name: string | undefined;
     readonly order: number | undefined;
@@ -1230,6 +1275,7 @@ export namespace ThingStatic {
       alternateNames: readonly string[];
       description: purify.Maybe<string>;
       disambiguatingDescription: purify.Maybe<string>;
+      images: readonly ImageObjectStub[];
       localIdentifiers: readonly string[];
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
@@ -1258,6 +1304,9 @@ export namespace ThingStatic {
     const disambiguatingDescription = purify.Maybe.fromNullable(
       _jsonObject["disambiguatingDescription"],
     );
+    const images = _jsonObject["images"].map((_item) =>
+      ImageObjectStub.fromJson(_item).unsafeCoerce(),
+    );
     const localIdentifiers = _jsonObject["localIdentifiers"];
     const name = purify.Maybe.fromNullable(_jsonObject["name"]);
     const order = purify.Maybe.fromNullable(_jsonObject["order"]);
@@ -1278,6 +1327,7 @@ export namespace ThingStatic {
       alternateNames,
       description,
       disambiguatingDescription,
+      images,
       localIdentifiers,
       name,
       order,
@@ -1334,6 +1384,9 @@ export namespace ThingStatic {
           scope: `${scopePrefix}/properties/disambiguatingDescription`,
           type: "Control",
         },
+        ImageObjectStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/images`,
+        }),
         {
           scope: `${scopePrefix}/properties/localIdentifiers`,
           type: "Control",
@@ -1404,6 +1457,9 @@ export namespace ThingStatic {
           .default(() => []),
         description: zod.string().optional(),
         disambiguatingDescription: zod.string().optional(),
+        images: ImageObjectStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         localIdentifiers: zod
           .string()
           .array()
@@ -1444,6 +1500,7 @@ export namespace ThingStatic {
       alternateNames: readonly string[];
       description: purify.Maybe<string>;
       disambiguatingDescription: purify.Maybe<string>;
+      images: readonly ImageObjectStub[];
       localIdentifiers: readonly string[];
       name: purify.Maybe<string>;
       order: purify.Maybe<number>;
@@ -1546,6 +1603,36 @@ export namespace ThingStatic {
 
     const disambiguatingDescription =
       _disambiguatingDescriptionEither.unsafeCoerce();
+    const _imagesEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly ImageObjectStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/image"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              ImageObjectStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_imagesEither.isLeft()) {
+      return _imagesEither;
+    }
+
+    const images = _imagesEither.unsafeCoerce();
     const _localIdentifiersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly string[]
@@ -1698,6 +1785,7 @@ export namespace ThingStatic {
       alternateNames,
       description,
       disambiguatingDescription,
+      images,
       localIdentifiers,
       name,
       order,
@@ -1775,6 +1863,7 @@ export namespace ThingStatic {
         "http://schema.org/disambiguatingDescription",
       ),
     },
+    { path: dataFactory.namedNode("http://schema.org/image") },
     { path: dataFactory.namedNode("http://schema.org/identifier") },
     { path: dataFactory.namedNode("http://schema.org/name") },
     { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
@@ -2724,1631 +2813,6 @@ export namespace Occupation {
   }
 
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
-}
-export class CreativeWork extends Thing {
-  override readonly type:
-    | "CreativeWork"
-    | "Article"
-    | "CreativeWorkSeries"
-    | "Episode"
-    | "ImageObject"
-    | "MediaObject"
-    | "Message"
-    | "MusicAlbum"
-    | "MusicComposition"
-    | "MusicPlaylist"
-    | "MusicRecording"
-    | "RadioEpisode"
-    | "RadioSeries"
-    | "Report"
-    | "TextObject" = "CreativeWork";
-  readonly about: readonly ThingStub[];
-  readonly authors: readonly AgentStub[];
-  readonly datePublished: purify.Maybe<Date>;
-  hasParts: CreativeWorkStub[];
-  readonly isBasedOn: readonly rdfjs.NamedNode[];
-  readonly isPartOf: readonly CreativeWorkStub[];
-  readonly publication: readonly PublicationEventStub[];
-
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly about?: readonly ThingStub[];
-      readonly authors?: readonly AgentStub[];
-      readonly datePublished?: Date | purify.Maybe<Date>;
-      readonly hasParts?: readonly CreativeWorkStub[];
-      readonly isBasedOn?: readonly rdfjs.NamedNode[];
-      readonly isPartOf?: readonly CreativeWorkStub[];
-      readonly publication?: readonly PublicationEventStub[];
-    } & ConstructorParameters<typeof Thing>[0],
-  ) {
-    super(parameters);
-    if (typeof parameters.about === "undefined") {
-      this.about = [];
-    } else if (typeof parameters.about === "object") {
-      this.about = parameters.about;
-    } else {
-      this.about = parameters.about satisfies never;
-    }
-
-    if (typeof parameters.authors === "undefined") {
-      this.authors = [];
-    } else if (typeof parameters.authors === "object") {
-      this.authors = parameters.authors;
-    } else {
-      this.authors = parameters.authors satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.datePublished)) {
-      this.datePublished = parameters.datePublished;
-    } else if (
-      typeof parameters.datePublished === "object" &&
-      parameters.datePublished instanceof Date
-    ) {
-      this.datePublished = purify.Maybe.of(parameters.datePublished);
-    } else if (typeof parameters.datePublished === "undefined") {
-      this.datePublished = purify.Maybe.empty();
-    } else {
-      this.datePublished = parameters.datePublished satisfies never;
-    }
-
-    if (typeof parameters.hasParts === "undefined") {
-      this.hasParts = [];
-    } else if (typeof parameters.hasParts === "object") {
-      this.hasParts = parameters.hasParts.concat();
-    } else {
-      this.hasParts = parameters.hasParts satisfies never;
-    }
-
-    if (typeof parameters.isBasedOn === "undefined") {
-      this.isBasedOn = [];
-    } else if (typeof parameters.isBasedOn === "object") {
-      this.isBasedOn = parameters.isBasedOn;
-    } else {
-      this.isBasedOn = parameters.isBasedOn satisfies never;
-    }
-
-    if (typeof parameters.isPartOf === "undefined") {
-      this.isPartOf = [];
-    } else if (typeof parameters.isPartOf === "object") {
-      this.isPartOf = parameters.isPartOf;
-    } else {
-      this.isPartOf = parameters.isPartOf satisfies never;
-    }
-
-    if (typeof parameters.publication === "undefined") {
-      this.publication = [];
-    } else if (typeof parameters.publication === "object") {
-      this.publication = parameters.publication;
-    } else {
-      this.publication = parameters.publication satisfies never;
-    }
-  }
-
-  override get identifier(): CreativeWorkStatic.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override equals(other: CreativeWork): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.about,
-          other.about,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "about",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
-          this.authors,
-          other.authors,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "authors",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          this.datePublished,
-          other.datePublished,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "datePublished",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.hasParts,
-          other.hasParts,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "hasParts",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          this.isBasedOn,
-          other.isBasedOn,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "isBasedOn",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.isPartOf,
-          other.isPartOf,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "isPartOf",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.publication,
-          other.publication,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "publication",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected override hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hashShaclProperties(_hasher);
-    for (const _item0 of this.about) {
-      _item0.hash(_hasher);
-    }
-
-    for (const _item0 of this.authors) {
-      _item0.hash(_hasher);
-    }
-
-    this.datePublished.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
-    });
-    for (const _item0 of this.hasParts) {
-      _item0.hash(_hasher);
-    }
-
-    for (const _item0 of this.isBasedOn) {
-      _hasher.update(_item0.termType);
-      _hasher.update(_item0.value);
-    }
-
-    for (const _item0 of this.isPartOf) {
-      _item0.hash(_hasher);
-    }
-
-    for (const _item0 of this.publication) {
-      _item0.hash(_hasher);
-    }
-
-    return _hasher;
-  }
-
-  override toJson(): CreativeWorkStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...super.toJson(),
-        about: this.about.map((_item) => _item.toJson()),
-        authors: this.authors.map((_item) => _item.toJson()),
-        datePublished: this.datePublished
-          .map((_item) => _item.toISOString())
-          .extract(),
-        hasParts: this.hasParts.map((_item) => _item.toJson()),
-        isBasedOn: this.isBasedOn.map((_item) => ({ "@id": _item.value })),
-        isPartOf: this.isPartOf.map((_item) => _item.toJson()),
-        publication: this.publication.map((_item) => _item.toJson()),
-      } satisfies CreativeWorkStatic.Json),
-    );
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/CreativeWork"),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/about"),
-      this.about.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/author"),
-      this.authors.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/datePublished"),
-      this.datePublished.map((_value) =>
-        rdfLiteral.toRdf(_value, {
-          dataFactory,
-          datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#dateTime",
-          ),
-        }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/hasPart"),
-      this.hasParts.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/isBasedOn"),
-      this.isBasedOn.map((_item) => _item),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/isPartOf"),
-      this.isPartOf.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/publication"),
-      this.publication.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace CreativeWorkStatic {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/CreativeWork",
-  );
-  export type Identifier = ThingStatic.Identifier;
-  export const Identifier = ThingStatic.Identifier;
-  export type Json = {
-    readonly about: readonly ThingStubStatic.Json[];
-    readonly authors: readonly (
-      | OrganizationStubStatic.Json
-      | PersonStub.Json
-    )[];
-    readonly datePublished: string | undefined;
-    readonly hasParts: readonly CreativeWorkStubStatic.Json[];
-    readonly isBasedOn: readonly { readonly "@id": string }[];
-    readonly isPartOf: readonly CreativeWorkStubStatic.Json[];
-    readonly publication: readonly PublicationEventStub.Json[];
-  } & ThingStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      about: readonly ThingStub[];
-      authors: readonly AgentStub[];
-      datePublished: purify.Maybe<Date>;
-      hasParts: CreativeWorkStub[];
-      isBasedOn: readonly rdfjs.NamedNode[];
-      isPartOf: readonly CreativeWorkStub[];
-      publication: readonly PublicationEventStub[];
-    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const about = _jsonObject["about"].map((_item) =>
-      ThingStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    const authors = _jsonObject["authors"].map((_item) =>
-      AgentStub.fromJson(_item).unsafeCoerce(),
-    );
-    const datePublished = purify.Maybe.fromNullable(
-      _jsonObject["datePublished"],
-    ).map((_item) => new Date(_item));
-    const hasParts = _jsonObject["hasParts"].map((_item) =>
-      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    const isBasedOn = _jsonObject["isBasedOn"].map((_item) =>
-      dataFactory.namedNode(_item["@id"]),
-    );
-    const isPartOf = _jsonObject["isPartOf"].map((_item) =>
-      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    const publication = _jsonObject["publication"].map((_item) =>
-      PublicationEventStub.fromJson(_item).unsafeCoerce(),
-    );
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      about,
-      authors,
-      datePublished,
-      hasParts,
-      isBasedOn,
-      isPartOf,
-      publication,
-    });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, CreativeWork> {
-    return (
-      ArticleStatic.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>
-    )
-      .altLazy(
-        () =>
-          CreativeWorkSeriesStatic.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          EpisodeStatic.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MediaObjectStatic.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          Message.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
-      )
-      .altLazy(
-        () =>
-          MusicAlbum.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicComposition.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicPlaylist.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicRecording.fromJson(json) as purify.Either<
-            zod.ZodError,
-            CreativeWork
-          >,
-      )
-      .altLazy(() =>
-        propertiesFromJson(json).map(
-          (properties) => new CreativeWork(properties),
-        ),
-      );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ThingStatic.jsonUiSchema({ scopePrefix }),
-        ThingStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/about`,
-        }),
-        { scope: `${scopePrefix}/properties/authors`, type: "Control" },
-        { scope: `${scopePrefix}/properties/datePublished`, type: "Control" },
-        CreativeWorkStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/hasParts`,
-        }),
-        { scope: `${scopePrefix}/properties/isBasedOn`, type: "Control" },
-        CreativeWorkStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/isPartOf`,
-        }),
-        PublicationEventStub.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/publication`,
-        }),
-      ],
-      label: "CreativeWork",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return ThingStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "CreativeWork",
-          "Article",
-          "CreativeWorkSeries",
-          "Episode",
-          "ImageObject",
-          "MediaObject",
-          "Message",
-          "MusicAlbum",
-          "MusicComposition",
-          "MusicPlaylist",
-          "MusicRecording",
-          "RadioEpisode",
-          "RadioSeries",
-          "Report",
-          "TextObject",
-        ]),
-        about: ThingStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
-        authors: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        datePublished: zod.string().datetime().optional(),
-        hasParts: CreativeWorkStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
-        isBasedOn: zod
-          .object({ "@id": zod.string().min(1) })
-          .array()
-          .default(() => []),
-        isPartOf: CreativeWorkStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
-        publication: PublicationEventStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      about: readonly ThingStub[];
-      authors: readonly AgentStub[];
-      datePublished: purify.Maybe<Date>;
-      hasParts: CreativeWorkStub[];
-      isBasedOn: readonly rdfjs.NamedNode[];
-      isPartOf: readonly CreativeWorkStub[];
-      publication: readonly PublicationEventStub[];
-    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
-  > {
-    const _super0Either = ThingStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/CreativeWork"),
-      )
-    ) {
-      return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-            }),
-          ),
-        );
-    }
-
-    const identifier: CreativeWorkStatic.Identifier = _resource.identifier;
-    const _aboutEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly ThingStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/about"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ThingStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_aboutEither.isLeft()) {
-      return _aboutEither;
-    }
-
-    const about = _aboutEither.unsafeCoerce();
-    const _authorsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/author"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_authorsEither.isLeft()) {
-      return _authorsEither;
-    }
-
-    const authors = _authorsEither.unsafeCoerce();
-    const _datePublishedEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/datePublished"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
-    if (_datePublishedEither.isLeft()) {
-      return _datePublishedEither;
-    }
-
-    const datePublished = _datePublishedEither.unsafeCoerce();
-    const _hasPartsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      CreativeWorkStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/hasPart"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              CreativeWorkStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_hasPartsEither.isLeft()) {
-      return _hasPartsEither;
-    }
-
-    const hasParts = _hasPartsEither.unsafeCoerce();
-    const _isBasedOnEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly rdfjs.NamedNode[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/isBasedOn"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toIri())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_isBasedOnEither.isLeft()) {
-      return _isBasedOnEither;
-    }
-
-    const isBasedOn = _isBasedOnEither.unsafeCoerce();
-    const _isPartOfEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly CreativeWorkStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/isPartOf"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              CreativeWorkStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_isPartOfEither.isLeft()) {
-      return _isPartOfEither;
-    }
-
-    const isPartOf = _isPartOfEither.unsafeCoerce();
-    const _publicationEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly PublicationEventStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/publication"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              PublicationEventStub.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_publicationEither.isLeft()) {
-      return _publicationEither;
-    }
-
-    const publication = _publicationEither.unsafeCoerce();
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      about,
-      authors,
-      datePublished,
-      hasParts,
-      isBasedOn,
-      isPartOf,
-      publication,
-    });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof CreativeWorkStatic.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWork> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return (
-      ArticleStatic.fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        CreativeWork
-      >
-    )
-      .altLazy(
-        () =>
-          CreativeWorkSeriesStatic.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          EpisodeStatic.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MediaObjectStatic.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          Message.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicAlbum.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicComposition.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicPlaylist.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(
-        () =>
-          MusicRecording.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWork
-          >,
-      )
-      .altLazy(() =>
-        CreativeWorkStatic.propertiesFromRdf(parameters).map(
-          (properties) => new CreativeWork(properties),
-        ),
-      );
-  }
-
-  export const rdfProperties = [
-    ...ThingStatic.rdfProperties,
-    { path: dataFactory.namedNode("http://schema.org/about") },
-    { path: dataFactory.namedNode("http://schema.org/author") },
-    { path: dataFactory.namedNode("http://schema.org/datePublished") },
-    { path: dataFactory.namedNode("http://schema.org/hasPart") },
-    { path: dataFactory.namedNode("http://schema.org/isBasedOn") },
-    { path: dataFactory.namedNode("http://schema.org/isPartOf") },
-    { path: dataFactory.namedNode("http://schema.org/publication") },
-  ];
-}
-export class MediaObject extends CreativeWork {
-  override readonly type: "MediaObject" | "ImageObject" | "TextObject" =
-    "MediaObject";
-  readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
-  readonly encodingFormat: purify.Maybe<string>;
-  readonly height: purify.Maybe<QuantitativeValue>;
-  readonly width: purify.Maybe<QuantitativeValue>;
-
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly contentUrl?:
-        | rdfjs.NamedNode
-        | purify.Maybe<rdfjs.NamedNode>
-        | string;
-      readonly encodingFormat?: purify.Maybe<string> | string;
-      readonly height?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
-      readonly width?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
-    } & ConstructorParameters<typeof CreativeWork>[0],
-  ) {
-    super(parameters);
-    if (purify.Maybe.isMaybe(parameters.contentUrl)) {
-      this.contentUrl = parameters.contentUrl;
-    } else if (typeof parameters.contentUrl === "object") {
-      this.contentUrl = purify.Maybe.of(parameters.contentUrl);
-    } else if (typeof parameters.contentUrl === "string") {
-      this.contentUrl = purify.Maybe.of(
-        dataFactory.namedNode(parameters.contentUrl),
-      );
-    } else if (typeof parameters.contentUrl === "undefined") {
-      this.contentUrl = purify.Maybe.empty();
-    } else {
-      this.contentUrl = parameters.contentUrl satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.encodingFormat)) {
-      this.encodingFormat = parameters.encodingFormat;
-    } else if (typeof parameters.encodingFormat === "string") {
-      this.encodingFormat = purify.Maybe.of(parameters.encodingFormat);
-    } else if (typeof parameters.encodingFormat === "undefined") {
-      this.encodingFormat = purify.Maybe.empty();
-    } else {
-      this.encodingFormat = parameters.encodingFormat satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.height)) {
-      this.height = parameters.height;
-    } else if (
-      typeof parameters.height === "object" &&
-      parameters.height instanceof QuantitativeValue
-    ) {
-      this.height = purify.Maybe.of(parameters.height);
-    } else if (typeof parameters.height === "undefined") {
-      this.height = purify.Maybe.empty();
-    } else {
-      this.height = parameters.height satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.width)) {
-      this.width = parameters.width;
-    } else if (
-      typeof parameters.width === "object" &&
-      parameters.width instanceof QuantitativeValue
-    ) {
-      this.width = purify.Maybe.of(parameters.width);
-    } else if (typeof parameters.width === "undefined") {
-      this.width = purify.Maybe.empty();
-    } else {
-      this.width = parameters.width satisfies never;
-    }
-  }
-
-  override get identifier(): MediaObjectStatic.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override equals(other: MediaObject): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          this.contentUrl,
-          other.contentUrl,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "contentUrl",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.encodingFormat,
-          other.encodingFormat,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "encodingFormat",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.height,
-          other.height,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "height",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.width,
-          other.width,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "width",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected override hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hashShaclProperties(_hasher);
-    this.contentUrl.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
-    });
-    this.encodingFormat.ifJust((_value0) => {
-      _hasher.update(_value0);
-    });
-    this.height.ifJust((_value0) => {
-      _value0.hash(_hasher);
-    });
-    this.width.ifJust((_value0) => {
-      _value0.hash(_hasher);
-    });
-    return _hasher;
-  }
-
-  override toJson(): MediaObjectStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...super.toJson(),
-        contentUrl: this.contentUrl
-          .map((_item) => ({ "@id": _item.value }))
-          .extract(),
-        encodingFormat: this.encodingFormat.map((_item) => _item).extract(),
-        height: this.height.map((_item) => _item.toJson()).extract(),
-        width: this.width.map((_item) => _item.toJson()).extract(),
-      } satisfies MediaObjectStatic.Json),
-    );
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/MediaObject"),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/contentUrl"),
-      this.contentUrl,
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/encodingFormat"),
-      this.encodingFormat,
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/height"),
-      this.height.map((_value) =>
-        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/width"),
-      this.width.map((_value) =>
-        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace MediaObjectStatic {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/MediaObject",
-  );
-  export type Identifier = CreativeWorkStatic.Identifier;
-  export const Identifier = CreativeWorkStatic.Identifier;
-  export type Json = {
-    readonly contentUrl: { readonly "@id": string } | undefined;
-    readonly encodingFormat: string | undefined;
-    readonly height: QuantitativeValue.Json | undefined;
-    readonly width: QuantitativeValue.Json | undefined;
-  } & CreativeWorkStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      contentUrl: purify.Maybe<rdfjs.NamedNode>;
-      encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitativeValue>;
-      width: purify.Maybe<QuantitativeValue>;
-    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const contentUrl = purify.Maybe.fromNullable(_jsonObject["contentUrl"]).map(
-      (_item) => dataFactory.namedNode(_item["@id"]),
-    );
-    const encodingFormat = purify.Maybe.fromNullable(
-      _jsonObject["encodingFormat"],
-    );
-    const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => QuantitativeValue.fromJson(_item).unsafeCoerce(),
-    );
-    const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      QuantitativeValue.fromJson(_item).unsafeCoerce(),
-    );
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      contentUrl,
-      encodingFormat,
-      height,
-      width,
-    });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, MediaObject> {
-    return (
-      TextObject.fromJson(json) as purify.Either<zod.ZodError, MediaObject>
-    )
-      .altLazy(
-        () =>
-          ImageObject.fromJson(json) as purify.Either<
-            zod.ZodError,
-            MediaObject
-          >,
-      )
-      .altLazy(() =>
-        propertiesFromJson(json).map(
-          (properties) => new MediaObject(properties),
-        ),
-      );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
-        { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        QuantitativeValue.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/height`,
-        }),
-        QuantitativeValue.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/width`,
-        }),
-      ],
-      label: "MediaObject",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return CreativeWorkStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["MediaObject", "ImageObject", "TextObject"]),
-        contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
-        encodingFormat: zod.string().optional(),
-        height: QuantitativeValue.jsonZodSchema().optional(),
-        width: QuantitativeValue.jsonZodSchema().optional(),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      contentUrl: purify.Maybe<rdfjs.NamedNode>;
-      encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitativeValue>;
-      width: purify.Maybe<QuantitativeValue>;
-    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
-  > {
-    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/MediaObject"),
-      )
-    ) {
-      return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-            }),
-          ),
-        );
-    }
-
-    const identifier: MediaObjectStatic.Identifier = _resource.identifier;
-    const _contentUrlEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/contentUrl"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toIri())
-        .toMaybe(),
-    );
-    if (_contentUrlEither.isLeft()) {
-      return _contentUrlEither;
-    }
-
-    const contentUrl = _contentUrlEither.unsafeCoerce();
-    const _encodingFormatEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/encodingFormat"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
-    if (_encodingFormatEither.isLeft()) {
-      return _encodingFormatEither;
-    }
-
-    const encodingFormat = _encodingFormatEither.unsafeCoerce();
-    const _heightEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitativeValue>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/height"), {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          QuantitativeValue.fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
-    if (_heightEither.isLeft()) {
-      return _heightEither;
-    }
-
-    const height = _heightEither.unsafeCoerce();
-    const _widthEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitativeValue>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/width"), {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          QuantitativeValue.fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
-    if (_widthEither.isLeft()) {
-      return _widthEither;
-    }
-
-    const width = _widthEither.unsafeCoerce();
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      contentUrl,
-      encodingFormat,
-      height,
-      width,
-    });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof MediaObjectStatic.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MediaObject> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return (
-      TextObject.fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        MediaObject
-      >
-    )
-      .altLazy(
-        () =>
-          ImageObject.fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            MediaObject
-          >,
-      )
-      .altLazy(() =>
-        MediaObjectStatic.propertiesFromRdf(parameters).map(
-          (properties) => new MediaObject(properties),
-        ),
-      );
-  }
-
-  export const rdfProperties = [
-    ...CreativeWorkStatic.rdfProperties,
-    { path: dataFactory.namedNode("http://schema.org/contentUrl") },
-    { path: dataFactory.namedNode("http://schema.org/encodingFormat") },
-    { path: dataFactory.namedNode("http://schema.org/height") },
-    { path: dataFactory.namedNode("http://schema.org/width") },
-  ];
-}
-export class ImageObject extends MediaObject {
-  override readonly type = "ImageObject";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof MediaObject>[0],
-  ) {
-    super(parameters);
-  }
-
-  override get identifier(): ImageObject.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/ImageObject"),
-      );
-    }
-
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace ImageObject {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/ImageObject",
-  );
-  export type Identifier = MediaObjectStatic.Identifier;
-  export const Identifier = MediaObjectStatic.Identifier;
-  export type Json = MediaObjectStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof MediaObjectStatic.propertiesFromJson>
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = MediaObjectStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ImageObject> {
-    return propertiesFromJson(json).map(
-      (properties) => new ImageObject(properties),
-    );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [MediaObjectStatic.jsonUiSchema({ scopePrefix })],
-      label: "ImageObject",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return MediaObjectStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("ImageObject"),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof MediaObjectStatic.propertiesFromRdf>
-    >
-  > {
-    const _super0Either = MediaObjectStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/ImageObject"),
-      )
-    ) {
-      return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-            }),
-          ),
-        );
-    }
-
-    const identifier: ImageObject.Identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof ImageObject.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ImageObject> {
-    return ImageObject.propertiesFromRdf(parameters).map(
-      (properties) => new ImageObject(properties),
-    );
-  }
-
-  export const rdfProperties = [...MediaObjectStatic.rdfProperties];
 }
 export class Enumeration extends Intangible {
   override readonly type: "Enumeration" | "GenderType" = "Enumeration";
@@ -7236,6 +5700,7 @@ export class ThingStub extends Model {
     | "CreativeWorkStub"
     | "EpisodeStub"
     | "EventStub"
+    | "ImageObjectStub"
     | "IntangibleStub"
     | "InvoiceStub"
     | "ItemListStub"
@@ -7530,6 +5995,7 @@ export namespace ThingStubStatic {
           "CreativeWorkStub",
           "EpisodeStub",
           "EventStub",
+          "ImageObjectStub",
           "IntangibleStub",
           "InvoiceStub",
           "ItemListStub",
@@ -8509,6 +6975,1446 @@ export namespace VoteActionStub {
 
   export const rdfProperties = [...ChooseActionStubStatic.rdfProperties];
 }
+export class CreativeWork extends Thing {
+  override readonly type:
+    | "CreativeWork"
+    | "Article"
+    | "CreativeWorkSeries"
+    | "Episode"
+    | "ImageObject"
+    | "MediaObject"
+    | "Message"
+    | "MusicAlbum"
+    | "MusicComposition"
+    | "MusicPlaylist"
+    | "MusicRecording"
+    | "RadioEpisode"
+    | "RadioSeries"
+    | "Report"
+    | "TextObject" = "CreativeWork";
+  readonly about: readonly ThingStub[];
+  readonly authors: readonly AgentStub[];
+  readonly datePublished: purify.Maybe<Date>;
+  hasParts: CreativeWorkStub[];
+  readonly isBasedOn: readonly rdfjs.NamedNode[];
+  readonly isPartOf: readonly CreativeWorkStub[];
+  readonly publication: readonly PublicationEventStub[];
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly about?: readonly ThingStub[];
+      readonly authors?: readonly AgentStub[];
+      readonly datePublished?: Date | purify.Maybe<Date>;
+      readonly hasParts?: readonly CreativeWorkStub[];
+      readonly isBasedOn?: readonly rdfjs.NamedNode[];
+      readonly isPartOf?: readonly CreativeWorkStub[];
+      readonly publication?: readonly PublicationEventStub[];
+    } & ConstructorParameters<typeof Thing>[0],
+  ) {
+    super(parameters);
+    if (typeof parameters.about === "undefined") {
+      this.about = [];
+    } else if (typeof parameters.about === "object") {
+      this.about = parameters.about;
+    } else {
+      this.about = parameters.about satisfies never;
+    }
+
+    if (typeof parameters.authors === "undefined") {
+      this.authors = [];
+    } else if (typeof parameters.authors === "object") {
+      this.authors = parameters.authors;
+    } else {
+      this.authors = parameters.authors satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.datePublished)) {
+      this.datePublished = parameters.datePublished;
+    } else if (
+      typeof parameters.datePublished === "object" &&
+      parameters.datePublished instanceof Date
+    ) {
+      this.datePublished = purify.Maybe.of(parameters.datePublished);
+    } else if (typeof parameters.datePublished === "undefined") {
+      this.datePublished = purify.Maybe.empty();
+    } else {
+      this.datePublished = parameters.datePublished satisfies never;
+    }
+
+    if (typeof parameters.hasParts === "undefined") {
+      this.hasParts = [];
+    } else if (typeof parameters.hasParts === "object") {
+      this.hasParts = parameters.hasParts.concat();
+    } else {
+      this.hasParts = parameters.hasParts satisfies never;
+    }
+
+    if (typeof parameters.isBasedOn === "undefined") {
+      this.isBasedOn = [];
+    } else if (typeof parameters.isBasedOn === "object") {
+      this.isBasedOn = parameters.isBasedOn;
+    } else {
+      this.isBasedOn = parameters.isBasedOn satisfies never;
+    }
+
+    if (typeof parameters.isPartOf === "undefined") {
+      this.isPartOf = [];
+    } else if (typeof parameters.isPartOf === "object") {
+      this.isPartOf = parameters.isPartOf;
+    } else {
+      this.isPartOf = parameters.isPartOf satisfies never;
+    }
+
+    if (typeof parameters.publication === "undefined") {
+      this.publication = [];
+    } else if (typeof parameters.publication === "object") {
+      this.publication = parameters.publication;
+    } else {
+      this.publication = parameters.publication satisfies never;
+    }
+  }
+
+  override get identifier(): CreativeWorkStatic.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: CreativeWork): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.about,
+          other.about,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "about",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
+          this.authors,
+          other.authors,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "authors",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
+          this.datePublished,
+          other.datePublished,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "datePublished",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.hasParts,
+          other.hasParts,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "hasParts",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.isBasedOn,
+          other.isBasedOn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "isBasedOn",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.isPartOf,
+          other.isPartOf,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "isPartOf",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.publication,
+          other.publication,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "publication",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    for (const _item0 of this.about) {
+      _item0.hash(_hasher);
+    }
+
+    for (const _item0 of this.authors) {
+      _item0.hash(_hasher);
+    }
+
+    this.datePublished.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
+    for (const _item0 of this.hasParts) {
+      _item0.hash(_hasher);
+    }
+
+    for (const _item0 of this.isBasedOn) {
+      _hasher.update(_item0.termType);
+      _hasher.update(_item0.value);
+    }
+
+    for (const _item0 of this.isPartOf) {
+      _item0.hash(_hasher);
+    }
+
+    for (const _item0 of this.publication) {
+      _item0.hash(_hasher);
+    }
+
+    return _hasher;
+  }
+
+  override toJson(): CreativeWorkStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        about: this.about.map((_item) => _item.toJson()),
+        authors: this.authors.map((_item) => _item.toJson()),
+        datePublished: this.datePublished
+          .map((_item) => _item.toISOString())
+          .extract(),
+        hasParts: this.hasParts.map((_item) => _item.toJson()),
+        isBasedOn: this.isBasedOn.map((_item) => ({ "@id": _item.value })),
+        isPartOf: this.isPartOf.map((_item) => _item.toJson()),
+        publication: this.publication.map((_item) => _item.toJson()),
+      } satisfies CreativeWorkStatic.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/CreativeWork"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/about"),
+      this.about.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/author"),
+      this.authors.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/datePublished"),
+      this.datePublished.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/hasPart"),
+      this.hasParts.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/isBasedOn"),
+      this.isBasedOn.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/isPartOf"),
+      this.isPartOf.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/publication"),
+      this.publication.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace CreativeWorkStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/CreativeWork",
+  );
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
+  export type Json = {
+    readonly about: readonly ThingStubStatic.Json[];
+    readonly authors: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
+    readonly datePublished: string | undefined;
+    readonly hasParts: readonly CreativeWorkStubStatic.Json[];
+    readonly isBasedOn: readonly { readonly "@id": string }[];
+    readonly isPartOf: readonly CreativeWorkStubStatic.Json[];
+    readonly publication: readonly PublicationEventStub.Json[];
+  } & ThingStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      about: readonly ThingStub[];
+      authors: readonly AgentStub[];
+      datePublished: purify.Maybe<Date>;
+      hasParts: CreativeWorkStub[];
+      isBasedOn: readonly rdfjs.NamedNode[];
+      isPartOf: readonly CreativeWorkStub[];
+      publication: readonly PublicationEventStub[];
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const about = _jsonObject["about"].map((_item) =>
+      ThingStubStatic.fromJson(_item).unsafeCoerce(),
+    );
+    const authors = _jsonObject["authors"].map((_item) =>
+      AgentStub.fromJson(_item).unsafeCoerce(),
+    );
+    const datePublished = purify.Maybe.fromNullable(
+      _jsonObject["datePublished"],
+    ).map((_item) => new Date(_item));
+    const hasParts = _jsonObject["hasParts"].map((_item) =>
+      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
+    );
+    const isBasedOn = _jsonObject["isBasedOn"].map((_item) =>
+      dataFactory.namedNode(_item["@id"]),
+    );
+    const isPartOf = _jsonObject["isPartOf"].map((_item) =>
+      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
+    );
+    const publication = _jsonObject["publication"].map((_item) =>
+      PublicationEventStub.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      about,
+      authors,
+      datePublished,
+      hasParts,
+      isBasedOn,
+      isPartOf,
+      publication,
+    });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, CreativeWork> {
+    return (
+      ArticleStatic.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>
+    )
+      .altLazy(
+        () =>
+          CreativeWorkSeriesStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          EpisodeStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MediaObjectStatic.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          Message.fromJson(json) as purify.Either<zod.ZodError, CreativeWork>,
+      )
+      .altLazy(
+        () =>
+          MusicAlbum.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicComposition.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicPlaylist.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicRecording.fromJson(json) as purify.Either<
+            zod.ZodError,
+            CreativeWork
+          >,
+      )
+      .altLazy(() =>
+        propertiesFromJson(json).map(
+          (properties) => new CreativeWork(properties),
+        ),
+      );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        ThingStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/about`,
+        }),
+        { scope: `${scopePrefix}/properties/authors`, type: "Control" },
+        { scope: `${scopePrefix}/properties/datePublished`, type: "Control" },
+        CreativeWorkStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/hasParts`,
+        }),
+        { scope: `${scopePrefix}/properties/isBasedOn`, type: "Control" },
+        CreativeWorkStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/isPartOf`,
+        }),
+        PublicationEventStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/publication`,
+        }),
+      ],
+      label: "CreativeWork",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "CreativeWork",
+          "Article",
+          "CreativeWorkSeries",
+          "Episode",
+          "ImageObject",
+          "MediaObject",
+          "Message",
+          "MusicAlbum",
+          "MusicComposition",
+          "MusicPlaylist",
+          "MusicRecording",
+          "RadioEpisode",
+          "RadioSeries",
+          "Report",
+          "TextObject",
+        ]),
+        about: ThingStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        authors: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        datePublished: zod.string().datetime().optional(),
+        hasParts: CreativeWorkStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        isBasedOn: zod
+          .object({ "@id": zod.string().min(1) })
+          .array()
+          .default(() => []),
+        isPartOf: CreativeWorkStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        publication: PublicationEventStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      about: readonly ThingStub[];
+      authors: readonly AgentStub[];
+      datePublished: purify.Maybe<Date>;
+      hasParts: CreativeWorkStub[];
+      isBasedOn: readonly rdfjs.NamedNode[];
+      isPartOf: readonly CreativeWorkStub[];
+      publication: readonly PublicationEventStub[];
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = ThingStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/CreativeWork"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: CreativeWorkStatic.Identifier = _resource.identifier;
+    const _aboutEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly ThingStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/about"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              ThingStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_aboutEither.isLeft()) {
+      return _aboutEither;
+    }
+
+    const about = _aboutEither.unsafeCoerce();
+    const _authorsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly AgentStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/author"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              AgentStub.fromRdf({
+                ..._context,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_authorsEither.isLeft()) {
+      return _authorsEither;
+    }
+
+    const authors = _authorsEither.unsafeCoerce();
+    const _datePublishedEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/datePublished"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_datePublishedEither.isLeft()) {
+      return _datePublishedEither;
+    }
+
+    const datePublished = _datePublishedEither.unsafeCoerce();
+    const _hasPartsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      CreativeWorkStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/hasPart"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              CreativeWorkStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_hasPartsEither.isLeft()) {
+      return _hasPartsEither;
+    }
+
+    const hasParts = _hasPartsEither.unsafeCoerce();
+    const _isBasedOnEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly rdfjs.NamedNode[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/isBasedOn"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((_value) => _value.toIri())
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_isBasedOnEither.isLeft()) {
+      return _isBasedOnEither;
+    }
+
+    const isBasedOn = _isBasedOnEither.unsafeCoerce();
+    const _isPartOfEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly CreativeWorkStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/isPartOf"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              CreativeWorkStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_isPartOfEither.isLeft()) {
+      return _isPartOfEither;
+    }
+
+    const isPartOf = _isPartOfEither.unsafeCoerce();
+    const _publicationEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly PublicationEventStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/publication"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              PublicationEventStub.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_publicationEither.isLeft()) {
+      return _publicationEither;
+    }
+
+    const publication = _publicationEither.unsafeCoerce();
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      about,
+      authors,
+      datePublished,
+      hasParts,
+      isBasedOn,
+      isPartOf,
+      publication,
+    });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof CreativeWorkStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWork> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ArticleStatic.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        CreativeWork
+      >
+    )
+      .altLazy(
+        () =>
+          CreativeWorkSeriesStatic.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          EpisodeStatic.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MediaObjectStatic.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          Message.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicAlbum.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicComposition.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicPlaylist.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicRecording.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            CreativeWork
+          >,
+      )
+      .altLazy(() =>
+        CreativeWorkStatic.propertiesFromRdf(parameters).map(
+          (properties) => new CreativeWork(properties),
+        ),
+      );
+  }
+
+  export const rdfProperties = [
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/about") },
+    { path: dataFactory.namedNode("http://schema.org/author") },
+    { path: dataFactory.namedNode("http://schema.org/datePublished") },
+    { path: dataFactory.namedNode("http://schema.org/hasPart") },
+    { path: dataFactory.namedNode("http://schema.org/isBasedOn") },
+    { path: dataFactory.namedNode("http://schema.org/isPartOf") },
+    { path: dataFactory.namedNode("http://schema.org/publication") },
+  ];
+}
+export class MediaObject extends CreativeWork {
+  override readonly type: "MediaObject" | "ImageObject" | "TextObject" =
+    "MediaObject";
+  readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
+  readonly encodingFormat: purify.Maybe<string>;
+  readonly height: purify.Maybe<QuantitativeValue>;
+  readonly width: purify.Maybe<QuantitativeValue>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly contentUrl?:
+        | rdfjs.NamedNode
+        | purify.Maybe<rdfjs.NamedNode>
+        | string;
+      readonly encodingFormat?: purify.Maybe<string> | string;
+      readonly height?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
+      readonly width?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
+    } & ConstructorParameters<typeof CreativeWork>[0],
+  ) {
+    super(parameters);
+    if (purify.Maybe.isMaybe(parameters.contentUrl)) {
+      this.contentUrl = parameters.contentUrl;
+    } else if (typeof parameters.contentUrl === "object") {
+      this.contentUrl = purify.Maybe.of(parameters.contentUrl);
+    } else if (typeof parameters.contentUrl === "string") {
+      this.contentUrl = purify.Maybe.of(
+        dataFactory.namedNode(parameters.contentUrl),
+      );
+    } else if (typeof parameters.contentUrl === "undefined") {
+      this.contentUrl = purify.Maybe.empty();
+    } else {
+      this.contentUrl = parameters.contentUrl satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.encodingFormat)) {
+      this.encodingFormat = parameters.encodingFormat;
+    } else if (typeof parameters.encodingFormat === "string") {
+      this.encodingFormat = purify.Maybe.of(parameters.encodingFormat);
+    } else if (typeof parameters.encodingFormat === "undefined") {
+      this.encodingFormat = purify.Maybe.empty();
+    } else {
+      this.encodingFormat = parameters.encodingFormat satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.height)) {
+      this.height = parameters.height;
+    } else if (
+      typeof parameters.height === "object" &&
+      parameters.height instanceof QuantitativeValue
+    ) {
+      this.height = purify.Maybe.of(parameters.height);
+    } else if (typeof parameters.height === "undefined") {
+      this.height = purify.Maybe.empty();
+    } else {
+      this.height = parameters.height satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.width)) {
+      this.width = parameters.width;
+    } else if (
+      typeof parameters.width === "object" &&
+      parameters.width instanceof QuantitativeValue
+    ) {
+      this.width = purify.Maybe.of(parameters.width);
+    } else if (typeof parameters.width === "undefined") {
+      this.width = purify.Maybe.empty();
+    } else {
+      this.width = parameters.width satisfies never;
+    }
+  }
+
+  override get identifier(): MediaObjectStatic.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: MediaObject): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.contentUrl,
+          other.contentUrl,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "contentUrl",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.encodingFormat,
+          other.encodingFormat,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "encodingFormat",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.height,
+          other.height,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "height",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.width,
+          other.width,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "width",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.contentUrl.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    this.encodingFormat.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    this.height.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    this.width.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  override toJson(): MediaObjectStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        contentUrl: this.contentUrl
+          .map((_item) => ({ "@id": _item.value }))
+          .extract(),
+        encodingFormat: this.encodingFormat.map((_item) => _item).extract(),
+        height: this.height.map((_item) => _item.toJson()).extract(),
+        width: this.width.map((_item) => _item.toJson()).extract(),
+      } satisfies MediaObjectStatic.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/MediaObject"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/contentUrl"),
+      this.contentUrl,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/encodingFormat"),
+      this.encodingFormat,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/height"),
+      this.height.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/width"),
+      this.width.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace MediaObjectStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/MediaObject",
+  );
+  export type Identifier = CreativeWorkStatic.Identifier;
+  export const Identifier = CreativeWorkStatic.Identifier;
+  export type Json = {
+    readonly contentUrl: { readonly "@id": string } | undefined;
+    readonly encodingFormat: string | undefined;
+    readonly height: QuantitativeValue.Json | undefined;
+    readonly width: QuantitativeValue.Json | undefined;
+  } & CreativeWorkStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      contentUrl: purify.Maybe<rdfjs.NamedNode>;
+      encodingFormat: purify.Maybe<string>;
+      height: purify.Maybe<QuantitativeValue>;
+      width: purify.Maybe<QuantitativeValue>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = CreativeWorkStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const contentUrl = purify.Maybe.fromNullable(_jsonObject["contentUrl"]).map(
+      (_item) => dataFactory.namedNode(_item["@id"]),
+    );
+    const encodingFormat = purify.Maybe.fromNullable(
+      _jsonObject["encodingFormat"],
+    );
+    const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
+      (_item) => QuantitativeValue.fromJson(_item).unsafeCoerce(),
+    );
+    const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
+      QuantitativeValue.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      contentUrl,
+      encodingFormat,
+      height,
+      width,
+    });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MediaObject> {
+    return (
+      ImageObject.fromJson(json) as purify.Either<zod.ZodError, MediaObject>
+    )
+      .altLazy(
+        () =>
+          TextObject.fromJson(json) as purify.Either<zod.ZodError, MediaObject>,
+      )
+      .altLazy(() =>
+        propertiesFromJson(json).map(
+          (properties) => new MediaObject(properties),
+        ),
+      );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
+        { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
+        QuantitativeValue.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/height`,
+        }),
+        QuantitativeValue.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/width`,
+        }),
+      ],
+      label: "MediaObject",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return CreativeWorkStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["MediaObject", "ImageObject", "TextObject"]),
+        contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
+        encodingFormat: zod.string().optional(),
+        height: QuantitativeValue.jsonZodSchema().optional(),
+        width: QuantitativeValue.jsonZodSchema().optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      contentUrl: purify.Maybe<rdfjs.NamedNode>;
+      encodingFormat: purify.Maybe<string>;
+      height: purify.Maybe<QuantitativeValue>;
+      width: purify.Maybe<QuantitativeValue>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = CreativeWorkStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/MediaObject"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: MediaObjectStatic.Identifier = _resource.identifier;
+    const _contentUrlEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.NamedNode>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/contentUrl"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toIri())
+        .toMaybe(),
+    );
+    if (_contentUrlEither.isLeft()) {
+      return _contentUrlEither;
+    }
+
+    const contentUrl = _contentUrlEither.unsafeCoerce();
+    const _encodingFormatEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/encodingFormat"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_encodingFormatEither.isLeft()) {
+      return _encodingFormatEither;
+    }
+
+    const encodingFormat = _encodingFormatEither.unsafeCoerce();
+    const _heightEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<QuantitativeValue>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/height"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          QuantitativeValue.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_heightEither.isLeft()) {
+      return _heightEither;
+    }
+
+    const height = _heightEither.unsafeCoerce();
+    const _widthEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<QuantitativeValue>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/width"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          QuantitativeValue.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_widthEither.isLeft()) {
+      return _widthEither;
+    }
+
+    const width = _widthEither.unsafeCoerce();
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      contentUrl,
+      encodingFormat,
+      height,
+      width,
+    });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof MediaObjectStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MediaObject> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ImageObject.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        MediaObject
+      >
+    )
+      .altLazy(
+        () =>
+          TextObject.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            MediaObject
+          >,
+      )
+      .altLazy(() =>
+        MediaObjectStatic.propertiesFromRdf(parameters).map(
+          (properties) => new MediaObject(properties),
+        ),
+      );
+  }
+
+  export const rdfProperties = [
+    ...CreativeWorkStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/contentUrl") },
+    { path: dataFactory.namedNode("http://schema.org/encodingFormat") },
+    { path: dataFactory.namedNode("http://schema.org/height") },
+    { path: dataFactory.namedNode("http://schema.org/width") },
+  ];
+}
 export class TextObject extends MediaObject {
   override readonly type = "TextObject";
   readonly uriSpace: purify.Maybe<string>;
@@ -8787,6 +8693,7 @@ export class CreativeWorkStub extends ThingStub {
     | "ArticleStub"
     | "CreativeWorkSeriesStub"
     | "EpisodeStub"
+    | "ImageObjectStub"
     | "MediaObjectStub"
     | "MessageStub"
     | "MusicAlbumStub"
@@ -8973,6 +8880,7 @@ export namespace CreativeWorkStubStatic {
           "ArticleStub",
           "CreativeWorkSeriesStub",
           "EpisodeStub",
+          "ImageObjectStub",
           "MediaObjectStub",
           "MessageStub",
           "MusicAlbumStub",
@@ -9124,16 +9032,77 @@ export namespace CreativeWorkStubStatic {
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
 }
 export class MediaObjectStub extends CreativeWorkStub {
-  override readonly type: "MediaObjectStub" | "TextObjectStub" =
-    "MediaObjectStub";
+  override readonly type:
+    | "MediaObjectStub"
+    | "ImageObjectStub"
+    | "TextObjectStub" = "MediaObjectStub";
+  readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
+  readonly encodingFormat: purify.Maybe<string>;
+  readonly height: purify.Maybe<QuantitativeValue>;
+  readonly width: purify.Maybe<QuantitativeValue>;
 
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly contentUrl?:
+        | rdfjs.NamedNode
+        | purify.Maybe<rdfjs.NamedNode>
+        | string;
+      readonly encodingFormat?: purify.Maybe<string> | string;
+      readonly height?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
+      readonly width?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
     } & ConstructorParameters<typeof CreativeWorkStub>[0],
   ) {
     super(parameters);
+    if (purify.Maybe.isMaybe(parameters.contentUrl)) {
+      this.contentUrl = parameters.contentUrl;
+    } else if (typeof parameters.contentUrl === "object") {
+      this.contentUrl = purify.Maybe.of(parameters.contentUrl);
+    } else if (typeof parameters.contentUrl === "string") {
+      this.contentUrl = purify.Maybe.of(
+        dataFactory.namedNode(parameters.contentUrl),
+      );
+    } else if (typeof parameters.contentUrl === "undefined") {
+      this.contentUrl = purify.Maybe.empty();
+    } else {
+      this.contentUrl = parameters.contentUrl satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.encodingFormat)) {
+      this.encodingFormat = parameters.encodingFormat;
+    } else if (typeof parameters.encodingFormat === "string") {
+      this.encodingFormat = purify.Maybe.of(parameters.encodingFormat);
+    } else if (typeof parameters.encodingFormat === "undefined") {
+      this.encodingFormat = purify.Maybe.empty();
+    } else {
+      this.encodingFormat = parameters.encodingFormat satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.height)) {
+      this.height = parameters.height;
+    } else if (
+      typeof parameters.height === "object" &&
+      parameters.height instanceof QuantitativeValue
+    ) {
+      this.height = purify.Maybe.of(parameters.height);
+    } else if (typeof parameters.height === "undefined") {
+      this.height = purify.Maybe.empty();
+    } else {
+      this.height = parameters.height satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.width)) {
+      this.width = parameters.width;
+    } else if (
+      typeof parameters.width === "object" &&
+      parameters.width instanceof QuantitativeValue
+    ) {
+      this.width = purify.Maybe.of(parameters.width);
+    } else if (typeof parameters.width === "undefined") {
+      this.width = purify.Maybe.empty();
+    } else {
+      this.width = parameters.width satisfies never;
+    }
   }
 
   override get identifier(): MediaObjectStubStatic.Identifier {
@@ -9141,6 +9110,106 @@ export class MediaObjectStub extends CreativeWorkStub {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
+  }
+
+  override equals(other: MediaObjectStub): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.contentUrl,
+          other.contentUrl,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "contentUrl",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.encodingFormat,
+          other.encodingFormat,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "encodingFormat",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.height,
+          other.height,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "height",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.width,
+          other.width,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "width",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.contentUrl.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    this.encodingFormat.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
+    this.height.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    this.width.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  override toJson(): MediaObjectStubStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        contentUrl: this.contentUrl
+          .map((_item) => ({ "@id": _item.value }))
+          .extract(),
+        encodingFormat: this.encodingFormat.map((_item) => _item).extract(),
+        height: this.height.map((_item) => _item.toJson()).extract(),
+        width: this.width.map((_item) => _item.toJson()).extract(),
+      } satisfies MediaObjectStubStatic.Json),
+    );
   }
 
   override toRdf({
@@ -9166,6 +9235,26 @@ export class MediaObjectStub extends CreativeWorkStub {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/contentUrl"),
+      this.contentUrl,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/encodingFormat"),
+      this.encodingFormat,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/height"),
+      this.height.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/width"),
+      this.width.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
     return _resource;
   }
 
@@ -9180,15 +9269,24 @@ export namespace MediaObjectStubStatic {
   );
   export type Identifier = CreativeWorkStubStatic.Identifier;
   export const Identifier = CreativeWorkStubStatic.Identifier;
-  export type Json = CreativeWorkStubStatic.Json;
+  export type Json = {
+    readonly contentUrl: { readonly "@id": string } | undefined;
+    readonly encodingFormat: string | undefined;
+    readonly height: QuantitativeValue.Json | undefined;
+    readonly width: QuantitativeValue.Json | undefined;
+  } & CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      contentUrl: purify.Maybe<rdfjs.NamedNode>;
+      encodingFormat: purify.Maybe<string>;
+      height: purify.Maybe<QuantitativeValue>;
+      width: purify.Maybe<QuantitativeValue>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -9206,22 +9304,49 @@ export namespace MediaObjectStubStatic {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
+    const contentUrl = purify.Maybe.fromNullable(_jsonObject["contentUrl"]).map(
+      (_item) => dataFactory.namedNode(_item["@id"]),
+    );
+    const encodingFormat = purify.Maybe.fromNullable(
+      _jsonObject["encodingFormat"],
+    );
+    const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
+      (_item) => QuantitativeValue.fromJson(_item).unsafeCoerce(),
+    );
+    const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
+      QuantitativeValue.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      contentUrl,
+      encodingFormat,
+      height,
+      width,
+    });
   }
 
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, MediaObjectStub> {
     return (
-      TextObjectStub.fromJson(json) as purify.Either<
+      ImageObjectStub.fromJson(json) as purify.Either<
         zod.ZodError,
         MediaObjectStub
       >
-    ).altLazy(() =>
-      propertiesFromJson(json).map(
-        (properties) => new MediaObjectStub(properties),
-      ),
-    );
+    )
+      .altLazy(
+        () =>
+          TextObjectStub.fromJson(json) as purify.Either<
+            zod.ZodError,
+            MediaObjectStub
+          >,
+      )
+      .altLazy(() =>
+        propertiesFromJson(json).map(
+          (properties) => new MediaObjectStub(properties),
+        ),
+      );
   }
 
   export function jsonSchema() {
@@ -9231,7 +9356,17 @@ export namespace MediaObjectStubStatic {
   export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [CreativeWorkStubStatic.jsonUiSchema({ scopePrefix })],
+      elements: [
+        CreativeWorkStubStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
+        { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
+        QuantitativeValue.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/height`,
+        }),
+        QuantitativeValue.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/width`,
+        }),
+      ],
       label: "MediaObjectStub",
       type: "Group",
     };
@@ -9241,7 +9376,15 @@ export namespace MediaObjectStubStatic {
     return CreativeWorkStubStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["MediaObjectStub", "TextObjectStub"]),
+        type: zod.enum([
+          "MediaObjectStub",
+          "ImageObjectStub",
+          "TextObjectStub",
+        ]),
+        contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
+        encodingFormat: zod.string().optional(),
+        height: QuantitativeValue.jsonZodSchema().optional(),
+        width: QuantitativeValue.jsonZodSchema().optional(),
       }),
     );
   }
@@ -9259,9 +9402,13 @@ export namespace MediaObjectStubStatic {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      contentUrl: purify.Maybe<rdfjs.NamedNode>;
+      encodingFormat: purify.Maybe<string>;
+      height: purify.Maybe<QuantitativeValue>;
+      width: purify.Maybe<QuantitativeValue>;
+    } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
       ..._context,
@@ -9301,7 +9448,98 @@ export namespace MediaObjectStubStatic {
     }
 
     const identifier: MediaObjectStubStatic.Identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
+    const _contentUrlEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.NamedNode>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/contentUrl"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toIri())
+        .toMaybe(),
+    );
+    if (_contentUrlEither.isLeft()) {
+      return _contentUrlEither;
+    }
+
+    const contentUrl = _contentUrlEither.unsafeCoerce();
+    const _encodingFormatEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/encodingFormat"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_encodingFormatEither.isLeft()) {
+      return _encodingFormatEither;
+    }
+
+    const encodingFormat = _encodingFormatEither.unsafeCoerce();
+    const _heightEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<QuantitativeValue>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/height"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          QuantitativeValue.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_heightEither.isLeft()) {
+      return _heightEither;
+    }
+
+    const height = _heightEither.unsafeCoerce();
+    const _widthEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<QuantitativeValue>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/width"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          QuantitativeValue.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_widthEither.isLeft()) {
+      return _widthEither;
+    }
+
+    const width = _widthEither.unsafeCoerce();
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      contentUrl,
+      encodingFormat,
+      height,
+      width,
+    });
   }
 
   export function fromRdf(
@@ -9309,18 +9547,32 @@ export namespace MediaObjectStubStatic {
   ): purify.Either<rdfjsResource.Resource.ValueError, MediaObjectStub> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      TextObjectStub.fromRdf(otherParameters) as purify.Either<
+      ImageObjectStub.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         MediaObjectStub
       >
-    ).altLazy(() =>
-      MediaObjectStubStatic.propertiesFromRdf(parameters).map(
-        (properties) => new MediaObjectStub(properties),
-      ),
-    );
+    )
+      .altLazy(
+        () =>
+          TextObjectStub.fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            MediaObjectStub
+          >,
+      )
+      .altLazy(() =>
+        MediaObjectStubStatic.propertiesFromRdf(parameters).map(
+          (properties) => new MediaObjectStub(properties),
+        ),
+      );
   }
 
-  export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+  export const rdfProperties = [
+    ...CreativeWorkStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/contentUrl") },
+    { path: dataFactory.namedNode("http://schema.org/encodingFormat") },
+    { path: dataFactory.namedNode("http://schema.org/height") },
+    { path: dataFactory.namedNode("http://schema.org/width") },
+  ];
 }
 export class TextObjectStub extends MediaObjectStub {
   override readonly type = "TextObjectStub";
@@ -15559,7 +15811,6 @@ export class Person extends Thing {
   >;
   readonly givenName: purify.Maybe<string>;
   readonly hasOccupation: readonly (Occupation | Role)[];
-  readonly images: readonly ImageObject[];
   readonly jobTitle: purify.Maybe<string>;
   memberOf: OrganizationStub[];
   performerIn: EventStub[];
@@ -15578,7 +15829,6 @@ export class Person extends Thing {
         | string;
       readonly givenName?: purify.Maybe<string> | string;
       readonly hasOccupation?: readonly (Occupation | Role)[];
-      readonly images?: readonly ImageObject[];
       readonly jobTitle?: purify.Maybe<string> | string;
       readonly memberOf?: readonly OrganizationStub[];
       readonly performerIn?: readonly EventStub[];
@@ -15651,14 +15901,6 @@ export class Person extends Thing {
       this.hasOccupation = parameters.hasOccupation;
     } else {
       this.hasOccupation = parameters.hasOccupation satisfies never;
-    }
-
-    if (typeof parameters.images === "undefined") {
-      this.images = [];
-    } else if (typeof parameters.images === "object") {
-      this.images = parameters.images;
-    } else {
-      this.images = parameters.images satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.jobTitle)) {
@@ -15782,19 +16024,6 @@ export class Person extends Thing {
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.images,
-          other.images,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "images",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.jobTitle,
           other.jobTitle,
@@ -15878,10 +16107,6 @@ export class Person extends Thing {
       }
     }
 
-    for (const _item0 of this.images) {
-      _item0.hash(_hasher);
-    }
-
     this.jobTitle.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -15927,7 +16152,6 @@ export class Person extends Thing {
         hasOccupation: this.hasOccupation.map((_item) =>
           _item.type === "Role" ? _item.toJson() : _item.toJson(),
         ),
-        images: this.images.map((_item) => _item.toJson()),
         jobTitle: this.jobTitle.map((_item) => _item).extract(),
         memberOf: this.memberOf.map((_item) => _item.toJson()),
         performerIn: this.performerIn.map((_item) => _item.toJson()),
@@ -15990,12 +16214,6 @@ export class Person extends Thing {
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://schema.org/image"),
-      this.images.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
       dataFactory.namedNode("http://schema.org/jobTitle"),
       this.jobTitle,
     );
@@ -16044,7 +16262,6 @@ export namespace Person {
       | undefined;
     readonly givenName: string | undefined;
     readonly hasOccupation: readonly (Occupation.Json | Role.Json)[];
-    readonly images: readonly ImageObject.Json[];
     readonly jobTitle: string | undefined;
     readonly memberOf: readonly OrganizationStubStatic.Json[];
     readonly performerIn: readonly EventStubStatic.Json[];
@@ -16061,7 +16278,6 @@ export namespace Person {
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
       hasOccupation: readonly (Occupation | Role)[];
-      images: readonly ImageObject[];
       jobTitle: purify.Maybe<string>;
       memberOf: OrganizationStub[];
       performerIn: EventStub[];
@@ -16107,9 +16323,6 @@ export namespace Person {
         ? Role.fromJson(_item).unsafeCoerce()
         : Occupation.fromJson(_item).unsafeCoerce(),
     );
-    const images = _jsonObject["images"].map((_item) =>
-      ImageObject.fromJson(_item).unsafeCoerce(),
-    );
     const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
     const memberOf = _jsonObject["memberOf"].map((_item) =>
       OrganizationStubStatic.fromJson(_item).unsafeCoerce(),
@@ -16125,7 +16338,6 @@ export namespace Person {
       gender,
       givenName,
       hasOccupation,
-      images,
       jobTitle,
       memberOf,
       performerIn,
@@ -16150,9 +16362,6 @@ export namespace Person {
         { scope: `${scopePrefix}/properties/gender`, type: "Control" },
         { scope: `${scopePrefix}/properties/givenName`, type: "Control" },
         { scope: `${scopePrefix}/properties/hasOccupation`, type: "Control" },
-        ImageObject.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/images`,
-        }),
         { scope: `${scopePrefix}/properties/jobTitle`, type: "Control" },
         OrganizationStubStatic.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/memberOf`,
@@ -16199,9 +16408,6 @@ export namespace Person {
           ])
           .array()
           .default(() => []),
-        images: ImageObject.jsonZodSchema()
-          .array()
-          .default(() => []),
         jobTitle: zod.string().optional(),
         memberOf: OrganizationStubStatic.jsonZodSchema()
           .array()
@@ -16233,7 +16439,6 @@ export namespace Person {
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
       hasOccupation: readonly (Occupation | Role)[];
-      images: readonly ImageObject[];
       jobTitle: purify.Maybe<string>;
       memberOf: OrganizationStub[];
       performerIn: EventStub[];
@@ -16394,36 +16599,6 @@ export namespace Person {
     }
 
     const hasOccupation = _hasOccupationEither.unsafeCoerce();
-    const _imagesEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly ImageObject[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/image"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ImageObject.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_imagesEither.isLeft()) {
-      return _imagesEither;
-    }
-
-    const images = _imagesEither.unsafeCoerce();
     const _jobTitleEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -16509,7 +16684,6 @@ export namespace Person {
       gender,
       givenName,
       hasOccupation,
-      images,
       jobTitle,
       memberOf,
       performerIn,
@@ -16531,7 +16705,6 @@ export namespace Person {
     { path: dataFactory.namedNode("http://schema.org/gender") },
     { path: dataFactory.namedNode("http://schema.org/givenName") },
     { path: dataFactory.namedNode("http://schema.org/hasOccupation") },
-    { path: dataFactory.namedNode("http://schema.org/image") },
     { path: dataFactory.namedNode("http://schema.org/jobTitle") },
     { path: dataFactory.namedNode("http://schema.org/memberOf") },
     { path: dataFactory.namedNode("http://schema.org/performerIn") },
@@ -24165,6 +24338,370 @@ export namespace InvoiceStub {
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
 }
+export class ImageObject extends MediaObject {
+  override readonly type = "ImageObject";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof MediaObject>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): ImageObject.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/ImageObject"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ImageObject {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ImageObject",
+  );
+  export type Identifier = MediaObjectStatic.Identifier;
+  export const Identifier = MediaObjectStatic.Identifier;
+  export type Json = MediaObjectStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = MediaObjectStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ImageObject> {
+    return propertiesFromJson(json).map(
+      (properties) => new ImageObject(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [MediaObjectStatic.jsonUiSchema({ scopePrefix })],
+      label: "ImageObject",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return MediaObjectStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ImageObject"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = MediaObjectStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/ImageObject"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: ImageObject.Identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ImageObject.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ImageObject> {
+    return ImageObject.propertiesFromRdf(parameters).map(
+      (properties) => new ImageObject(properties),
+    );
+  }
+
+  export const rdfProperties = [...MediaObjectStatic.rdfProperties];
+}
+export class ImageObjectStub extends MediaObjectStub {
+  override readonly type = "ImageObjectStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof MediaObjectStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): ImageObjectStub.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/ImageObject"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ImageObjectStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/ImageObject",
+  );
+  export type Identifier = MediaObjectStubStatic.Identifier;
+  export const Identifier = MediaObjectStubStatic.Identifier;
+  export type Json = MediaObjectStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = MediaObjectStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ImageObjectStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new ImageObjectStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [MediaObjectStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "ImageObjectStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return MediaObjectStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ImageObjectStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof MediaObjectStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = MediaObjectStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/ImageObject"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: ImageObjectStub.Identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof ImageObjectStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ImageObjectStub> {
+    return ImageObjectStub.propertiesFromRdf(parameters).map(
+      (properties) => new ImageObjectStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...MediaObjectStubStatic.rdfProperties];
+}
 export class PersonStub extends ThingStub {
   override readonly type = "PersonStub";
   readonly jobTitle: purify.Maybe<string>;
@@ -24840,6 +25377,18 @@ export interface $ObjectSet {
   ): Promise<readonly purify.Either<Error, ImageObject>[]>;
   imageObjectsCount(
     query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  imageObjectStub(
+    identifier: ImageObjectStub.Identifier,
+  ): Promise<purify.Either<Error, ImageObjectStub>>;
+  imageObjectStubIdentifiers(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ImageObjectStub.Identifier[]>>;
+  imageObjectStubs(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ImageObjectStub>[]>;
+  imageObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<ImageObjectStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   intangible(
     identifier: IntangibleStatic.Identifier,
@@ -26980,6 +27529,69 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<ImageObject, ImageObject.Identifier>(
       ImageObject,
+      query,
+    );
+  }
+
+  async imageObjectStub(
+    identifier: ImageObjectStub.Identifier,
+  ): Promise<purify.Either<Error, ImageObjectStub>> {
+    return this.imageObjectStubSync(identifier);
+  }
+
+  imageObjectStubSync(
+    identifier: ImageObjectStub.Identifier,
+  ): purify.Either<Error, ImageObjectStub> {
+    return this.imageObjectStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async imageObjectStubIdentifiers(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ImageObjectStub.Identifier[]>> {
+    return this.imageObjectStubIdentifiersSync(query);
+  }
+
+  imageObjectStubIdentifiersSync(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): purify.Either<Error, readonly ImageObjectStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        ImageObjectStub,
+        ImageObjectStub.Identifier
+      >(ImageObjectStub, query),
+    ]);
+  }
+
+  async imageObjectStubs(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ImageObjectStub>[]> {
+    return this.imageObjectStubsSync(query);
+  }
+
+  imageObjectStubsSync(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): readonly purify.Either<Error, ImageObjectStub>[] {
+    return [
+      ...this.$objectsSync<ImageObjectStub, ImageObjectStub.Identifier>(
+        ImageObjectStub,
+        query,
+      ),
+    ];
+  }
+
+  async imageObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<ImageObjectStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.imageObjectStubsCountSync(query);
+  }
+
+  imageObjectStubsCountSync(
+    query?: Pick<$ObjectSet.Query<ImageObjectStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<ImageObjectStub, ImageObjectStub.Identifier>(
+      ImageObjectStub,
       query,
     );
   }

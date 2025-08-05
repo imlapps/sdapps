@@ -1,5 +1,11 @@
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { MusicGroup, Organization, Person, Thing } from "@sdapps/models";
+import {
+  ImageObjectStub,
+  MusicGroup,
+  Organization,
+  Person,
+  Thing,
+} from "@sdapps/models";
 import { owl, schema } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
@@ -12,6 +18,10 @@ import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 const wd = DataFactory.namedNode("http://www.wikidata.org/entity/");
 
 namespace wdt {
+  export const image: NamedNode = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P18",
+  );
+
   export const subClassOf: NamedNode = DataFactory.namedNode(
     "http://www.wikidata.org/prop/direct/P279",
   );
@@ -57,6 +67,16 @@ export class WikidataEntity {
 
   get name(): Maybe<string> {
     return this.stringProperty(schema.name);
+  }
+
+  get images(): readonly URL[] {
+    return this.resource.values(wdt.image).flatMap((value) =>
+      value
+        .toIri()
+        .chain((url) => Either.encase(() => new URL(url.value)))
+        .toMaybe()
+        .toList(),
+    );
   }
 
   @Memoize()
@@ -181,6 +201,13 @@ export class WikidataEntity {
         alternateNames: parameters?.alternateNames,
         description: this.description,
         identifier: this.iri,
+        images: this.images.map(
+          (url) =>
+            new ImageObjectStub({
+              identifier: DataFactory.namedNode(url.toString()),
+              contentUrl: url.toString(),
+            }),
+        ),
         name: this.name,
       };
 

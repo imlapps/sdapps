@@ -79,6 +79,12 @@ sdapps:EventStub-superEvent
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path schema:superEvent .
 
+sdapps:ImageObjectStub
+    shaclmate:name "ImageObjectStub" ;
+    shaclmate:rdfType schema:ImageObject ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:MediaObjectStub .
+
 sdapps:IntangibleStub
     shaclmate:name "IntangibleStub" ;
     shaclmate:rdfType schema:Intangible ;
@@ -109,7 +115,8 @@ sdapps:MediaObjectStub
     shaclmate:name "MediaObjectStub" ;
     shaclmate:rdfType schema:MediaObject ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf sdapps:CreativeWorkStub .
+    rdfs:subClassOf sdapps:CreativeWorkStub ;
+    sh:property schema:MediaObject-contentUrl, schema:MediaObject-encodingFormat, schema:MediaObject-height, schema:MediaObject-width .
 
 sdapps:MessageStub
     shaclmate:name "MessageStub" ;
@@ -800,7 +807,7 @@ schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Person-performerIn, schema:Thing-images .
+    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Person-performerIn .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -990,7 +997,7 @@ schema:Thing
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:Model ;
-    sh:property sdapps:Thing-order, schema:Thing-alternateNames, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
+    sh:property sdapps:Thing-order, schema:Thing-alternateNames, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-images, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-alternateNames
     a sh:PropertyShape ;
@@ -1015,7 +1022,7 @@ schema:Thing-disambiguatingDescription
 schema:Thing-images
     a sh:PropertyShape ;
     sh:name "images" ;
-    sh:node schema:ImageObject ;
+    sh:node sdapps:ImageObjectStub ;
     sh:path schema:image .
 
 schema:Thing-localIdentifiers
