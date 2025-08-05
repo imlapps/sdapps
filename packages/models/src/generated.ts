@@ -15805,6 +15805,7 @@ export namespace PlaceStub {
 export class Person extends Thing {
   override readonly type = "Person";
   readonly birthDate: purify.Maybe<Date>;
+  readonly deathDate: purify.Maybe<Date>;
   readonly familyName: purify.Maybe<string>;
   readonly gender: purify.Maybe<
     rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
@@ -15819,6 +15820,7 @@ export class Person extends Thing {
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
       readonly birthDate?: Date | purify.Maybe<Date>;
+      readonly deathDate?: Date | purify.Maybe<Date>;
       readonly familyName?: purify.Maybe<string> | string;
       readonly gender?:
         | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
@@ -15846,6 +15848,19 @@ export class Person extends Thing {
       this.birthDate = purify.Maybe.empty();
     } else {
       this.birthDate = parameters.birthDate satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.deathDate)) {
+      this.deathDate = parameters.deathDate;
+    } else if (
+      typeof parameters.deathDate === "object" &&
+      parameters.deathDate instanceof Date
+    ) {
+      this.deathDate = purify.Maybe.of(parameters.deathDate);
+    } else if (typeof parameters.deathDate === "undefined") {
+      this.deathDate = purify.Maybe.empty();
+    } else {
+      this.deathDate = parameters.deathDate satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.familyName)) {
@@ -15948,6 +15963,18 @@ export class Person extends Thing {
           left: this,
           right: other,
           propertyName: "birthDate",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
+          this.deathDate,
+          other.deathDate,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "deathDate",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -16081,6 +16108,9 @@ export class Person extends Thing {
     this.birthDate.ifJust((_value0) => {
       _hasher.update(_value0.toISOString());
     });
+    this.deathDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
     this.familyName.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -16126,6 +16156,9 @@ export class Person extends Thing {
       JSON.stringify({
         ...super.toJson(),
         birthDate: this.birthDate
+          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .extract(),
+        deathDate: this.deathDate
           .map((_item) => _item.toISOString().replace(/T.*$/, ""))
           .extract(),
         familyName: this.familyName.map((_item) => _item).extract(),
@@ -16194,6 +16227,17 @@ export class Person extends Thing {
       ),
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/deathDate"),
+      this.deathDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#date",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/familyName"),
       this.familyName,
     );
@@ -16245,6 +16289,7 @@ export namespace Person {
   export const Identifier = ThingStatic.Identifier;
   export type Json = {
     readonly birthDate: string | undefined;
+    readonly deathDate: string | undefined;
     readonly familyName: string | undefined;
     readonly gender:
       | (
@@ -16274,6 +16319,7 @@ export namespace Person {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       birthDate: purify.Maybe<Date>;
+      deathDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
@@ -16299,6 +16345,9 @@ export namespace Person {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const birthDate = purify.Maybe.fromNullable(_jsonObject["birthDate"]).map(
+      (_item) => new Date(_item),
+    );
+    const deathDate = purify.Maybe.fromNullable(_jsonObject["deathDate"]).map(
       (_item) => new Date(_item),
     );
     const familyName = purify.Maybe.fromNullable(_jsonObject["familyName"]);
@@ -16334,6 +16383,7 @@ export namespace Person {
       ..._super0,
       identifier,
       birthDate,
+      deathDate,
       familyName,
       gender,
       givenName,
@@ -16358,6 +16408,7 @@ export namespace Person {
       elements: [
         ThingStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/birthDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/deathDate`, type: "Control" },
         { scope: `${scopePrefix}/properties/familyName`, type: "Control" },
         { scope: `${scopePrefix}/properties/gender`, type: "Control" },
         { scope: `${scopePrefix}/properties/givenName`, type: "Control" },
@@ -16381,6 +16432,7 @@ export namespace Person {
         "@id": zod.string().min(1),
         type: zod.literal("Person"),
         birthDate: zod.string().date().optional(),
+        deathDate: zod.string().date().optional(),
         familyName: zod.string().optional(),
         gender: zod
           .discriminatedUnion("termType", [
@@ -16435,6 +16487,7 @@ export namespace Person {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       birthDate: purify.Maybe<Date>;
+      deathDate: purify.Maybe<Date>;
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
@@ -16497,6 +16550,23 @@ export namespace Person {
     }
 
     const birthDate = _birthDateEither.unsafeCoerce();
+    const _deathDateEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/deathDate"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_deathDateEither.isLeft()) {
+      return _deathDateEither;
+    }
+
+    const deathDate = _deathDateEither.unsafeCoerce();
     const _familyNameEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -16680,6 +16750,7 @@ export namespace Person {
       ..._super0,
       identifier,
       birthDate,
+      deathDate,
       familyName,
       gender,
       givenName,
@@ -16701,6 +16772,7 @@ export namespace Person {
   export const rdfProperties = [
     ...ThingStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/birthDate") },
+    { path: dataFactory.namedNode("http://schema.org/deathDate") },
     { path: dataFactory.namedNode("http://schema.org/familyName") },
     { path: dataFactory.namedNode("http://schema.org/gender") },
     { path: dataFactory.namedNode("http://schema.org/givenName") },

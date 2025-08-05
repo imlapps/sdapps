@@ -807,7 +807,7 @@ schema:Person
     shaclmate:name "Person" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Person-birthDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Person-performerIn .
+    sh:property schema:Person-birthDate, schema:Person-deathDate, schema:Person-familyName, schema:Person-gender, schema:Person-givenName, schema:Person-hasOccupation, schema:Person-jobTitle, schema:Person-memberOf, schema:Person-performerIn .
 
 schema:Person-birthDate
     a sh:PropertyShape ;
@@ -815,6 +815,13 @@ schema:Person-birthDate
     sh:maxCount 1 ;
     sh:name "birthDate" ;
     sh:path schema:birthDate .
+
+schema:Person-deathDate
+    a sh:PropertyShape ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "deathDate" ;
+    sh:path schema:deathDate .
 
 schema:Person-familyName
     a sh:PropertyShape ;
