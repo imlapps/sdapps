@@ -598,14 +598,14 @@ schema:MediaObject-height
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "height" ;
-    sh:node schema:QuantitativeValue ;
+    sh:node schema:QuantitativeValueStub ;
     sh:path schema:height .
 
 schema:MediaObject-width
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "width" ;
-    sh:node schema:QuantitativeValue ;
+    sh:node schema:QuantitativeValueStub ;
     sh:path schema:width .
 
 schema:Message

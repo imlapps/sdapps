@@ -200,6 +200,224 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
     left.getTime() === right.getTime(),
   );
 }
+export class schema_QuantitativeValueStub {
+  private _identifier: schema_QuantitativeValueStub.Identifier | undefined;
+  readonly type = "schema_QuantitativeValueStub";
+
+  constructor(parameters: {
+    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+  }) {
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier satisfies never;
+    }
+  }
+
+  get identifier(): schema_QuantitativeValueStub.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  equals(other: schema_QuantitativeValueStub): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.type, other.type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.identifier.value);
+    _hasher.update(this.type);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    return _hasher;
+  }
+
+  toJson(): schema_QuantitativeValueStub.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.identifier.termType === "BlankNode"
+            ? `_:${this.identifier.value}`
+            : this.identifier.value,
+        type: this.type,
+      } satisfies schema_QuantitativeValueStub.Json),
+    );
+  }
+
+  toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace schema_QuantitativeValueStub {
+  export type Identifier = rdfjsResource.Resource.Identifier;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "schema_QuantitativeValueStub";
+  };
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, schema_QuantitativeValueStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new schema_QuantitativeValueStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "schema_QuantitativeValueStub" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+      ],
+      label: "schema_QuantitativeValueStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("schema_QuantitativeValueStub"),
+    });
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+  > {
+    const identifier: schema_QuantitativeValueStub.Identifier =
+      _resource.identifier;
+    return purify.Either.of({ identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<
+      typeof schema_QuantitativeValueStub.propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    schema_QuantitativeValueStub
+  > {
+    return schema_QuantitativeValueStub
+      .propertiesFromRdf(parameters)
+      .map((properties) => new schema_QuantitativeValueStub(properties));
+  }
+
+  export const rdfProperties = [];
+}
 export abstract class Model {
   abstract readonly identifier: ModelStatic.Identifier;
   abstract readonly type:
@@ -7872,8 +8090,8 @@ export class MediaObject extends CreativeWork {
     "MediaObject";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
-  readonly height: purify.Maybe<QuantitativeValue>;
-  readonly width: purify.Maybe<QuantitativeValue>;
+  readonly height: purify.Maybe<schema_QuantitativeValueStub>;
+  readonly width: purify.Maybe<schema_QuantitativeValueStub>;
 
   constructor(
     parameters: {
@@ -7883,8 +8101,12 @@ export class MediaObject extends CreativeWork {
         | purify.Maybe<rdfjs.NamedNode>
         | string;
       readonly encodingFormat?: purify.Maybe<string> | string;
-      readonly height?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
-      readonly width?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
+      readonly height?:
+        | purify.Maybe<schema_QuantitativeValueStub>
+        | schema_QuantitativeValueStub;
+      readonly width?:
+        | purify.Maybe<schema_QuantitativeValueStub>
+        | schema_QuantitativeValueStub;
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
@@ -7916,7 +8138,7 @@ export class MediaObject extends CreativeWork {
       this.height = parameters.height;
     } else if (
       typeof parameters.height === "object" &&
-      parameters.height instanceof QuantitativeValue
+      parameters.height instanceof schema_QuantitativeValueStub
     ) {
       this.height = purify.Maybe.of(parameters.height);
     } else if (typeof parameters.height === "undefined") {
@@ -7929,7 +8151,7 @@ export class MediaObject extends CreativeWork {
       this.width = parameters.width;
     } else if (
       typeof parameters.width === "object" &&
-      parameters.width instanceof QuantitativeValue
+      parameters.width instanceof schema_QuantitativeValueStub
     ) {
       this.width = purify.Maybe.of(parameters.width);
     } else if (typeof parameters.width === "undefined") {
@@ -8106,8 +8328,8 @@ export namespace MediaObjectStatic {
   export type Json = {
     readonly contentUrl: { readonly "@id": string } | undefined;
     readonly encodingFormat: string | undefined;
-    readonly height: QuantitativeValue.Json | undefined;
-    readonly width: QuantitativeValue.Json | undefined;
+    readonly height: schema_QuantitativeValueStub.Json | undefined;
+    readonly width: schema_QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
   export function propertiesFromJson(_json: unknown): purify.Either<
@@ -8116,8 +8338,8 @@ export namespace MediaObjectStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitativeValue>;
-      width: purify.Maybe<QuantitativeValue>;
+      height: purify.Maybe<schema_QuantitativeValueStub>;
+      width: purify.Maybe<schema_QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -8142,10 +8364,10 @@ export namespace MediaObjectStatic {
       _jsonObject["encodingFormat"],
     );
     const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => QuantitativeValue.fromJson(_item).unsafeCoerce(),
+      (_item) => schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      QuantitativeValue.fromJson(_item).unsafeCoerce(),
+      schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -8185,10 +8407,10 @@ export namespace MediaObjectStatic {
         CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
         { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        QuantitativeValue.jsonUiSchema({
+        schema_QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/height`,
         }),
-        QuantitativeValue.jsonUiSchema({
+        schema_QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/width`,
         }),
       ],
@@ -8204,8 +8426,8 @@ export namespace MediaObjectStatic {
         type: zod.enum(["MediaObject", "ImageObject", "TextObject"]),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
-        height: QuantitativeValue.jsonZodSchema().optional(),
-        width: QuantitativeValue.jsonZodSchema().optional(),
+        height: schema_QuantitativeValueStub.jsonZodSchema().optional(),
+        width: schema_QuantitativeValueStub.jsonZodSchema().optional(),
       }),
     );
   }
@@ -8227,8 +8449,8 @@ export namespace MediaObjectStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitativeValue>;
-      width: purify.Maybe<QuantitativeValue>;
+      height: purify.Maybe<schema_QuantitativeValueStub>;
+      width: purify.Maybe<schema_QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStatic.propertiesFromRdf({
@@ -8305,7 +8527,7 @@ export namespace MediaObjectStatic {
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitativeValue>
+      purify.Maybe<schema_QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/height"), {
@@ -8314,7 +8536,7 @@ export namespace MediaObjectStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          QuantitativeValue.fromRdf({
+          schema_QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -8330,7 +8552,7 @@ export namespace MediaObjectStatic {
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitativeValue>
+      purify.Maybe<schema_QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/width"), {
@@ -8339,7 +8561,7 @@ export namespace MediaObjectStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          QuantitativeValue.fromRdf({
+          schema_QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -9014,8 +9236,8 @@ export class MediaObjectStub extends CreativeWorkStub {
     | "TextObjectStub" = "MediaObjectStub";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
-  readonly height: purify.Maybe<QuantitativeValue>;
-  readonly width: purify.Maybe<QuantitativeValue>;
+  readonly height: purify.Maybe<schema_QuantitativeValueStub>;
+  readonly width: purify.Maybe<schema_QuantitativeValueStub>;
 
   constructor(
     parameters: {
@@ -9025,8 +9247,12 @@ export class MediaObjectStub extends CreativeWorkStub {
         | purify.Maybe<rdfjs.NamedNode>
         | string;
       readonly encodingFormat?: purify.Maybe<string> | string;
-      readonly height?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
-      readonly width?: QuantitativeValue | purify.Maybe<QuantitativeValue>;
+      readonly height?:
+        | purify.Maybe<schema_QuantitativeValueStub>
+        | schema_QuantitativeValueStub;
+      readonly width?:
+        | purify.Maybe<schema_QuantitativeValueStub>
+        | schema_QuantitativeValueStub;
     } & ConstructorParameters<typeof CreativeWorkStub>[0],
   ) {
     super(parameters);
@@ -9058,7 +9284,7 @@ export class MediaObjectStub extends CreativeWorkStub {
       this.height = parameters.height;
     } else if (
       typeof parameters.height === "object" &&
-      parameters.height instanceof QuantitativeValue
+      parameters.height instanceof schema_QuantitativeValueStub
     ) {
       this.height = purify.Maybe.of(parameters.height);
     } else if (typeof parameters.height === "undefined") {
@@ -9071,7 +9297,7 @@ export class MediaObjectStub extends CreativeWorkStub {
       this.width = parameters.width;
     } else if (
       typeof parameters.width === "object" &&
-      parameters.width instanceof QuantitativeValue
+      parameters.width instanceof schema_QuantitativeValueStub
     ) {
       this.width = purify.Maybe.of(parameters.width);
     } else if (typeof parameters.width === "undefined") {
@@ -9248,8 +9474,8 @@ export namespace MediaObjectStubStatic {
   export type Json = {
     readonly contentUrl: { readonly "@id": string } | undefined;
     readonly encodingFormat: string | undefined;
-    readonly height: QuantitativeValue.Json | undefined;
-    readonly width: QuantitativeValue.Json | undefined;
+    readonly height: schema_QuantitativeValueStub.Json | undefined;
+    readonly width: schema_QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStubStatic.Json;
 
   export function propertiesFromJson(_json: unknown): purify.Either<
@@ -9258,8 +9484,8 @@ export namespace MediaObjectStubStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitativeValue>;
-      width: purify.Maybe<QuantitativeValue>;
+      height: purify.Maybe<schema_QuantitativeValueStub>;
+      width: purify.Maybe<schema_QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -9285,10 +9511,10 @@ export namespace MediaObjectStubStatic {
       _jsonObject["encodingFormat"],
     );
     const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => QuantitativeValue.fromJson(_item).unsafeCoerce(),
+      (_item) => schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      QuantitativeValue.fromJson(_item).unsafeCoerce(),
+      schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -9334,10 +9560,10 @@ export namespace MediaObjectStubStatic {
         CreativeWorkStubStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
         { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        QuantitativeValue.jsonUiSchema({
+        schema_QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/height`,
         }),
-        QuantitativeValue.jsonUiSchema({
+        schema_QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/width`,
         }),
       ],
@@ -9357,8 +9583,8 @@ export namespace MediaObjectStubStatic {
         ]),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
-        height: QuantitativeValue.jsonZodSchema().optional(),
-        width: QuantitativeValue.jsonZodSchema().optional(),
+        height: schema_QuantitativeValueStub.jsonZodSchema().optional(),
+        width: schema_QuantitativeValueStub.jsonZodSchema().optional(),
       }),
     );
   }
@@ -9380,8 +9606,8 @@ export namespace MediaObjectStubStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<QuantitativeValue>;
-      width: purify.Maybe<QuantitativeValue>;
+      height: purify.Maybe<schema_QuantitativeValueStub>;
+      width: purify.Maybe<schema_QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
@@ -9458,7 +9684,7 @@ export namespace MediaObjectStubStatic {
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitativeValue>
+      purify.Maybe<schema_QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/height"), {
@@ -9467,7 +9693,7 @@ export namespace MediaObjectStubStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          QuantitativeValue.fromRdf({
+          schema_QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -9483,7 +9709,7 @@ export namespace MediaObjectStubStatic {
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<QuantitativeValue>
+      purify.Maybe<schema_QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/width"), {
@@ -9492,7 +9718,7 @@ export namespace MediaObjectStubStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          QuantitativeValue.fromRdf({
+          schema_QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -25956,6 +26182,23 @@ export interface $ObjectSet {
   rolesCount(
     query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  schemaQuantitativeValueStub(
+    identifier: schema_QuantitativeValueStub.Identifier,
+  ): Promise<purify.Either<Error, schema_QuantitativeValueStub>>;
+  schemaQuantitativeValueStubIdentifiers(
+    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly schema_QuantitativeValueStub.Identifier[]>
+  >;
+  schemaQuantitativeValueStubs(
+    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, schema_QuantitativeValueStub>[]>;
+  schemaQuantitativeValueStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   service(
     identifier: ServiceStatic.Identifier,
   ): Promise<purify.Either<Error, Service>>;
@@ -30533,6 +30776,77 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Role, Role.Identifier>(Role, query);
+  }
+
+  async schemaQuantitativeValueStub(
+    identifier: schema_QuantitativeValueStub.Identifier,
+  ): Promise<purify.Either<Error, schema_QuantitativeValueStub>> {
+    return this.schemaQuantitativeValueStubSync(identifier);
+  }
+
+  schemaQuantitativeValueStubSync(
+    identifier: schema_QuantitativeValueStub.Identifier,
+  ): purify.Either<Error, schema_QuantitativeValueStub> {
+    return this.schemaQuantitativeValueStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async schemaQuantitativeValueStubIdentifiers(
+    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly schema_QuantitativeValueStub.Identifier[]>
+  > {
+    return this.schemaQuantitativeValueStubIdentifiersSync(query);
+  }
+
+  schemaQuantitativeValueStubIdentifiersSync(
+    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+  ): purify.Either<Error, readonly schema_QuantitativeValueStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        schema_QuantitativeValueStub,
+        schema_QuantitativeValueStub.Identifier
+      >(schema_QuantitativeValueStub, query),
+    ]);
+  }
+
+  async schemaQuantitativeValueStubs(
+    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, schema_QuantitativeValueStub>[]> {
+    return this.schemaQuantitativeValueStubsSync(query);
+  }
+
+  schemaQuantitativeValueStubsSync(
+    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+  ): readonly purify.Either<Error, schema_QuantitativeValueStub>[] {
+    return [
+      ...this.$objectsSync<
+        schema_QuantitativeValueStub,
+        schema_QuantitativeValueStub.Identifier
+      >(schema_QuantitativeValueStub, query),
+    ];
+  }
+
+  async schemaQuantitativeValueStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.schemaQuantitativeValueStubsCountSync(query);
+  }
+
+  schemaQuantitativeValueStubsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      schema_QuantitativeValueStub,
+      schema_QuantitativeValueStub.Identifier
+    >(schema_QuantitativeValueStub, query);
   }
 
   async service(
