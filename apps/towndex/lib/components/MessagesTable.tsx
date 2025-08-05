@@ -17,7 +17,7 @@ interface Row {
 }
 
 export function MessagesTable(json: {
-  messages: readonly ReturnType<Message["toJson"]>[];
+  messages: readonly Message.Json[];
 }) {
   const hrefs = useHrefs();
 

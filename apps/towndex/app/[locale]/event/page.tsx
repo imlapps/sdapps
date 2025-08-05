@@ -3,12 +3,12 @@ import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { EventsTimeline } from "@/lib/components/EventsTimeline";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { EventStub } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Either } from "purify-ts";
 
 interface EventsPageParams {
   locale: Locale;
@@ -20,7 +20,7 @@ export default async function EventsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const events = (await modelSet.models<EventStub>("EventStub")).orDefault([]);
+  const events = Either.rights(await objectSet.eventStubs());
   const translations = await getTranslations("EventsPage");
 
   return (

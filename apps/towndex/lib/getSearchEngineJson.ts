@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from "@/lib/logger";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { LunrSearchEngine, SearchEngine } from "@sdapps/search";
 import { getLocale } from "next-intl/server";
@@ -37,7 +37,7 @@ async function getLunrSearchEngineJson({
     logger.info(`creating ${locale} search engine`);
     const searchEngine = await LunrSearchEngine.create({
       languageTag: locale,
-      modelSet,
+      objectSet,
     });
     logger.info(`created ${locale} search engine`);
 

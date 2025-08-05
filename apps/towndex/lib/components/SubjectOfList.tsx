@@ -1,21 +1,20 @@
 import { Anchor, Group, List, ListItem, Text } from "@mantine/core";
 import {
   url,
+  $ObjectSet,
   CreativeWorkStub,
   EventStub,
   Identifier,
-  ModelSet,
-  TextObject,
   displayLabel,
 } from "@sdapps/models";
 import { IconExternalLink } from "@tabler/icons-react";
 import { ReactElement } from "react";
 
 export async function SubjectOfList({
-  modelSet,
+  objectSet,
   thing,
 }: {
-  modelSet: ModelSet;
+  objectSet: $ObjectSet;
   thing: { subjectOf: readonly (CreativeWorkStub | EventStub)[] };
 }) {
   const items: ReactElement[] = [];
@@ -23,12 +22,7 @@ export async function SubjectOfList({
     if (subjectOf.type !== "TextObjectStub") {
       continue;
     }
-    const textObject = (
-      await modelSet.model<TextObject>({
-        identifier: subjectOf.identifier,
-        type: "TextObject",
-      })
-    )
+    const textObject = (await objectSet.textObject(subjectOf.identifier))
       .toMaybe()
       .extract();
     if (!textObject) {

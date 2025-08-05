@@ -1,7 +1,15 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": ["dist/**", ".next/**", "node_modules/**", "out/**", "*.jsonld"],
+    "ignore": [
+      "data/**",
+      "dist/**",
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      "packages/etl/__tests__/caches/**",
+      "*.jsonld"
+    ],
     "maxSize": 2097152
   },
   "formatter": {
@@ -12,7 +20,6 @@
     "enabled": true,
     "rules": {
       "complexity": {
-        "noForEach": "off",
         "useLiteralKeys": "off"
       },
       "correctness": {

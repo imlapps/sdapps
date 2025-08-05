@@ -1,6 +1,5 @@
 import * as N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
-import { RdfjsDatasetModelSet } from "../src/RdfjsDatasetModelSet";
 
 const dataFactory = N3.DataFactory;
 const dataset = new N3.Store();
@@ -10,7 +9,7 @@ const resourceSet = new MutableResourceSet({
   dataset,
 });
 
-import { Person } from "../src";
+import { $RdfjsDatasetObjectSet, Person } from "../src";
 
 const people = [...new Array(3).keys()].map(
   (_, index) =>
@@ -22,12 +21,14 @@ const people = [...new Array(3).keys()].map(
     }),
 );
 
-people.forEach((person) => person.toRdf({ mutateGraph, resourceSet }));
+for (const person of people) {
+  person.toRdf({ mutateGraph, resourceSet });
+}
 
 export const testData = {
   dataset,
   models: {
     people,
   },
-  rdfjsDatasetModelSet: new RdfjsDatasetModelSet({ dataset }),
+  rdfjsDatasetObjectSet: new $RdfjsDatasetObjectSet({ dataset }),
 };

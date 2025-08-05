@@ -5,9 +5,9 @@ import { openai } from "@ai-sdk/openai";
 import { DatasetCore, DefaultGraph, NamedNode } from "@rdfjs/types";
 import { DocumentFactory, fileNameCodec, readRdfInput } from "@sdapps/etl";
 import {
+  $RdfjsDatasetObjectSet,
   TextObject as GeneratedTextObject,
   Identifier,
-  RdfjsDatasetModelSet,
 } from "@sdapps/models";
 import { _void } from "@tpluscode/rdf-ns-builders";
 import { CoreMessage, generateText } from "ai";
@@ -17,9 +17,9 @@ import { jsonrepair } from "jsonrepair";
 import * as N3 from "n3";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { TextObject } from "./TextObject.js";
-import { fetch } from "./fetch.js";
 import { logger } from "./logger.js";
-import { cachesDirectoryPath } from "./paths.js";
+
+import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
 
 function cleanCompletionText(text: string) {
   // Strip characters before the first { and after the last }
@@ -40,12 +40,13 @@ function cleanCompletionText(text: string) {
   return JSON.stringify(JSON.parse(repairedText), undefined, 2); // May throw a SyntaxError
 }
 
-const documentFactory = new DocumentFactory({
+export async function extract({
   cachesDirectoryPath,
-  logger,
-});
-
-export async function extract(input: Maybe<string>): Promise<{
+  input,
+}: {
+  cachesDirectoryPath: string;
+  input: Maybe<string>;
+}): Promise<{
   inputDataset: DatasetCore;
   ontologyDataset: DatasetCore;
   textObjects: AsyncIterable<TextObject>;
@@ -54,7 +55,7 @@ export async function extract(input: Maybe<string>): Promise<{
   return {
     inputDataset,
     ontologyDataset: await extractOntologyDataset(),
-    textObjects: extractTextObjects(inputDataset),
+    textObjects: extractTextObjects({ cachesDirectoryPath, inputDataset }),
   };
 }
 
@@ -76,9 +77,13 @@ async function extractOntologyDataset(): Promise<DatasetCore> {
   return ontologyDataset;
 }
 
-async function extractTextObjectContent(
-  textObject: GeneratedTextObject,
-): Promise<Either<Error, TextObject.Content>> {
+async function extractTextObjectContent({
+  cachesDirectoryPath,
+  textObject,
+}: {
+  cachesDirectoryPath: string;
+  textObject: GeneratedTextObject;
+}): Promise<Either<Error, TextObject.Content>> {
   return EitherAsync(async () => {
     logger.debug(
       `extracting content dataset for ${Identifier.toString(textObject.identifier)}`,
@@ -136,7 +141,11 @@ async function extractTextObjectContent(
     logger.debug(
       `fetching ${Identifier.toString(textObject.identifier)} content from ${contentUrl.value}`,
     );
-    const contentResponse = await fetch(contentUrl.value);
+    const contentResponse = await NodeFetchCache.create({
+      cache: new FileSystemCache({
+        cacheDirectory: path.join(cachesDirectoryPath, "fetch"),
+      }),
+    })(contentUrl.value);
     const contentBlob = await contentResponse.blob();
     logger.debug(
       `fetched ${contentBlob.size} bytes from ${contentUrl.value} (cache ${contentResponse.isCacheMiss ? "miss" : "hit"})`,
@@ -145,7 +154,10 @@ async function extractTextObjectContent(
     logger.debug(`getting HTML for ${contentUrl.value}`);
     const contentHtml = (
       await (
-        await documentFactory.createDocumentFromBlob({ blob: contentBlob })
+        await new DocumentFactory({
+          cachesDirectoryPath,
+          logger,
+        }).createDocumentFromBlob({ blob: contentBlob })
       )
         .unsafeCoerce()
         .html()
@@ -197,14 +209,18 @@ ${contentHtml}
   });
 }
 
-async function* extractTextObjects(
-  inputDataset: DatasetCore,
-): AsyncIterable<TextObject> {
-  const modelSet = new RdfjsDatasetModelSet({ dataset: inputDataset });
-  for (const model of modelSet.modelsSync("TextObject").unsafeCoerce()) {
+async function* extractTextObjects({
+  cachesDirectoryPath,
+  inputDataset,
+}: {
+  cachesDirectoryPath: string;
+  inputDataset: DatasetCore;
+}): AsyncIterable<TextObject> {
+  const objectSet = new $RdfjsDatasetObjectSet({ dataset: inputDataset });
+  for (const model of objectSet.modelsSync("TextObject").unsafeCoerce()) {
     const textObject = model as GeneratedTextObject;
 
-    const uriSpace = modelSet.resourceSet
+    const uriSpace = objectSet.resourceSet
       .resource(textObject.identifier)
       .value(_void.uriSpace)
       .chain((value) => value.toString());
@@ -215,7 +231,9 @@ async function* extractTextObjects(
       continue;
     }
 
-    const textObjectEither = (await extractTextObjectContent(textObject)).map(
+    const textObjectEither = (
+      await extractTextObjectContent({ cachesDirectoryPath, textObject })
+    ).map(
       (content) =>
         new TextObject({
           content,

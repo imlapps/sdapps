@@ -10,8 +10,8 @@
 @prefix void: <http://rdfs.org/ns/void#> .
 
 sdapps:ActionStub
-    shaclmate:fromRdfType schema:Action ;
     shaclmate:name "ActionStub" ;
+    shaclmate:rdfType schema:Action ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
@@ -23,32 +23,50 @@ sdapps:AgentStub
     ) .
 
 sdapps:ArticleStub
-    shaclmate:fromRdfType schema:Article ;
     shaclmate:name "ArticleStub" ;
+    shaclmate:rdfType schema:Article ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:AssessActionStub
-    shaclmate:fromRdfType schema:AssessAction ;
     shaclmate:name "AssessActionStub" ;
+    shaclmate:rdfType schema:AssessAction ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ActionStub .
 
+sdapps:BroadcastServiceStub
+    shaclmate:name "BroadcastServiceStub" ;
+    shaclmate:rdfType schema:BroadcastService ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:ServiceStub .
+
 sdapps:ChooseActionStub
-    shaclmate:fromRdfType schema:ChooseAction ;
     shaclmate:name "ChooseActionStub" ;
+    shaclmate:rdfType schema:ChooseAction ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:AssessActionStub .
 
+sdapps:CreativeWorkSeriesStub
+    shaclmate:name "CreativeWorkSeriesStub" ;
+    shaclmate:rdfType schema:CreativeWorkSeries ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:CreativeWorkStub
-    shaclmate:fromRdfType schema:CreativeWork ;
     shaclmate:name "CreativeWorkStub" ;
+    shaclmate:rdfType schema:CreativeWork ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
+sdapps:EpisodeStub
+    shaclmate:name "EpisodeStub" ;
+    shaclmate:rdfType schema:Episode ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:EventStub
-    shaclmate:fromRdfType schema:Event ;
     shaclmate:name "EventStub" ;
+    shaclmate:rdfType schema:Event ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub ;
     sh:property sdapps:EventStub-superEvent, schema:Event-startDate .
@@ -62,83 +80,168 @@ sdapps:EventStub-superEvent
     sh:path schema:superEvent .
 
 sdapps:IntangibleStub
-    shaclmate:abstract true ;
     shaclmate:name "IntangibleStub" ;
+    shaclmate:rdfType schema:Intangible ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
 sdapps:InvoiceStub
-    shaclmate:fromRdfType schema:Invoice ;
     shaclmate:name "InvoiceStub" ;
+    shaclmate:rdfType schema:Invoice ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
+sdapps:ItemListStub
+    shaclmate:name "ItemListStub" ;
+    shaclmate:rdfType schema:ItemList ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub ;
+    sh:property schema:ItemList-itemListElements .
+
+sdapps:ListItemStub
+    shaclmate:name "ListItemStub" ;
+    shaclmate:rdfType schema:ListItem ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub ;
+    sh:property schema:ListItem-item, schema:ListItem-position .
+
 sdapps:MediaObjectStub
-    shaclmate:fromRdfType schema:MediaObject ;
     shaclmate:name "MediaObjectStub" ;
+    shaclmate:rdfType schema:MediaObject ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:MessageStub
-    shaclmate:fromRdfType schema:Message ;
     shaclmate:name "MessageStub" ;
+    shaclmate:rdfType schema:Message ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
+sdapps:Model
+    shaclmate:abstract true ;
+    shaclmate:name "Model" ;
+    a owl:Class, sh:NodeShape .
+
 sdapps:MonetaryAmountStub
-    shaclmate:fromRdfType schema:MonetaryAmount ;
     shaclmate:name "MonetaryAmountStub" ;
+    shaclmate:rdfType schema:MonetaryAmount ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:StructuredValueStub ;
     sh:property schema:MonetaryAmount-currency, schema:MonetaryAmount-value .
 
+sdapps:MusicAlbumStub
+    shaclmate:name "MusicAlbumStub" ;
+    shaclmate:rdfType schema:MusicAlbum ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MusicCompositionStub
+    shaclmate:name "MusicCompositionStub" ;
+    shaclmate:rdfType schema:MusicComposition ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MusicGroupStub
+    shaclmate:name "MusicGroupStub" ;
+    shaclmate:rdfType schema:MusicGroup ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:PerformingGroupStub .
+
+sdapps:MusicPlaylistStub
+    shaclmate:name "MusicPlaylistStub" ;
+    shaclmate:rdfType schema:MusicPlaylist ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:MusicRecordingStub
+    shaclmate:name "MusicRecordingStub" ;
+    shaclmate:rdfType schema:MusicRecording ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkStub .
+
 sdapps:OrderStub
-    shaclmate:fromRdfType schema:Order ;
     shaclmate:name "OrderStub" ;
+    shaclmate:rdfType schema:Order ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:OrganizationStub
-    shaclmate:fromRdfType schema:Organization ;
     shaclmate:name "OrganizationStub" ;
+    shaclmate:rdfType schema:Organization ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
+sdapps:PerformingGroupStub
+    shaclmate:name "PerformingGroupStub" ;
+    shaclmate:rdfType schema:PerformingGroup ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:OrganizationStub .
+
 sdapps:PersonStub
-    shaclmate:fromRdfType schema:Person ;
     shaclmate:name "PersonStub" ;
+    shaclmate:rdfType schema:Person ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub ;
     sh:property schema:Person-jobTitle .
 
 sdapps:PlaceStub
-    shaclmate:fromRdfType schema:Place ;
     shaclmate:name "PlaceStub" ;
+    shaclmate:rdfType schema:Place ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ThingStub .
 
+sdapps:PublicationEventStub
+    shaclmate:name "PublicationEventStub" ;
+    shaclmate:rdfType schema:PublicationEvent ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:EventStub .
+
 sdapps:QuantitativeValueStub
-    shaclmate:fromRdfType schema:QuantitativeValue ;
     shaclmate:name "QuantitativeValueStub" ;
+    shaclmate:rdfType schema:QuantitativeValue ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:StructuredValueStub ;
     sh:property schema:QuantitativeValue-unitText, schema:QuantitativeValue-value .
 
+sdapps:RadioBroadcastServiceStub
+    shaclmate:name "RadioBroadcastServiceStub" ;
+    shaclmate:rdfType schema:RadioBroadcastService ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:BroadcastServiceStub .
+
+sdapps:RadioEpisodeStub
+    shaclmate:name "RadioEpisodeStub" ;
+    shaclmate:rdfType schema:RadioEpisode ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:EpisodeStub .
+
+sdapps:RadioSeriesStub
+    shaclmate:name "RadioSeriesStub" ;
+    shaclmate:rdfType schema:RadioSeries ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:CreativeWorkSeriesStub .
+
 sdapps:ReportStub
-    shaclmate:fromRdfType schema:Report ;
     shaclmate:name "ReportStub" ;
+    shaclmate:rdfType schema:Report ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ArticleStub .
 
+sdapps:ServiceStub
+    shaclmate:name "ServiceStub" ;
+    shaclmate:rdfType schema:Service ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub .
+
 sdapps:StructuredValueStub
-    shaclmate:abstract true ;
     shaclmate:name "StructuredValueStub" ;
+    shaclmate:rdfType schema:StructuredValue ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:TextObjectStub
-    shaclmate:fromRdfType schema:TextObject ;
     shaclmate:name "TextObjectStub" ;
+    shaclmate:rdfType schema:TextObject ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:MediaObjectStub .
 
@@ -150,14 +253,15 @@ sdapps:Thing-order
     sh:path sh:order .
 
 sdapps:ThingStub
-    shaclmate:abstract true ;
     shaclmate:name "ThingStub" ;
+    shaclmate:rdfType schema:Thing ;
     a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:Model ;
     sh:property sdapps:Thing-order, schema:Thing-name .
 
 sdapps:VoteActionStub
-    shaclmate:fromRdfType schema:VoteAction ;
     shaclmate:name "VoteActionStub" ;
+    shaclmate:rdfType schema:VoteAction ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ChooseActionStub .
 
@@ -207,17 +311,34 @@ schema:AssessAction
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Action .
 
+schema:BroadcastEvent
+    shaclmate:name "BroadcastEvent" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:PublicationEvent .
+
+schema:BroadcastService
+    shaclmate:name "BroadcastService" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Service ;
+    sh:property schema:BroadcastService-callSign .
+
+schema:BroadcastService-callSign
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "callSign" ;
+    sh:path schema:callSign .
+
 schema:ChooseAction
     shaclmate:name "ChooseAction" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:AssessAction .
 
 schema:CreativeWork
-    shaclmate:abstract true ;
     shaclmate:name "CreativeWork" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-isBasedOn .
+    sh:property schema:CreativeWork-about, schema:CreativeWork-authors, schema:CreativeWork-datePublished, schema:CreativeWork-hasParts, schema:CreativeWork-isBasedOn, schema:CreativeWork-isPartOf, schema:CreativeWork-publication .
 
 schema:CreativeWork-about
     a sh:PropertyShape ;
@@ -238,17 +359,53 @@ schema:CreativeWork-datePublished
     sh:name "datePublished" ;
     sh:path schema:datePublished .
 
+schema:CreativeWork-hasParts
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "hasParts" ;
+    sh:node sdapps:CreativeWorkStub ;
+    sh:path schema:hasPart .
+
 schema:CreativeWork-isBasedOn
     a sh:PropertyShape ;
     sh:name "isBasedOn" ;
     sh:nodeKind sh:IRI ;
     sh:path schema:isBasedOn .
 
+schema:CreativeWork-isPartOf
+    a sh:PropertyShape ;
+    sh:name "isPartOf" ;
+    sh:node sdapps:CreativeWorkStub ;
+    sh:path schema:isPartOf .
+
+schema:CreativeWork-publication
+    a sh:PropertyShape ;
+    sh:name "publication" ;
+    sh:node sdapps:PublicationEventStub ;
+    sh:path schema:publication .
+
+schema:CreativeWorkSeries
+    shaclmate:name "CreativeWorkSeries" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork .
+
 schema:Enumeration
-    shaclmate:abstract true ;
     shaclmate:name "Enumeration" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
+
+schema:Episode
+    shaclmate:name "Episode" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:Episode-partOfSeries .
+
+schema:Episode-partOfSeries
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "partOfSeries" ;
+    sh:node sdapps:CreativeWorkSeriesStub ;
+    sh:path schema:partOfSeries .
 
 schema:Event
     shaclmate:name "Event" ;
@@ -328,7 +485,6 @@ schema:ImageObject
     rdfs:subClassOf schema:MediaObject .
 
 schema:Intangible
-    shaclmate:abstract true ;
     shaclmate:name "Intangible" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
@@ -366,12 +522,52 @@ schema:Invoice-totalPaymentDue
     sh:node sdapps:MonetaryAmountStub ;
     sh:path schema:totalPaymentDue .
 
+schema:ItemList
+    shaclmate:name "ItemList" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:property schema:ItemList-itemListElements .
+
+schema:ItemList-itemListElements
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "itemListElements" ;
+    sh:node sdapps:ListItemStub ;
+    sh:path schema:itemListElement .
+
+schema:ListItem
+    shaclmate:name "ListItem" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible ;
+    sh:property schema:ListItem-item, schema:ListItem-position .
+
+schema:ListItem-item
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "item" ;
+    sh:node sdapps:ThingStub ;
+    sh:path schema:item .
+
+schema:ListItem-position
+    shaclmate:widen false ;
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "position" ;
+    sh:path schema:position ;
+    sh:xone ([
+            sh:datatype xsd:integer
+        ]
+        [
+            sh:datatype xsd:string
+        ]
+    ) .
+
 schema:Male
     a schema:GenderType ;
     rdfs:label "Male" .
 
 schema:MediaObject
-    shaclmate:abstract true ;
     shaclmate:name "MediaObject" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:CreativeWork ;
@@ -438,6 +634,118 @@ schema:MonetaryAmount-value
     sh:name "value" ;
     sh:path schema:value .
 
+schema:MusicAlbum
+    shaclmate:name "MusicAlbum" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicAlbum-byArtists .
+
+schema:MusicAlbum-byArtists
+    a sh:PropertyShape ;
+    sh:name "byArtists" ;
+    sh:path schema:byArtist ;
+    sh:xone ([
+            sh:node sdapps:MusicGroupStub
+        ]
+        [
+            sh:node sdapps:PersonStub
+        ]
+    ) .
+
+schema:MusicComposition
+    shaclmate:name "MusicComposition" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicComposition-composers, schema:MusicComposition-recordedAs .
+
+schema:MusicComposition-composers
+    a sh:PropertyShape ;
+    sh:name "composers" ;
+    sh:node sdapps:AgentStub ;
+    sh:path schema:composer .
+
+schema:MusicComposition-recordedAs
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "recordedAs" ;
+    sh:node sdapps:MusicRecordingStub ;
+    sh:path schema:recordedAs .
+
+schema:MusicGroup
+    shaclmate:name "MusicGroup" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:PerformingGroup .
+
+schema:MusicPlaylist
+    shaclmate:name "MusicPlaylist" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicPlaylist-tracks .
+
+schema:MusicPlaylist-tracks
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "tracks" ;
+    sh:path schema:track ;
+    sh:xone ([
+            sh:node sdapps:MusicRecordingStub
+        ]
+        [
+            sh:node sdapps:ItemListStub
+        ]
+    ) .
+
+schema:MusicRecording
+    shaclmate:name "MusicRecording" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWork ;
+    sh:property schema:MusicRecording-byArtists, schema:MusicRecording-duration, schema:MusicRecording-inAlbum, schema:MusicRecording-inPlaylists, schema:MusicRecording-recordingOf .
+
+schema:MusicRecording-byArtists
+    a sh:PropertyShape ;
+    sh:name "byArtists" ;
+    sh:path schema:byArtist ;
+    sh:xone ([
+            sh:node sdapps:MusicGroupStub
+        ]
+        [
+            sh:node sdapps:PersonStub
+        ]
+    ) .
+
+schema:MusicRecording-duration
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "duration" ;
+    sh:path schema:duration ;
+    sh:xone ([
+            sh:datatype xsd:string
+        ]
+        [
+            sh:node sdapps:QuantitativeValueStub
+        ]
+    ) .
+
+schema:MusicRecording-inAlbum
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "inAlbum" ;
+    sh:node sdapps:MusicAlbumStub ;
+    sh:path schema:inAlbum .
+
+schema:MusicRecording-inPlaylists
+    a sh:PropertyShape ;
+    sh:name "inPlaylists" ;
+    sh:node sdapps:MusicPlaylistStub ;
+    sh:path schema:inPlaylist .
+
+schema:MusicRecording-recordingOf
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "recordingOf" ;
+    sh:node sdapps:MusicCompositionStub ;
+    sh:path schema:recordingOf .
+
 schema:Occupation
     shaclmate:name "Occupation" ;
     a owl:Class, sh:NodeShape ;
@@ -482,6 +790,11 @@ schema:Organization-subOrganizations
     sh:name "subOrganizations" ;
     sh:node sdapps:OrganizationStub ;
     sh:path schema:subOrganization .
+
+schema:PerformingGroup
+    shaclmate:name "PerformingGroup" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Organization .
 
 schema:Person
     shaclmate:name "Person" ;
@@ -561,6 +874,19 @@ schema:Place
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing .
 
+schema:PublicationEvent
+    shaclmate:name "PublicationEvent" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Event ;
+    sh:property schema:PublicationEvent-publishedOn .
+
+schema:PublicationEvent-publishedOn
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "publishedOn" ;
+    sh:node sdapps:BroadcastServiceStub ;
+    sh:path schema:publishedOn .
+
 schema:QuantitativeValue
     shaclmate:name "QuantitativeValue" ;
     a owl:Class, sh:NodeShape ;
@@ -580,6 +906,29 @@ schema:QuantitativeValue-value
     sh:maxCount 1 ;
     sh:name "value" ;
     sh:path schema:value .
+
+schema:RadioBroadcastService
+    shaclmate:name "RadioBroadcastService" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:BroadcastService .
+
+schema:RadioEpisode
+    shaclmate:name "RadioEpisode" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Episode .
+
+schema:RadioSeries
+    shaclmate:name "RadioSeries" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:CreativeWorkSeries ;
+    sh:property schema:RadioSeries-episodes .
+
+schema:RadioSeries-episodes
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "episodes" ;
+    sh:node sdapps:RadioEpisodeStub ;
+    sh:path schema:episode .
 
 schema:Report
     shaclmate:name "Report" ;
@@ -614,8 +963,12 @@ schema:Role-startDate
     sh:name "startDate" ;
     sh:path schema:startDate .
 
+schema:Service
+    shaclmate:name "Service" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf schema:Intangible .
+
 schema:StructuredValue
-    shaclmate:abstract true ;
     shaclmate:name "StructuredValue" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Intangible .
@@ -634,10 +987,10 @@ schema:TextObject-uriSpace
     sh:path void:uriSpace .
 
 schema:Thing
-    shaclmate:abstract true ;
     shaclmate:name "Thing" ;
     a owl:Class, sh:NodeShape ;
-    sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-identifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
+    rdfs:subClassOf sdapps:Model ;
+    sh:property sdapps:Thing-order, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-description
     a sh:PropertyShape ;
@@ -646,17 +999,24 @@ schema:Thing-description
     sh:name "description" ;
     sh:path schema:description .
 
-schema:Thing-identifiers
+schema:Thing-disambiguatingDescription
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
-    sh:name "identifiers" ;
-    sh:path schema:identifier .
+    sh:maxCount 1 ;
+    sh:name "disambiguatingDescription" ;
+    sh:path schema:disambiguatingDescription .
 
 schema:Thing-images
     a sh:PropertyShape ;
     sh:name "images" ;
     sh:node schema:ImageObject ;
     sh:path schema:image .
+
+schema:Thing-localIdentifiers
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "localIdentifiers" ;
+    sh:path schema:identifier .
 
 schema:Thing-name
     a sh:PropertyShape ;

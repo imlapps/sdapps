@@ -1,42 +1,20 @@
 import {
+  $ObjectSet,
   EventStub,
   Identifier,
   LanguageTag,
-  ModelSet,
   OrganizationStub,
   PersonStub,
   displayLabel,
   iso8601DateString,
 } from "@sdapps/models";
+
 import lunr, { Index } from "lunr";
+import { Either } from "purify-ts";
 import { LunrIndexCompactor } from "./LunrIndexCompactor.js";
 import { SearchEngine } from "./SearchEngine.js";
 import { SearchResult } from "./SearchResult.js";
 import { SearchResults } from "./SearchResults.js";
-
-async function eventLabel(
-  event: EventStub,
-  modelSet: ModelSet,
-): Promise<string> {
-  const eventLabelParts: string[] = [];
-  if (event.startDate.isJust()) {
-    eventLabelParts.push(iso8601DateString(event.startDate.unsafeCoerce()));
-  }
-  eventLabelParts.push(displayLabel(event));
-  const eventLabelString = eventLabelParts.join(" ");
-
-  if (event.superEvent.isNothing()) {
-    return eventLabelString;
-  }
-  const superEventEither = await modelSet.model<EventStub>({
-    identifier: event.superEvent.unsafeCoerce(),
-    type: "EventStub",
-  });
-  if (superEventEither.isLeft()) {
-    return eventLabelString;
-  }
-  return `${await eventLabel(superEventEither.unsafeCoerce(), modelSet)} > ${eventLabelString}`;
-}
 
 /**
  * A SearchEngine implementation built with Lunr.js, so it can be used in the browser.
@@ -55,46 +33,41 @@ export class LunrSearchEngine implements SearchEngine {
 
   static async create({
     languageTag,
-    modelSet,
+    objectSet,
   }: {
     languageTag: LanguageTag;
-    modelSet: ModelSet;
+    objectSet: $ObjectSet;
   }): Promise<LunrSearchEngine> {
     const indexDocuments: {
       readonly identifier: string;
       readonly label: string;
       readonly type: SearchResult["type"];
     }[] = [];
-    for (const models of [
-      await modelSet.models<EventStub>("EventStub"),
-      await modelSet.models<OrganizationStub>("OrganizationStub"),
-      await modelSet.models<PersonStub>("PersonStub"),
-    ]) {
-      if (models.isLeft()) {
-        continue;
-      }
-      for (const model of models.unsafeCoerce()) {
+
+    async function* modelsGenerator(): AsyncGenerator<
+      [
+        SearchResult["type"],
+        readonly (EventStub | OrganizationStub | PersonStub)[],
+      ]
+    > {
+      yield ["Event", Either.rights(await objectSet.eventStubs())];
+      yield [
+        "Organization",
+        Either.rights(await objectSet.organizationStubs()),
+      ];
+      yield ["Person", Either.rights(await objectSet.personStubs())];
+    }
+
+    for await (const [indexDocumentType, models] of modelsGenerator()) {
+      for (const model of models) {
         if (!model.name.isJust()) {
           continue;
         }
 
-        let indexDocumentType: SearchResult["type"];
-        switch (model.type) {
-          case "EventStub":
-            indexDocumentType = "Event";
-            break;
-          case "OrganizationStub":
-            indexDocumentType = "Organization";
-            break;
-          case "PersonStub":
-            indexDocumentType = "Person";
-            break;
-        }
-
         let label: string;
-        switch (model.type) {
-          case "EventStub": {
-            label = await eventLabel(model, modelSet);
+        switch (indexDocumentType) {
+          case "Event": {
+            label = await eventLabel(model as EventStub, objectSet);
             break;
           }
           default:
@@ -196,4 +169,27 @@ export class LunrSearchEngine implements SearchEngine {
       type: "lunr",
     };
   }
+}
+
+async function eventLabel(
+  event: EventStub,
+  objectSet: $ObjectSet,
+): Promise<string> {
+  const eventLabelParts: string[] = [];
+  if (event.startDate.isJust()) {
+    eventLabelParts.push(iso8601DateString(event.startDate.unsafeCoerce()));
+  }
+  eventLabelParts.push(displayLabel(event));
+  const eventLabelString = eventLabelParts.join(" ");
+
+  if (event.superEvent.isNothing()) {
+    return eventLabelString;
+  }
+  const superEventEither = await objectSet.eventStub(
+    event.superEvent.unsafeCoerce(),
+  );
+  if (superEventEither.isLeft()) {
+    return eventLabelString;
+  }
+  return `${await eventLabel(superEventEither.unsafeCoerce(), objectSet)} > ${eventLabelString}`;
 }

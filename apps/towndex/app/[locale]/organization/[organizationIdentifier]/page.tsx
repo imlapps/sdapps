@@ -5,21 +5,17 @@ import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { SubjectOfList } from "@/lib/components/SubjectOfList";
 import { getHrefs } from "@/lib/getHrefs";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Fieldset, Stack } from "@mantine/core";
-import {
-  Identifier,
-  Organization,
-  OrganizationStub,
-  displayLabel,
-} from "@sdapps/models";
+import { Identifier, displayLabel } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Either } from "purify-ts";
 
 interface OrganizationPageParams {
   locale: Locale;
@@ -35,10 +31,9 @@ export default async function OrganizationPage({
   setRequestLocale(locale);
 
   const organization = (
-    await modelSet.model<Organization>({
-      identifier: Identifier.fromString(decodeFileName(organizationIdentifier)),
-      type: "Organization",
-    })
+    await objectSet.organization(
+      Identifier.fromString(decodeFileName(organizationIdentifier)),
+    )
   )
     .toMaybe()
     .extractNullable();
@@ -58,7 +53,7 @@ export default async function OrganizationPage({
         <Stack>
           {organization.subjectOf.length > 0 ? (
             <Fieldset legend={translations("Subject of")}>
-              <SubjectOfList modelSet={modelSet} thing={organization} />
+              <SubjectOfList objectSet={objectSet} thing={organization} />
             </Fieldset>
           ) : null}
           {organization.members.length > 0 ? (
@@ -82,10 +77,9 @@ export async function generateMetadata({
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
-    await modelSet.model<OrganizationStub>({
-      identifier: Identifier.fromString(decodeFileName(organizationIdentifier)),
-      type: "OrganizationStub",
-    })
+    await objectSet.organizationStub(
+      Identifier.fromString(decodeFileName(organizationIdentifier)),
+    )
   )
     .map((organization) => pageMetadata.organization(organization))
     .orDefault({} satisfies Metadata);
@@ -101,9 +95,9 @@ export async function generateStaticParams(): Promise<
   const staticParams: OrganizationPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const organization of (
-      await modelSet.models<OrganizationStub>("OrganizationStub")
-    ).unsafeCoerce()) {
+    for (const organization of Either.rights(
+      await objectSet.organizationStubs(),
+    )) {
       staticParams.push({
         organizationIdentifier: encodeFileName(
           Identifier.toString(organization.identifier),

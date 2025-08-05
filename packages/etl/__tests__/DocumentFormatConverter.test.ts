@@ -6,7 +6,7 @@ import { DocumentFormatConverter } from "../src/DocumentFormatConverter";
 import { testDocumentFilePaths } from "./paths";
 
 describe.skipIf(process.env["CI"])("DocumentFormatConverter", async () => {
-  [testDocumentFilePaths.pdf].forEach((testDocumentFilePath) => {
+  for (const testDocumentFilePath of [testDocumentFilePaths.pdf]) {
     it(`should convert ${testDocumentFilePath} to PDF`, async () => {
       await tmp.withDir(
         async ({ path: tempDirPath }) => {
@@ -26,5 +26,5 @@ describe.skipIf(process.env["CI"])("DocumentFormatConverter", async () => {
         { unsafeCleanup: true },
       );
     });
-  });
+  }
 });

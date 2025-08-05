@@ -19,7 +19,7 @@ describe("DocumentFactory", async () => {
     .toString()
     .trim();
 
-  Object.values(testDocumentFilePaths).forEach((testDocumentFilePath) => {
+  for (const testDocumentFilePath of Object.values(testDocumentFilePaths)) {
     it(`should create a document from a local file ${testDocumentFilePath}`, async ({
       expect,
     }) => {
@@ -61,7 +61,7 @@ describe("DocumentFactory", async () => {
           break;
       }
     });
-  });
+  }
 
   it("should create a document from HTML string (no MIME type)", async ({
     expect,

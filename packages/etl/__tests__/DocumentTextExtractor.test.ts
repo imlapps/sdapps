@@ -6,7 +6,7 @@ import { DocumentTextExtractor } from "../src/DocumentTextExtractor";
 import { cachesDirectoryPath, testDocumentFilePaths } from "./paths";
 
 describe.skipIf(process.env["CI"])("DocumentTextExtractor", async () => {
-  [testDocumentFilePaths.pdf].forEach((testDocumentFilePath) => {
+  for (const testDocumentFilePath of [testDocumentFilePaths.pdf]) {
     it(`should extract text from ${testDocumentFilePath} `, async ({
       expect,
     }) => {
@@ -32,5 +32,5 @@ describe.skipIf(process.env["CI"])("DocumentTextExtractor", async () => {
       expect(result.html).not.toHaveLength(0);
       expect(result.text).not.toHaveLength(0);
     });
-  });
+  }
 });

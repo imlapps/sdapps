@@ -1,5 +1,6 @@
-.cache/
-.caches/
+/data/congress/.cache/
+/data/npr-composer/.caches/wikidata/
+/data/towndex/.caches/
 .DS_Store
 .env
 .env.*
@@ -13,3 +14,4 @@ next-env.d.ts
 node_modules
 npmdebug.log*
 out/
+tsconfig.tsbuildinfo

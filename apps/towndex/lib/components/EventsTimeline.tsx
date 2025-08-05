@@ -3,18 +3,23 @@
 import { EventIcon } from "@/lib/components/EventIcon";
 import { useHrefs } from "@/lib/hooks/useHrefs";
 import { Anchor, Text, Timeline, TimelineItem } from "@mantine/core";
-import { EventStub, Identifier, compare, displayLabel } from "@sdapps/models";
+import {
+  EventStubStatic,
+  Identifier,
+  compare,
+  displayLabel,
+} from "@sdapps/models";
 import { useMemo } from "react";
 
 export function EventsTimeline(json: {
-  events: readonly ReturnType<EventStub["toJson"]>[];
+  events: readonly EventStubStatic.Json[];
 }) {
   const hrefs = useHrefs();
 
   const events = useMemo(
     () =>
       json.events
-        .flatMap((json) => EventStub.fromJson(json).toMaybe().toList())
+        .flatMap((json) => EventStubStatic.fromJson(json).toMaybe().toList())
         .toSorted(compare),
     [json],
   );

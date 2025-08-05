@@ -18,7 +18,7 @@ interface Row {
 }
 
 export function PeopleTable(json: {
-  people: readonly ReturnType<PersonStub["toJson"]>[];
+  people: readonly PersonStub.Json[];
 }) {
   const hrefs = useHrefs();
   const translations = useTranslations("PeopleTable");

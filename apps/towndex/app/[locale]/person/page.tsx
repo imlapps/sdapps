@@ -3,12 +3,12 @@ import { AppShell } from "@/lib/components/AppShell";
 import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
 import { PeopleTable } from "@/lib/components/PeopleTable";
 import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
-import { modelSet } from "@/lib/modelSet";
 import { Locale } from "@/lib/models/Locale";
+import { objectSet } from "@/lib/objectSet";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { PersonStub } from "@sdapps/models";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Either } from "purify-ts";
 
 interface PeoplePageParams {
   locale: Locale;
@@ -20,9 +20,7 @@ export default async function PeoplePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const people = (await modelSet.models<PersonStub>("PersonStub")).orDefault(
-    [],
-  );
+  const people = Either.rights(await objectSet.personStubs());
   const translations = await getTranslations("PeoplePage");
 
   return (

@@ -1,13 +1,13 @@
 import { PropertiesTable } from "@/lib/components/PropertiesTable";
 import {} from "@mantine/core";
-import { Invoice, ModelSet, Order, displayLabel } from "@sdapps/models";
+import { $ObjectSet, Invoice, displayLabel } from "@sdapps/models";
 import { getTranslations } from "next-intl/server";
 import { ReactNode } from "react";
 
 export async function InvoiceTable({
   invoice,
-  modelSet,
-}: { invoice: Invoice; modelSet: ModelSet }) {
+  objectSet,
+}: { invoice: Invoice; objectSet: $ObjectSet }) {
   const translations = await getTranslations("InvoiceTable");
 
   const properties: { label: string; value: ReactNode }[] = [];
@@ -25,12 +25,7 @@ export async function InvoiceTable({
   });
 
   for (const orderStub of invoice.referencesOrder) {
-    const order = (
-      await modelSet.model<Order>({
-        identifier: orderStub.identifier,
-        type: "Order",
-      })
-    )
+    const order = (await objectSet.order(orderStub.identifier))
       .toMaybe()
       .extract();
     if (!order) {
@@ -41,10 +36,7 @@ export async function InvoiceTable({
       continue;
     }
     const partOfInvoice = (
-      await modelSet.model<Invoice>({
-        identifier: partOfInvoiceStub.identifier,
-        type: "Invoice",
-      })
+      await objectSet.invoice(partOfInvoiceStub.identifier)
     )
       .toMaybe()
       .extract();

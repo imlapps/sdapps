@@ -1,0 +1,648 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix wikibase: <http://wikiba.se/ontology#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <http://schema.org/> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix wd: <http://www.wikidata.org/entity/> .
+@prefix data: <https://www.wikidata.org/wiki/Special:EntityData/> .
+@prefix wds: <http://www.wikidata.org/entity/statement/> .
+@prefix wdref: <http://www.wikidata.org/reference/> .
+@prefix wdv: <http://www.wikidata.org/value/> .
+@prefix wdt: <http://www.wikidata.org/prop/direct/> .
+@prefix wdtn: <http://www.wikidata.org/prop/direct-normalized/> .
+@prefix p: <http://www.wikidata.org/prop/> .
+@prefix ps: <http://www.wikidata.org/prop/statement/> .
+@prefix psv: <http://www.wikidata.org/prop/statement/value/> .
+@prefix psn: <http://www.wikidata.org/prop/statement/value-normalized/> .
+@prefix pq: <http://www.wikidata.org/prop/qualifier/> .
+@prefix pqv: <http://www.wikidata.org/prop/qualifier/value/> .
+@prefix pqn: <http://www.wikidata.org/prop/qualifier/value-normalized/> .
+@prefix pr: <http://www.wikidata.org/prop/reference/> .
+@prefix prv: <http://www.wikidata.org/prop/reference/value/> .
+@prefix prn: <http://www.wikidata.org/prop/reference/value-normalized/> .
+@prefix wdno: <http://www.wikidata.org/prop/novalue/> .
+
+data:Q32178211 a schema:Dataset ;
+	schema:about wd:Q32178211 ;
+	cc:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	schema:softwareVersion "1.0.0" ;
+	schema:version "2350248205"^^xsd:integer ;
+	schema:dateModified "2025-05-19T15:08:01Z"^^xsd:dateTime ;
+	wikibase:statements "8"^^xsd:integer ;
+	wikibase:sitelinks "0"^^xsd:integer ;
+	wikibase:identifiers "1"^^xsd:integer .
+
+wd:Q32178211 a wikibase:Item ;
+	wdt:P279 wd:Q43229 ;
+	wdt:P910 wd:Q4242 ;
+	wdt:P373 "Music organizations" ;
+	wdt:P452 wd:Q746359 ;
+	wdt:P2354 wd:Q6630001 ;
+	wdt:P6104 wd:Q5830855 ;
+	wdt:P101 wd:Q638 ;
+	wdt:P691 "ph120907" ;
+	p:P279 wds:Q32178211-78ed7a25-4101-5d33-c940-676b9793f2c2 .
+
+wds:Q32178211-78ed7a25-4101-5d33-c940-676b9793f2c2 a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P279 wd:Q43229 .
+
+wd:Q32178211 p:P910 wds:Q32178211-c2cac6bf-475f-7026-93f3-da1f4255c332 .
+
+wds:Q32178211-c2cac6bf-475f-7026-93f3-da1f4255c332 a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P910 wd:Q4242 .
+
+wd:Q32178211 p:P373 wds:Q32178211-6A7B18EF-4975-4B91-ABA5-C1F473C969E3 .
+
+wds:Q32178211-6A7B18EF-4975-4B91-ABA5-C1F473C969E3 a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P373 "Music organizations" .
+
+wd:Q32178211 p:P452 wds:Q32178211-88137392-4e23-5107-2822-6925d59dda81 .
+
+wds:Q32178211-88137392-4e23-5107-2822-6925d59dda81 a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P452 wd:Q746359 .
+
+wd:Q32178211 p:P2354 wds:Q32178211-630909d2-48f5-52fc-ac30-ce1b39f31037 .
+
+wds:Q32178211-630909d2-48f5-52fc-ac30-ce1b39f31037 a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P2354 wd:Q6630001 .
+
+wd:Q32178211 p:P6104 wds:Q32178211-f5b22dc0-4dcc-0913-581a-d28dc6a66196 .
+
+wds:Q32178211-f5b22dc0-4dcc-0913-581a-d28dc6a66196 a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P6104 wd:Q5830855 .
+
+wd:Q32178211 p:P101 wds:Q32178211-6361728c-43a1-f520-295a-01eac035a11c .
+
+wds:Q32178211-6361728c-43a1-f520-295a-01eac035a11c a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P101 wd:Q638 .
+
+wd:Q32178211 p:P691 wds:Q32178211-9F7DEAFB-46E3-41E6-BE89-1145433879ED .
+
+wds:Q32178211-9F7DEAFB-46E3-41E6-BE89-1145433879ED a wikibase:Statement,
+		wikibase:BestRank ;
+	wikibase:rank wikibase:NormalRank ;
+	ps:P691 "ph120907" ;
+	pq:P1810 "hudební instituce a organizace" .
+
+wd:Q32178211 rdfs:label "музыкальная организация"@ru ;
+	skos:prefLabel "музыкальная организация"@ru ;
+	schema:name "музыкальная организация"@ru ;
+	rdfs:label "music organization"@en ;
+	skos:prefLabel "music organization"@en ;
+	schema:name "music organization"@en ;
+	rdfs:label "organización musical"@es ;
+	skos:prefLabel "organización musical"@es ;
+	schema:name "organización musical"@es ;
+	rdfs:label "muziekorganisatie"@nl ;
+	skos:prefLabel "muziekorganisatie"@nl ;
+	schema:name "muziekorganisatie"@nl ;
+	rdfs:label "organització musical"@ca ;
+	skos:prefLabel "organització musical"@ca ;
+	schema:name "organització musical"@ca ;
+	rdfs:label "музична організація"@uk ;
+	skos:prefLabel "музична організація"@uk ;
+	schema:name "музична організація"@uk ;
+	rdfs:label "muzika  organizaĵo"@eo ;
+	skos:prefLabel "muzika  organizaĵo"@eo ;
+	schema:name "muzika  organizaĵo"@eo ;
+	rdfs:label "organização musical"@pt ;
+	skos:prefLabel "organização musical"@pt ;
+	schema:name "organização musical"@pt ;
+	rdfs:label "organizacja muzyczna"@pl ;
+	skos:prefLabel "organizacja muzyczna"@pl ;
+	schema:name "organizacja muzyczna"@pl ;
+	rdfs:label "organizzazione musicale"@it ;
+	skos:prefLabel "organizzazione musicale"@it ;
+	schema:name "organizzazione musicale"@it ;
+	rdfs:label "organisasi musik"@id ;
+	skos:prefLabel "organisasi musik"@id ;
+	schema:name "organisasi musik"@id ;
+	rdfs:label "музычная арганізацыя"@be-tarask ;
+	skos:prefLabel "музычная арганізацыя"@be-tarask ;
+	schema:name "музычная арганізацыя"@be-tarask ;
+	rdfs:label "երաժշտական կազմակերպություն"@hy ;
+	skos:prefLabel "երաժշտական կազմակերպություն"@hy ;
+	schema:name "երաժշտական կազմակերպություն"@hy ;
+	rdfs:label "hudební organizace"@cs ;
+	skos:prefLabel "hudební organizace"@cs ;
+	schema:name "hudební organizace"@cs ;
+	rdfs:label "organisation musicale"@fr ;
+	skos:prefLabel "organisation musicale"@fr ;
+	schema:name "organisation musicale"@fr ;
+	rdfs:label "musikorganisation"@da ;
+	skos:prefLabel "musikorganisation"@da ;
+	schema:name "musikorganisation"@da ;
+	rdfs:label "音乐组织"@zh-hans ;
+	skos:prefLabel "音乐组织"@zh-hans ;
+	schema:name "音乐组织"@zh-hans ;
+	rdfs:label "音樂組織"@zh-hant ;
+	skos:prefLabel "音樂組織"@zh-hant ;
+	schema:name "音樂組織"@zh-hant ;
+	rdfs:label "Musikorganisation"@de ;
+	skos:prefLabel "Musikorganisation"@de ;
+	schema:name "Musikorganisation"@de ;
+	rdfs:label "musikorganisation"@sv ;
+	skos:prefLabel "musikorganisation"@sv ;
+	schema:name "musikorganisation"@sv ;
+	rdfs:label "musika erakunde"@eu ;
+	skos:prefLabel "musika erakunde"@eu ;
+	schema:name "musika erakunde"@eu ;
+	rdfs:label "μουσικός οργανισμός"@el ;
+	skos:prefLabel "μουσικός οργανισμός"@el ;
+	schema:name "μουσικός οργανισμός"@el ;
+	rdfs:label "ארגון מוזיקלי"@he ;
+	skos:prefLabel "ארגון מוזיקלי"@he ;
+	schema:name "ארגון מוזיקלי"@he ;
+	rdfs:label "music organisation"@en-gb ;
+	skos:prefLabel "music organisation"@en-gb ;
+	schema:name "music organisation"@en-gb ;
+	rdfs:label "музычная арганізацыя"@be ;
+	skos:prefLabel "музычная арганізацыя"@be ;
+	schema:name "музычная арганізацыя"@be ;
+	rdfs:label "glasbena organizacija"@sl ;
+	skos:prefLabel "glasbena organizacija"@sl ;
+	schema:name "glasbena organizacija"@sl ;
+	rdfs:label "müzik organizasyonu"@tr ;
+	skos:prefLabel "müzik organizasyonu"@tr ;
+	schema:name "müzik organizasyonu"@tr ;
+	rdfs:label "eagraíocht cheoil"@ga ;
+	skos:prefLabel "eagraíocht cheoil"@ga ;
+	schema:name "eagraíocht cheoil"@ga ;
+	rdfs:label "tổ chức âm nhạc"@vi ;
+	skos:prefLabel "tổ chức âm nhạc"@vi ;
+	schema:name "tổ chức âm nhạc"@vi ;
+	rdfs:label "音楽組織"@ja ;
+	skos:prefLabel "音楽組織"@ja ;
+	schema:name "音楽組織"@ja ;
+	rdfs:label "hudobná organizácia"@sk ;
+	skos:prefLabel "hudobná organizácia"@sk ;
+	schema:name "hudobná organizácia"@sk ;
+	rdfs:label "zenei szervezet"@hu ;
+	skos:prefLabel "zenei szervezet"@hu ;
+	schema:name "zenei szervezet"@hu ;
+	rdfs:label "pertubuhan muzik"@ms ;
+	skos:prefLabel "pertubuhan muzik"@ms ;
+	schema:name "pertubuhan muzik"@ms ;
+	rdfs:label "organizasion muzicałe"@vec ;
+	skos:prefLabel "organizasion muzicałe"@vec ;
+	schema:name "organizasion muzicałe"@vec ;
+	rdfs:label "musikkorganisasjon"@nb ;
+	skos:prefLabel "musikkorganisasjon"@nb ;
+	schema:name "musikkorganisasjon"@nb ;
+	rdfs:label "organización musical"@gl ;
+	skos:prefLabel "organización musical"@gl ;
+	schema:name "organización musical"@gl ;
+	schema:description "организация, связанная с музыкой"@ru,
+		"type of organization linked with music"@en,
+		"організація, пов'язана з музикою"@uk,
+		"organizacja związana z muzyką"@pl,
+		"organizzazione collegata alla musica"@it,
+		"арганізацыя, зьвязаная з музыкай"@be-tarask,
+		"organisation en lien avec la musique"@fr,
+		"Art von Organisation"@de,
+		"organisation som bedriver musik"@sv,
+		"musikarekin lotuta erakundea"@eu,
+		"οργανισμός που σχετίζεται με τη μουσική"@el,
+		"organisation linked with music"@en-gb,
+		"organización vinculada con la música"@es,
+		"müzikle bağlantılı organizasyon türü"@tr,
+		"organizácia spojená s hudbou"@sk,
+		"jenis pertubuhan yang dikaitkan dengan muzik"@ms,
+		"type organisasjon"@nb ;
+	skos:altLabel "музыкальное учреждение"@ru,
+		"musical organisation"@en,
+		"music organisation"@en,
+		"organization in music"@en,
+		"organization (music)"@en,
+		"organisation in music"@en,
+		"organisation (music)"@en,
+		"musical organization"@en,
+		"музична установа"@uk,
+		"Organisation in der Musik"@de,
+		"Organisation (Musik)"@de,
+		"organizasyon (müzik)"@tr,
+		"müzikal organizasyon"@tr,
+		"音楽関連組織"@ja,
+		"zenei szerveződés"@hu,
+		"organisasi muzik"@ms,
+		"musikkforening"@nb .
+
+wd:Q43229 a wikibase:Item ;
+	rdfs:label "organization"@en ;
+	skos:prefLabel "organization"@en ;
+	schema:name "organization"@en ;
+	schema:description "social entity established to meet needs or pursue goals"@en .
+
+wd:P279 a wikibase:Property ;
+	rdfs:label "subclass of"@en ;
+	skos:prefLabel "subclass of"@en ;
+	schema:name "subclass of"@en ;
+	schema:description "this item is a subclass (subset) of that item; ALL instances of this item are instances of that item; different from P31 (instance of), e.g.: volcano is a subclass of mountain (and an instance of volcanic landform); Everest is an instance of mountain"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#WikibaseItem> ;
+	wikibase:directClaim wdt:P279 ;
+	wikibase:claim p:P279 ;
+	wikibase:statementProperty ps:P279 ;
+	wikibase:statementValue psv:P279 ;
+	wikibase:qualifier pq:P279 ;
+	wikibase:qualifierValue pqv:P279 ;
+	wikibase:reference pr:P279 ;
+	wikibase:referenceValue prv:P279 ;
+	wikibase:novalue wdno:P279 .
+
+p:P279 a owl:ObjectProperty .
+
+psv:P279 a owl:ObjectProperty .
+
+pqv:P279 a owl:ObjectProperty .
+
+prv:P279 a owl:ObjectProperty .
+
+wdt:P279 a owl:ObjectProperty .
+
+ps:P279 a owl:ObjectProperty .
+
+pq:P279 a owl:ObjectProperty .
+
+pr:P279 a owl:ObjectProperty .
+
+wdno:P279 a owl:Class ;
+	owl:complementOf _:55a0a46aa65f620d17fa7dc3671280d4 .
+
+_:55a0a46aa65f620d17fa7dc3671280d4 a owl:Restriction ;
+	owl:onProperty wdt:P279 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:Q4242 a wikibase:Item ;
+	rdfs:label "Category:Music organizations"@en ;
+	skos:prefLabel "Category:Music organizations"@en ;
+	schema:name "Category:Music organizations"@en ;
+	schema:description "Wikimedia category"@en .
+
+wd:P910 a wikibase:Property ;
+	rdfs:label "topic's main category"@en ;
+	skos:prefLabel "topic's main category"@en ;
+	schema:name "topic's main category"@en ;
+	schema:description "main Wikimedia category"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#WikibaseItem> ;
+	wikibase:directClaim wdt:P910 ;
+	wikibase:claim p:P910 ;
+	wikibase:statementProperty ps:P910 ;
+	wikibase:statementValue psv:P910 ;
+	wikibase:qualifier pq:P910 ;
+	wikibase:qualifierValue pqv:P910 ;
+	wikibase:reference pr:P910 ;
+	wikibase:referenceValue prv:P910 ;
+	wikibase:novalue wdno:P910 .
+
+p:P910 a owl:ObjectProperty .
+
+psv:P910 a owl:ObjectProperty .
+
+pqv:P910 a owl:ObjectProperty .
+
+prv:P910 a owl:ObjectProperty .
+
+wdt:P910 a owl:ObjectProperty .
+
+ps:P910 a owl:ObjectProperty .
+
+pq:P910 a owl:ObjectProperty .
+
+pr:P910 a owl:ObjectProperty .
+
+wdno:P910 a owl:Class ;
+	owl:complementOf _:06be9361e78d041ce01df69013cf6906 .
+
+_:06be9361e78d041ce01df69013cf6906 a owl:Restriction ;
+	owl:onProperty wdt:P910 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:P373 a wikibase:Property ;
+	rdfs:label "Commons category"@en ;
+	skos:prefLabel "Commons category"@en ;
+	schema:name "Commons category"@en ;
+	schema:description "name of the Wikimedia Commons category containing files related to this item (without the prefix \"Category:\")"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#String> ;
+	wikibase:directClaim wdt:P373 ;
+	wikibase:claim p:P373 ;
+	wikibase:statementProperty ps:P373 ;
+	wikibase:statementValue psv:P373 ;
+	wikibase:qualifier pq:P373 ;
+	wikibase:qualifierValue pqv:P373 ;
+	wikibase:reference pr:P373 ;
+	wikibase:referenceValue prv:P373 ;
+	wikibase:novalue wdno:P373 .
+
+p:P373 a owl:ObjectProperty .
+
+psv:P373 a owl:ObjectProperty .
+
+pqv:P373 a owl:ObjectProperty .
+
+prv:P373 a owl:ObjectProperty .
+
+wdt:P373 a owl:DatatypeProperty .
+
+ps:P373 a owl:DatatypeProperty .
+
+pq:P373 a owl:DatatypeProperty .
+
+pr:P373 a owl:DatatypeProperty .
+
+wdno:P373 a owl:Class ;
+	owl:complementOf _:3de19c92e209926f02f215095eb4fd12 .
+
+_:3de19c92e209926f02f215095eb4fd12 a owl:Restriction ;
+	owl:onProperty wdt:P373 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:Q746359 a wikibase:Item ;
+	rdfs:label "music industry"@en ;
+	skos:prefLabel "music industry"@en ;
+	schema:name "music industry"@en ;
+	schema:description "companies and individuals that create and sell music and make money off of sales"@en .
+
+wd:P452 a wikibase:Property ;
+	rdfs:label "industry"@en ;
+	skos:prefLabel "industry"@en ;
+	schema:name "industry"@en ;
+	schema:description "specific industry of company or organization"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#WikibaseItem> ;
+	wikibase:directClaim wdt:P452 ;
+	wikibase:claim p:P452 ;
+	wikibase:statementProperty ps:P452 ;
+	wikibase:statementValue psv:P452 ;
+	wikibase:qualifier pq:P452 ;
+	wikibase:qualifierValue pqv:P452 ;
+	wikibase:reference pr:P452 ;
+	wikibase:referenceValue prv:P452 ;
+	wikibase:novalue wdno:P452 .
+
+p:P452 a owl:ObjectProperty .
+
+psv:P452 a owl:ObjectProperty .
+
+pqv:P452 a owl:ObjectProperty .
+
+prv:P452 a owl:ObjectProperty .
+
+wdt:P452 a owl:ObjectProperty .
+
+ps:P452 a owl:ObjectProperty .
+
+pq:P452 a owl:ObjectProperty .
+
+pr:P452 a owl:ObjectProperty .
+
+wdno:P452 a owl:Class ;
+	owl:complementOf _:ddd7e098b124e66afb3cdf7d0fc751ea .
+
+_:ddd7e098b124e66afb3cdf7d0fc751ea a owl:Restriction ;
+	owl:onProperty wdt:P452 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:Q6630001 a wikibase:Item ;
+	rdfs:label "list of music organizations in the United States"@en ;
+	skos:prefLabel "list of music organizations in the United States"@en ;
+	schema:name "list of music organizations in the United States"@en ;
+	schema:description "Wikimedia music-related list"@en .
+
+wd:P2354 a wikibase:Property ;
+	rdfs:label "has list"@en ;
+	skos:prefLabel "has list"@en ;
+	schema:name "has list"@en ;
+	schema:description "Wikimedia list related to this subject"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#WikibaseItem> ;
+	wikibase:directClaim wdt:P2354 ;
+	wikibase:claim p:P2354 ;
+	wikibase:statementProperty ps:P2354 ;
+	wikibase:statementValue psv:P2354 ;
+	wikibase:qualifier pq:P2354 ;
+	wikibase:qualifierValue pqv:P2354 ;
+	wikibase:reference pr:P2354 ;
+	wikibase:referenceValue prv:P2354 ;
+	wikibase:novalue wdno:P2354 .
+
+p:P2354 a owl:ObjectProperty .
+
+psv:P2354 a owl:ObjectProperty .
+
+pqv:P2354 a owl:ObjectProperty .
+
+prv:P2354 a owl:ObjectProperty .
+
+wdt:P2354 a owl:ObjectProperty .
+
+ps:P2354 a owl:ObjectProperty .
+
+pq:P2354 a owl:ObjectProperty .
+
+pr:P2354 a owl:ObjectProperty .
+
+wdno:P2354 a owl:Class ;
+	owl:complementOf _:791ea1bcdc4c5009fbb485e56fdf2cd0 .
+
+_:791ea1bcdc4c5009fbb485e56fdf2cd0 a owl:Restriction ;
+	owl:onProperty wdt:P2354 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:Q5830855 a wikibase:Item ;
+	rdfs:label "WikiProject Music"@en ;
+	skos:prefLabel "WikiProject Music"@en ;
+	schema:name "WikiProject Music"@en ;
+	schema:description "Wikimedia subject-area collaboration"@en .
+
+wd:P6104 a wikibase:Property ;
+	rdfs:label "maintained by WikiProject"@en ;
+	skos:prefLabel "maintained by WikiProject"@en ;
+	schema:name "maintained by WikiProject"@en ;
+	schema:description "WikiProject that maintains this property, item, or linked pages. If the WikiProject is hosted outside of Wikidata, identify the hosting project using the qualifier \"part of\" (P361)"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#WikibaseItem> ;
+	wikibase:directClaim wdt:P6104 ;
+	wikibase:claim p:P6104 ;
+	wikibase:statementProperty ps:P6104 ;
+	wikibase:statementValue psv:P6104 ;
+	wikibase:qualifier pq:P6104 ;
+	wikibase:qualifierValue pqv:P6104 ;
+	wikibase:reference pr:P6104 ;
+	wikibase:referenceValue prv:P6104 ;
+	wikibase:novalue wdno:P6104 .
+
+p:P6104 a owl:ObjectProperty .
+
+psv:P6104 a owl:ObjectProperty .
+
+pqv:P6104 a owl:ObjectProperty .
+
+prv:P6104 a owl:ObjectProperty .
+
+wdt:P6104 a owl:ObjectProperty .
+
+ps:P6104 a owl:ObjectProperty .
+
+pq:P6104 a owl:ObjectProperty .
+
+pr:P6104 a owl:ObjectProperty .
+
+wdno:P6104 a owl:Class ;
+	owl:complementOf _:8ed522f108b0fd974fa8303edd0ec44c .
+
+_:8ed522f108b0fd974fa8303edd0ec44c a owl:Restriction ;
+	owl:onProperty wdt:P6104 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:Q638 a wikibase:Item ;
+	rdfs:label "music"@en ;
+	skos:prefLabel "music"@en ;
+	schema:name "music"@en ;
+	schema:description "art/activity of creating art using sound"@en .
+
+wd:P101 a wikibase:Property ;
+	rdfs:label "field of work"@en ;
+	skos:prefLabel "field of work"@en ;
+	schema:name "field of work"@en ;
+	schema:description "specialization of a person or organization; see P106 for the occupation"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#WikibaseItem> ;
+	wikibase:directClaim wdt:P101 ;
+	wikibase:claim p:P101 ;
+	wikibase:statementProperty ps:P101 ;
+	wikibase:statementValue psv:P101 ;
+	wikibase:qualifier pq:P101 ;
+	wikibase:qualifierValue pqv:P101 ;
+	wikibase:reference pr:P101 ;
+	wikibase:referenceValue prv:P101 ;
+	wikibase:novalue wdno:P101 .
+
+p:P101 a owl:ObjectProperty .
+
+psv:P101 a owl:ObjectProperty .
+
+pqv:P101 a owl:ObjectProperty .
+
+prv:P101 a owl:ObjectProperty .
+
+wdt:P101 a owl:ObjectProperty .
+
+ps:P101 a owl:ObjectProperty .
+
+pq:P101 a owl:ObjectProperty .
+
+pr:P101 a owl:ObjectProperty .
+
+wdno:P101 a owl:Class ;
+	owl:complementOf _:cbb504a009ed02903f241add7373826c .
+
+_:cbb504a009ed02903f241add7373826c a owl:Restriction ;
+	owl:onProperty wdt:P101 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:P691 a wikibase:Property ;
+	rdfs:label "NL CR AUT ID"@en ;
+	skos:prefLabel "NL CR AUT ID"@en ;
+	schema:name "NL CR AUT ID"@en ;
+	schema:description "identifier in the Czech National Authority Database of National Library of the Czech Republic (NL CR)"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#ExternalId> ;
+	wikibase:directClaim wdt:P691 ;
+	wikibase:claim p:P691 ;
+	wikibase:statementProperty ps:P691 ;
+	wikibase:statementValue psv:P691 ;
+	wikibase:qualifier pq:P691 ;
+	wikibase:qualifierValue pqv:P691 ;
+	wikibase:reference pr:P691 ;
+	wikibase:referenceValue prv:P691 ;
+	wikibase:novalue wdno:P691 ;
+	wikibase:directClaimNormalized wdtn:P691 ;
+	wikibase:statementValueNormalized psn:P691 ;
+	wikibase:qualifierValueNormalized pqn:P691 ;
+	wikibase:referenceValueNormalized prn:P691 .
+
+p:P691 a owl:ObjectProperty .
+
+psv:P691 a owl:ObjectProperty .
+
+pqv:P691 a owl:ObjectProperty .
+
+prv:P691 a owl:ObjectProperty .
+
+wdt:P691 a owl:DatatypeProperty .
+
+ps:P691 a owl:DatatypeProperty .
+
+pq:P691 a owl:DatatypeProperty .
+
+pr:P691 a owl:DatatypeProperty .
+
+psn:P691 a owl:ObjectProperty .
+
+pqn:P691 a owl:ObjectProperty .
+
+prn:P691 a owl:ObjectProperty .
+
+wdtn:P691 a owl:ObjectProperty .
+
+wdno:P691 a owl:Class ;
+	owl:complementOf _:eee17ba34d3dca4b3bf5b23f68ca71b1 .
+
+_:eee17ba34d3dca4b3bf5b23f68ca71b1 a owl:Restriction ;
+	owl:onProperty wdt:P691 ;
+	owl:someValuesFrom owl:Thing .
+
+wd:P1810 a wikibase:Property ;
+	rdfs:label "subject named as"@en ;
+	skos:prefLabel "subject named as"@en ;
+	schema:name "subject named as"@en ;
+	schema:description "name by which a subject is recorded in a database, mentioned as a contributor of a work, or is referred to in a particular context"@en ;
+	wikibase:propertyType <http://wikiba.se/ontology#String> ;
+	wikibase:directClaim wdt:P1810 ;
+	wikibase:claim p:P1810 ;
+	wikibase:statementProperty ps:P1810 ;
+	wikibase:statementValue psv:P1810 ;
+	wikibase:qualifier pq:P1810 ;
+	wikibase:qualifierValue pqv:P1810 ;
+	wikibase:reference pr:P1810 ;
+	wikibase:referenceValue prv:P1810 ;
+	wikibase:novalue wdno:P1810 .
+
+p:P1810 a owl:ObjectProperty .
+
+psv:P1810 a owl:ObjectProperty .
+
+pqv:P1810 a owl:ObjectProperty .
+
+prv:P1810 a owl:ObjectProperty .
+
+wdt:P1810 a owl:DatatypeProperty .
+
+ps:P1810 a owl:DatatypeProperty .
+
+pq:P1810 a owl:DatatypeProperty .
+
+pr:P1810 a owl:DatatypeProperty .
+
+wdno:P1810 a owl:Class ;
+	owl:complementOf _:1d6e1ecf4f0164f6a3471dd66d38c9d8 .
+
+_:1d6e1ecf4f0164f6a3471dd66d38c9d8 a owl:Restriction ;
+	owl:onProperty wdt:P1810 ;
+	owl:someValuesFrom owl:Thing .
