@@ -1,5 +1,11 @@
 import { DatasetCore, NamedNode } from "@rdfjs/types";
-import { MusicGroup, Organization, Person, Thing } from "@sdapps/models";
+import {
+  ImageObjectStub,
+  MusicGroup,
+  Organization,
+  Person,
+  Thing,
+} from "@sdapps/models";
 import { owl, schema } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory } from "n3";
 import { Logger } from "pino";
@@ -12,7 +18,27 @@ import { WikidataEntityFetcher } from "./WikidataEntityFetcher.js";
 const wd = DataFactory.namedNode("http://www.wikidata.org/entity/");
 
 namespace wdt {
-  export const subClassOf: NamedNode = DataFactory.namedNode(
+  export const birthDate = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P569",
+  );
+
+  export const deathDate = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P570",
+  );
+
+  export const familyName = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P734",
+  );
+
+  export const givenName = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P735",
+  );
+
+  export const image = DataFactory.namedNode(
+    "http://www.wikidata.org/prop/direct/P18",
+  );
+
+  export const subClassOf = DataFactory.namedNode(
     "http://www.wikidata.org/prop/direct/P279",
   );
 
@@ -59,6 +85,16 @@ export class WikidataEntity {
     return this.stringProperty(schema.name);
   }
 
+  get images(): readonly URL[] {
+    return this.resource.values(wdt.image).flatMap((value) =>
+      value
+        .toIri()
+        .chain((url) => Either.encase(() => new URL(url.value)))
+        .toMaybe()
+        .toList(),
+    );
+  }
+
   @Memoize()
   private get resource(): Resource<NamedNode> {
     return new Resource<NamedNode>({
@@ -81,7 +117,9 @@ export class WikidataEntity {
     return this.id;
   }
 
-  async toThing(): Promise<Either<Error, Thing>> {
+  async toThing(parameters?: { alternateNames?: readonly string[] }): Promise<
+    Either<Error, Thing>
+  > {
     return EitherAsync(async ({ liftEither }) => {
       const wikidataEntityType = async (
         wikidataEntity: WikidataEntity,
@@ -175,24 +213,58 @@ export class WikidataEntity {
       };
 
       const type = await wikidataEntityType(this, new Set());
-      const kwds: ConstructorParameters<typeof Thing>[0] = {
+
+      const thingParameters: ConstructorParameters<typeof Thing>[0] = {
+        alternateNames: parameters?.alternateNames,
         description: this.description,
         identifier: this.iri,
+        images: this.images.map(
+          (url) =>
+            new ImageObjectStub({
+              identifier: DataFactory.namedNode(url.toString()),
+              contentUrl: url.toString(),
+            }),
+        ),
         name: this.name,
+        sameAs: this.resource
+          .valuesOf(schema.about)
+          .flatMap((article) => article.toNamedResource().toMaybe().toList())
+          .filter(
+            (article) =>
+              article.isInstanceOf(schema.Article) &&
+              article
+                .value(schema.isPartOf)
+                .chain((value) => value.toIri())
+                .map((value) => value.value)
+                .extract() === "https://en.wikipedia.org/",
+          )
+          .map((article) => article.identifier),
       };
 
       switch (type) {
         case "MusicGroup":
-          return new MusicGroup(kwds);
+          return new MusicGroup(thingParameters);
         case "Organization":
-          return new Organization(kwds);
+          return new Organization(thingParameters);
         case "Person":
-          return new Person(kwds);
+          return new Person({
+            ...thingParameters,
+            birthDate: this.resource
+              .value(wdt.birthDate)
+              .chain((value) => value.toDate())
+              .toMaybe(),
+            deathDate: this.resource
+              .value(wdt.deathDate)
+              .chain((value) => value.toDate())
+              .toMaybe(),
+            familyName: this.stringProperty(wdt.familyName),
+            givenName: this.stringProperty(wdt.givenName),
+          });
         case "Thing":
           this.logger?.warn(
             `unable to infer schema.org type for Wikidata entity ${this.id}, defaulting to Thing`,
           );
-          return new Thing(kwds);
+          return new Thing(thingParameters);
       }
     });
   }
