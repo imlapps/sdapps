@@ -21,7 +21,6 @@ export function behavesLikeTowndexObjectSet(objectSet: $ObjectSet): void {
   });
 
   it("organization stubs", async ({ expect }) => {
-    const _actual = await objectSet.organizationStubs();
     expect(Either.rights(await objectSet.organizationStubs())).toHaveLength(2);
   });
 

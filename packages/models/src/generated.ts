@@ -1319,9 +1319,7 @@ export namespace ThingStatic {
     readonly url: { readonly "@id": string } | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1986,6 +1984,13 @@ export namespace ThingStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}AlternateNames`),
@@ -2115,6 +2120,33 @@ export namespace ThingStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -2704,6 +2736,13 @@ export namespace IntangibleStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -2764,6 +2803,33 @@ export namespace IntangibleStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -3000,9 +3066,7 @@ export namespace Role {
     readonly startDate: string | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3270,6 +3334,13 @@ export namespace Role {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}EndDate`),
@@ -3345,6 +3416,33 @@ export namespace Role {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -3638,6 +3736,13 @@ export namespace Occupation {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -3698,6 +3803,33 @@ export namespace Occupation {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -3959,6 +4091,13 @@ export namespace EnumerationStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -4021,6 +4160,33 @@ export namespace EnumerationStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -4127,9 +4293,7 @@ export namespace GenderType {
 
   export type Json = EnumerationStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -4335,6 +4499,13 @@ export namespace GenderType {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -4395,6 +4566,33 @@ export namespace GenderType {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -4797,9 +4995,7 @@ export namespace EventStatic {
     readonly superEvent: EventStubStatic.Json | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5299,6 +5495,13 @@ export namespace EventStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}About`),
@@ -5427,6 +5630,33 @@ export namespace EventStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -5618,21 +5848,19 @@ export class PublicationEvent extends Event {
   }
 
   override equals(other: PublicationEvent): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.publishedOn,
-          other.publishedOn,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "publishedOn",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $maybeEquals(left, right, (left, right) => left.equals(right)))(
+        this.publishedOn,
+        other.publishedOn,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "publishedOn",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -5712,9 +5940,7 @@ export namespace PublicationEventStatic {
     readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
   } & EventStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5955,6 +6181,13 @@ export namespace PublicationEventStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
@@ -6028,6 +6261,33 @@ export namespace PublicationEventStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -6303,6 +6563,13 @@ export namespace BroadcastEvent {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -6366,6 +6633,33 @@ export namespace BroadcastEvent {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -6620,9 +6914,7 @@ export namespace ActionStatic {
     readonly startTime: string | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6962,6 +7254,13 @@ export namespace ActionStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Agents`),
@@ -7050,6 +7349,33 @@ export namespace ActionStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -7388,6 +7714,13 @@ export namespace AssessActionStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -7451,6 +7784,33 @@ export namespace AssessActionStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -7715,6 +8075,13 @@ export namespace ChooseActionStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -7778,6 +8145,33 @@ export namespace ChooseActionStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -8026,6 +8420,13 @@ export namespace VoteAction {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -8086,6 +8487,33 @@ export namespace VoteAction {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -8290,9 +8718,7 @@ export namespace ThingStubStatic {
     readonly order: number | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8655,6 +9081,13 @@ export namespace ThingStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Name`),
@@ -8725,6 +9158,33 @@ export namespace ThingStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -9028,6 +9488,13 @@ export namespace ActionStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -9088,6 +9555,33 @@ export namespace ActionStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -9362,6 +9856,13 @@ export namespace AssessActionStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -9425,6 +9926,33 @@ export namespace AssessActionStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -9694,6 +10222,13 @@ export namespace ChooseActionStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -9757,6 +10292,33 @@ export namespace ChooseActionStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -10010,6 +10572,13 @@ export namespace VoteActionStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -10071,6 +10640,33 @@ export namespace VoteActionStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -10434,9 +11030,7 @@ export namespace CreativeWorkStatic {
     readonly publication: readonly PublicationEventStub.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11051,6 +11645,13 @@ export namespace CreativeWorkStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}About`),
@@ -11173,6 +11774,33 @@ export namespace CreativeWorkStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -11558,9 +12186,7 @@ export namespace MediaObjectStatic {
     readonly width: QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11909,6 +12535,13 @@ export namespace MediaObjectStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}ContentUrl`),
@@ -12001,6 +12634,33 @@ export namespace MediaObjectStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -12112,20 +12772,18 @@ export class TextObject extends MediaObject {
   }
 
   override equals(other: TextObject): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.uriSpace,
-          other.uriSpace,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "uriSpace",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        this.uriSpace,
+        other.uriSpace,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "uriSpace",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -12203,9 +12861,7 @@ export namespace TextObject {
     readonly uriSpace: string | undefined;
   } & MediaObjectStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12415,6 +13071,13 @@ export namespace TextObject {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}UriSpace`),
@@ -12480,6 +13143,33 @@ export namespace TextObject {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -12911,6 +13601,13 @@ export namespace CreativeWorkStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -12974,6 +13671,33 @@ export namespace CreativeWorkStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -13228,9 +13952,7 @@ export namespace MediaObjectStubStatic {
     readonly width: QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13591,6 +14313,13 @@ export namespace MediaObjectStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}ContentUrl`),
@@ -13684,6 +14413,33 @@ export namespace MediaObjectStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -14012,6 +14768,13 @@ export namespace TextObjectStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -14073,6 +14836,33 @@ export namespace TextObjectStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -14363,6 +15153,13 @@ export namespace StructuredValueStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -14426,6 +15223,33 @@ export namespace StructuredValueStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -14697,6 +15521,13 @@ export namespace ServiceStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -14757,6 +15588,33 @@ export namespace ServiceStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -15018,6 +15876,13 @@ export namespace ArticleStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -15078,6 +15943,33 @@ export namespace ArticleStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -15317,6 +16209,13 @@ export namespace Report {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -15377,6 +16276,33 @@ export namespace Report {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -15639,6 +16565,13 @@ export namespace ArticleStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -15699,6 +16632,33 @@ export namespace ArticleStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -15945,6 +16905,13 @@ export namespace ReportStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -16005,6 +16972,33 @@ export namespace ReportStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -16279,6 +17273,13 @@ export namespace CreativeWorkSeriesStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -16343,6 +17344,33 @@ export namespace CreativeWorkSeriesStatic {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
     ];
   }
@@ -16375,21 +17403,19 @@ export class RadioSeries extends CreativeWorkSeries {
   }
 
   override equals(other: RadioSeries): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.episodes,
-          other.episodes,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "episodes",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(left, right, (left, right) => left.equals(right)))(
+        this.episodes,
+        other.episodes,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "episodes",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -16470,9 +17496,7 @@ export namespace RadioSeries {
     readonly episodes: readonly RadioEpisodeStub.Json[];
   } & CreativeWorkSeriesStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16702,6 +17726,13 @@ export namespace RadioSeries {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Episodes`),
@@ -16774,6 +17805,33 @@ export namespace RadioSeries {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -17071,6 +18129,13 @@ export namespace CreativeWorkSeriesStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -17136,6 +18201,33 @@ export namespace CreativeWorkSeriesStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -17389,6 +18481,13 @@ export namespace RadioSeriesStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -17453,6 +18552,33 @@ export namespace RadioSeriesStub {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
     ];
   }
@@ -17492,21 +18618,19 @@ export class Episode extends CreativeWork {
   }
 
   override equals(other: Episode): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.partOfSeries,
-          other.partOfSeries,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "partOfSeries",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $maybeEquals(left, right, (left, right) => left.equals(right)))(
+        this.partOfSeries,
+        other.partOfSeries,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "partOfSeries",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -17588,9 +18712,7 @@ export namespace EpisodeStatic {
     readonly partOfSeries: CreativeWorkSeriesStubStatic.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17827,6 +18949,13 @@ export namespace EpisodeStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}PartOfSeries`),
@@ -17897,6 +19026,33 @@ export namespace EpisodeStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -18168,6 +19324,13 @@ export namespace RadioEpisode {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -18231,6 +19394,33 @@ export namespace RadioEpisode {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -18496,6 +19686,13 @@ export namespace EpisodeStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -18556,6 +19753,33 @@ export namespace EpisodeStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -18808,6 +20032,13 @@ export namespace RadioEpisodeStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -18872,6 +20103,33 @@ export namespace RadioEpisodeStub {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
     ];
   }
@@ -18907,20 +20165,18 @@ export class BroadcastService extends Service {
   }
 
   override equals(other: BroadcastService): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.callSign,
-          other.callSign,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "callSign",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        this.callSign,
+        other.callSign,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "callSign",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -18998,9 +20254,7 @@ export namespace BroadcastServiceStatic {
     readonly callSign: string | undefined;
   } & ServiceStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19229,6 +20483,13 @@ export namespace BroadcastServiceStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}CallSign`),
@@ -19297,6 +20558,33 @@ export namespace BroadcastServiceStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -19569,6 +20857,13 @@ export namespace RadioBroadcastService {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -19634,6 +20929,33 @@ export namespace RadioBroadcastService {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -19996,6 +21318,13 @@ export namespace IntangibleStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -20057,6 +21386,33 @@ export namespace IntangibleStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -20328,6 +21684,13 @@ export namespace ServiceStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -20388,6 +21751,33 @@ export namespace ServiceStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -20664,6 +22054,13 @@ export namespace BroadcastServiceStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -20729,6 +22126,33 @@ export namespace BroadcastServiceStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -20995,6 +22419,13 @@ export namespace RadioBroadcastServiceStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -21060,6 +22491,33 @@ export namespace RadioBroadcastServiceStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -21216,9 +22674,7 @@ export namespace QuantitativeValue {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21455,6 +22911,13 @@ export namespace QuantitativeValue {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}UnitText`),
@@ -21528,6 +22991,33 @@ export namespace QuantitativeValue {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -21854,6 +23344,13 @@ export namespace StructuredValueStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -21917,6 +23414,33 @@ export namespace StructuredValueStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -22073,9 +23597,7 @@ export namespace QuantitativeValueStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22317,6 +23839,13 @@ export namespace QuantitativeValueStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}UnitText`),
@@ -22392,6 +23921,33 @@ export namespace QuantitativeValueStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -22605,9 +24161,7 @@ export namespace EventStubStatic {
     readonly superEvent: { readonly "@id": string } | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22861,6 +24415,13 @@ export namespace EventStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}StartDate`),
@@ -22931,6 +24492,33 @@ export namespace EventStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -23217,6 +24805,13 @@ export namespace PublicationEventStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -23282,6 +24877,33 @@ export namespace PublicationEventStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -23521,6 +25143,13 @@ export namespace Place {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -23581,6 +25210,33 @@ export namespace Place {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -23827,6 +25483,13 @@ export namespace PlaceStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -23887,6 +25550,33 @@ export namespace PlaceStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -24402,9 +26092,7 @@ export namespace Person {
     readonly performerIn: readonly EventStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24933,6 +26621,13 @@ export namespace Person {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}BirthDate`),
@@ -25058,6 +26753,33 @@ export namespace Person {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -25441,9 +27163,7 @@ export namespace OrganizationStatic {
     readonly subOrganizations: readonly OrganizationStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25784,6 +27504,13 @@ export namespace OrganizationStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Members`),
@@ -25878,6 +27605,33 @@ export namespace OrganizationStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -26211,6 +27965,13 @@ export namespace PerformingGroupStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -26275,6 +28036,33 @@ export namespace PerformingGroupStatic {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
     ];
   }
@@ -26312,21 +28100,19 @@ export class Order extends Intangible {
   }
 
   override equals(other: Order): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.partOfInvoice,
-          other.partOfInvoice,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "partOfInvoice",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $maybeEquals(left, right, (left, right) => left.equals(right)))(
+        this.partOfInvoice,
+        other.partOfInvoice,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "partOfInvoice",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -26408,9 +28194,7 @@ export namespace Order {
     readonly partOfInvoice: InvoiceStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26626,6 +28410,13 @@ export namespace Order {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}PartOfInvoice`),
@@ -26696,6 +28487,33 @@ export namespace Order {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -26964,6 +28782,13 @@ export namespace OrderStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -27024,6 +28849,33 @@ export namespace OrderStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -27393,9 +29245,7 @@ export namespace MusicRecording {
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27835,6 +29685,13 @@ export namespace MusicRecording {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}ByArtists`),
@@ -27953,6 +29810,33 @@ export namespace MusicRecording {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -28345,6 +30229,13 @@ export namespace MusicRecordingStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -28408,6 +30299,33 @@ export namespace MusicRecordingStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -28576,9 +30494,7 @@ export namespace MusicPlaylist {
     readonly tracks: readonly (MusicRecordingStub.Json | ItemListStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -28836,6 +30752,13 @@ export namespace MusicPlaylist {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Tracks`),
@@ -28914,6 +30837,33 @@ export namespace MusicPlaylist {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -29207,6 +31157,13 @@ export namespace MusicPlaylistStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -29270,6 +31227,33 @@ export namespace MusicPlaylistStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -29544,6 +31528,13 @@ export namespace OrganizationStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -29607,6 +31598,33 @@ export namespace OrganizationStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -29882,6 +31900,13 @@ export namespace PerformingGroupStubStatic {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -29945,6 +31970,33 @@ export namespace PerformingGroupStubStatic {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -30193,6 +32245,13 @@ export namespace MusicGroup {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -30253,6 +32312,33 @@ export namespace MusicGroup {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -30506,6 +32592,13 @@ export namespace MusicGroupStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -30567,6 +32660,33 @@ export namespace MusicGroupStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -30732,9 +32852,7 @@ export namespace MusicComposition {
     readonly recordedAs: readonly MusicRecordingStub.Json[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -31006,6 +33124,13 @@ export namespace MusicComposition {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Composers`),
@@ -31088,6 +33213,33 @@ export namespace MusicComposition {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -31384,6 +33536,13 @@ export namespace MusicCompositionStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -31449,6 +33608,33 @@ export namespace MusicCompositionStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -31619,9 +33805,7 @@ export namespace MusicAlbum {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -31875,6 +34059,13 @@ export namespace MusicAlbum {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}ByArtists`),
@@ -31950,6 +34141,33 @@ export namespace MusicAlbum {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -32247,6 +34465,13 @@ export namespace MusicAlbumStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -32308,6 +34533,33 @@ export namespace MusicAlbumStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -32464,9 +34716,7 @@ export namespace MonetaryAmount {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32703,6 +34953,13 @@ export namespace MonetaryAmount {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Currency`),
@@ -32776,6 +35033,33 @@ export namespace MonetaryAmount {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -32962,9 +35246,7 @@ export namespace MonetaryAmountStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33204,6 +35486,13 @@ export namespace MonetaryAmountStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Currency`),
@@ -33278,6 +35567,33 @@ export namespace MonetaryAmountStub {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
       {
         patterns: [
@@ -33342,20 +35658,18 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
-          this.sender,
-          other.sender,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "sender",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
+        this.sender,
+        other.sender,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "sender",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -33437,9 +35751,7 @@ export namespace Message {
       | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33658,6 +35970,13 @@ export namespace Message {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Sender`),
@@ -33727,6 +36046,33 @@ export namespace Message {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -33995,6 +36341,13 @@ export namespace MessageStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -34055,6 +36408,33 @@ export namespace MessageStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -34243,9 +36623,7 @@ export namespace ListItem {
     readonly position: (number | string) | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -34502,6 +36880,13 @@ export namespace ListItem {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Item`),
@@ -34577,6 +36962,33 @@ export namespace ListItem {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -34796,9 +37208,7 @@ export namespace ListItemStub {
     readonly position: (number | string) | undefined;
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -35056,6 +37466,13 @@ export namespace ListItemStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Item`),
@@ -35133,6 +37550,33 @@ export namespace ListItemStub {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
       {
         triples: [
@@ -35196,21 +37640,19 @@ export class ItemList extends Intangible {
   }
 
   override equals(other: ItemList): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.itemListElements,
-          other.itemListElements,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "itemListElements",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(left, right, (left, right) => left.equals(right)))(
+        this.itemListElements,
+        other.itemListElements,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "itemListElements",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -35291,9 +37733,7 @@ export namespace ItemList {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -35522,6 +37962,13 @@ export namespace ItemList {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}ItemListElements`),
@@ -35593,6 +38040,33 @@ export namespace ItemList {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
       {
         patterns: [
@@ -35649,21 +38123,19 @@ export class ItemListStub extends IntangibleStub {
   }
 
   override equals(other: ItemListStub): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.itemListElements,
-          other.itemListElements,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "itemListElements",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(left, right, (left, right) => left.equals(right)))(
+        this.itemListElements,
+        other.itemListElements,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "itemListElements",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -35744,9 +38216,7 @@ export namespace ItemListStub {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -35976,6 +38446,13 @@ export namespace ItemListStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}ItemListElements`),
@@ -36047,6 +38524,33 @@ export namespace ItemListStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -36312,9 +38816,7 @@ export namespace Invoice {
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -36647,6 +39149,13 @@ export namespace Invoice {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}Category`),
@@ -36741,6 +39250,33 @@ export namespace Invoice {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -37071,6 +39607,13 @@ export namespace InvoiceStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -37131,6 +39674,33 @@ export namespace InvoiceStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -37379,6 +39949,13 @@ export namespace ImageObject {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -37441,6 +40018,33 @@ export namespace ImageObject {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
     ];
@@ -37693,6 +40297,13 @@ export namespace ImageObjectStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
     ];
   }
@@ -37757,6 +40368,33 @@ export namespace ImageObjectStub {
               ],
               type: "bgp" as const,
             },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
           ]),
     ];
   }
@@ -37791,20 +40429,18 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.jobTitle,
-          other.jobTitle,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "jobTitle",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        this.jobTitle,
+        other.jobTitle,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "jobTitle",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -37882,9 +40518,7 @@ export namespace PersonStub {
     readonly jobTitle: string | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -38092,6 +40726,13 @@ export namespace PersonStub {
               ),
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
           ]),
       {
         object: dataFactory.variable!(`${variablePrefix}JobTitle`),
@@ -38157,6 +40798,33 @@ export namespace PersonStub {
                 },
               ],
               type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
             },
           ]),
       {
@@ -47660,7 +50328,6 @@ export class $SparqlObjectSet implements $ObjectSet {
   >(
     objectType: {
       fromRdf: (parameters: {
-        ignoreRdfType?: boolean;
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
       fromRdfType?: rdfjs.NamedNode;
@@ -47712,7 +50379,6 @@ export class $SparqlObjectSet implements $ObjectSet {
 
     return identifiers.map((identifier) =>
       objectType.fromRdf({
-        ignoreRdfType: true, // The identifier may have a sub-type of objectType and we haven't picked up the rdfs:subClassOf hierarchy in the SPARQL CONSTRUCT
         resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
           dataset,
           identifier: identifier as rdfjs.NamedNode,
