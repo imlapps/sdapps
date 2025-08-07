@@ -8,8 +8,10 @@
     "rdfjs-resource": "1.0.19"
   },
   "devDependencies": {
+    "@kos-kit/sparql-client": "2.0.115",
     "@sdapps/tsconfig": "0.0.0",
     "@types/node": "^22.13.9",
+    "oxigraph": "0.4.11",
     "typescript": "5.8.2"
   },
   "exports": {

@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as N3 from "n3";
-import { $RdfjsDatasetObjectSet } from "../src";
 
 const thisDirectoryPath = path.resolve(
   path.join(path.dirname(fileURLToPath(import.meta.url))),
@@ -27,5 +26,4 @@ const dataset = await loadDataset();
 
 export const towndexData = {
   dataset,
-  rdfjsDatasetObjectSet: new $RdfjsDatasetObjectSet({ dataset }),
 };

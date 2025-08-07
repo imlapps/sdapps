@@ -9,7 +9,7 @@ const resourceSet = new MutableResourceSet({
   dataset,
 });
 
-import { $RdfjsDatasetObjectSet, Person } from "../src";
+import { Person } from "../src";
 
 const people = [...new Array(3).keys()].map(
   (_, index) =>
@@ -30,5 +30,4 @@ export const testData = {
   models: {
     people,
   },
-  rdfjsDatasetObjectSet: new $RdfjsDatasetObjectSet({ dataset }),
 };
