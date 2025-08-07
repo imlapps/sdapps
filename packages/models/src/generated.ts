@@ -1319,7 +1319,9 @@ export namespace ThingStatic {
     readonly url: { readonly "@id": string } | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2079,9 +2081,24 @@ export namespace ThingStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Thing"),
                 },
               ],
@@ -2713,9 +2730,24 @@ export namespace IntangibleStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Intangible"),
                 },
               ],
@@ -2968,7 +3000,9 @@ export namespace Role {
     readonly startDate: string | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3277,9 +3311,24 @@ export namespace Role {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Role"),
                 },
               ],
@@ -3615,9 +3664,24 @@ export namespace Occupation {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Occupation"),
                 },
               ],
@@ -3921,9 +3985,24 @@ export namespace EnumerationStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/Enumeration",
                   ),
@@ -4048,7 +4127,9 @@ export namespace GenderType {
 
   export type Json = EnumerationStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -4280,9 +4361,24 @@ export namespace GenderType {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/GenderType"),
                 },
               ],
@@ -4701,7 +4797,9 @@ export namespace EventStatic {
     readonly superEvent: EventStubStatic.Json | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5295,9 +5393,24 @@ export namespace EventStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Event"),
                 },
               ],
@@ -5505,19 +5618,21 @@ export class PublicationEvent extends Event {
   }
 
   override equals(other: PublicationEvent): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.publishedOn,
-        other.publishedOn,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "publishedOn",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.publishedOn,
+          other.publishedOn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "publishedOn",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -5597,7 +5712,9 @@ export namespace PublicationEventStatic {
     readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
   } & EventStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5875,9 +5992,24 @@ export namespace PublicationEventStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/PublicationEvent",
                   ),
@@ -6198,9 +6330,24 @@ export namespace BroadcastEvent {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/BroadcastEvent",
                   ),
@@ -6473,7 +6620,9 @@ export namespace ActionStatic {
     readonly startTime: string | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6867,9 +7016,24 @@ export namespace ActionStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Action"),
                 },
               ],
@@ -7251,9 +7415,24 @@ export namespace AssessActionStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/AssessAction",
                   ),
@@ -7563,9 +7742,24 @@ export namespace ChooseActionStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/ChooseAction",
                   ),
@@ -7858,9 +8052,24 @@ export namespace VoteAction {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/VoteAction"),
                 },
               ],
@@ -8081,7 +8290,9 @@ export namespace ThingStubStatic {
     readonly order: number | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8480,9 +8691,24 @@ export namespace ThingStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Thing"),
                 },
               ],
@@ -8828,9 +9054,24 @@ export namespace ActionStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Action"),
                 },
               ],
@@ -9148,9 +9389,24 @@ export namespace AssessActionStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/AssessAction",
                   ),
@@ -9465,9 +9721,24 @@ export namespace ChooseActionStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/ChooseAction",
                   ),
@@ -9766,9 +10037,24 @@ export namespace VoteActionStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/VoteAction"),
                 },
               ],
@@ -10148,7 +10434,9 @@ export namespace CreativeWorkStatic {
     readonly publication: readonly PublicationEventStub.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10849,9 +11137,24 @@ export namespace CreativeWorkStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/CreativeWork",
                   ),
@@ -11255,7 +11558,9 @@ export namespace MediaObjectStatic {
     readonly width: QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11660,9 +11965,24 @@ export namespace MediaObjectStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MediaObject",
                   ),
@@ -11792,18 +12112,20 @@ export class TextObject extends MediaObject {
   }
 
   override equals(other: TextObject): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.uriSpace,
-        other.uriSpace,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "uriSpace",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.uriSpace,
+          other.uriSpace,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "uriSpace",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -11881,7 +12203,9 @@ export namespace TextObject {
     readonly uriSpace: string | undefined;
   } & MediaObjectStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12122,9 +12446,24 @@ export namespace TextObject {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/TextObject"),
                 },
               ],
@@ -12599,9 +12938,24 @@ export namespace CreativeWorkStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/CreativeWork",
                   ),
@@ -12874,7 +13228,9 @@ export namespace MediaObjectStubStatic {
     readonly width: QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13292,9 +13648,24 @@ export namespace MediaObjectStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MediaObject",
                   ),
@@ -13668,9 +14039,24 @@ export namespace TextObjectStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/TextObject"),
                 },
               ],
@@ -14004,9 +14390,24 @@ export namespace StructuredValueStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/StructuredValue",
                   ),
@@ -14322,9 +14723,24 @@ export namespace ServiceStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Service"),
                 },
               ],
@@ -14628,9 +15044,24 @@ export namespace ArticleStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Article"),
                 },
               ],
@@ -14912,9 +15343,24 @@ export namespace Report {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Report"),
                 },
               ],
@@ -15219,9 +15665,24 @@ export namespace ArticleStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Article"),
                 },
               ],
@@ -15510,9 +15971,24 @@ export namespace ReportStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Report"),
                 },
               ],
@@ -15830,9 +16306,24 @@ export namespace CreativeWorkSeriesStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/CreativeWorkSeries",
                   ),
@@ -15884,19 +16375,21 @@ export class RadioSeries extends CreativeWorkSeries {
   }
 
   override equals(other: RadioSeries): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.episodes,
-        other.episodes,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "episodes",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.episodes,
+          other.episodes,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "episodes",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -15977,7 +16470,9 @@ export namespace RadioSeries {
     readonly episodes: readonly RadioEpisodeStub.Json[];
   } & CreativeWorkSeriesStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16243,9 +16738,24 @@ export namespace RadioSeries {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/RadioSeries",
                   ),
@@ -16590,9 +17100,24 @@ export namespace CreativeWorkSeriesStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/CreativeWorkSeries",
                   ),
@@ -16891,9 +17416,24 @@ export namespace RadioSeriesStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/RadioSeries",
                   ),
@@ -16952,19 +17492,21 @@ export class Episode extends CreativeWork {
   }
 
   override equals(other: Episode): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfSeries,
-        other.partOfSeries,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfSeries",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfSeries,
+          other.partOfSeries,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfSeries",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -17046,7 +17588,9 @@ export namespace EpisodeStatic {
     readonly partOfSeries: CreativeWorkSeriesStubStatic.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17319,9 +17863,24 @@ export namespace EpisodeStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Episode"),
                 },
               ],
@@ -17636,9 +18195,24 @@ export namespace RadioEpisode {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/RadioEpisode",
                   ),
@@ -17948,9 +18522,24 @@ export namespace EpisodeStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Episode"),
                 },
               ],
@@ -18246,9 +18835,24 @@ export namespace RadioEpisodeStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/RadioEpisode",
                   ),
@@ -18303,18 +18907,20 @@ export class BroadcastService extends Service {
   }
 
   override equals(other: BroadcastService): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.callSign,
-        other.callSign,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "callSign",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.callSign,
+          other.callSign,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "callSign",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -18392,7 +18998,9 @@ export namespace BroadcastServiceStatic {
     readonly callSign: string | undefined;
   } & ServiceStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18653,9 +19261,24 @@ export namespace BroadcastServiceStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/BroadcastService",
                   ),
@@ -18975,9 +19598,24 @@ export namespace RadioBroadcastService {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/RadioBroadcastService",
                   ),
@@ -19385,9 +20023,24 @@ export namespace IntangibleStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Intangible"),
                 },
               ],
@@ -19701,9 +20354,24 @@ export namespace ServiceStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Service"),
                 },
               ],
@@ -20025,9 +20693,24 @@ export namespace BroadcastServiceStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/BroadcastService",
                   ),
@@ -20341,9 +21024,24 @@ export namespace RadioBroadcastServiceStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/RadioBroadcastService",
                   ),
@@ -20518,7 +21216,9 @@ export namespace QuantitativeValue {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20792,9 +21492,24 @@ export namespace QuantitativeValue {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/QuantitativeValue",
                   ),
@@ -21166,9 +21881,24 @@ export namespace StructuredValueStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/StructuredValue",
                   ),
@@ -21343,7 +22073,9 @@ export namespace QuantitativeValueStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21624,9 +22356,24 @@ export namespace QuantitativeValueStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/QuantitativeValue",
                   ),
@@ -21858,7 +22605,9 @@ export namespace EventStubStatic {
     readonly superEvent: { readonly "@id": string } | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22148,9 +22897,24 @@ export namespace EventStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Event"),
                 },
               ],
@@ -22482,9 +23246,24 @@ export namespace PublicationEventStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/PublicationEvent",
                   ),
@@ -22768,9 +23547,24 @@ export namespace Place {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Place"),
                 },
               ],
@@ -23059,9 +23853,24 @@ export namespace PlaceStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Place"),
                 },
               ],
@@ -23593,7 +24402,9 @@ export namespace Person {
     readonly performerIn: readonly EventStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24213,9 +25024,24 @@ export namespace Person {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Person"),
                 },
               ],
@@ -24615,7 +25441,9 @@ export namespace OrganizationStatic {
     readonly subOrganizations: readonly OrganizationStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25014,9 +25842,24 @@ export namespace OrganizationStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/Organization",
                   ),
@@ -25395,9 +26238,24 @@ export namespace PerformingGroupStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/PerformingGroup",
                   ),
@@ -25454,19 +26312,21 @@ export class Order extends Intangible {
   }
 
   override equals(other: Order): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfInvoice,
-        other.partOfInvoice,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfInvoice",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfInvoice,
+          other.partOfInvoice,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfInvoice",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -25548,7 +26408,9 @@ export namespace Order {
     readonly partOfInvoice: InvoiceStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25800,9 +26662,24 @@ export namespace Order {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Order"),
                 },
               ],
@@ -26113,9 +26990,24 @@ export namespace OrderStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Order"),
                 },
               ],
@@ -26501,7 +27393,9 @@ export namespace MusicRecording {
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27023,9 +27917,24 @@ export namespace MusicRecording {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicRecording",
                   ),
@@ -27463,9 +28372,24 @@ export namespace MusicRecordingStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicRecording",
                   ),
@@ -27652,7 +28576,9 @@ export namespace MusicPlaylist {
     readonly tracks: readonly (MusicRecordingStub.Json | ItemListStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27952,9 +28878,24 @@ export namespace MusicPlaylist {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicPlaylist",
                   ),
@@ -28293,9 +29234,24 @@ export namespace MusicPlaylistStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicPlaylist",
                   ),
@@ -28615,9 +29571,24 @@ export namespace OrganizationStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/Organization",
                   ),
@@ -28938,9 +29909,24 @@ export namespace PerformingGroupStubStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/PerformingGroup",
                   ),
@@ -29233,9 +30219,24 @@ export namespace MusicGroup {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/MusicGroup"),
                 },
               ],
@@ -29532,9 +30533,24 @@ export namespace MusicGroupStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/MusicGroup"),
                 },
               ],
@@ -29716,7 +30732,9 @@ export namespace MusicComposition {
     readonly recordedAs: readonly MusicRecordingStub.Json[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -30034,9 +31052,24 @@ export namespace MusicComposition {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicComposition",
                   ),
@@ -30380,9 +31413,24 @@ export namespace MusicCompositionStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MusicComposition",
                   ),
@@ -30571,7 +31619,9 @@ export namespace MusicAlbum {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -30866,9 +31916,24 @@ export namespace MusicAlbum {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/MusicAlbum"),
                 },
               ],
@@ -31209,9 +32274,24 @@ export namespace MusicAlbumStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/MusicAlbum"),
                 },
               ],
@@ -31384,7 +32464,9 @@ export namespace MonetaryAmount {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -31658,9 +32740,24 @@ export namespace MonetaryAmount {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MonetaryAmount",
                   ),
@@ -31865,7 +32962,9 @@ export namespace MonetaryAmountStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32142,9 +33241,24 @@ export namespace MonetaryAmountStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/MonetaryAmount",
                   ),
@@ -32228,18 +33342,20 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
-        this.sender,
-        other.sender,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "sender",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
+          this.sender,
+          other.sender,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "sender",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -32321,7 +33437,9 @@ export namespace Message {
       | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32575,9 +33693,24 @@ export namespace Message {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Message"),
                 },
               ],
@@ -32888,9 +34021,24 @@ export namespace MessageStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Message"),
                 },
               ],
@@ -33095,7 +34243,9 @@ export namespace ListItem {
     readonly position: (number | string) | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33393,9 +34543,24 @@ export namespace ListItem {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/ListItem"),
                 },
               ],
@@ -33631,7 +34796,9 @@ export namespace ListItemStub {
     readonly position: (number | string) | undefined;
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33931,9 +35098,24 @@ export namespace ListItemStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/ListItem"),
                 },
               ],
@@ -34014,19 +35196,21 @@ export class ItemList extends Intangible {
   }
 
   override equals(other: ItemList): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.itemListElements,
-        other.itemListElements,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "itemListElements",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -34107,7 +35291,9 @@ export namespace ItemList {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -34372,9 +35558,24 @@ export namespace ItemList {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/ItemList"),
                 },
               ],
@@ -34448,19 +35649,21 @@ export class ItemListStub extends IntangibleStub {
   }
 
   override equals(other: ItemListStub): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.itemListElements,
-        other.itemListElements,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "itemListElements",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -34541,7 +35744,9 @@ export namespace ItemListStub {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -34808,9 +36013,24 @@ export namespace ItemListStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/ItemList"),
                 },
               ],
@@ -35092,7 +36312,9 @@ export namespace Invoice {
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -35485,9 +36707,24 @@ export namespace Invoice {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Invoice"),
                 },
               ],
@@ -35860,9 +37097,24 @@ export namespace InvoiceStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Invoice"),
                 },
               ],
@@ -36153,9 +37405,24 @@ export namespace ImageObject {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/ImageObject",
                   ),
@@ -36453,9 +37720,24 @@ export namespace ImageObjectStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode(
                     "http://schema.org/ImageObject",
                   ),
@@ -36509,18 +37791,20 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.jobTitle,
-        other.jobTitle,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "jobTitle",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -36598,7 +37882,9 @@ export namespace PersonStub {
     readonly jobTitle: string | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -36837,9 +38123,24 @@ export namespace PersonStub {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
                   object: dataFactory.namedNode("http://schema.org/Person"),
                 },
               ],
@@ -38144,7 +39445,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ActionStatic.Identifier>,
   ): purify.Either<Error, readonly ActionStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Action, ActionStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ActionStatic.Identifier>(
         ActionStatic,
         query,
       ),
@@ -38177,10 +39478,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   actionsCountSync(
     query?: Pick<$ObjectSet.Query<ActionStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Action, ActionStatic.Identifier>(
-      ActionStatic,
-      query,
-    );
+    return this.$objectsCountSync<ActionStatic.Identifier>(ActionStatic, query);
   }
 
   async actionStub(
@@ -38207,7 +39505,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
   ): purify.Either<Error, readonly ActionStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ActionStub, ActionStubStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ActionStubStatic.Identifier>(
         ActionStubStatic,
         query,
       ),
@@ -38240,7 +39538,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   actionStubsCountSync(
     query?: Pick<$ObjectSet.Query<ActionStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ActionStub, ActionStubStatic.Identifier>(
+    return this.$objectsCountSync<ActionStubStatic.Identifier>(
       ActionStubStatic,
       query,
     );
@@ -38270,7 +39568,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ArticleStatic.Identifier>,
   ): purify.Either<Error, readonly ArticleStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Article, ArticleStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ArticleStatic.Identifier>(
         ArticleStatic,
         query,
       ),
@@ -38303,7 +39601,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   articlesCountSync(
     query?: Pick<$ObjectSet.Query<ArticleStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Article, ArticleStatic.Identifier>(
+    return this.$objectsCountSync<ArticleStatic.Identifier>(
       ArticleStatic,
       query,
     );
@@ -38333,7 +39631,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
   ): purify.Either<Error, readonly ArticleStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ArticleStub, ArticleStubStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ArticleStubStatic.Identifier>(
         ArticleStubStatic,
         query,
       ),
@@ -38366,7 +39664,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   articleStubsCountSync(
     query?: Pick<$ObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ArticleStub, ArticleStubStatic.Identifier>(
+    return this.$objectsCountSync<ArticleStubStatic.Identifier>(
       ArticleStubStatic,
       query,
     );
@@ -38396,10 +39694,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
   ): purify.Either<Error, readonly AssessActionStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        AssessAction,
-        AssessActionStatic.Identifier
-      >(AssessActionStatic, query),
+      ...this.$objectIdentifiersSync<AssessActionStatic.Identifier>(
+        AssessActionStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38429,7 +39727,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   assessActionsCountSync(
     query?: Pick<$ObjectSet.Query<AssessActionStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<AssessAction, AssessActionStatic.Identifier>(
+    return this.$objectsCountSync<AssessActionStatic.Identifier>(
       AssessActionStatic,
       query,
     );
@@ -38461,10 +39759,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
   ): purify.Either<Error, readonly AssessActionStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        AssessActionStub,
-        AssessActionStubStatic.Identifier
-      >(AssessActionStubStatic, query),
+      ...this.$objectIdentifiersSync<AssessActionStubStatic.Identifier>(
+        AssessActionStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38494,10 +39792,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   assessActionStubsCountSync(
     query?: Pick<$ObjectSet.Query<AssessActionStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      AssessActionStub,
-      AssessActionStubStatic.Identifier
-    >(AssessActionStubStatic, query);
+    return this.$objectsCountSync<AssessActionStubStatic.Identifier>(
+      AssessActionStubStatic,
+      query,
+    );
   }
 
   async broadcastEvent(
@@ -38524,7 +39822,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
   ): purify.Either<Error, readonly BroadcastEvent.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<BroadcastEvent, BroadcastEvent.Identifier>(
+      ...this.$objectIdentifiersSync<BroadcastEvent.Identifier>(
         BroadcastEvent,
         query,
       ),
@@ -38557,7 +39855,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   broadcastEventsCountSync(
     query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<BroadcastEvent, BroadcastEvent.Identifier>(
+    return this.$objectsCountSync<BroadcastEvent.Identifier>(
       BroadcastEvent,
       query,
     );
@@ -38589,10 +39887,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
   ): purify.Either<Error, readonly BroadcastServiceStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        BroadcastService,
-        BroadcastServiceStatic.Identifier
-      >(BroadcastServiceStatic, query),
+      ...this.$objectIdentifiersSync<BroadcastServiceStatic.Identifier>(
+        BroadcastServiceStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38622,10 +39920,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   broadcastServicesCountSync(
     query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      BroadcastService,
-      BroadcastServiceStatic.Identifier
-    >(BroadcastServiceStatic, query);
+    return this.$objectsCountSync<BroadcastServiceStatic.Identifier>(
+      BroadcastServiceStatic,
+      query,
+    );
   }
 
   async broadcastServiceStub(
@@ -38654,10 +39952,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
   ): purify.Either<Error, readonly BroadcastServiceStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        BroadcastServiceStub,
-        BroadcastServiceStubStatic.Identifier
-      >(BroadcastServiceStubStatic, query),
+      ...this.$objectIdentifiersSync<BroadcastServiceStubStatic.Identifier>(
+        BroadcastServiceStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38693,10 +39991,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "where"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      BroadcastServiceStub,
-      BroadcastServiceStubStatic.Identifier
-    >(BroadcastServiceStubStatic, query);
+    return this.$objectsCountSync<BroadcastServiceStubStatic.Identifier>(
+      BroadcastServiceStubStatic,
+      query,
+    );
   }
 
   async chooseAction(
@@ -38723,10 +40021,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
   ): purify.Either<Error, readonly ChooseActionStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ChooseAction,
-        ChooseActionStatic.Identifier
-      >(ChooseActionStatic, query),
+      ...this.$objectIdentifiersSync<ChooseActionStatic.Identifier>(
+        ChooseActionStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38756,7 +40054,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   chooseActionsCountSync(
     query?: Pick<$ObjectSet.Query<ChooseActionStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ChooseAction, ChooseActionStatic.Identifier>(
+    return this.$objectsCountSync<ChooseActionStatic.Identifier>(
       ChooseActionStatic,
       query,
     );
@@ -38788,10 +40086,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
   ): purify.Either<Error, readonly ChooseActionStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ChooseActionStub,
-        ChooseActionStubStatic.Identifier
-      >(ChooseActionStubStatic, query),
+      ...this.$objectIdentifiersSync<ChooseActionStubStatic.Identifier>(
+        ChooseActionStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38821,10 +40119,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   chooseActionStubsCountSync(
     query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      ChooseActionStub,
-      ChooseActionStubStatic.Identifier
-    >(ChooseActionStubStatic, query);
+    return this.$objectsCountSync<ChooseActionStubStatic.Identifier>(
+      ChooseActionStubStatic,
+      query,
+    );
   }
 
   async creativeWork(
@@ -38851,10 +40149,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
   ): purify.Either<Error, readonly CreativeWorkStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWork,
-        CreativeWorkStatic.Identifier
-      >(CreativeWorkStatic, query),
+      ...this.$objectIdentifiersSync<CreativeWorkStatic.Identifier>(
+        CreativeWorkStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38884,7 +40182,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   creativeWorksCountSync(
     query?: Pick<$ObjectSet.Query<CreativeWorkStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<CreativeWork, CreativeWorkStatic.Identifier>(
+    return this.$objectsCountSync<CreativeWorkStatic.Identifier>(
       CreativeWorkStatic,
       query,
     );
@@ -38916,10 +40214,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
   ): purify.Either<Error, readonly CreativeWorkSeriesStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWorkSeries,
-        CreativeWorkSeriesStatic.Identifier
-      >(CreativeWorkSeriesStatic, query),
+      ...this.$objectIdentifiersSync<CreativeWorkSeriesStatic.Identifier>(
+        CreativeWorkSeriesStatic,
+        query,
+      ),
     ]);
   }
 
@@ -38955,10 +40253,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "where"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      CreativeWorkSeries,
-      CreativeWorkSeriesStatic.Identifier
-    >(CreativeWorkSeriesStatic, query);
+    return this.$objectsCountSync<CreativeWorkSeriesStatic.Identifier>(
+      CreativeWorkSeriesStatic,
+      query,
+    );
   }
 
   async creativeWorkSeriesStub(
@@ -38987,10 +40285,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
   ): purify.Either<Error, readonly CreativeWorkSeriesStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWorkSeriesStub,
-        CreativeWorkSeriesStubStatic.Identifier
-      >(CreativeWorkSeriesStubStatic, query),
+      ...this.$objectIdentifiersSync<CreativeWorkSeriesStubStatic.Identifier>(
+        CreativeWorkSeriesStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -39026,10 +40324,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "where"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      CreativeWorkSeriesStub,
-      CreativeWorkSeriesStubStatic.Identifier
-    >(CreativeWorkSeriesStubStatic, query);
+    return this.$objectsCountSync<CreativeWorkSeriesStubStatic.Identifier>(
+      CreativeWorkSeriesStubStatic,
+      query,
+    );
   }
 
   async creativeWorkStub(
@@ -39058,10 +40356,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
   ): purify.Either<Error, readonly CreativeWorkStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWorkStub,
-        CreativeWorkStubStatic.Identifier
-      >(CreativeWorkStubStatic, query),
+      ...this.$objectIdentifiersSync<CreativeWorkStubStatic.Identifier>(
+        CreativeWorkStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -39091,10 +40389,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   creativeWorkStubsCountSync(
     query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      CreativeWorkStub,
-      CreativeWorkStubStatic.Identifier
-    >(CreativeWorkStubStatic, query);
+    return this.$objectsCountSync<CreativeWorkStubStatic.Identifier>(
+      CreativeWorkStubStatic,
+      query,
+    );
   }
 
   async enumeration(
@@ -39121,7 +40419,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
   ): purify.Either<Error, readonly EnumerationStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Enumeration, EnumerationStatic.Identifier>(
+      ...this.$objectIdentifiersSync<EnumerationStatic.Identifier>(
         EnumerationStatic,
         query,
       ),
@@ -39154,7 +40452,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   enumerationsCountSync(
     query?: Pick<$ObjectSet.Query<EnumerationStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Enumeration, EnumerationStatic.Identifier>(
+    return this.$objectsCountSync<EnumerationStatic.Identifier>(
       EnumerationStatic,
       query,
     );
@@ -39184,7 +40482,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
   ): purify.Either<Error, readonly EpisodeStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Episode, EpisodeStatic.Identifier>(
+      ...this.$objectIdentifiersSync<EpisodeStatic.Identifier>(
         EpisodeStatic,
         query,
       ),
@@ -39217,7 +40515,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   episodesCountSync(
     query?: Pick<$ObjectSet.Query<EpisodeStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Episode, EpisodeStatic.Identifier>(
+    return this.$objectsCountSync<EpisodeStatic.Identifier>(
       EpisodeStatic,
       query,
     );
@@ -39247,7 +40545,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
   ): purify.Either<Error, readonly EpisodeStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<EpisodeStub, EpisodeStubStatic.Identifier>(
+      ...this.$objectIdentifiersSync<EpisodeStubStatic.Identifier>(
         EpisodeStubStatic,
         query,
       ),
@@ -39280,7 +40578,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   episodeStubsCountSync(
     query?: Pick<$ObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<EpisodeStub, EpisodeStubStatic.Identifier>(
+    return this.$objectsCountSync<EpisodeStubStatic.Identifier>(
       EpisodeStubStatic,
       query,
     );
@@ -39308,7 +40606,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<EventStatic.Identifier>,
   ): purify.Either<Error, readonly EventStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Event, EventStatic.Identifier>(
+      ...this.$objectIdentifiersSync<EventStatic.Identifier>(
         EventStatic,
         query,
       ),
@@ -39338,10 +40636,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   eventsCountSync(
     query?: Pick<$ObjectSet.Query<EventStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Event, EventStatic.Identifier>(
-      EventStatic,
-      query,
-    );
+    return this.$objectsCountSync<EventStatic.Identifier>(EventStatic, query);
   }
 
   async eventStub(
@@ -39368,7 +40663,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<EventStubStatic.Identifier>,
   ): purify.Either<Error, readonly EventStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<EventStub, EventStubStatic.Identifier>(
+      ...this.$objectIdentifiersSync<EventStubStatic.Identifier>(
         EventStubStatic,
         query,
       ),
@@ -39401,7 +40696,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   eventStubsCountSync(
     query?: Pick<$ObjectSet.Query<EventStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<EventStub, EventStubStatic.Identifier>(
+    return this.$objectsCountSync<EventStubStatic.Identifier>(
       EventStubStatic,
       query,
     );
@@ -39431,10 +40726,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<GenderType.Identifier>,
   ): purify.Either<Error, readonly GenderType.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<GenderType, GenderType.Identifier>(
-        GenderType,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<GenderType.Identifier>(GenderType, query),
     ]);
   }
 
@@ -39464,10 +40756,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   genderTypesCountSync(
     query?: Pick<$ObjectSet.Query<GenderType.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<GenderType, GenderType.Identifier>(
-      GenderType,
-      query,
-    );
+    return this.$objectsCountSync<GenderType.Identifier>(GenderType, query);
   }
 
   async imageObject(
@@ -39494,7 +40783,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ImageObject.Identifier>,
   ): purify.Either<Error, readonly ImageObject.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ImageObject, ImageObject.Identifier>(
+      ...this.$objectIdentifiersSync<ImageObject.Identifier>(
         ImageObject,
         query,
       ),
@@ -39527,10 +40816,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   imageObjectsCountSync(
     query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ImageObject, ImageObject.Identifier>(
-      ImageObject,
-      query,
-    );
+    return this.$objectsCountSync<ImageObject.Identifier>(ImageObject, query);
   }
 
   async imageObjectStub(
@@ -39557,10 +40843,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
   ): purify.Either<Error, readonly ImageObjectStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<ImageObjectStub.Identifier>(
         ImageObjectStub,
-        ImageObjectStub.Identifier
-      >(ImageObjectStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -39590,7 +40876,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   imageObjectStubsCountSync(
     query?: Pick<$ObjectSet.Query<ImageObjectStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ImageObjectStub, ImageObjectStub.Identifier>(
+    return this.$objectsCountSync<ImageObjectStub.Identifier>(
       ImageObjectStub,
       query,
     );
@@ -39620,7 +40906,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
   ): purify.Either<Error, readonly IntangibleStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Intangible, IntangibleStatic.Identifier>(
+      ...this.$objectIdentifiersSync<IntangibleStatic.Identifier>(
         IntangibleStatic,
         query,
       ),
@@ -39653,7 +40939,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   intangiblesCountSync(
     query?: Pick<$ObjectSet.Query<IntangibleStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Intangible, IntangibleStatic.Identifier>(
+    return this.$objectsCountSync<IntangibleStatic.Identifier>(
       IntangibleStatic,
       query,
     );
@@ -39683,10 +40969,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
   ): purify.Either<Error, readonly IntangibleStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        IntangibleStub,
-        IntangibleStubStatic.Identifier
-      >(IntangibleStubStatic, query),
+      ...this.$objectIdentifiersSync<IntangibleStubStatic.Identifier>(
+        IntangibleStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -39716,10 +41002,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   intangibleStubsCountSync(
     query?: Pick<$ObjectSet.Query<IntangibleStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      IntangibleStub,
-      IntangibleStubStatic.Identifier
-    >(IntangibleStubStatic, query);
+    return this.$objectsCountSync<IntangibleStubStatic.Identifier>(
+      IntangibleStubStatic,
+      query,
+    );
   }
 
   async invoice(
@@ -39744,10 +41030,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Invoice.Identifier>,
   ): purify.Either<Error, readonly Invoice.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Invoice, Invoice.Identifier>(
-        Invoice,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<Invoice.Identifier>(Invoice, query),
     ]);
   }
 
@@ -39772,7 +41055,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   invoicesCountSync(
     query?: Pick<$ObjectSet.Query<Invoice.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Invoice, Invoice.Identifier>(Invoice, query);
+    return this.$objectsCountSync<Invoice.Identifier>(Invoice, query);
   }
 
   async invoiceStub(
@@ -39799,7 +41082,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InvoiceStub.Identifier>,
   ): purify.Either<Error, readonly InvoiceStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<InvoiceStub, InvoiceStub.Identifier>(
+      ...this.$objectIdentifiersSync<InvoiceStub.Identifier>(
         InvoiceStub,
         query,
       ),
@@ -39832,10 +41115,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   invoiceStubsCountSync(
     query?: Pick<$ObjectSet.Query<InvoiceStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<InvoiceStub, InvoiceStub.Identifier>(
-      InvoiceStub,
-      query,
-    );
+    return this.$objectsCountSync<InvoiceStub.Identifier>(InvoiceStub, query);
   }
 
   async itemList(
@@ -39862,10 +41142,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ItemList.Identifier>,
   ): purify.Either<Error, readonly ItemList.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ItemList, ItemList.Identifier>(
-        ItemList,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<ItemList.Identifier>(ItemList, query),
     ]);
   }
 
@@ -39892,10 +41169,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   itemListsCountSync(
     query?: Pick<$ObjectSet.Query<ItemList.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ItemList, ItemList.Identifier>(
-      ItemList,
-      query,
-    );
+    return this.$objectsCountSync<ItemList.Identifier>(ItemList, query);
   }
 
   async itemListStub(
@@ -39922,7 +41196,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ItemListStub.Identifier>,
   ): purify.Either<Error, readonly ItemListStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ItemListStub, ItemListStub.Identifier>(
+      ...this.$objectIdentifiersSync<ItemListStub.Identifier>(
         ItemListStub,
         query,
       ),
@@ -39955,10 +41229,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   itemListStubsCountSync(
     query?: Pick<$ObjectSet.Query<ItemListStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ItemListStub, ItemListStub.Identifier>(
-      ItemListStub,
-      query,
-    );
+    return this.$objectsCountSync<ItemListStub.Identifier>(ItemListStub, query);
   }
 
   async listItem(
@@ -39985,10 +41256,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ListItem.Identifier>,
   ): purify.Either<Error, readonly ListItem.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ListItem, ListItem.Identifier>(
-        ListItem,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<ListItem.Identifier>(ListItem, query),
     ]);
   }
 
@@ -40015,10 +41283,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   listItemsCountSync(
     query?: Pick<$ObjectSet.Query<ListItem.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ListItem, ListItem.Identifier>(
-      ListItem,
-      query,
-    );
+    return this.$objectsCountSync<ListItem.Identifier>(ListItem, query);
   }
 
   async listItemStub(
@@ -40045,7 +41310,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ListItemStub.Identifier>,
   ): purify.Either<Error, readonly ListItemStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ListItemStub, ListItemStub.Identifier>(
+      ...this.$objectIdentifiersSync<ListItemStub.Identifier>(
         ListItemStub,
         query,
       ),
@@ -40078,10 +41343,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   listItemStubsCountSync(
     query?: Pick<$ObjectSet.Query<ListItemStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ListItemStub, ListItemStub.Identifier>(
-      ListItemStub,
-      query,
-    );
+    return this.$objectsCountSync<ListItemStub.Identifier>(ListItemStub, query);
   }
 
   async mediaObject(
@@ -40108,7 +41370,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
   ): purify.Either<Error, readonly MediaObjectStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MediaObject, MediaObjectStatic.Identifier>(
+      ...this.$objectIdentifiersSync<MediaObjectStatic.Identifier>(
         MediaObjectStatic,
         query,
       ),
@@ -40141,7 +41403,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   mediaObjectsCountSync(
     query?: Pick<$ObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MediaObject, MediaObjectStatic.Identifier>(
+    return this.$objectsCountSync<MediaObjectStatic.Identifier>(
       MediaObjectStatic,
       query,
     );
@@ -40173,10 +41435,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
   ): purify.Either<Error, readonly MediaObjectStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MediaObjectStub,
-        MediaObjectStubStatic.Identifier
-      >(MediaObjectStubStatic, query),
+      ...this.$objectIdentifiersSync<MediaObjectStubStatic.Identifier>(
+        MediaObjectStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -40206,10 +41468,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   mediaObjectStubsCountSync(
     query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      MediaObjectStub,
-      MediaObjectStubStatic.Identifier
-    >(MediaObjectStubStatic, query);
+    return this.$objectsCountSync<MediaObjectStubStatic.Identifier>(
+      MediaObjectStubStatic,
+      query,
+    );
   }
 
   async message(
@@ -40234,10 +41496,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Message.Identifier>,
   ): purify.Either<Error, readonly Message.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Message, Message.Identifier>(
-        Message,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<Message.Identifier>(Message, query),
     ]);
   }
 
@@ -40262,7 +41521,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   messagesCountSync(
     query?: Pick<$ObjectSet.Query<Message.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Message, Message.Identifier>(Message, query);
+    return this.$objectsCountSync<Message.Identifier>(Message, query);
   }
 
   async messageStub(
@@ -40289,7 +41548,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MessageStub.Identifier>,
   ): purify.Either<Error, readonly MessageStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MessageStub, MessageStub.Identifier>(
+      ...this.$objectIdentifiersSync<MessageStub.Identifier>(
         MessageStub,
         query,
       ),
@@ -40322,10 +41581,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   messageStubsCountSync(
     query?: Pick<$ObjectSet.Query<MessageStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MessageStub, MessageStub.Identifier>(
-      MessageStub,
-      query,
-    );
+    return this.$objectsCountSync<MessageStub.Identifier>(MessageStub, query);
   }
 
   async monetaryAmount(
@@ -40352,7 +41608,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
   ): purify.Either<Error, readonly MonetaryAmount.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MonetaryAmount, MonetaryAmount.Identifier>(
+      ...this.$objectIdentifiersSync<MonetaryAmount.Identifier>(
         MonetaryAmount,
         query,
       ),
@@ -40385,7 +41641,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   monetaryAmountsCountSync(
     query?: Pick<$ObjectSet.Query<MonetaryAmount.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MonetaryAmount, MonetaryAmount.Identifier>(
+    return this.$objectsCountSync<MonetaryAmount.Identifier>(
       MonetaryAmount,
       query,
     );
@@ -40415,10 +41671,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
   ): purify.Either<Error, readonly MonetaryAmountStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<MonetaryAmountStub.Identifier>(
         MonetaryAmountStub,
-        MonetaryAmountStub.Identifier
-      >(MonetaryAmountStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -40448,10 +41704,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   monetaryAmountStubsCountSync(
     query?: Pick<$ObjectSet.Query<MonetaryAmountStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<MonetaryAmountStub.Identifier>(
       MonetaryAmountStub,
-      MonetaryAmountStub.Identifier
-    >(MonetaryAmountStub, query);
+      query,
+    );
   }
 
   async musicAlbum(
@@ -40478,10 +41734,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicAlbum.Identifier>,
   ): purify.Either<Error, readonly MusicAlbum.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicAlbum, MusicAlbum.Identifier>(
-        MusicAlbum,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<MusicAlbum.Identifier>(MusicAlbum, query),
     ]);
   }
 
@@ -40511,10 +41764,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicAlbumsCountSync(
     query?: Pick<$ObjectSet.Query<MusicAlbum.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MusicAlbum, MusicAlbum.Identifier>(
-      MusicAlbum,
-      query,
-    );
+    return this.$objectsCountSync<MusicAlbum.Identifier>(MusicAlbum, query);
   }
 
   async musicAlbumStub(
@@ -40541,7 +41791,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
   ): purify.Either<Error, readonly MusicAlbumStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicAlbumStub, MusicAlbumStub.Identifier>(
+      ...this.$objectIdentifiersSync<MusicAlbumStub.Identifier>(
         MusicAlbumStub,
         query,
       ),
@@ -40574,7 +41824,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicAlbumStubsCountSync(
     query?: Pick<$ObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MusicAlbumStub, MusicAlbumStub.Identifier>(
+    return this.$objectsCountSync<MusicAlbumStub.Identifier>(
       MusicAlbumStub,
       query,
     );
@@ -40604,10 +41854,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicComposition.Identifier>,
   ): purify.Either<Error, readonly MusicComposition.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<MusicComposition.Identifier>(
         MusicComposition,
-        MusicComposition.Identifier
-      >(MusicComposition, query),
+        query,
+      ),
     ]);
   }
 
@@ -40637,10 +41887,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicCompositionsCountSync(
     query?: Pick<$ObjectSet.Query<MusicComposition.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<MusicComposition.Identifier>(
       MusicComposition,
-      MusicComposition.Identifier
-    >(MusicComposition, query);
+      query,
+    );
   }
 
   async musicCompositionStub(
@@ -40667,10 +41917,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
   ): purify.Either<Error, readonly MusicCompositionStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<MusicCompositionStub.Identifier>(
         MusicCompositionStub,
-        MusicCompositionStub.Identifier
-      >(MusicCompositionStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -40700,10 +41950,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicCompositionStubsCountSync(
     query?: Pick<$ObjectSet.Query<MusicCompositionStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<MusicCompositionStub.Identifier>(
       MusicCompositionStub,
-      MusicCompositionStub.Identifier
-    >(MusicCompositionStub, query);
+      query,
+    );
   }
 
   async musicGroup(
@@ -40730,10 +41980,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicGroup.Identifier>,
   ): purify.Either<Error, readonly MusicGroup.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicGroup, MusicGroup.Identifier>(
-        MusicGroup,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<MusicGroup.Identifier>(MusicGroup, query),
     ]);
   }
 
@@ -40763,10 +42010,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicGroupsCountSync(
     query?: Pick<$ObjectSet.Query<MusicGroup.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MusicGroup, MusicGroup.Identifier>(
-      MusicGroup,
-      query,
-    );
+    return this.$objectsCountSync<MusicGroup.Identifier>(MusicGroup, query);
   }
 
   async musicGroupStub(
@@ -40793,7 +42037,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
   ): purify.Either<Error, readonly MusicGroupStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicGroupStub, MusicGroupStub.Identifier>(
+      ...this.$objectIdentifiersSync<MusicGroupStub.Identifier>(
         MusicGroupStub,
         query,
       ),
@@ -40826,7 +42070,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicGroupStubsCountSync(
     query?: Pick<$ObjectSet.Query<MusicGroupStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MusicGroupStub, MusicGroupStub.Identifier>(
+    return this.$objectsCountSync<MusicGroupStub.Identifier>(
       MusicGroupStub,
       query,
     );
@@ -40856,7 +42100,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
   ): purify.Either<Error, readonly MusicPlaylist.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicPlaylist, MusicPlaylist.Identifier>(
+      ...this.$objectIdentifiersSync<MusicPlaylist.Identifier>(
         MusicPlaylist,
         query,
       ),
@@ -40889,7 +42133,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicPlaylistsCountSync(
     query?: Pick<$ObjectSet.Query<MusicPlaylist.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MusicPlaylist, MusicPlaylist.Identifier>(
+    return this.$objectsCountSync<MusicPlaylist.Identifier>(
       MusicPlaylist,
       query,
     );
@@ -40919,10 +42163,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
   ): purify.Either<Error, readonly MusicPlaylistStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<MusicPlaylistStub.Identifier>(
         MusicPlaylistStub,
-        MusicPlaylistStub.Identifier
-      >(MusicPlaylistStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -40952,10 +42196,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicPlaylistStubsCountSync(
     query?: Pick<$ObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<MusicPlaylistStub.Identifier>(
       MusicPlaylistStub,
-      MusicPlaylistStub.Identifier
-    >(MusicPlaylistStub, query);
+      query,
+    );
   }
 
   async musicRecording(
@@ -40982,7 +42226,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicRecording.Identifier>,
   ): purify.Either<Error, readonly MusicRecording.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicRecording, MusicRecording.Identifier>(
+      ...this.$objectIdentifiersSync<MusicRecording.Identifier>(
         MusicRecording,
         query,
       ),
@@ -41015,7 +42259,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicRecordingsCountSync(
     query?: Pick<$ObjectSet.Query<MusicRecording.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<MusicRecording, MusicRecording.Identifier>(
+    return this.$objectsCountSync<MusicRecording.Identifier>(
       MusicRecording,
       query,
     );
@@ -41045,10 +42289,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
   ): purify.Either<Error, readonly MusicRecordingStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<MusicRecordingStub.Identifier>(
         MusicRecordingStub,
-        MusicRecordingStub.Identifier
-      >(MusicRecordingStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -41078,10 +42322,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicRecordingStubsCountSync(
     query?: Pick<$ObjectSet.Query<MusicRecordingStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<MusicRecordingStub.Identifier>(
       MusicRecordingStub,
-      MusicRecordingStub.Identifier
-    >(MusicRecordingStub, query);
+      query,
+    );
   }
 
   async occupation(
@@ -41108,10 +42352,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Occupation.Identifier>,
   ): purify.Either<Error, readonly Occupation.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Occupation, Occupation.Identifier>(
-        Occupation,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<Occupation.Identifier>(Occupation, query),
     ]);
   }
 
@@ -41141,10 +42382,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   occupationsCountSync(
     query?: Pick<$ObjectSet.Query<Occupation.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Occupation, Occupation.Identifier>(
-      Occupation,
-      query,
-    );
+    return this.$objectsCountSync<Occupation.Identifier>(Occupation, query);
   }
 
   async order(
@@ -41169,7 +42407,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Order.Identifier>,
   ): purify.Either<Error, readonly Order.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Order, Order.Identifier>(Order, query),
+      ...this.$objectIdentifiersSync<Order.Identifier>(Order, query),
     ]);
   }
 
@@ -41194,7 +42432,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ordersCountSync(
     query?: Pick<$ObjectSet.Query<Order.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Order, Order.Identifier>(Order, query);
+    return this.$objectsCountSync<Order.Identifier>(Order, query);
   }
 
   async orderStub(
@@ -41221,10 +42459,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OrderStub.Identifier>,
   ): purify.Either<Error, readonly OrderStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<OrderStub, OrderStub.Identifier>(
-        OrderStub,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<OrderStub.Identifier>(OrderStub, query),
     ]);
   }
 
@@ -41251,10 +42486,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   orderStubsCountSync(
     query?: Pick<$ObjectSet.Query<OrderStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<OrderStub, OrderStub.Identifier>(
-      OrderStub,
-      query,
-    );
+    return this.$objectsCountSync<OrderStub.Identifier>(OrderStub, query);
   }
 
   async organization(
@@ -41281,10 +42513,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
   ): purify.Either<Error, readonly OrganizationStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        Organization,
-        OrganizationStatic.Identifier
-      >(OrganizationStatic, query),
+      ...this.$objectIdentifiersSync<OrganizationStatic.Identifier>(
+        OrganizationStatic,
+        query,
+      ),
     ]);
   }
 
@@ -41314,7 +42546,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   organizationsCountSync(
     query?: Pick<$ObjectSet.Query<OrganizationStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Organization, OrganizationStatic.Identifier>(
+    return this.$objectsCountSync<OrganizationStatic.Identifier>(
       OrganizationStatic,
       query,
     );
@@ -41346,10 +42578,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
   ): purify.Either<Error, readonly OrganizationStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        OrganizationStub,
-        OrganizationStubStatic.Identifier
-      >(OrganizationStubStatic, query),
+      ...this.$objectIdentifiersSync<OrganizationStubStatic.Identifier>(
+        OrganizationStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -41379,10 +42611,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   organizationStubsCountSync(
     query?: Pick<$ObjectSet.Query<OrganizationStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      OrganizationStub,
-      OrganizationStubStatic.Identifier
-    >(OrganizationStubStatic, query);
+    return this.$objectsCountSync<OrganizationStubStatic.Identifier>(
+      OrganizationStubStatic,
+      query,
+    );
   }
 
   async performingGroup(
@@ -41411,10 +42643,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
   ): purify.Either<Error, readonly PerformingGroupStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PerformingGroup,
-        PerformingGroupStatic.Identifier
-      >(PerformingGroupStatic, query),
+      ...this.$objectIdentifiersSync<PerformingGroupStatic.Identifier>(
+        PerformingGroupStatic,
+        query,
+      ),
     ]);
   }
 
@@ -41444,10 +42676,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   performingGroupsCountSync(
     query?: Pick<$ObjectSet.Query<PerformingGroupStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      PerformingGroup,
-      PerformingGroupStatic.Identifier
-    >(PerformingGroupStatic, query);
+    return this.$objectsCountSync<PerformingGroupStatic.Identifier>(
+      PerformingGroupStatic,
+      query,
+    );
   }
 
   async performingGroupStub(
@@ -41476,10 +42708,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
   ): purify.Either<Error, readonly PerformingGroupStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PerformingGroupStub,
-        PerformingGroupStubStatic.Identifier
-      >(PerformingGroupStubStatic, query),
+      ...this.$objectIdentifiersSync<PerformingGroupStubStatic.Identifier>(
+        PerformingGroupStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -41515,10 +42747,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "where"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      PerformingGroupStub,
-      PerformingGroupStubStatic.Identifier
-    >(PerformingGroupStubStatic, query);
+    return this.$objectsCountSync<PerformingGroupStubStatic.Identifier>(
+      PerformingGroupStubStatic,
+      query,
+    );
   }
 
   async person(
@@ -41543,7 +42775,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Person.Identifier>,
   ): purify.Either<Error, readonly Person.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Person, Person.Identifier>(Person, query),
+      ...this.$objectIdentifiersSync<Person.Identifier>(Person, query),
     ]);
   }
 
@@ -41568,7 +42800,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   peopleCountSync(
     query?: Pick<$ObjectSet.Query<Person.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Person, Person.Identifier>(Person, query);
+    return this.$objectsCountSync<Person.Identifier>(Person, query);
   }
 
   async personStub(
@@ -41595,10 +42827,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PersonStub.Identifier>,
   ): purify.Either<Error, readonly PersonStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<PersonStub, PersonStub.Identifier>(
-        PersonStub,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<PersonStub.Identifier>(PersonStub, query),
     ]);
   }
 
@@ -41628,10 +42857,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   personStubsCountSync(
     query?: Pick<$ObjectSet.Query<PersonStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<PersonStub, PersonStub.Identifier>(
-      PersonStub,
-      query,
-    );
+    return this.$objectsCountSync<PersonStub.Identifier>(PersonStub, query);
   }
 
   async place(
@@ -41656,7 +42882,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Place.Identifier>,
   ): purify.Either<Error, readonly Place.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Place, Place.Identifier>(Place, query),
+      ...this.$objectIdentifiersSync<Place.Identifier>(Place, query),
     ]);
   }
 
@@ -41681,7 +42907,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   placesCountSync(
     query?: Pick<$ObjectSet.Query<Place.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Place, Place.Identifier>(Place, query);
+    return this.$objectsCountSync<Place.Identifier>(Place, query);
   }
 
   async placeStub(
@@ -41708,10 +42934,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PlaceStub.Identifier>,
   ): purify.Either<Error, readonly PlaceStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<PlaceStub, PlaceStub.Identifier>(
-        PlaceStub,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<PlaceStub.Identifier>(PlaceStub, query),
     ]);
   }
 
@@ -41738,10 +42961,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   placeStubsCountSync(
     query?: Pick<$ObjectSet.Query<PlaceStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<PlaceStub, PlaceStub.Identifier>(
-      PlaceStub,
-      query,
-    );
+    return this.$objectsCountSync<PlaceStub.Identifier>(PlaceStub, query);
   }
 
   async publicationEvent(
@@ -41770,10 +42990,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
   ): purify.Either<Error, readonly PublicationEventStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PublicationEvent,
-        PublicationEventStatic.Identifier
-      >(PublicationEventStatic, query),
+      ...this.$objectIdentifiersSync<PublicationEventStatic.Identifier>(
+        PublicationEventStatic,
+        query,
+      ),
     ]);
   }
 
@@ -41803,10 +43023,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   publicationEventsCountSync(
     query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      PublicationEvent,
-      PublicationEventStatic.Identifier
-    >(PublicationEventStatic, query);
+    return this.$objectsCountSync<PublicationEventStatic.Identifier>(
+      PublicationEventStatic,
+      query,
+    );
   }
 
   async publicationEventStub(
@@ -41833,10 +43053,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
   ): purify.Either<Error, readonly PublicationEventStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<PublicationEventStub.Identifier>(
         PublicationEventStub,
-        PublicationEventStub.Identifier
-      >(PublicationEventStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -41866,10 +43086,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   publicationEventStubsCountSync(
     query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<PublicationEventStub.Identifier>(
       PublicationEventStub,
-      PublicationEventStub.Identifier
-    >(PublicationEventStub, query);
+      query,
+    );
   }
 
   async quantitativeValue(
@@ -41896,10 +43116,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
   ): purify.Either<Error, readonly QuantitativeValue.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<QuantitativeValue.Identifier>(
         QuantitativeValue,
-        QuantitativeValue.Identifier
-      >(QuantitativeValue, query),
+        query,
+      ),
     ]);
   }
 
@@ -41929,10 +43149,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   quantitativeValuesCountSync(
     query?: Pick<$ObjectSet.Query<QuantitativeValue.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<QuantitativeValue.Identifier>(
       QuantitativeValue,
-      QuantitativeValue.Identifier
-    >(QuantitativeValue, query);
+      query,
+    );
   }
 
   async quantitativeValueStub(
@@ -41961,10 +43181,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
   ): purify.Either<Error, readonly QuantitativeValueStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<QuantitativeValueStub.Identifier>(
         QuantitativeValueStub,
-        QuantitativeValueStub.Identifier
-      >(QuantitativeValueStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -41994,10 +43214,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   quantitativeValueStubsCountSync(
     query?: Pick<$ObjectSet.Query<QuantitativeValueStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<QuantitativeValueStub.Identifier>(
       QuantitativeValueStub,
-      QuantitativeValueStub.Identifier
-    >(QuantitativeValueStub, query);
+      query,
+    );
   }
 
   async radioBroadcastService(
@@ -42026,10 +43246,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
   ): purify.Either<Error, readonly RadioBroadcastService.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<RadioBroadcastService.Identifier>(
         RadioBroadcastService,
-        RadioBroadcastService.Identifier
-      >(RadioBroadcastService, query),
+        query,
+      ),
     ]);
   }
 
@@ -42059,10 +43279,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioBroadcastServicesCountSync(
     query?: Pick<$ObjectSet.Query<RadioBroadcastService.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<RadioBroadcastService.Identifier>(
       RadioBroadcastService,
-      RadioBroadcastService.Identifier
-    >(RadioBroadcastService, query);
+      query,
+    );
   }
 
   async radioBroadcastServiceStub(
@@ -42091,10 +43311,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
   ): purify.Either<Error, readonly RadioBroadcastServiceStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<RadioBroadcastServiceStub.Identifier>(
         RadioBroadcastServiceStub,
-        RadioBroadcastServiceStub.Identifier
-      >(RadioBroadcastServiceStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -42130,10 +43350,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "where"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<RadioBroadcastServiceStub.Identifier>(
       RadioBroadcastServiceStub,
-      RadioBroadcastServiceStub.Identifier
-    >(RadioBroadcastServiceStub, query);
+      query,
+    );
   }
 
   async radioEpisode(
@@ -42160,7 +43380,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RadioEpisode.Identifier>,
   ): purify.Either<Error, readonly RadioEpisode.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<RadioEpisode, RadioEpisode.Identifier>(
+      ...this.$objectIdentifiersSync<RadioEpisode.Identifier>(
         RadioEpisode,
         query,
       ),
@@ -42193,10 +43413,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioEpisodesCountSync(
     query?: Pick<$ObjectSet.Query<RadioEpisode.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<RadioEpisode, RadioEpisode.Identifier>(
-      RadioEpisode,
-      query,
-    );
+    return this.$objectsCountSync<RadioEpisode.Identifier>(RadioEpisode, query);
   }
 
   async radioEpisodeStub(
@@ -42223,10 +43440,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
   ): purify.Either<Error, readonly RadioEpisodeStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<RadioEpisodeStub.Identifier>(
         RadioEpisodeStub,
-        RadioEpisodeStub.Identifier
-      >(RadioEpisodeStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -42256,10 +43473,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioEpisodeStubsCountSync(
     query?: Pick<$ObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<RadioEpisodeStub.Identifier>(
       RadioEpisodeStub,
-      RadioEpisodeStub.Identifier
-    >(RadioEpisodeStub, query);
+      query,
+    );
   }
 
   async radioSeries(
@@ -42286,7 +43503,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RadioSeries.Identifier>,
   ): purify.Either<Error, readonly RadioSeries.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<RadioSeries, RadioSeries.Identifier>(
+      ...this.$objectIdentifiersSync<RadioSeries.Identifier>(
         RadioSeries,
         query,
       ),
@@ -42319,10 +43536,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioSeriessCountSync(
     query?: Pick<$ObjectSet.Query<RadioSeries.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<RadioSeries, RadioSeries.Identifier>(
-      RadioSeries,
-      query,
-    );
+    return this.$objectsCountSync<RadioSeries.Identifier>(RadioSeries, query);
   }
 
   async radioSeriesStub(
@@ -42349,10 +43563,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
   ): purify.Either<Error, readonly RadioSeriesStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<RadioSeriesStub.Identifier>(
         RadioSeriesStub,
-        RadioSeriesStub.Identifier
-      >(RadioSeriesStub, query),
+        query,
+      ),
     ]);
   }
 
@@ -42382,7 +43596,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioSeriesStubsCountSync(
     query?: Pick<$ObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<RadioSeriesStub, RadioSeriesStub.Identifier>(
+    return this.$objectsCountSync<RadioSeriesStub.Identifier>(
       RadioSeriesStub,
       query,
     );
@@ -42410,7 +43624,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Report.Identifier>,
   ): purify.Either<Error, readonly Report.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Report, Report.Identifier>(Report, query),
+      ...this.$objectIdentifiersSync<Report.Identifier>(Report, query),
     ]);
   }
 
@@ -42435,7 +43649,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   reportsCountSync(
     query?: Pick<$ObjectSet.Query<Report.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Report, Report.Identifier>(Report, query);
+    return this.$objectsCountSync<Report.Identifier>(Report, query);
   }
 
   async reportStub(
@@ -42462,10 +43676,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ReportStub.Identifier>,
   ): purify.Either<Error, readonly ReportStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ReportStub, ReportStub.Identifier>(
-        ReportStub,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<ReportStub.Identifier>(ReportStub, query),
     ]);
   }
 
@@ -42495,10 +43706,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   reportStubsCountSync(
     query?: Pick<$ObjectSet.Query<ReportStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ReportStub, ReportStub.Identifier>(
-      ReportStub,
-      query,
-    );
+    return this.$objectsCountSync<ReportStub.Identifier>(ReportStub, query);
   }
 
   async role(identifier: Role.Identifier): Promise<purify.Either<Error, Role>> {
@@ -42521,7 +43729,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Role.Identifier>,
   ): purify.Either<Error, readonly Role.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Role, Role.Identifier>(Role, query),
+      ...this.$objectIdentifiersSync<Role.Identifier>(Role, query),
     ]);
   }
 
@@ -42546,7 +43754,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   rolesCountSync(
     query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Role, Role.Identifier>(Role, query);
+    return this.$objectsCountSync<Role.Identifier>(Role, query);
   }
 
   async service(
@@ -42573,7 +43781,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ServiceStatic.Identifier>,
   ): purify.Either<Error, readonly ServiceStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Service, ServiceStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ServiceStatic.Identifier>(
         ServiceStatic,
         query,
       ),
@@ -42606,7 +43814,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   servicesCountSync(
     query?: Pick<$ObjectSet.Query<ServiceStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Service, ServiceStatic.Identifier>(
+    return this.$objectsCountSync<ServiceStatic.Identifier>(
       ServiceStatic,
       query,
     );
@@ -42636,7 +43844,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
   ): purify.Either<Error, readonly ServiceStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ServiceStub, ServiceStubStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ServiceStubStatic.Identifier>(
         ServiceStubStatic,
         query,
       ),
@@ -42669,7 +43877,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   serviceStubsCountSync(
     query?: Pick<$ObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ServiceStub, ServiceStubStatic.Identifier>(
+    return this.$objectsCountSync<ServiceStubStatic.Identifier>(
       ServiceStubStatic,
       query,
     );
@@ -42701,10 +43909,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
   ): purify.Either<Error, readonly StructuredValueStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        StructuredValue,
-        StructuredValueStatic.Identifier
-      >(StructuredValueStatic, query),
+      ...this.$objectIdentifiersSync<StructuredValueStatic.Identifier>(
+        StructuredValueStatic,
+        query,
+      ),
     ]);
   }
 
@@ -42734,10 +43942,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   structuredValuesCountSync(
     query?: Pick<$ObjectSet.Query<StructuredValueStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      StructuredValue,
-      StructuredValueStatic.Identifier
-    >(StructuredValueStatic, query);
+    return this.$objectsCountSync<StructuredValueStatic.Identifier>(
+      StructuredValueStatic,
+      query,
+    );
   }
 
   async structuredValueStub(
@@ -42766,10 +43974,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
   ): purify.Either<Error, readonly StructuredValueStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        StructuredValueStub,
-        StructuredValueStubStatic.Identifier
-      >(StructuredValueStubStatic, query),
+      ...this.$objectIdentifiersSync<StructuredValueStubStatic.Identifier>(
+        StructuredValueStubStatic,
+        query,
+      ),
     ]);
   }
 
@@ -42805,10 +44013,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "where"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      StructuredValueStub,
-      StructuredValueStubStatic.Identifier
-    >(StructuredValueStubStatic, query);
+    return this.$objectsCountSync<StructuredValueStubStatic.Identifier>(
+      StructuredValueStubStatic,
+      query,
+    );
   }
 
   async textObject(
@@ -42835,10 +44043,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<TextObject.Identifier>,
   ): purify.Either<Error, readonly TextObject.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<TextObject, TextObject.Identifier>(
-        TextObject,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<TextObject.Identifier>(TextObject, query),
     ]);
   }
 
@@ -42868,10 +44073,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   textObjectsCountSync(
     query?: Pick<$ObjectSet.Query<TextObject.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<TextObject, TextObject.Identifier>(
-      TextObject,
-      query,
-    );
+    return this.$objectsCountSync<TextObject.Identifier>(TextObject, query);
   }
 
   async textObjectStub(
@@ -42898,7 +44100,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<TextObjectStub.Identifier>,
   ): purify.Either<Error, readonly TextObjectStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<TextObjectStub, TextObjectStub.Identifier>(
+      ...this.$objectIdentifiersSync<TextObjectStub.Identifier>(
         TextObjectStub,
         query,
       ),
@@ -42931,7 +44133,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   textObjectStubsCountSync(
     query?: Pick<$ObjectSet.Query<TextObjectStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<TextObjectStub, TextObjectStub.Identifier>(
+    return this.$objectsCountSync<TextObjectStub.Identifier>(
       TextObjectStub,
       query,
     );
@@ -42959,7 +44161,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ThingStatic.Identifier>,
   ): purify.Either<Error, readonly ThingStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Thing, ThingStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ThingStatic.Identifier>(
         ThingStatic,
         query,
       ),
@@ -42989,10 +44191,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   thingsCountSync(
     query?: Pick<$ObjectSet.Query<ThingStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Thing, ThingStatic.Identifier>(
-      ThingStatic,
-      query,
-    );
+    return this.$objectsCountSync<ThingStatic.Identifier>(ThingStatic, query);
   }
 
   async thingStub(
@@ -43019,7 +44218,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
   ): purify.Either<Error, readonly ThingStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ThingStub, ThingStubStatic.Identifier>(
+      ...this.$objectIdentifiersSync<ThingStubStatic.Identifier>(
         ThingStubStatic,
         query,
       ),
@@ -43052,7 +44251,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   thingStubsCountSync(
     query?: Pick<$ObjectSet.Query<ThingStubStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ThingStub, ThingStubStatic.Identifier>(
+    return this.$objectsCountSync<ThingStubStatic.Identifier>(
       ThingStubStatic,
       query,
     );
@@ -43082,10 +44281,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<VoteAction.Identifier>,
   ): purify.Either<Error, readonly VoteAction.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<VoteAction, VoteAction.Identifier>(
-        VoteAction,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<VoteAction.Identifier>(VoteAction, query),
     ]);
   }
 
@@ -43115,10 +44311,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   voteActionsCountSync(
     query?: Pick<$ObjectSet.Query<VoteAction.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<VoteAction, VoteAction.Identifier>(
-      VoteAction,
-      query,
-    );
+    return this.$objectsCountSync<VoteAction.Identifier>(VoteAction, query);
   }
 
   async voteActionStub(
@@ -43145,7 +44338,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<VoteActionStub.Identifier>,
   ): purify.Either<Error, readonly VoteActionStub.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<VoteActionStub, VoteActionStub.Identifier>(
+      ...this.$objectIdentifiersSync<VoteActionStub.Identifier>(
         VoteActionStub,
         query,
       ),
@@ -43178,22 +44371,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   voteActionStubsCountSync(
     query?: Pick<$ObjectSet.Query<VoteActionStub.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<VoteActionStub, VoteActionStub.Identifier>(
+    return this.$objectsCountSync<VoteActionStub.Identifier>(
       VoteActionStub,
       query,
     );
   }
 
   *$objectIdentifiersSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectType: {
-      fromRdf: (parameters: {
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
-    },
+    objectType: { fromRdfType?: rdfjs.NamedNode },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): Generator<ObjectIdentifierT> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
@@ -43241,10 +44428,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): Generator<purify.Either<Error, ObjectT>> {
-    for (const identifier of this.$objectIdentifiersSync<
-      ObjectT,
-      ObjectIdentifierT
-    >(objectType, query)) {
+    for (const identifier of this.$objectIdentifiersSync<ObjectIdentifierT>(
+      objectType,
+      query,
+    )) {
       yield objectType.fromRdf({
         resource: this.resourceSet.resource(identifier),
       });
@@ -43252,19 +44439,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectsCountSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectType: {
-      fromRdf: (parameters: {
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
-    },
+    objectType: { fromRdfType?: rdfjs.NamedNode },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
     let count = 0;
-    for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(
+    for (const _ of this.$objectIdentifiersSync<ObjectIdentifierT>(
       objectType,
       query,
     )) {
@@ -43308,7 +44489,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async actionIdentifiers(
-    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ActionStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ActionStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ActionStatic,
@@ -43317,7 +44498,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async actions(
-    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ActionStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Action>[]> {
     return this.$objects<Action, rdfjs.BlankNode | rdfjs.NamedNode>(
       ActionStatic,
@@ -43326,7 +44507,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async actionsCount(
-    query?: Pick<$ObjectSet.Query<ActionStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ActionStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ActionStatic,
@@ -43345,7 +44526,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async actionStubIdentifiers(
-    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ActionStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ActionStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ActionStubStatic,
@@ -43354,7 +44535,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async actionStubs(
-    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ActionStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ActionStub>[]> {
     return this.$objects<ActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ActionStubStatic,
@@ -43363,7 +44544,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async actionStubsCount(
-    query?: Pick<$ObjectSet.Query<ActionStubStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ActionStubStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ActionStubStatic,
@@ -43382,7 +44563,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async articleIdentifiers(
-    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ArticleStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ArticleStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ArticleStatic,
@@ -43391,7 +44572,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async articles(
-    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ArticleStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Article>[]> {
     return this.$objects<Article, rdfjs.BlankNode | rdfjs.NamedNode>(
       ArticleStatic,
@@ -43400,7 +44581,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async articlesCount(
-    query?: Pick<$ObjectSet.Query<ArticleStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ArticleStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ArticleStatic,
@@ -43419,7 +44600,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async articleStubIdentifiers(
-    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ArticleStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ArticleStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ArticleStubStatic,
@@ -43428,7 +44609,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async articleStubs(
-    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ArticleStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ArticleStub>[]> {
     return this.$objects<ArticleStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ArticleStubStatic,
@@ -43437,7 +44618,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async articleStubsCount(
-    query?: Pick<$ObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ArticleStubStatic,
@@ -43456,7 +44637,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async assessActionIdentifiers(
-    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<AssessActionStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly AssessActionStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       AssessActionStatic,
@@ -43465,7 +44646,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async assessActions(
-    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<AssessActionStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, AssessAction>[]> {
     return this.$objects<AssessAction, rdfjs.BlankNode | rdfjs.NamedNode>(
       AssessActionStatic,
@@ -43474,7 +44655,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async assessActionsCount(
-    query?: Pick<$ObjectSet.Query<AssessActionStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<AssessActionStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       AssessActionStatic,
@@ -43493,7 +44677,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async assessActionStubIdentifiers(
-    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<AssessActionStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly AssessActionStubStatic.Identifier[]>
   > {
@@ -43504,7 +44688,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async assessActionStubs(
-    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<AssessActionStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, AssessActionStub>[]> {
     return this.$objects<AssessActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       AssessActionStubStatic,
@@ -43513,7 +44697,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async assessActionStubsCount(
-    query?: Pick<$ObjectSet.Query<AssessActionStubStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<AssessActionStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       AssessActionStubStatic,
@@ -43532,7 +44719,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastEventIdentifiers(
-    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+    query?: $SparqlObjectSet.Query<BroadcastEvent.Identifier>,
   ): Promise<purify.Either<Error, readonly BroadcastEvent.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       BroadcastEvent,
@@ -43541,7 +44728,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastEvents(
-    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+    query?: $SparqlObjectSet.Query<BroadcastEvent.Identifier>,
   ): Promise<readonly purify.Either<Error, BroadcastEvent>[]> {
     return this.$objects<BroadcastEvent, rdfjs.BlankNode | rdfjs.NamedNode>(
       BroadcastEvent,
@@ -43550,7 +44737,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastEventsCount(
-    query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<BroadcastEvent.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       BroadcastEvent,
@@ -43569,7 +44756,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastServiceIdentifiers(
-    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<BroadcastServiceStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly BroadcastServiceStatic.Identifier[]>
   > {
@@ -43580,7 +44767,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastServices(
-    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<BroadcastServiceStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, BroadcastService>[]> {
     return this.$objects<BroadcastService, rdfjs.BlankNode | rdfjs.NamedNode>(
       BroadcastServiceStatic,
@@ -43589,7 +44776,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastServicesCount(
-    query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<BroadcastServiceStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       BroadcastServiceStatic,
@@ -43608,7 +44798,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastServiceStubIdentifiers(
-    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly BroadcastServiceStubStatic.Identifier[]>
   > {
@@ -43619,7 +44809,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async broadcastServiceStubs(
-    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]> {
     return this.$objects<
       BroadcastServiceStub,
@@ -43629,7 +44819,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async broadcastServiceStubsCount(
     query?: Pick<
-      $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+      $SparqlObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
@@ -43650,7 +44840,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async chooseActionIdentifiers(
-    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ChooseActionStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ChooseActionStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ChooseActionStatic,
@@ -43659,7 +44849,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async chooseActions(
-    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ChooseActionStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ChooseAction>[]> {
     return this.$objects<ChooseAction, rdfjs.BlankNode | rdfjs.NamedNode>(
       ChooseActionStatic,
@@ -43668,7 +44858,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async chooseActionsCount(
-    query?: Pick<$ObjectSet.Query<ChooseActionStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<ChooseActionStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ChooseActionStatic,
@@ -43687,7 +44880,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async chooseActionStubIdentifiers(
-    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ChooseActionStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly ChooseActionStubStatic.Identifier[]>
   > {
@@ -43698,7 +44891,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async chooseActionStubs(
-    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ChooseActionStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ChooseActionStub>[]> {
     return this.$objects<ChooseActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ChooseActionStubStatic,
@@ -43707,7 +44900,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async chooseActionStubsCount(
-    query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<ChooseActionStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ChooseActionStubStatic,
@@ -43726,7 +44922,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkIdentifiers(
-    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly CreativeWorkStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       CreativeWorkStatic,
@@ -43735,7 +44931,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorks(
-    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, CreativeWork>[]> {
     return this.$objects<CreativeWork, rdfjs.BlankNode | rdfjs.NamedNode>(
       CreativeWorkStatic,
@@ -43744,7 +44940,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorksCount(
-    query?: Pick<$ObjectSet.Query<CreativeWorkStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<CreativeWorkStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       CreativeWorkStatic,
@@ -43763,7 +44962,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkSeriesIdentifiers(
-    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly CreativeWorkSeriesStatic.Identifier[]>
   > {
@@ -43774,7 +44973,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkSeriess(
-    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]> {
     return this.$objects<CreativeWorkSeries, rdfjs.BlankNode | rdfjs.NamedNode>(
       CreativeWorkSeriesStatic,
@@ -43784,7 +44983,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async creativeWorkSeriessCount(
     query?: Pick<
-      $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+      $SparqlObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
@@ -43805,7 +45004,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkSeriesStubIdentifiers(
-    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly CreativeWorkSeriesStubStatic.Identifier[]>
   > {
@@ -43816,7 +45015,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkSeriesStubs(
-    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]> {
     return this.$objects<
       CreativeWorkSeriesStub,
@@ -43826,7 +45025,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async creativeWorkSeriesStubsCount(
     query?: Pick<
-      $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+      $SparqlObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
@@ -43847,7 +45046,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkStubIdentifiers(
-    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly CreativeWorkStubStatic.Identifier[]>
   > {
@@ -43858,7 +45057,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkStubs(
-    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<CreativeWorkStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]> {
     return this.$objects<CreativeWorkStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       CreativeWorkStubStatic,
@@ -43867,7 +45066,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async creativeWorkStubsCount(
-    query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       CreativeWorkStubStatic,
@@ -43886,7 +45088,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async enumerationIdentifiers(
-    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EnumerationStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly EnumerationStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       EnumerationStatic,
@@ -43895,7 +45097,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async enumerations(
-    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EnumerationStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Enumeration>[]> {
     return this.$objects<Enumeration, rdfjs.BlankNode | rdfjs.NamedNode>(
       EnumerationStatic,
@@ -43904,7 +45106,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async enumerationsCount(
-    query?: Pick<$ObjectSet.Query<EnumerationStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<EnumerationStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       EnumerationStatic,
@@ -43923,7 +45125,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async episodeIdentifiers(
-    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EpisodeStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly EpisodeStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       EpisodeStatic,
@@ -43932,7 +45134,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async episodes(
-    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EpisodeStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Episode>[]> {
     return this.$objects<Episode, rdfjs.BlankNode | rdfjs.NamedNode>(
       EpisodeStatic,
@@ -43941,7 +45143,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async episodesCount(
-    query?: Pick<$ObjectSet.Query<EpisodeStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<EpisodeStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       EpisodeStatic,
@@ -43960,7 +45162,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async episodeStubIdentifiers(
-    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EpisodeStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly EpisodeStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       EpisodeStubStatic,
@@ -43969,7 +45171,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async episodeStubs(
-    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EpisodeStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, EpisodeStub>[]> {
     return this.$objects<EpisodeStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       EpisodeStubStatic,
@@ -43978,7 +45180,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async episodeStubsCount(
-    query?: Pick<$ObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       EpisodeStubStatic,
@@ -43997,7 +45199,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async eventIdentifiers(
-    query?: $ObjectSet.Query<EventStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EventStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly EventStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       EventStatic,
@@ -44006,7 +45208,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async events(
-    query?: $ObjectSet.Query<EventStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EventStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Event>[]> {
     return this.$objects<Event, rdfjs.BlankNode | rdfjs.NamedNode>(
       EventStatic,
@@ -44015,7 +45217,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async eventsCount(
-    query?: Pick<$ObjectSet.Query<EventStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<EventStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       EventStatic,
@@ -44034,7 +45236,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async eventStubIdentifiers(
-    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EventStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly EventStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       EventStubStatic,
@@ -44043,7 +45245,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async eventStubs(
-    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<EventStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, EventStub>[]> {
     return this.$objects<EventStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       EventStubStatic,
@@ -44052,7 +45254,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async eventStubsCount(
-    query?: Pick<$ObjectSet.Query<EventStubStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<EventStubStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       EventStubStatic,
@@ -44071,7 +45273,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async genderTypeIdentifiers(
-    query?: $ObjectSet.Query<GenderType.Identifier>,
+    query?: $SparqlObjectSet.Query<GenderType.Identifier>,
   ): Promise<purify.Either<Error, readonly GenderType.Identifier[]>> {
     return this.$objectIdentifiers<
       rdfjs.NamedNode<"http://schema.org/Female" | "http://schema.org/Male">
@@ -44079,7 +45281,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async genderTypes(
-    query?: $ObjectSet.Query<GenderType.Identifier>,
+    query?: $SparqlObjectSet.Query<GenderType.Identifier>,
   ): Promise<readonly purify.Either<Error, GenderType>[]> {
     return this.$objects<
       GenderType,
@@ -44088,7 +45290,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async genderTypesCount(
-    query?: Pick<$ObjectSet.Query<GenderType.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<GenderType.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<
       rdfjs.NamedNode<"http://schema.org/Female" | "http://schema.org/Male">
@@ -44106,7 +45308,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async imageObjectIdentifiers(
-    query?: $ObjectSet.Query<ImageObject.Identifier>,
+    query?: $SparqlObjectSet.Query<ImageObject.Identifier>,
   ): Promise<purify.Either<Error, readonly ImageObject.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ImageObject,
@@ -44115,7 +45317,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async imageObjects(
-    query?: $ObjectSet.Query<ImageObject.Identifier>,
+    query?: $SparqlObjectSet.Query<ImageObject.Identifier>,
   ): Promise<readonly purify.Either<Error, ImageObject>[]> {
     return this.$objects<ImageObject, rdfjs.BlankNode | rdfjs.NamedNode>(
       ImageObject,
@@ -44124,7 +45326,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async imageObjectsCount(
-    query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ImageObject.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ImageObject,
@@ -44143,7 +45345,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async imageObjectStubIdentifiers(
-    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ImageObjectStub.Identifier>,
   ): Promise<purify.Either<Error, readonly ImageObjectStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ImageObjectStub,
@@ -44152,7 +45354,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async imageObjectStubs(
-    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ImageObjectStub.Identifier>,
   ): Promise<readonly purify.Either<Error, ImageObjectStub>[]> {
     return this.$objects<ImageObjectStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ImageObjectStub,
@@ -44161,7 +45363,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async imageObjectStubsCount(
-    query?: Pick<$ObjectSet.Query<ImageObjectStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ImageObjectStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ImageObjectStub,
@@ -44180,7 +45382,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async intangibleIdentifiers(
-    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<IntangibleStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly IntangibleStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       IntangibleStatic,
@@ -44189,7 +45391,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async intangibles(
-    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<IntangibleStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Intangible>[]> {
     return this.$objects<Intangible, rdfjs.BlankNode | rdfjs.NamedNode>(
       IntangibleStatic,
@@ -44198,7 +45400,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async intangiblesCount(
-    query?: Pick<$ObjectSet.Query<IntangibleStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<IntangibleStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       IntangibleStatic,
@@ -44217,7 +45419,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async intangibleStubIdentifiers(
-    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<IntangibleStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly IntangibleStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       IntangibleStubStatic,
@@ -44226,7 +45428,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async intangibleStubs(
-    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<IntangibleStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, IntangibleStub>[]> {
     return this.$objects<IntangibleStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       IntangibleStubStatic,
@@ -44235,7 +45437,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async intangibleStubsCount(
-    query?: Pick<$ObjectSet.Query<IntangibleStubStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<IntangibleStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       IntangibleStubStatic,
@@ -44254,7 +45459,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async invoiceIdentifiers(
-    query?: $ObjectSet.Query<Invoice.Identifier>,
+    query?: $SparqlObjectSet.Query<Invoice.Identifier>,
   ): Promise<purify.Either<Error, readonly Invoice.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Invoice,
@@ -44263,7 +45468,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async invoices(
-    query?: $ObjectSet.Query<Invoice.Identifier>,
+    query?: $SparqlObjectSet.Query<Invoice.Identifier>,
   ): Promise<readonly purify.Either<Error, Invoice>[]> {
     return this.$objects<Invoice, rdfjs.BlankNode | rdfjs.NamedNode>(
       Invoice,
@@ -44272,7 +45477,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async invoicesCount(
-    query?: Pick<$ObjectSet.Query<Invoice.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Invoice.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       Invoice,
@@ -44291,7 +45496,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async invoiceStubIdentifiers(
-    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+    query?: $SparqlObjectSet.Query<InvoiceStub.Identifier>,
   ): Promise<purify.Either<Error, readonly InvoiceStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       InvoiceStub,
@@ -44300,7 +45505,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async invoiceStubs(
-    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+    query?: $SparqlObjectSet.Query<InvoiceStub.Identifier>,
   ): Promise<readonly purify.Either<Error, InvoiceStub>[]> {
     return this.$objects<InvoiceStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       InvoiceStub,
@@ -44309,7 +45514,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async invoiceStubsCount(
-    query?: Pick<$ObjectSet.Query<InvoiceStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<InvoiceStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       InvoiceStub,
@@ -44328,7 +45533,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async itemListIdentifiers(
-    query?: $ObjectSet.Query<ItemList.Identifier>,
+    query?: $SparqlObjectSet.Query<ItemList.Identifier>,
   ): Promise<purify.Either<Error, readonly ItemList.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ItemList,
@@ -44337,7 +45542,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async itemLists(
-    query?: $ObjectSet.Query<ItemList.Identifier>,
+    query?: $SparqlObjectSet.Query<ItemList.Identifier>,
   ): Promise<readonly purify.Either<Error, ItemList>[]> {
     return this.$objects<ItemList, rdfjs.BlankNode | rdfjs.NamedNode>(
       ItemList,
@@ -44346,7 +45551,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async itemListsCount(
-    query?: Pick<$ObjectSet.Query<ItemList.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ItemList.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ItemList,
@@ -44365,7 +45570,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async itemListStubIdentifiers(
-    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ItemListStub.Identifier>,
   ): Promise<purify.Either<Error, readonly ItemListStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ItemListStub,
@@ -44374,7 +45579,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async itemListStubs(
-    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ItemListStub.Identifier>,
   ): Promise<readonly purify.Either<Error, ItemListStub>[]> {
     return this.$objects<ItemListStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ItemListStub,
@@ -44383,7 +45588,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async itemListStubsCount(
-    query?: Pick<$ObjectSet.Query<ItemListStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ItemListStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ItemListStub,
@@ -44402,7 +45607,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listItemIdentifiers(
-    query?: $ObjectSet.Query<ListItem.Identifier>,
+    query?: $SparqlObjectSet.Query<ListItem.Identifier>,
   ): Promise<purify.Either<Error, readonly ListItem.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ListItem,
@@ -44411,7 +45616,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listItems(
-    query?: $ObjectSet.Query<ListItem.Identifier>,
+    query?: $SparqlObjectSet.Query<ListItem.Identifier>,
   ): Promise<readonly purify.Either<Error, ListItem>[]> {
     return this.$objects<ListItem, rdfjs.BlankNode | rdfjs.NamedNode>(
       ListItem,
@@ -44420,7 +45625,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listItemsCount(
-    query?: Pick<$ObjectSet.Query<ListItem.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ListItem.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ListItem,
@@ -44439,7 +45644,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listItemStubIdentifiers(
-    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ListItemStub.Identifier>,
   ): Promise<purify.Either<Error, readonly ListItemStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ListItemStub,
@@ -44448,7 +45653,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listItemStubs(
-    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ListItemStub.Identifier>,
   ): Promise<readonly purify.Either<Error, ListItemStub>[]> {
     return this.$objects<ListItemStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ListItemStub,
@@ -44457,7 +45662,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listItemStubsCount(
-    query?: Pick<$ObjectSet.Query<ListItemStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ListItemStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ListItemStub,
@@ -44476,7 +45681,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mediaObjectIdentifiers(
-    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<MediaObjectStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly MediaObjectStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MediaObjectStatic,
@@ -44485,7 +45690,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mediaObjects(
-    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<MediaObjectStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, MediaObject>[]> {
     return this.$objects<MediaObject, rdfjs.BlankNode | rdfjs.NamedNode>(
       MediaObjectStatic,
@@ -44494,7 +45699,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mediaObjectsCount(
-    query?: Pick<$ObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MediaObjectStatic,
@@ -44513,7 +45718,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mediaObjectStubIdentifiers(
-    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<MediaObjectStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly MediaObjectStubStatic.Identifier[]>
   > {
@@ -44524,7 +45729,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mediaObjectStubs(
-    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<MediaObjectStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, MediaObjectStub>[]> {
     return this.$objects<MediaObjectStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MediaObjectStubStatic,
@@ -44533,7 +45738,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mediaObjectStubsCount(
-    query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<MediaObjectStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MediaObjectStubStatic,
@@ -44552,7 +45760,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async messageIdentifiers(
-    query?: $ObjectSet.Query<Message.Identifier>,
+    query?: $SparqlObjectSet.Query<Message.Identifier>,
   ): Promise<purify.Either<Error, readonly Message.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Message,
@@ -44561,7 +45769,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async messages(
-    query?: $ObjectSet.Query<Message.Identifier>,
+    query?: $SparqlObjectSet.Query<Message.Identifier>,
   ): Promise<readonly purify.Either<Error, Message>[]> {
     return this.$objects<Message, rdfjs.BlankNode | rdfjs.NamedNode>(
       Message,
@@ -44570,7 +45778,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async messagesCount(
-    query?: Pick<$ObjectSet.Query<Message.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Message.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       Message,
@@ -44589,7 +45797,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async messageStubIdentifiers(
-    query?: $ObjectSet.Query<MessageStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MessageStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MessageStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MessageStub,
@@ -44598,7 +45806,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async messageStubs(
-    query?: $ObjectSet.Query<MessageStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MessageStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MessageStub>[]> {
     return this.$objects<MessageStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MessageStub,
@@ -44607,7 +45815,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async messageStubsCount(
-    query?: Pick<$ObjectSet.Query<MessageStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MessageStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MessageStub,
@@ -44626,7 +45834,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async monetaryAmountIdentifiers(
-    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+    query?: $SparqlObjectSet.Query<MonetaryAmount.Identifier>,
   ): Promise<purify.Either<Error, readonly MonetaryAmount.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MonetaryAmount,
@@ -44635,7 +45843,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async monetaryAmounts(
-    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+    query?: $SparqlObjectSet.Query<MonetaryAmount.Identifier>,
   ): Promise<readonly purify.Either<Error, MonetaryAmount>[]> {
     return this.$objects<MonetaryAmount, rdfjs.BlankNode | rdfjs.NamedNode>(
       MonetaryAmount,
@@ -44644,7 +45852,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async monetaryAmountsCount(
-    query?: Pick<$ObjectSet.Query<MonetaryAmount.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MonetaryAmount.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MonetaryAmount,
@@ -44663,7 +45871,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async monetaryAmountStubIdentifiers(
-    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MonetaryAmountStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MonetaryAmountStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MonetaryAmountStub,
@@ -44672,7 +45880,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async monetaryAmountStubs(
-    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MonetaryAmountStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]> {
     return this.$objects<MonetaryAmountStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MonetaryAmountStub,
@@ -44681,7 +45889,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async monetaryAmountStubsCount(
-    query?: Pick<$ObjectSet.Query<MonetaryAmountStub.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<MonetaryAmountStub.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MonetaryAmountStub,
@@ -44700,7 +45911,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicAlbumIdentifiers(
-    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicAlbum.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicAlbum.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicAlbum,
@@ -44709,7 +45920,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicAlbums(
-    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicAlbum.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicAlbum>[]> {
     return this.$objects<MusicAlbum, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicAlbum,
@@ -44718,7 +45929,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicAlbumsCount(
-    query?: Pick<$ObjectSet.Query<MusicAlbum.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicAlbum.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicAlbum,
@@ -44737,7 +45948,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicAlbumStubIdentifiers(
-    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicAlbumStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicAlbumStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicAlbumStub,
@@ -44746,7 +45957,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicAlbumStubs(
-    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicAlbumStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]> {
     return this.$objects<MusicAlbumStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicAlbumStub,
@@ -44755,7 +45966,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicAlbumStubsCount(
-    query?: Pick<$ObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicAlbumStub,
@@ -44774,7 +45985,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicCompositionIdentifiers(
-    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicComposition.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicComposition.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicComposition,
@@ -44783,7 +45994,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicCompositions(
-    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicComposition.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicComposition>[]> {
     return this.$objects<MusicComposition, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicComposition,
@@ -44792,7 +46003,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicCompositionsCount(
-    query?: Pick<$ObjectSet.Query<MusicComposition.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicComposition.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicComposition,
@@ -44811,7 +46022,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicCompositionStubIdentifiers(
-    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicCompositionStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicCompositionStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicCompositionStub,
@@ -44820,7 +46031,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicCompositionStubs(
-    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicCompositionStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]> {
     return this.$objects<
       MusicCompositionStub,
@@ -44829,7 +46040,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicCompositionStubsCount(
-    query?: Pick<$ObjectSet.Query<MusicCompositionStub.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<MusicCompositionStub.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicCompositionStub,
@@ -44848,7 +46062,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicGroupIdentifiers(
-    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicGroup.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicGroup.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicGroup,
@@ -44857,7 +46071,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicGroups(
-    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicGroup.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicGroup>[]> {
     return this.$objects<MusicGroup, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicGroup,
@@ -44866,7 +46080,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicGroupsCount(
-    query?: Pick<$ObjectSet.Query<MusicGroup.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicGroup.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicGroup,
@@ -44885,7 +46099,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicGroupStubIdentifiers(
-    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicGroupStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicGroupStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicGroupStub,
@@ -44894,7 +46108,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicGroupStubs(
-    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicGroupStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicGroupStub>[]> {
     return this.$objects<MusicGroupStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicGroupStub,
@@ -44903,7 +46117,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicGroupStubsCount(
-    query?: Pick<$ObjectSet.Query<MusicGroupStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicGroupStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicGroupStub,
@@ -44922,7 +46136,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicPlaylistIdentifiers(
-    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicPlaylist.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicPlaylist.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicPlaylist,
@@ -44931,7 +46145,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicPlaylists(
-    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicPlaylist.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicPlaylist>[]> {
     return this.$objects<MusicPlaylist, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicPlaylist,
@@ -44940,7 +46154,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicPlaylistsCount(
-    query?: Pick<$ObjectSet.Query<MusicPlaylist.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicPlaylist.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicPlaylist,
@@ -44959,7 +46173,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicPlaylistStubIdentifiers(
-    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicPlaylistStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicPlaylistStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicPlaylistStub,
@@ -44968,7 +46182,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicPlaylistStubs(
-    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicPlaylistStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]> {
     return this.$objects<MusicPlaylistStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicPlaylistStub,
@@ -44977,7 +46191,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicPlaylistStubsCount(
-    query?: Pick<$ObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicPlaylistStub,
@@ -44996,7 +46210,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicRecordingIdentifiers(
-    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicRecording.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicRecording.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicRecording,
@@ -45005,7 +46219,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicRecordings(
-    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicRecording.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicRecording>[]> {
     return this.$objects<MusicRecording, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicRecording,
@@ -45014,7 +46228,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicRecordingsCount(
-    query?: Pick<$ObjectSet.Query<MusicRecording.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<MusicRecording.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicRecording,
@@ -45033,7 +46247,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicRecordingStubIdentifiers(
-    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicRecordingStub.Identifier>,
   ): Promise<purify.Either<Error, readonly MusicRecordingStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicRecordingStub,
@@ -45042,7 +46256,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicRecordingStubs(
-    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+    query?: $SparqlObjectSet.Query<MusicRecordingStub.Identifier>,
   ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]> {
     return this.$objects<MusicRecordingStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicRecordingStub,
@@ -45051,7 +46265,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async musicRecordingStubsCount(
-    query?: Pick<$ObjectSet.Query<MusicRecordingStub.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<MusicRecordingStub.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       MusicRecordingStub,
@@ -45070,7 +46287,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async occupationIdentifiers(
-    query?: $ObjectSet.Query<Occupation.Identifier>,
+    query?: $SparqlObjectSet.Query<Occupation.Identifier>,
   ): Promise<purify.Either<Error, readonly Occupation.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Occupation,
@@ -45079,7 +46296,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async occupations(
-    query?: $ObjectSet.Query<Occupation.Identifier>,
+    query?: $SparqlObjectSet.Query<Occupation.Identifier>,
   ): Promise<readonly purify.Either<Error, Occupation>[]> {
     return this.$objects<Occupation, rdfjs.BlankNode | rdfjs.NamedNode>(
       Occupation,
@@ -45088,7 +46305,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async occupationsCount(
-    query?: Pick<$ObjectSet.Query<Occupation.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Occupation.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       Occupation,
@@ -45107,7 +46324,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orderIdentifiers(
-    query?: $ObjectSet.Query<Order.Identifier>,
+    query?: $SparqlObjectSet.Query<Order.Identifier>,
   ): Promise<purify.Either<Error, readonly Order.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Order,
@@ -45116,7 +46333,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orders(
-    query?: $ObjectSet.Query<Order.Identifier>,
+    query?: $SparqlObjectSet.Query<Order.Identifier>,
   ): Promise<readonly purify.Either<Error, Order>[]> {
     return this.$objects<Order, rdfjs.BlankNode | rdfjs.NamedNode>(
       Order,
@@ -45125,7 +46342,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async ordersCount(
-    query?: Pick<$ObjectSet.Query<Order.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Order.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Order, query);
   }
@@ -45141,7 +46358,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orderStubIdentifiers(
-    query?: $ObjectSet.Query<OrderStub.Identifier>,
+    query?: $SparqlObjectSet.Query<OrderStub.Identifier>,
   ): Promise<purify.Either<Error, readonly OrderStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       OrderStub,
@@ -45150,7 +46367,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orderStubs(
-    query?: $ObjectSet.Query<OrderStub.Identifier>,
+    query?: $SparqlObjectSet.Query<OrderStub.Identifier>,
   ): Promise<readonly purify.Either<Error, OrderStub>[]> {
     return this.$objects<OrderStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       OrderStub,
@@ -45159,7 +46376,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orderStubsCount(
-    query?: Pick<$ObjectSet.Query<OrderStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<OrderStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       OrderStub,
@@ -45178,7 +46395,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async organizationIdentifiers(
-    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<OrganizationStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly OrganizationStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       OrganizationStatic,
@@ -45187,7 +46404,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async organizations(
-    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<OrganizationStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Organization>[]> {
     return this.$objects<Organization, rdfjs.BlankNode | rdfjs.NamedNode>(
       OrganizationStatic,
@@ -45196,7 +46413,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async organizationsCount(
-    query?: Pick<$ObjectSet.Query<OrganizationStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<OrganizationStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       OrganizationStatic,
@@ -45215,7 +46435,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async organizationStubIdentifiers(
-    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<OrganizationStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly OrganizationStubStatic.Identifier[]>
   > {
@@ -45226,7 +46446,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async organizationStubs(
-    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<OrganizationStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, OrganizationStub>[]> {
     return this.$objects<OrganizationStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       OrganizationStubStatic,
@@ -45235,7 +46455,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async organizationStubsCount(
-    query?: Pick<$ObjectSet.Query<OrganizationStubStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<OrganizationStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       OrganizationStubStatic,
@@ -45254,7 +46477,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async performingGroupIdentifiers(
-    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<PerformingGroupStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly PerformingGroupStatic.Identifier[]>
   > {
@@ -45265,7 +46488,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async performingGroups(
-    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<PerformingGroupStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, PerformingGroup>[]> {
     return this.$objects<PerformingGroup, rdfjs.BlankNode | rdfjs.NamedNode>(
       PerformingGroupStatic,
@@ -45274,7 +46497,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async performingGroupsCount(
-    query?: Pick<$ObjectSet.Query<PerformingGroupStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<PerformingGroupStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       PerformingGroupStatic,
@@ -45293,7 +46519,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async performingGroupStubIdentifiers(
-    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<PerformingGroupStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly PerformingGroupStubStatic.Identifier[]>
   > {
@@ -45304,7 +46530,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async performingGroupStubs(
-    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<PerformingGroupStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]> {
     return this.$objects<
       PerformingGroupStub,
@@ -45314,7 +46540,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async performingGroupStubsCount(
     query?: Pick<
-      $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+      $SparqlObjectSet.Query<PerformingGroupStubStatic.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
@@ -45335,7 +46561,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async personIdentifiers(
-    query?: $ObjectSet.Query<Person.Identifier>,
+    query?: $SparqlObjectSet.Query<Person.Identifier>,
   ): Promise<purify.Either<Error, readonly Person.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Person,
@@ -45344,7 +46570,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async people(
-    query?: $ObjectSet.Query<Person.Identifier>,
+    query?: $SparqlObjectSet.Query<Person.Identifier>,
   ): Promise<readonly purify.Either<Error, Person>[]> {
     return this.$objects<Person, rdfjs.BlankNode | rdfjs.NamedNode>(
       Person,
@@ -45353,7 +46579,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async peopleCount(
-    query?: Pick<$ObjectSet.Query<Person.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Person.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Person, query);
   }
@@ -45369,7 +46595,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async personStubIdentifiers(
-    query?: $ObjectSet.Query<PersonStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PersonStub.Identifier>,
   ): Promise<purify.Either<Error, readonly PersonStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       PersonStub,
@@ -45378,7 +46604,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async personStubs(
-    query?: $ObjectSet.Query<PersonStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PersonStub.Identifier>,
   ): Promise<readonly purify.Either<Error, PersonStub>[]> {
     return this.$objects<PersonStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       PersonStub,
@@ -45387,7 +46613,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async personStubsCount(
-    query?: Pick<$ObjectSet.Query<PersonStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<PersonStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       PersonStub,
@@ -45406,7 +46632,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async placeIdentifiers(
-    query?: $ObjectSet.Query<Place.Identifier>,
+    query?: $SparqlObjectSet.Query<Place.Identifier>,
   ): Promise<purify.Either<Error, readonly Place.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Place,
@@ -45415,7 +46641,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async places(
-    query?: $ObjectSet.Query<Place.Identifier>,
+    query?: $SparqlObjectSet.Query<Place.Identifier>,
   ): Promise<readonly purify.Either<Error, Place>[]> {
     return this.$objects<Place, rdfjs.BlankNode | rdfjs.NamedNode>(
       Place,
@@ -45424,7 +46650,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async placesCount(
-    query?: Pick<$ObjectSet.Query<Place.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Place.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Place, query);
   }
@@ -45440,7 +46666,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async placeStubIdentifiers(
-    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PlaceStub.Identifier>,
   ): Promise<purify.Either<Error, readonly PlaceStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       PlaceStub,
@@ -45449,7 +46675,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async placeStubs(
-    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PlaceStub.Identifier>,
   ): Promise<readonly purify.Either<Error, PlaceStub>[]> {
     return this.$objects<PlaceStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       PlaceStub,
@@ -45458,7 +46684,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async placeStubsCount(
-    query?: Pick<$ObjectSet.Query<PlaceStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<PlaceStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       PlaceStub,
@@ -45477,7 +46703,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventIdentifiers(
-    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<PublicationEventStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly PublicationEventStatic.Identifier[]>
   > {
@@ -45488,7 +46714,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEvents(
-    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<PublicationEventStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, PublicationEvent>[]> {
     return this.$objects<PublicationEvent, rdfjs.BlankNode | rdfjs.NamedNode>(
       PublicationEventStatic,
@@ -45497,7 +46723,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventsCount(
-    query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<PublicationEventStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       PublicationEventStatic,
@@ -45516,7 +46745,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventStubIdentifiers(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PublicationEventStub.Identifier>,
   ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       PublicationEventStub,
@@ -45525,7 +46754,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventStubs(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PublicationEventStub.Identifier>,
   ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
     return this.$objects<
       PublicationEventStub,
@@ -45534,7 +46763,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventStubsCount(
-    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<PublicationEventStub.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       PublicationEventStub,
@@ -45553,7 +46785,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async quantitativeValueIdentifiers(
-    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+    query?: $SparqlObjectSet.Query<QuantitativeValue.Identifier>,
   ): Promise<purify.Either<Error, readonly QuantitativeValue.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       QuantitativeValue,
@@ -45562,7 +46794,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async quantitativeValues(
-    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+    query?: $SparqlObjectSet.Query<QuantitativeValue.Identifier>,
   ): Promise<readonly purify.Either<Error, QuantitativeValue>[]> {
     return this.$objects<QuantitativeValue, rdfjs.BlankNode | rdfjs.NamedNode>(
       QuantitativeValue,
@@ -45571,7 +46803,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async quantitativeValuesCount(
-    query?: Pick<$ObjectSet.Query<QuantitativeValue.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<QuantitativeValue.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       QuantitativeValue,
@@ -45590,7 +46822,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async quantitativeValueStubIdentifiers(
-    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+    query?: $SparqlObjectSet.Query<QuantitativeValueStub.Identifier>,
   ): Promise<
     purify.Either<Error, readonly QuantitativeValueStub.Identifier[]>
   > {
@@ -45601,7 +46833,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async quantitativeValueStubs(
-    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+    query?: $SparqlObjectSet.Query<QuantitativeValueStub.Identifier>,
   ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]> {
     return this.$objects<
       QuantitativeValueStub,
@@ -45610,7 +46842,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async quantitativeValueStubsCount(
-    query?: Pick<$ObjectSet.Query<QuantitativeValueStub.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<QuantitativeValueStub.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       QuantitativeValueStub,
@@ -45629,7 +46864,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioBroadcastServiceIdentifiers(
-    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioBroadcastService.Identifier>,
   ): Promise<
     purify.Either<Error, readonly RadioBroadcastService.Identifier[]>
   > {
@@ -45640,7 +46875,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioBroadcastServices(
-    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioBroadcastService.Identifier>,
   ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]> {
     return this.$objects<
       RadioBroadcastService,
@@ -45649,7 +46884,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioBroadcastServicesCount(
-    query?: Pick<$ObjectSet.Query<RadioBroadcastService.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<RadioBroadcastService.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioBroadcastService,
@@ -45668,7 +46906,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioBroadcastServiceStubIdentifiers(
-    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
   ): Promise<
     purify.Either<Error, readonly RadioBroadcastServiceStub.Identifier[]>
   > {
@@ -45679,7 +46917,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioBroadcastServiceStubs(
-    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
   ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]> {
     return this.$objects<
       RadioBroadcastServiceStub,
@@ -45689,7 +46927,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioBroadcastServiceStubsCount(
     query?: Pick<
-      $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+      $SparqlObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
@@ -45710,7 +46948,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioEpisodeIdentifiers(
-    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioEpisode.Identifier>,
   ): Promise<purify.Either<Error, readonly RadioEpisode.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioEpisode,
@@ -45719,7 +46957,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioEpisodes(
-    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioEpisode.Identifier>,
   ): Promise<readonly purify.Either<Error, RadioEpisode>[]> {
     return this.$objects<RadioEpisode, rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioEpisode,
@@ -45728,7 +46966,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioEpisodesCount(
-    query?: Pick<$ObjectSet.Query<RadioEpisode.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<RadioEpisode.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioEpisode,
@@ -45747,7 +46985,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioEpisodeStubIdentifiers(
-    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioEpisodeStub.Identifier>,
   ): Promise<purify.Either<Error, readonly RadioEpisodeStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioEpisodeStub,
@@ -45756,7 +46994,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioEpisodeStubs(
-    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioEpisodeStub.Identifier>,
   ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]> {
     return this.$objects<RadioEpisodeStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioEpisodeStub,
@@ -45765,7 +47003,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioEpisodeStubsCount(
-    query?: Pick<$ObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioEpisodeStub,
@@ -45784,7 +47022,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioSeriesIdentifiers(
-    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioSeries.Identifier>,
   ): Promise<purify.Either<Error, readonly RadioSeries.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioSeries,
@@ -45793,7 +47031,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioSeriess(
-    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioSeries.Identifier>,
   ): Promise<readonly purify.Either<Error, RadioSeries>[]> {
     return this.$objects<RadioSeries, rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioSeries,
@@ -45802,7 +47040,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioSeriessCount(
-    query?: Pick<$ObjectSet.Query<RadioSeries.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<RadioSeries.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioSeries,
@@ -45821,7 +47059,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioSeriesStubIdentifiers(
-    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioSeriesStub.Identifier>,
   ): Promise<purify.Either<Error, readonly RadioSeriesStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioSeriesStub,
@@ -45830,7 +47068,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioSeriesStubs(
-    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+    query?: $SparqlObjectSet.Query<RadioSeriesStub.Identifier>,
   ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]> {
     return this.$objects<RadioSeriesStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioSeriesStub,
@@ -45839,7 +47077,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async radioSeriesStubsCount(
-    query?: Pick<$ObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       RadioSeriesStub,
@@ -45858,7 +47096,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async reportIdentifiers(
-    query?: $ObjectSet.Query<Report.Identifier>,
+    query?: $SparqlObjectSet.Query<Report.Identifier>,
   ): Promise<purify.Either<Error, readonly Report.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Report,
@@ -45867,7 +47105,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async reports(
-    query?: $ObjectSet.Query<Report.Identifier>,
+    query?: $SparqlObjectSet.Query<Report.Identifier>,
   ): Promise<readonly purify.Either<Error, Report>[]> {
     return this.$objects<Report, rdfjs.BlankNode | rdfjs.NamedNode>(
       Report,
@@ -45876,7 +47114,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async reportsCount(
-    query?: Pick<$ObjectSet.Query<Report.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Report.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Report, query);
   }
@@ -45892,7 +47130,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async reportStubIdentifiers(
-    query?: $ObjectSet.Query<ReportStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ReportStub.Identifier>,
   ): Promise<purify.Either<Error, readonly ReportStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ReportStub,
@@ -45901,7 +47139,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async reportStubs(
-    query?: $ObjectSet.Query<ReportStub.Identifier>,
+    query?: $SparqlObjectSet.Query<ReportStub.Identifier>,
   ): Promise<readonly purify.Either<Error, ReportStub>[]> {
     return this.$objects<ReportStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ReportStub,
@@ -45910,7 +47148,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async reportStubsCount(
-    query?: Pick<$ObjectSet.Query<ReportStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ReportStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ReportStub,
@@ -45927,7 +47165,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async roleIdentifiers(
-    query?: $ObjectSet.Query<Role.Identifier>,
+    query?: $SparqlObjectSet.Query<Role.Identifier>,
   ): Promise<purify.Either<Error, readonly Role.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       Role,
@@ -45936,13 +47174,13 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async roles(
-    query?: $ObjectSet.Query<Role.Identifier>,
+    query?: $SparqlObjectSet.Query<Role.Identifier>,
   ): Promise<readonly purify.Either<Error, Role>[]> {
     return this.$objects<Role, rdfjs.BlankNode | rdfjs.NamedNode>(Role, query);
   }
 
   async rolesCount(
-    query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Role.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Role, query);
   }
@@ -45958,7 +47196,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async serviceIdentifiers(
-    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ServiceStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ServiceStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ServiceStatic,
@@ -45967,7 +47205,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async services(
-    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ServiceStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Service>[]> {
     return this.$objects<Service, rdfjs.BlankNode | rdfjs.NamedNode>(
       ServiceStatic,
@@ -45976,7 +47214,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async servicesCount(
-    query?: Pick<$ObjectSet.Query<ServiceStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ServiceStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ServiceStatic,
@@ -45995,7 +47233,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async serviceStubIdentifiers(
-    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ServiceStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ServiceStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ServiceStubStatic,
@@ -46004,7 +47242,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async serviceStubs(
-    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ServiceStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ServiceStub>[]> {
     return this.$objects<ServiceStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ServiceStubStatic,
@@ -46013,7 +47251,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async serviceStubsCount(
-    query?: Pick<$ObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ServiceStubStatic,
@@ -46032,7 +47270,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async structuredValueIdentifiers(
-    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<StructuredValueStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly StructuredValueStatic.Identifier[]>
   > {
@@ -46043,7 +47281,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async structuredValues(
-    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<StructuredValueStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, StructuredValue>[]> {
     return this.$objects<StructuredValue, rdfjs.BlankNode | rdfjs.NamedNode>(
       StructuredValueStatic,
@@ -46052,7 +47290,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async structuredValuesCount(
-    query?: Pick<$ObjectSet.Query<StructuredValueStatic.Identifier>, "where">,
+    query?: Pick<
+      $SparqlObjectSet.Query<StructuredValueStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       StructuredValueStatic,
@@ -46071,7 +47312,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async structuredValueStubIdentifiers(
-    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<StructuredValueStubStatic.Identifier>,
   ): Promise<
     purify.Either<Error, readonly StructuredValueStubStatic.Identifier[]>
   > {
@@ -46082,7 +47323,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async structuredValueStubs(
-    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<StructuredValueStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, StructuredValueStub>[]> {
     return this.$objects<
       StructuredValueStub,
@@ -46092,7 +47333,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async structuredValueStubsCount(
     query?: Pick<
-      $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+      $SparqlObjectSet.Query<StructuredValueStubStatic.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
@@ -46113,7 +47354,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async textObjectIdentifiers(
-    query?: $ObjectSet.Query<TextObject.Identifier>,
+    query?: $SparqlObjectSet.Query<TextObject.Identifier>,
   ): Promise<purify.Either<Error, readonly TextObject.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       TextObject,
@@ -46122,7 +47363,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async textObjects(
-    query?: $ObjectSet.Query<TextObject.Identifier>,
+    query?: $SparqlObjectSet.Query<TextObject.Identifier>,
   ): Promise<readonly purify.Either<Error, TextObject>[]> {
     return this.$objects<TextObject, rdfjs.BlankNode | rdfjs.NamedNode>(
       TextObject,
@@ -46131,7 +47372,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async textObjectsCount(
-    query?: Pick<$ObjectSet.Query<TextObject.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<TextObject.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       TextObject,
@@ -46150,7 +47391,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async textObjectStubIdentifiers(
-    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+    query?: $SparqlObjectSet.Query<TextObjectStub.Identifier>,
   ): Promise<purify.Either<Error, readonly TextObjectStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       TextObjectStub,
@@ -46159,7 +47400,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async textObjectStubs(
-    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+    query?: $SparqlObjectSet.Query<TextObjectStub.Identifier>,
   ): Promise<readonly purify.Either<Error, TextObjectStub>[]> {
     return this.$objects<TextObjectStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       TextObjectStub,
@@ -46168,7 +47409,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async textObjectStubsCount(
-    query?: Pick<$ObjectSet.Query<TextObjectStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<TextObjectStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       TextObjectStub,
@@ -46187,7 +47428,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async thingIdentifiers(
-    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ThingStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ThingStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ThingStatic,
@@ -46196,7 +47437,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async things(
-    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ThingStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, Thing>[]> {
     return this.$objects<Thing, rdfjs.BlankNode | rdfjs.NamedNode>(
       ThingStatic,
@@ -46205,7 +47446,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async thingsCount(
-    query?: Pick<$ObjectSet.Query<ThingStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ThingStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ThingStatic,
@@ -46224,7 +47465,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async thingStubIdentifiers(
-    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ThingStubStatic.Identifier>,
   ): Promise<purify.Either<Error, readonly ThingStubStatic.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       ThingStubStatic,
@@ -46233,7 +47474,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async thingStubs(
-    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+    query?: $SparqlObjectSet.Query<ThingStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ThingStub>[]> {
     return this.$objects<ThingStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       ThingStubStatic,
@@ -46242,7 +47483,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async thingStubsCount(
-    query?: Pick<$ObjectSet.Query<ThingStubStatic.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ThingStubStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       ThingStubStatic,
@@ -46261,7 +47502,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async voteActionIdentifiers(
-    query?: $ObjectSet.Query<VoteAction.Identifier>,
+    query?: $SparqlObjectSet.Query<VoteAction.Identifier>,
   ): Promise<purify.Either<Error, readonly VoteAction.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       VoteAction,
@@ -46270,7 +47511,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async voteActions(
-    query?: $ObjectSet.Query<VoteAction.Identifier>,
+    query?: $SparqlObjectSet.Query<VoteAction.Identifier>,
   ): Promise<readonly purify.Either<Error, VoteAction>[]> {
     return this.$objects<VoteAction, rdfjs.BlankNode | rdfjs.NamedNode>(
       VoteAction,
@@ -46279,7 +47520,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async voteActionsCount(
-    query?: Pick<$ObjectSet.Query<VoteAction.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<VoteAction.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       VoteAction,
@@ -46298,7 +47539,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async voteActionStubIdentifiers(
-    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+    query?: $SparqlObjectSet.Query<VoteActionStub.Identifier>,
   ): Promise<purify.Either<Error, readonly VoteActionStub.Identifier[]>> {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
       VoteActionStub,
@@ -46307,7 +47548,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async voteActionStubs(
-    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+    query?: $SparqlObjectSet.Query<VoteActionStub.Identifier>,
   ): Promise<readonly purify.Either<Error, VoteActionStub>[]> {
     return this.$objects<VoteActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
       VoteActionStub,
@@ -46316,7 +47557,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async voteActionStubsCount(
-    query?: Pick<$ObjectSet.Query<VoteActionStub.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<VoteActionStub.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       VoteActionStub,
@@ -46375,7 +47616,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: { fromRdfType?: rdfjs.NamedNode },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
   ): Promise<purify.Either<Error, readonly ObjectIdentifierT[]>> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -46387,68 +47628,30 @@ export class $SparqlObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    if (query?.where) {
-      const identifiers = query.where.identifiers;
-      if (
-        identifiers.some((identifier) => identifier.termType === "BlankNode")
-      ) {
-        return purify.Left(
-          new Error("can't use blank node object identifiers with SPARQL"),
-        );
-      }
-      return purify.Either.of(identifiers.slice(offset, offset + limit));
+    const wherePatterns = this.$wherePatterns(objectType, query?.where);
+    if (wherePatterns.length === 0) {
+      return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
     }
 
-    if (objectType.fromRdfType) {
-      return purify.EitherAsync(
-        async () =>
-          this.$mapBindingsToIdentifiers(
-            await this.sparqlClient.queryBindings(
-              this.sparqlGenerator.stringify({
-                distinct: true,
-                limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
-                offset,
-                order: [{ expression: this.objectVariable }],
-                prefixes: {},
-                queryType: "SELECT",
-                type: "query",
-                variables: [this.objectVariable],
-                where: [
-                  {
-                    triples: [
-                      {
-                        object: objectType.fromRdfType!,
-                        subject: this.objectVariable,
-                        predicate: {
-                          items: [
-                            dataFactory.namedNode(
-                              "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                            ),
-                            {
-                              items: [
-                                dataFactory.namedNode(
-                                  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                                ),
-                              ],
-                              pathType: "*",
-                              type: "path",
-                            },
-                          ],
-                          pathType: "/",
-                          type: "path",
-                        },
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                ],
-              }),
-            ),
-            this.objectVariable.value,
-          ) as readonly ObjectIdentifierT[],
-      );
-    }
-    return purify.Left(new Error("object type has no fromRdfType"));
+    return purify.EitherAsync(
+      async () =>
+        this.$mapBindingsToIdentifiers(
+          await this.sparqlClient.queryBindings(
+            this.sparqlGenerator.stringify({
+              distinct: true,
+              limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+              offset,
+              order: [{ expression: this.objectVariable }],
+              prefixes: {},
+              queryType: "SELECT",
+              type: "query",
+              variables: [this.objectVariable],
+              where: wherePatterns,
+            }),
+          ),
+          this.objectVariable.value,
+        ) as readonly ObjectIdentifierT[],
+    );
   }
 
   async $objects<
@@ -46457,6 +47660,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   >(
     objectType: {
       fromRdf: (parameters: {
+        ignoreRdfType?: boolean;
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
       fromRdfType?: rdfjs.NamedNode;
@@ -46468,7 +47672,7 @@ export class $SparqlObjectSet implements $ObjectSet {
           sparqljs.GeneratorOptions,
       ) => string;
     },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
   ): Promise<readonly purify.Either<Error, ObjectT>[]> {
     const identifiersEither = await this.$objectIdentifiers<ObjectIdentifierT>(
       objectType,
@@ -46508,6 +47712,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
     return identifiers.map((identifier) =>
       objectType.fromRdf({
+        ignoreRdfType: true, // The identifier may have a sub-type of objectType and we haven't picked up the rdfs:subClassOf hierarchy in the SPARQL CONSTRUCT
         resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
           dataset,
           identifier: identifier as rdfjs.NamedNode,
@@ -46520,14 +47725,11 @@ export class $SparqlObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: { fromRdfType?: rdfjs.NamedNode },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
   ): Promise<purify.Either<Error, number>> {
-    if (!objectType.fromRdfType) {
-      return purify.Left(new Error("object type has no fromRdfType"));
-    }
-
-    if (query) {
-      throw new Error("not implemented");
+    const wherePatterns = this.$wherePatterns(objectType, query?.where);
+    if (wherePatterns.length === 0) {
+      return purify.Left(new Error("no SPARQL WHERE patterns for count"));
     }
 
     return purify.EitherAsync(async ({ liftEither }) =>
@@ -46550,35 +47752,7 @@ export class $SparqlObjectSet implements $ObjectSet {
                   variable: this.countVariable,
                 },
               ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: objectType.fromRdfType!,
-                      subject: this.objectVariable,
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
+              where: wherePatterns,
             }),
           ),
           this.countVariable.value,
@@ -46586,4 +47760,83 @@ export class $SparqlObjectSet implements $ObjectSet {
       ),
     );
   }
+
+  protected $wherePatterns<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: { fromRdfType?: rdfjs.NamedNode },
+    where?: $SparqlObjectSet.Where<ObjectIdentifierT>,
+  ): sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    // Pattern should be most to least specific.
+
+    if (where) {
+      switch (where.type) {
+        case "identifiers":
+          patterns.push({
+            type: "values" as const,
+            values: where.identifiers.map((identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            }),
+          });
+          break;
+        case "patterns":
+          patterns.push(...where.patterns(this.objectVariable));
+          break;
+      }
+    }
+
+    if (objectType.fromRdfType) {
+      patterns.push({
+        triples: [
+          {
+            object: objectType.fromRdfType!,
+            subject: this.objectVariable,
+            predicate: {
+              items: [
+                dataFactory.namedNode(
+                  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                ),
+                {
+                  items: [
+                    dataFactory.namedNode(
+                      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                    ),
+                  ],
+                  pathType: "*",
+                  type: "path",
+                },
+              ],
+              pathType: "/",
+              type: "path",
+            },
+          },
+        ],
+        type: "bgp",
+      });
+    }
+
+    return patterns;
+  }
+}
+
+export namespace $SparqlObjectSet {
+  export type Query<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = Omit<$ObjectSet.Query<ObjectIdentifierT>, "where"> & {
+    readonly where?: Where<ObjectIdentifierT>;
+  };
+  export type Where<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > =
+    | $ObjectSet.Where<ObjectIdentifierT>
+    | {
+        readonly patterns: (
+          objectVariable: rdfjs.Variable,
+        ) => readonly sparqljs.Pattern[];
+        readonly type: "patterns";
+      };
 }
