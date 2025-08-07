@@ -1,9 +1,10 @@
 import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
-import { DataFactory as dataFactory } from "n3";
+import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
+import * as sparqljs from "sparqljs";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
@@ -199,224 +200,6 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
     right,
     left.getTime() === right.getTime(),
   );
-}
-export class schema_QuantitativeValueStub {
-  private _identifier: schema_QuantitativeValueStub.Identifier | undefined;
-  readonly type = "schema_QuantitativeValueStub";
-
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier satisfies never;
-    }
-  }
-
-  get identifier(): schema_QuantitativeValueStub.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  equals(other: schema_QuantitativeValueStub): $EqualsResult {
-    return $booleanEquals(this.identifier, other.identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      );
-  }
-
-  hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.identifier.value);
-    _hasher.update(this.type);
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    return _hasher;
-  }
-
-  toJson(): schema_QuantitativeValueStub.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.identifier.termType === "BlankNode"
-            ? `_:${this.identifier.value}`
-            : this.identifier.value,
-        type: this.type,
-      } satisfies schema_QuantitativeValueStub.Json),
-    );
-  }
-
-  toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
-      mutateGraph,
-    });
-    return _resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace schema_QuantitativeValueStub {
-  export type Identifier = rdfjsResource.Resource.Identifier;
-
-  export namespace Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "schema_QuantitativeValueStub";
-  };
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, schema_QuantitativeValueStub> {
-    return propertiesFromJson(json).map(
-      (properties) => new schema_QuantitativeValueStub(properties),
-    );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "schema_QuantitativeValueStub" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-      ],
-      label: "schema_QuantitativeValueStub",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("schema_QuantitativeValueStub"),
-    });
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
-    const identifier: schema_QuantitativeValueStub.Identifier =
-      _resource.identifier;
-    return purify.Either.of({ identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof schema_QuantitativeValueStub.propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    schema_QuantitativeValueStub
-  > {
-    return schema_QuantitativeValueStub
-      .propertiesFromRdf(parameters)
-      .map((properties) => new schema_QuantitativeValueStub(properties));
-  }
-
-  export const rdfProperties = [];
 }
 export abstract class Model {
   abstract readonly identifier: ModelStatic.Identifier;
@@ -866,6 +649,58 @@ export namespace ModelStatic {
   }
 
   export const rdfProperties = [];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ModelStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ModelStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ModelStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(_parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [];
+  }
+
+  export function sparqlWherePatterns(_parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [];
+  }
 }
 export class Thing extends Model {
   protected _identifier: ThingStatic.Identifier | undefined;
@@ -1484,7 +1319,9 @@ export namespace ThingStatic {
     readonly url: { readonly "@id": string } | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2087,6 +1924,386 @@ export namespace ThingStatic {
     { path: dataFactory.namedNode("http://schema.org/subjectOf") },
     { path: dataFactory.namedNode("http://schema.org/url") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ThingStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ThingStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ThingStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("thing");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "thing");
+    return [
+      ...ModelStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}AlternateNames`),
+        predicate: dataFactory.namedNode("http://schema.org/alternateName"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Description`),
+        predicate: dataFactory.namedNode("http://schema.org/description"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(
+          `${variablePrefix}DisambiguatingDescription`,
+        ),
+        predicate: dataFactory.namedNode(
+          "http://schema.org/disambiguatingDescription",
+        ),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Images`),
+        predicate: dataFactory.namedNode("http://schema.org/image"),
+        subject,
+      },
+      ...ImageObjectStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Images`),
+        variablePrefix: `${variablePrefix}Images`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}LocalIdentifiers`),
+        predicate: dataFactory.namedNode("http://schema.org/identifier"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Name`),
+        predicate: dataFactory.namedNode("http://schema.org/name"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Order`),
+        predicate: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}SameAs`),
+        predicate: dataFactory.namedNode("http://schema.org/sameAs"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}SubjectOf`),
+        predicate: dataFactory.namedNode("http://schema.org/subjectOf"),
+        subject,
+      },
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SubjectOf`),
+        variablePrefix: `${variablePrefix}SubjectOf`,
+      }),
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SubjectOf`),
+        variablePrefix: `${variablePrefix}SubjectOf`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Url`),
+        predicate: dataFactory.namedNode("http://schema.org/url"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("thing");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "thing");
+    return [
+      ...ModelStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Thing"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}AlternateNames`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/alternateName",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Description`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/description",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}DisambiguatingDescription`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/disambiguatingDescription",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Images`),
+                predicate: dataFactory.namedNode("http://schema.org/image"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ImageObjectStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Images`),
+            variablePrefix: `${variablePrefix}Images`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}LocalIdentifiers`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/identifier",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Name`),
+                predicate: dataFactory.namedNode("http://schema.org/name"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Order`),
+                predicate: dataFactory.namedNode(
+                  "http://www.w3.org/ns/shacl#order",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SameAs`),
+                predicate: dataFactory.namedNode("http://schema.org/sameAs"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SubjectOf`),
+                predicate: dataFactory.namedNode("http://schema.org/subjectOf"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...CreativeWorkStubStatic.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}SubjectOf`,
+                    ),
+                    variablePrefix: `${variablePrefix}SubjectOf`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...EventStubStatic.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}SubjectOf`,
+                    ),
+                    variablePrefix: `${variablePrefix}SubjectOf`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Url`),
+                predicate: dataFactory.namedNode("http://schema.org/url"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class Intangible extends Thing {
   override readonly type:
@@ -2407,6 +2624,120 @@ export namespace IntangibleStatic {
   }
 
   export const rdfProperties = [...ThingStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IntangibleStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IntangibleStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IntangibleStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("intangible");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangible");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("intangible");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangible");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Intangible"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Role extends Intangible {
   protected readonly _identifierPrefix?: string;
@@ -2639,7 +2970,9 @@ export namespace Role {
     readonly startDate: string | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2845,6 +3178,177 @@ export namespace Role {
     { path: dataFactory.namedNode("http://schema.org/roleName") },
     { path: dataFactory.namedNode("http://schema.org/startDate") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Role.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Role.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Role.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("role");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "role");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}EndDate`),
+        predicate: dataFactory.namedNode("http://schema.org/endDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}RoleName`),
+        predicate: dataFactory.namedNode("http://schema.org/roleName"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}StartDate`),
+        predicate: dataFactory.namedNode("http://schema.org/startDate"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("role");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "role");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Role"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}EndDate`),
+                predicate: dataFactory.namedNode("http://schema.org/endDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}RoleName`),
+                predicate: dataFactory.namedNode("http://schema.org/roleName"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartDate`),
+                predicate: dataFactory.namedNode("http://schema.org/startDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class Occupation extends Intangible {
   override readonly type = "Occupation";
@@ -3027,6 +3531,117 @@ export namespace Occupation {
   }
 
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Occupation.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Occupation.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Occupation.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("occupation");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "occupation");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("occupation");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "occupation");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Occupation"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Enumeration extends Intangible {
   override readonly type: "Enumeration" | "GenderType" = "Enumeration";
@@ -3219,6 +3834,122 @@ export namespace EnumerationStatic {
   }
 
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        EnumerationStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        EnumerationStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      EnumerationStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("enumeration");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "enumeration");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("enumeration");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "enumeration");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/Enumeration",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class GenderType extends Enumeration {
   override readonly type = "GenderType";
@@ -3321,7 +4052,9 @@ export namespace GenderType {
 
   export type Json = EnumerationStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -3465,6 +4198,117 @@ export namespace GenderType {
   }
 
   export const rdfProperties = [...EnumerationStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        GenderType.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        GenderType.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      GenderType.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("genderType");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "genderType");
+    return [
+      ...EnumerationStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("genderType");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "genderType");
+    return [
+      ...EnumerationStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/GenderType"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Event extends Thing {
   override readonly type: "Event" | "BroadcastEvent" | "PublicationEvent" =
@@ -3863,7 +4707,9 @@ export namespace EventStatic {
     readonly superEvent: EventStubStatic.Json | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4301,6 +5147,335 @@ export namespace EventStatic {
     { path: dataFactory.namedNode("http://schema.org/subEvent") },
     { path: dataFactory.namedNode("http://schema.org/superEvent") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        EventStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        EventStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      EventStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("event");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "event");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}About`),
+        predicate: dataFactory.namedNode("http://schema.org/about"),
+        subject,
+      },
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}About`),
+        variablePrefix: `${variablePrefix}About`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}EndDate`),
+        predicate: dataFactory.namedNode("http://schema.org/endDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Location`),
+        predicate: dataFactory.namedNode("http://schema.org/location"),
+        subject,
+      },
+      ...PlaceStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Location`),
+        variablePrefix: `${variablePrefix}Location`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Organizers`),
+        predicate: dataFactory.namedNode("http://schema.org/organizer"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Organizers`),
+        variablePrefix: `${variablePrefix}Organizers`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Performers`),
+        predicate: dataFactory.namedNode("http://schema.org/performer"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Performers`),
+        variablePrefix: `${variablePrefix}Performers`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}StartDate`),
+        predicate: dataFactory.namedNode("http://schema.org/startDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}SubEvents`),
+        predicate: dataFactory.namedNode("http://schema.org/subEvent"),
+        subject,
+      },
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SubEvents`),
+        variablePrefix: `${variablePrefix}SubEvents`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+        predicate: dataFactory.namedNode("http://schema.org/superEvent"),
+        subject,
+      },
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+        variablePrefix: `${variablePrefix}SuperEvent`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("event");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "event");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Event"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}About`),
+                predicate: dataFactory.namedNode("http://schema.org/about"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ThingStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}About`),
+            variablePrefix: `${variablePrefix}About`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}EndDate`),
+                predicate: dataFactory.namedNode("http://schema.org/endDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Location`),
+                predicate: dataFactory.namedNode("http://schema.org/location"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...PlaceStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Location`),
+            variablePrefix: `${variablePrefix}Location`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Organizers`),
+                predicate: dataFactory.namedNode("http://schema.org/organizer"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Organizers`),
+            variablePrefix: `${variablePrefix}Organizers`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Performers`),
+                predicate: dataFactory.namedNode("http://schema.org/performer"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Performers`),
+            variablePrefix: `${variablePrefix}Performers`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartDate`),
+                predicate: dataFactory.namedNode("http://schema.org/startDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SubEvents`),
+                predicate: dataFactory.namedNode("http://schema.org/subEvent"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...EventStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}SubEvents`),
+            variablePrefix: `${variablePrefix}SubEvents`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/superEvent",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...EventStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+            variablePrefix: `${variablePrefix}SuperEvent`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class PublicationEvent extends Event {
   override readonly type: "PublicationEvent" | "BroadcastEvent" =
@@ -4338,19 +5513,21 @@ export class PublicationEvent extends Event {
   }
 
   override equals(other: PublicationEvent): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.publishedOn,
-        other.publishedOn,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "publishedOn",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.publishedOn,
+          other.publishedOn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "publishedOn",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -4430,7 +5607,9 @@ export namespace PublicationEventStatic {
     readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
   } & EventStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4605,6 +5784,156 @@ export namespace PublicationEventStatic {
     ...EventStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/publishedOn") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PublicationEventStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PublicationEventStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PublicationEventStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("publicationEvent");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "publicationEvent");
+    return [
+      ...EventStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+        predicate: dataFactory.namedNode("http://schema.org/publishedOn"),
+        subject,
+      },
+      ...BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+        variablePrefix: `${variablePrefix}PublishedOn`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("publicationEvent");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "publicationEvent");
+    return [
+      ...EventStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/PublicationEvent",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/publishedOn",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...BroadcastServiceStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+            variablePrefix: `${variablePrefix}PublishedOn`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class BroadcastEvent extends PublicationEvent {
   override readonly type = "BroadcastEvent";
@@ -4788,6 +6117,124 @@ export namespace BroadcastEvent {
   }
 
   export const rdfProperties = [...PublicationEventStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BroadcastEvent.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BroadcastEvent.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BroadcastEvent.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastEvent");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastEvent");
+    return [
+      ...PublicationEventStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastEvent");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastEvent");
+    return [
+      ...PublicationEventStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/BroadcastEvent",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Action extends Thing {
   override readonly type:
@@ -5038,7 +6485,9 @@ export namespace ActionStatic {
     readonly startTime: string | undefined;
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5316,6 +6765,215 @@ export namespace ActionStatic {
     { path: dataFactory.namedNode("http://schema.org/participant") },
     { path: dataFactory.namedNode("http://schema.org/startTime") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ActionStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ActionStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ActionStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("action");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "action");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Agents`),
+        predicate: dataFactory.namedNode("http://schema.org/agent"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Agents`),
+        variablePrefix: `${variablePrefix}Agents`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}EndTime`),
+        predicate: dataFactory.namedNode("http://schema.org/endTime"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Participants`),
+        predicate: dataFactory.namedNode("http://schema.org/participant"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Participants`),
+        variablePrefix: `${variablePrefix}Participants`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}StartTime`),
+        predicate: dataFactory.namedNode("http://schema.org/startTime"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("action");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "action");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Action"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Agents`),
+                predicate: dataFactory.namedNode("http://schema.org/agent"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Agents`),
+            variablePrefix: `${variablePrefix}Agents`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}EndTime`),
+                predicate: dataFactory.namedNode("http://schema.org/endTime"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Participants`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/participant",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Participants`),
+            variablePrefix: `${variablePrefix}Participants`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartTime`),
+                predicate: dataFactory.namedNode("http://schema.org/startTime"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class AssessAction extends Action {
   override readonly type: "AssessAction" | "ChooseAction" | "VoteAction" =
@@ -5514,6 +7172,124 @@ export namespace AssessActionStatic {
   }
 
   export const rdfProperties = [...ActionStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        AssessActionStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        AssessActionStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      AssessActionStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("assessAction");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "assessAction");
+    return [
+      ...ActionStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("assessAction");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "assessAction");
+    return [
+      ...ActionStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/AssessAction",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ChooseAction extends AssessAction {
   override readonly type: "ChooseAction" | "VoteAction" = "ChooseAction";
@@ -5708,6 +7484,124 @@ export namespace ChooseActionStatic {
   }
 
   export const rdfProperties = [...AssessActionStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ChooseActionStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ChooseActionStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ChooseActionStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("chooseAction");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "chooseAction");
+    return [
+      ...AssessActionStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("chooseAction");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "chooseAction");
+    return [
+      ...AssessActionStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/ChooseAction",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class VoteAction extends ChooseAction {
   override readonly type = "VoteAction";
@@ -5890,6 +7784,117 @@ export namespace VoteAction {
   }
 
   export const rdfProperties = [...ChooseActionStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        VoteAction.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        VoteAction.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      VoteAction.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("voteAction");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "voteAction");
+    return [
+      ...ChooseActionStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("voteAction");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "voteAction");
+    return [
+      ...ChooseActionStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/VoteAction"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ThingStub extends Model {
   protected _identifier: ThingStubStatic.Identifier | undefined;
@@ -6090,7 +8095,9 @@ export namespace ThingStubStatic {
     readonly order: number | undefined;
   } & ModelStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6388,6 +8395,162 @@ export namespace ThingStubStatic {
     { path: dataFactory.namedNode("http://schema.org/name") },
     { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ThingStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ThingStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ThingStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("thingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "thingStub");
+    return [
+      ...ModelStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Name`),
+        predicate: dataFactory.namedNode("http://schema.org/name"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Order`),
+        predicate: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("thingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "thingStub");
+    return [
+      ...ModelStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Thing"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Name`),
+                predicate: dataFactory.namedNode("http://schema.org/name"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Order`),
+                predicate: dataFactory.namedNode(
+                  "http://www.w3.org/ns/shacl#order",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class ActionStub extends ThingStub {
   override readonly type:
@@ -6590,6 +8753,120 @@ export namespace ActionStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ActionStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ActionStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("actionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "actionStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("actionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "actionStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Action"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class AssessActionStub extends ActionStub {
   override readonly type:
@@ -6794,6 +9071,124 @@ export namespace AssessActionStubStatic {
   }
 
   export const rdfProperties = [...ActionStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        AssessActionStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        AssessActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      AssessActionStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("assessActionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "assessActionStub");
+    return [
+      ...ActionStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("assessActionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "assessActionStub");
+    return [
+      ...ActionStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/AssessAction",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ChooseActionStub extends AssessActionStub {
   override readonly type: "ChooseActionStub" | "VoteActionStub" =
@@ -6993,6 +9388,124 @@ export namespace ChooseActionStubStatic {
   }
 
   export const rdfProperties = [...AssessActionStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ChooseActionStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ChooseActionStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ChooseActionStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("chooseActionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "chooseActionStub");
+    return [
+      ...AssessActionStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("chooseActionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "chooseActionStub");
+    return [
+      ...AssessActionStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/ChooseAction",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class VoteActionStub extends ChooseActionStub {
   override readonly type = "VoteActionStub";
@@ -7176,6 +9689,122 @@ export namespace VoteActionStub {
   }
 
   export const rdfProperties = [...ChooseActionStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        VoteActionStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        VoteActionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      VoteActionStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("voteActionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "voteActionStub");
+    return [
+      ...ChooseActionStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("voteActionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "voteActionStub");
+    return [
+      ...ChooseActionStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/VoteAction"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class CreativeWork extends Thing {
   override readonly type:
@@ -7535,7 +10164,9 @@ export namespace CreativeWorkStatic {
     readonly publication: readonly PublicationEventStub.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8084,14 +10715,324 @@ export namespace CreativeWorkStatic {
     { path: dataFactory.namedNode("http://schema.org/isPartOf") },
     { path: dataFactory.namedNode("http://schema.org/publication") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        CreativeWorkStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        CreativeWorkStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      CreativeWorkStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWork");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWork");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}About`),
+        predicate: dataFactory.namedNode("http://schema.org/about"),
+        subject,
+      },
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}About`),
+        variablePrefix: `${variablePrefix}About`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Authors`),
+        predicate: dataFactory.namedNode("http://schema.org/author"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Authors`),
+        variablePrefix: `${variablePrefix}Authors`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}DatePublished`),
+        predicate: dataFactory.namedNode("http://schema.org/datePublished"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}HasParts`),
+        predicate: dataFactory.namedNode("http://schema.org/hasPart"),
+        subject,
+      },
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}HasParts`),
+        variablePrefix: `${variablePrefix}HasParts`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}IsBasedOn`),
+        predicate: dataFactory.namedNode("http://schema.org/isBasedOn"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}IsPartOf`),
+        predicate: dataFactory.namedNode("http://schema.org/isPartOf"),
+        subject,
+      },
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}IsPartOf`),
+        variablePrefix: `${variablePrefix}IsPartOf`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Publication`),
+        predicate: dataFactory.namedNode("http://schema.org/publication"),
+        subject,
+      },
+      ...PublicationEventStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Publication`),
+        variablePrefix: `${variablePrefix}Publication`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWork");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWork");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/CreativeWork",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}About`),
+                predicate: dataFactory.namedNode("http://schema.org/about"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ThingStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}About`),
+            variablePrefix: `${variablePrefix}About`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Authors`),
+                predicate: dataFactory.namedNode("http://schema.org/author"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Authors`),
+            variablePrefix: `${variablePrefix}Authors`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}DatePublished`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/datePublished",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}HasParts`),
+                predicate: dataFactory.namedNode("http://schema.org/hasPart"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...CreativeWorkStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}HasParts`),
+            variablePrefix: `${variablePrefix}HasParts`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}IsBasedOn`),
+                predicate: dataFactory.namedNode("http://schema.org/isBasedOn"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}IsPartOf`),
+                predicate: dataFactory.namedNode("http://schema.org/isPartOf"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...CreativeWorkStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}IsPartOf`),
+            variablePrefix: `${variablePrefix}IsPartOf`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Publication`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/publication",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...PublicationEventStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Publication`),
+            variablePrefix: `${variablePrefix}Publication`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MediaObject extends CreativeWork {
   override readonly type: "MediaObject" | "ImageObject" | "TextObject" =
     "MediaObject";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
-  readonly height: purify.Maybe<schema_QuantitativeValueStub>;
-  readonly width: purify.Maybe<schema_QuantitativeValueStub>;
+  readonly height: purify.Maybe<QuantitativeValueStub>;
+  readonly width: purify.Maybe<QuantitativeValueStub>;
 
   constructor(
     parameters: {
@@ -8102,11 +11043,11 @@ export class MediaObject extends CreativeWork {
         | string;
       readonly encodingFormat?: purify.Maybe<string> | string;
       readonly height?:
-        | purify.Maybe<schema_QuantitativeValueStub>
-        | schema_QuantitativeValueStub;
+        | QuantitativeValueStub
+        | purify.Maybe<QuantitativeValueStub>;
       readonly width?:
-        | purify.Maybe<schema_QuantitativeValueStub>
-        | schema_QuantitativeValueStub;
+        | QuantitativeValueStub
+        | purify.Maybe<QuantitativeValueStub>;
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
@@ -8138,7 +11079,7 @@ export class MediaObject extends CreativeWork {
       this.height = parameters.height;
     } else if (
       typeof parameters.height === "object" &&
-      parameters.height instanceof schema_QuantitativeValueStub
+      parameters.height instanceof QuantitativeValueStub
     ) {
       this.height = purify.Maybe.of(parameters.height);
     } else if (typeof parameters.height === "undefined") {
@@ -8151,7 +11092,7 @@ export class MediaObject extends CreativeWork {
       this.width = parameters.width;
     } else if (
       typeof parameters.width === "object" &&
-      parameters.width instanceof schema_QuantitativeValueStub
+      parameters.width instanceof QuantitativeValueStub
     ) {
       this.width = purify.Maybe.of(parameters.width);
     } else if (typeof parameters.width === "undefined") {
@@ -8328,18 +11269,20 @@ export namespace MediaObjectStatic {
   export type Json = {
     readonly contentUrl: { readonly "@id": string } | undefined;
     readonly encodingFormat: string | undefined;
-    readonly height: schema_QuantitativeValueStub.Json | undefined;
-    readonly width: schema_QuantitativeValueStub.Json | undefined;
+    readonly height: QuantitativeValueStub.Json | undefined;
+    readonly width: QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<schema_QuantitativeValueStub>;
-      width: purify.Maybe<schema_QuantitativeValueStub>;
+      height: purify.Maybe<QuantitativeValueStub>;
+      width: purify.Maybe<QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -8364,10 +11307,10 @@ export namespace MediaObjectStatic {
       _jsonObject["encodingFormat"],
     );
     const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
+      (_item) => QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
+      QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -8407,10 +11350,10 @@ export namespace MediaObjectStatic {
         CreativeWorkStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
         { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        schema_QuantitativeValueStub.jsonUiSchema({
+        QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/height`,
         }),
-        schema_QuantitativeValueStub.jsonUiSchema({
+        QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/width`,
         }),
       ],
@@ -8426,8 +11369,8 @@ export namespace MediaObjectStatic {
         type: zod.enum(["MediaObject", "ImageObject", "TextObject"]),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
-        height: schema_QuantitativeValueStub.jsonZodSchema().optional(),
-        width: schema_QuantitativeValueStub.jsonZodSchema().optional(),
+        height: QuantitativeValueStub.jsonZodSchema().optional(),
+        width: QuantitativeValueStub.jsonZodSchema().optional(),
       }),
     );
   }
@@ -8449,8 +11392,8 @@ export namespace MediaObjectStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<schema_QuantitativeValueStub>;
-      width: purify.Maybe<schema_QuantitativeValueStub>;
+      height: purify.Maybe<QuantitativeValueStub>;
+      width: purify.Maybe<QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStatic.propertiesFromRdf({
@@ -8527,7 +11470,7 @@ export namespace MediaObjectStatic {
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<schema_QuantitativeValueStub>
+      purify.Maybe<QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/height"), {
@@ -8536,7 +11479,7 @@ export namespace MediaObjectStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          schema_QuantitativeValueStub.fromRdf({
+          QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -8552,7 +11495,7 @@ export namespace MediaObjectStatic {
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<schema_QuantitativeValueStub>
+      purify.Maybe<QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/width"), {
@@ -8561,7 +11504,7 @@ export namespace MediaObjectStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          schema_QuantitativeValueStub.fromRdf({
+          QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -8616,6 +11559,228 @@ export namespace MediaObjectStatic {
     { path: dataFactory.namedNode("http://schema.org/height") },
     { path: dataFactory.namedNode("http://schema.org/width") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MediaObjectStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MediaObjectStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MediaObjectStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("mediaObject");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "mediaObject");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ContentUrl`),
+        predicate: dataFactory.namedNode("http://schema.org/contentUrl"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}EncodingFormat`),
+        predicate: dataFactory.namedNode("http://schema.org/encodingFormat"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Height`),
+        predicate: dataFactory.namedNode("http://schema.org/height"),
+        subject,
+      },
+      ...QuantitativeValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Height`),
+        variablePrefix: `${variablePrefix}Height`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Width`),
+        predicate: dataFactory.namedNode("http://schema.org/width"),
+        subject,
+      },
+      ...QuantitativeValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Width`),
+        variablePrefix: `${variablePrefix}Width`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("mediaObject");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "mediaObject");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MediaObject",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}ContentUrl`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/contentUrl",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}EncodingFormat`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/encodingFormat",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Height`),
+                predicate: dataFactory.namedNode("http://schema.org/height"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...QuantitativeValueStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Height`),
+            variablePrefix: `${variablePrefix}Height`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Width`),
+                predicate: dataFactory.namedNode("http://schema.org/width"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...QuantitativeValueStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Width`),
+            variablePrefix: `${variablePrefix}Width`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class TextObject extends MediaObject {
   override readonly type = "TextObject";
@@ -8647,18 +11812,20 @@ export class TextObject extends MediaObject {
   }
 
   override equals(other: TextObject): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.uriSpace,
-        other.uriSpace,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "uriSpace",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.uriSpace,
+          other.uriSpace,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "uriSpace",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -8736,7 +11903,9 @@ export namespace TextObject {
     readonly uriSpace: string | undefined;
   } & MediaObjectStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8884,6 +12053,139 @@ export namespace TextObject {
     ...MediaObjectStatic.rdfProperties,
     { path: dataFactory.namedNode("http://rdfs.org/ns/void#uriSpace") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        TextObject.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        TextObject.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      TextObject.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("textObject");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "textObject");
+    return [
+      ...MediaObjectStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}UriSpace`),
+        predicate: dataFactory.namedNode("http://rdfs.org/ns/void#uriSpace"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("textObject");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "textObject");
+    return [
+      ...MediaObjectStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/TextObject"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}UriSpace`),
+                predicate: dataFactory.namedNode(
+                  "http://rdfs.org/ns/void#uriSpace",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class CreativeWorkStub extends ThingStub {
   override readonly type:
@@ -9228,6 +12530,124 @@ export namespace CreativeWorkStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        CreativeWorkStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      CreativeWorkStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWorkStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/CreativeWork",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MediaObjectStub extends CreativeWorkStub {
   override readonly type:
@@ -9236,8 +12656,8 @@ export class MediaObjectStub extends CreativeWorkStub {
     | "TextObjectStub" = "MediaObjectStub";
   readonly contentUrl: purify.Maybe<rdfjs.NamedNode>;
   readonly encodingFormat: purify.Maybe<string>;
-  readonly height: purify.Maybe<schema_QuantitativeValueStub>;
-  readonly width: purify.Maybe<schema_QuantitativeValueStub>;
+  readonly height: purify.Maybe<QuantitativeValueStub>;
+  readonly width: purify.Maybe<QuantitativeValueStub>;
 
   constructor(
     parameters: {
@@ -9248,11 +12668,11 @@ export class MediaObjectStub extends CreativeWorkStub {
         | string;
       readonly encodingFormat?: purify.Maybe<string> | string;
       readonly height?:
-        | purify.Maybe<schema_QuantitativeValueStub>
-        | schema_QuantitativeValueStub;
+        | QuantitativeValueStub
+        | purify.Maybe<QuantitativeValueStub>;
       readonly width?:
-        | purify.Maybe<schema_QuantitativeValueStub>
-        | schema_QuantitativeValueStub;
+        | QuantitativeValueStub
+        | purify.Maybe<QuantitativeValueStub>;
     } & ConstructorParameters<typeof CreativeWorkStub>[0],
   ) {
     super(parameters);
@@ -9284,7 +12704,7 @@ export class MediaObjectStub extends CreativeWorkStub {
       this.height = parameters.height;
     } else if (
       typeof parameters.height === "object" &&
-      parameters.height instanceof schema_QuantitativeValueStub
+      parameters.height instanceof QuantitativeValueStub
     ) {
       this.height = purify.Maybe.of(parameters.height);
     } else if (typeof parameters.height === "undefined") {
@@ -9297,7 +12717,7 @@ export class MediaObjectStub extends CreativeWorkStub {
       this.width = parameters.width;
     } else if (
       typeof parameters.width === "object" &&
-      parameters.width instanceof schema_QuantitativeValueStub
+      parameters.width instanceof QuantitativeValueStub
     ) {
       this.width = purify.Maybe.of(parameters.width);
     } else if (typeof parameters.width === "undefined") {
@@ -9474,18 +12894,20 @@ export namespace MediaObjectStubStatic {
   export type Json = {
     readonly contentUrl: { readonly "@id": string } | undefined;
     readonly encodingFormat: string | undefined;
-    readonly height: schema_QuantitativeValueStub.Json | undefined;
-    readonly width: schema_QuantitativeValueStub.Json | undefined;
+    readonly height: QuantitativeValueStub.Json | undefined;
+    readonly width: QuantitativeValueStub.Json | undefined;
   } & CreativeWorkStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<schema_QuantitativeValueStub>;
-      width: purify.Maybe<schema_QuantitativeValueStub>;
+      height: purify.Maybe<QuantitativeValueStub>;
+      width: purify.Maybe<QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -9511,10 +12933,10 @@ export namespace MediaObjectStubStatic {
       _jsonObject["encodingFormat"],
     );
     const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
+      (_item) => QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      schema_QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
+      QuantitativeValueStub.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -9560,10 +12982,10 @@ export namespace MediaObjectStubStatic {
         CreativeWorkStubStatic.jsonUiSchema({ scopePrefix }),
         { scope: `${scopePrefix}/properties/contentUrl`, type: "Control" },
         { scope: `${scopePrefix}/properties/encodingFormat`, type: "Control" },
-        schema_QuantitativeValueStub.jsonUiSchema({
+        QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/height`,
         }),
-        schema_QuantitativeValueStub.jsonUiSchema({
+        QuantitativeValueStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/width`,
         }),
       ],
@@ -9583,8 +13005,8 @@ export namespace MediaObjectStubStatic {
         ]),
         contentUrl: zod.object({ "@id": zod.string().min(1) }).optional(),
         encodingFormat: zod.string().optional(),
-        height: schema_QuantitativeValueStub.jsonZodSchema().optional(),
-        width: schema_QuantitativeValueStub.jsonZodSchema().optional(),
+        height: QuantitativeValueStub.jsonZodSchema().optional(),
+        width: QuantitativeValueStub.jsonZodSchema().optional(),
       }),
     );
   }
@@ -9606,8 +13028,8 @@ export namespace MediaObjectStubStatic {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
       encodingFormat: purify.Maybe<string>;
-      height: purify.Maybe<schema_QuantitativeValueStub>;
-      width: purify.Maybe<schema_QuantitativeValueStub>;
+      height: purify.Maybe<QuantitativeValueStub>;
+      width: purify.Maybe<QuantitativeValueStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.propertiesFromRdf>>
   > {
     const _super0Either = CreativeWorkStubStatic.propertiesFromRdf({
@@ -9684,7 +13106,7 @@ export namespace MediaObjectStubStatic {
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<schema_QuantitativeValueStub>
+      purify.Maybe<QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/height"), {
@@ -9693,7 +13115,7 @@ export namespace MediaObjectStubStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          schema_QuantitativeValueStub.fromRdf({
+          QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -9709,7 +13131,7 @@ export namespace MediaObjectStubStatic {
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<schema_QuantitativeValueStub>
+      purify.Maybe<QuantitativeValueStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/width"), {
@@ -9718,7 +13140,7 @@ export namespace MediaObjectStubStatic {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          schema_QuantitativeValueStub.fromRdf({
+          QuantitativeValueStub.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -9773,6 +13195,230 @@ export namespace MediaObjectStubStatic {
     { path: dataFactory.namedNode("http://schema.org/height") },
     { path: dataFactory.namedNode("http://schema.org/width") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MediaObjectStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MediaObjectStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MediaObjectStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("mediaObjectStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "mediaObjectStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ContentUrl`),
+        predicate: dataFactory.namedNode("http://schema.org/contentUrl"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}EncodingFormat`),
+        predicate: dataFactory.namedNode("http://schema.org/encodingFormat"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Height`),
+        predicate: dataFactory.namedNode("http://schema.org/height"),
+        subject,
+      },
+      ...QuantitativeValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Height`),
+        variablePrefix: `${variablePrefix}Height`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Width`),
+        predicate: dataFactory.namedNode("http://schema.org/width"),
+        subject,
+      },
+      ...QuantitativeValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Width`),
+        variablePrefix: `${variablePrefix}Width`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("mediaObjectStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "mediaObjectStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MediaObject",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}ContentUrl`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/contentUrl",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}EncodingFormat`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/encodingFormat",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Height`),
+                predicate: dataFactory.namedNode("http://schema.org/height"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...QuantitativeValueStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Height`),
+            variablePrefix: `${variablePrefix}Height`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Width`),
+                predicate: dataFactory.namedNode("http://schema.org/width"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...QuantitativeValueStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Width`),
+            variablePrefix: `${variablePrefix}Width`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class TextObjectStub extends MediaObjectStub {
   override readonly type = "TextObjectStub";
@@ -9955,6 +13601,122 @@ export namespace TextObjectStub {
   }
 
   export const rdfProperties = [...MediaObjectStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        TextObjectStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        TextObjectStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      TextObjectStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("textObjectStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "textObjectStub");
+    return [
+      ...MediaObjectStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("textObjectStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "textObjectStub");
+    return [
+      ...MediaObjectStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/TextObject"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class StructuredValue extends Intangible {
   override readonly type:
@@ -10175,6 +13937,124 @@ export namespace StructuredValueStatic {
   }
 
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructuredValueStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StructuredValueStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StructuredValueStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("structuredValue");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "structuredValue");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("structuredValue");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "structuredValue");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/StructuredValue",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Service extends Intangible {
   override readonly type:
@@ -10377,6 +14257,120 @@ export namespace ServiceStatic {
   }
 
   export const rdfProperties = [...IntangibleStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ServiceStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ServiceStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ServiceStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("service");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "service");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("service");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "service");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Service"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Article extends CreativeWork {
   override readonly type: "Article" | "Report" = "Article";
@@ -10569,6 +14563,120 @@ export namespace ArticleStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ArticleStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ArticleStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ArticleStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("article");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "article");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("article");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "article");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Article"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Report extends Article {
   override readonly type = "Report";
@@ -10742,6 +14850,117 @@ export namespace Report {
   }
 
   export const rdfProperties = [...ArticleStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Report.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Report.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Report.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("report");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "report");
+    return [
+      ...ArticleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("report");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "report");
+    return [
+      ...ArticleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Report"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ArticleStub extends CreativeWorkStub {
   override readonly type: "ArticleStub" | "ReportStub" = "ArticleStub";
@@ -10935,6 +15154,120 @@ export namespace ArticleStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ArticleStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ArticleStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ArticleStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("articleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "articleStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("articleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "articleStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Article"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ReportStub extends ArticleStub {
   override readonly type = "ReportStub";
@@ -11115,6 +15448,117 @@ export namespace ReportStub {
   }
 
   export const rdfProperties = [...ArticleStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ReportStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ReportStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ReportStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("reportStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "reportStub");
+    return [
+      ...ArticleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("reportStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "reportStub");
+    return [
+      ...ArticleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Report"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class CreativeWorkSeries extends CreativeWork {
   override readonly type: "CreativeWorkSeries" | "RadioSeries" =
@@ -11316,6 +15760,127 @@ export namespace CreativeWorkSeriesStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        CreativeWorkSeriesStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        CreativeWorkSeriesStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      CreativeWorkSeriesStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkSeries");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWorkSeries");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkSeries");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "creativeWorkSeries");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/CreativeWorkSeries",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class RadioSeries extends CreativeWorkSeries {
   override readonly type = "RadioSeries";
@@ -11345,19 +15910,21 @@ export class RadioSeries extends CreativeWorkSeries {
   }
 
   override equals(other: RadioSeries): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.episodes,
-        other.episodes,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "episodes",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.episodes,
+          other.episodes,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "episodes",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -11438,7 +16005,9 @@ export namespace RadioSeries {
     readonly episodes: readonly RadioEpisodeStub.Json[];
   } & CreativeWorkSeriesStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11606,6 +16175,149 @@ export namespace RadioSeries {
     ...CreativeWorkSeriesStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/episode") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RadioSeries.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RadioSeries.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RadioSeries.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("radioSeries");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioSeries");
+    return [
+      ...CreativeWorkSeriesStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Episodes`),
+        predicate: dataFactory.namedNode("http://schema.org/episode"),
+        subject,
+      },
+      ...RadioEpisodeStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Episodes`),
+        variablePrefix: `${variablePrefix}Episodes`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("radioSeries");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioSeries");
+    return [
+      ...CreativeWorkSeriesStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/RadioSeries",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Episodes`),
+                predicate: dataFactory.namedNode("http://schema.org/episode"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...RadioEpisodeStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Episodes`),
+            variablePrefix: `${variablePrefix}Episodes`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class CreativeWorkSeriesStub extends CreativeWorkStub {
   override readonly type: "CreativeWorkSeriesStub" | "RadioSeriesStub" =
@@ -11808,6 +16520,131 @@ export namespace CreativeWorkSeriesStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        CreativeWorkSeriesStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        CreativeWorkSeriesStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      CreativeWorkSeriesStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkSeriesStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "creativeWorkSeriesStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("creativeWorkSeriesStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "creativeWorkSeriesStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/CreativeWorkSeries",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class RadioSeriesStub extends CreativeWorkSeriesStub {
   override readonly type = "RadioSeriesStub";
@@ -11991,6 +16828,124 @@ export namespace RadioSeriesStub {
   }
 
   export const rdfProperties = [...CreativeWorkSeriesStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RadioSeriesStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RadioSeriesStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RadioSeriesStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioSeriesStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioSeriesStub");
+    return [
+      ...CreativeWorkSeriesStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioSeriesStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioSeriesStub");
+    return [
+      ...CreativeWorkSeriesStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/RadioSeries",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Episode extends CreativeWork {
   override readonly type: "Episode" | "RadioEpisode" = "Episode";
@@ -12027,19 +16982,21 @@ export class Episode extends CreativeWork {
   }
 
   override equals(other: Episode): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfSeries,
-        other.partOfSeries,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfSeries",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfSeries,
+          other.partOfSeries,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfSeries",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -12121,7 +17078,9 @@ export namespace EpisodeStatic {
     readonly partOfSeries: CreativeWorkSeriesStubStatic.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12293,6 +17252,152 @@ export namespace EpisodeStatic {
     ...CreativeWorkStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/partOfSeries") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        EpisodeStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        EpisodeStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      EpisodeStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("episode");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "episode");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}PartOfSeries`),
+        predicate: dataFactory.namedNode("http://schema.org/partOfSeries"),
+        subject,
+      },
+      ...CreativeWorkSeriesStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}PartOfSeries`),
+        variablePrefix: `${variablePrefix}PartOfSeries`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("episode");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "episode");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Episode"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}PartOfSeries`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/partOfSeries",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...CreativeWorkSeriesStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}PartOfSeries`),
+            variablePrefix: `${variablePrefix}PartOfSeries`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class RadioEpisode extends Episode {
   override readonly type = "RadioEpisode";
@@ -12475,6 +17580,121 @@ export namespace RadioEpisode {
   }
 
   export const rdfProperties = [...EpisodeStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RadioEpisode.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RadioEpisode.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RadioEpisode.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioEpisode");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioEpisode");
+    return [
+      ...EpisodeStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioEpisode");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioEpisode");
+    return [
+      ...EpisodeStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/RadioEpisode",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class EpisodeStub extends CreativeWorkStub {
   override readonly type: "EpisodeStub" | "RadioEpisodeStub" = "EpisodeStub";
@@ -12671,6 +17891,120 @@ export namespace EpisodeStubStatic {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        EpisodeStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        EpisodeStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      EpisodeStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("episodeStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "episodeStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("episodeStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "episodeStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Episode"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class RadioEpisodeStub extends EpisodeStub {
   override readonly type = "RadioEpisodeStub";
@@ -12853,6 +18187,124 @@ export namespace RadioEpisodeStub {
   }
 
   export const rdfProperties = [...EpisodeStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RadioEpisodeStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RadioEpisodeStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RadioEpisodeStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioEpisodeStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioEpisodeStub");
+    return [
+      ...EpisodeStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioEpisodeStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "radioEpisodeStub");
+    return [
+      ...EpisodeStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/RadioEpisode",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class BroadcastService extends Service {
   override readonly type: "BroadcastService" | "RadioBroadcastService" =
@@ -12885,18 +18337,20 @@ export class BroadcastService extends Service {
   }
 
   override equals(other: BroadcastService): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.callSign,
-        other.callSign,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "callSign",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.callSign,
+          other.callSign,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "callSign",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -12974,7 +18428,9 @@ export namespace BroadcastServiceStatic {
     readonly callSign: string | undefined;
   } & ServiceStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13137,6 +18593,144 @@ export namespace BroadcastServiceStatic {
     ...ServiceStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/callSign") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BroadcastServiceStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BroadcastServiceStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BroadcastServiceStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastService");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastService");
+    return [
+      ...ServiceStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}CallSign`),
+        predicate: dataFactory.namedNode("http://schema.org/callSign"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastService");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastService");
+    return [
+      ...ServiceStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/BroadcastService",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}CallSign`),
+                predicate: dataFactory.namedNode("http://schema.org/callSign"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class RadioBroadcastService extends BroadcastService {
   override readonly type = "RadioBroadcastService";
@@ -13322,6 +18916,128 @@ export namespace RadioBroadcastService {
   }
 
   export const rdfProperties = [...BroadcastServiceStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RadioBroadcastService.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RadioBroadcastService.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RadioBroadcastService.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioBroadcastService");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "radioBroadcastService");
+    return [
+      ...BroadcastServiceStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioBroadcastService");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "radioBroadcastService");
+    return [
+      ...BroadcastServiceStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/RadioBroadcastService",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class IntangibleStub extends ThingStub {
   override readonly type:
@@ -13614,6 +19330,122 @@ export namespace IntangibleStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IntangibleStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IntangibleStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IntangibleStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("intangibleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangibleStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("intangibleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangibleStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Intangible"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ServiceStub extends IntangibleStub {
   override readonly type:
@@ -13816,6 +19648,120 @@ export namespace ServiceStubStatic {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ServiceStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ServiceStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ServiceStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("serviceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "serviceStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("serviceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "serviceStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Service"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class BroadcastServiceStub extends ServiceStub {
   override readonly type: "BroadcastServiceStub" | "RadioBroadcastServiceStub" =
@@ -14017,6 +19963,131 @@ export namespace BroadcastServiceStubStatic {
   }
 
   export const rdfProperties = [...ServiceStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BroadcastServiceStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BroadcastServiceStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastServiceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "broadcastServiceStub");
+    return [
+      ...ServiceStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastServiceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "broadcastServiceStub");
+    return [
+      ...ServiceStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/BroadcastService",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class RadioBroadcastServiceStub extends BroadcastServiceStub {
   override readonly type = "RadioBroadcastServiceStub";
@@ -14208,6 +20279,131 @@ export namespace RadioBroadcastServiceStub {
   }
 
   export const rdfProperties = [...BroadcastServiceStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RadioBroadcastServiceStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RadioBroadcastServiceStub.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RadioBroadcastServiceStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioBroadcastServiceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "radioBroadcastServiceStub");
+    return [
+      ...BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("radioBroadcastServiceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "radioBroadcastServiceStub");
+    return [
+      ...BroadcastServiceStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/RadioBroadcastService",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class QuantitativeValue extends StructuredValue {
   override readonly type = "QuantitativeValue";
@@ -14360,7 +20556,9 @@ export namespace QuantitativeValue {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14531,6 +20729,164 @@ export namespace QuantitativeValue {
     { path: dataFactory.namedNode("http://schema.org/unitText") },
     { path: dataFactory.namedNode("http://schema.org/value") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        QuantitativeValue.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        QuantitativeValue.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      QuantitativeValue.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("quantitativeValue");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "quantitativeValue");
+    return [
+      ...StructuredValueStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}UnitText`),
+        predicate: dataFactory.namedNode("http://schema.org/unitText"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Value`),
+        predicate: dataFactory.namedNode("http://schema.org/value"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("quantitativeValue");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "quantitativeValue");
+    return [
+      ...StructuredValueStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/QuantitativeValue",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}UnitText`),
+                predicate: dataFactory.namedNode("http://schema.org/unitText"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Value`),
+                predicate: dataFactory.namedNode("http://schema.org/value"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class StructuredValueStub extends IntangibleStub {
   override readonly type:
@@ -14754,6 +21110,127 @@ export namespace StructuredValueStubStatic {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StructuredValueStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StructuredValueStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StructuredValueStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("structuredValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "structuredValueStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("structuredValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "structuredValueStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/StructuredValue",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class QuantitativeValueStub extends StructuredValueStub {
   override readonly type = "QuantitativeValueStub";
@@ -14906,7 +21383,9 @@ export namespace QuantitativeValueStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15080,6 +21559,168 @@ export namespace QuantitativeValueStub {
     { path: dataFactory.namedNode("http://schema.org/unitText") },
     { path: dataFactory.namedNode("http://schema.org/value") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        QuantitativeValueStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        QuantitativeValueStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      QuantitativeValueStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("quantitativeValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "quantitativeValueStub");
+    return [
+      ...StructuredValueStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}UnitText`),
+        predicate: dataFactory.namedNode("http://schema.org/unitText"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Value`),
+        predicate: dataFactory.namedNode("http://schema.org/value"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("quantitativeValueStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "quantitativeValueStub");
+    return [
+      ...StructuredValueStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/QuantitativeValue",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}UnitText`),
+                predicate: dataFactory.namedNode("http://schema.org/unitText"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Value`),
+                predicate: dataFactory.namedNode("http://schema.org/value"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class EventStub extends ThingStub {
   override readonly type: "EventStub" | "PublicationEventStub" = "EventStub";
@@ -15259,7 +21900,9 @@ export namespace EventStubStatic {
     readonly superEvent: { readonly "@id": string } | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15448,6 +22091,162 @@ export namespace EventStubStatic {
     { path: dataFactory.namedNode("http://schema.org/startDate") },
     { path: dataFactory.namedNode("http://schema.org/superEvent") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        EventStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        EventStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      EventStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "eventStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}StartDate`),
+        predicate: dataFactory.namedNode("http://schema.org/startDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+        predicate: dataFactory.namedNode("http://schema.org/superEvent"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "eventStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Event"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartDate`),
+                predicate: dataFactory.namedNode("http://schema.org/startDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/superEvent",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class PublicationEventStub extends EventStub {
   override readonly type = "PublicationEventStub";
@@ -15630,6 +22429,128 @@ export namespace PublicationEventStub {
   }
 
   export const rdfProperties = [...EventStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PublicationEventStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PublicationEventStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PublicationEventStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "publicationEventStub");
+    return [
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "publicationEventStub");
+    return [
+      ...EventStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/PublicationEvent",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Place extends Thing {
   override readonly type = "Place";
@@ -15803,6 +22724,117 @@ export namespace Place {
   }
 
   export const rdfProperties = [...ThingStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Place.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Place.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Place.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("place");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "place");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("place");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "place");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Place"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class PlaceStub extends ThingStub {
   override readonly type = "PlaceStub";
@@ -15983,6 +23015,117 @@ export namespace PlaceStub {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PlaceStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PlaceStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PlaceStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("placeStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "placeStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("placeStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "placeStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Place"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Person extends Thing {
   override readonly type = "Person";
@@ -16494,7 +23637,9 @@ export namespace Person {
     readonly performerIn: readonly EventStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16961,6 +24106,362 @@ export namespace Person {
     { path: dataFactory.namedNode("http://schema.org/memberOf") },
     { path: dataFactory.namedNode("http://schema.org/performerIn") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Person.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Person.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Person.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("person");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "person");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}BirthDate`),
+        predicate: dataFactory.namedNode("http://schema.org/birthDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}DeathDate`),
+        predicate: dataFactory.namedNode("http://schema.org/deathDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}FamilyName`),
+        predicate: dataFactory.namedNode("http://schema.org/familyName"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Gender`),
+        predicate: dataFactory.namedNode("http://schema.org/gender"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}GivenName`),
+        predicate: dataFactory.namedNode("http://schema.org/givenName"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}HasOccupation`),
+        predicate: dataFactory.namedNode("http://schema.org/hasOccupation"),
+        subject,
+      },
+      ...Occupation.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}HasOccupation`),
+        variablePrefix: `${variablePrefix}HasOccupation`,
+      }),
+      ...Role.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}HasOccupation`),
+        variablePrefix: `${variablePrefix}HasOccupation`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}JobTitle`),
+        predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}MemberOf`),
+        predicate: dataFactory.namedNode("http://schema.org/memberOf"),
+        subject,
+      },
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}MemberOf`),
+        variablePrefix: `${variablePrefix}MemberOf`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}PerformerIn`),
+        predicate: dataFactory.namedNode("http://schema.org/performerIn"),
+        subject,
+      },
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}PerformerIn`),
+        variablePrefix: `${variablePrefix}PerformerIn`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("person");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "person");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Person"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}BirthDate`),
+                predicate: dataFactory.namedNode("http://schema.org/birthDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}DeathDate`),
+                predicate: dataFactory.namedNode("http://schema.org/deathDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}FamilyName`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/familyName",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Gender`),
+                predicate: dataFactory.namedNode("http://schema.org/gender"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}GivenName`),
+                predicate: dataFactory.namedNode("http://schema.org/givenName"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}HasOccupation`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/hasOccupation",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...Occupation.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}HasOccupation`,
+                    ),
+                    variablePrefix: `${variablePrefix}HasOccupation`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...Role.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}HasOccupation`,
+                    ),
+                    variablePrefix: `${variablePrefix}HasOccupation`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}JobTitle`),
+                predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}MemberOf`),
+                predicate: dataFactory.namedNode("http://schema.org/memberOf"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...OrganizationStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}MemberOf`),
+            variablePrefix: `${variablePrefix}MemberOf`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}PerformerIn`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/performerIn",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...EventStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}PerformerIn`),
+            variablePrefix: `${variablePrefix}PerformerIn`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class Organization extends Thing {
   override readonly type: "Organization" | "MusicGroup" | "PerformingGroup" =
@@ -17160,7 +24661,9 @@ export namespace OrganizationStatic {
     readonly subOrganizations: readonly OrganizationStubStatic.Json[];
   } & ThingStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17435,6 +24938,224 @@ export namespace OrganizationStatic {
     { path: dataFactory.namedNode("http://schema.org/parentOrganization") },
     { path: dataFactory.namedNode("http://schema.org/subOrganization") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        OrganizationStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        OrganizationStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      OrganizationStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("organization");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "organization");
+    return [
+      ...ThingStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Members`),
+        predicate: dataFactory.namedNode("http://schema.org/member"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Members`),
+        variablePrefix: `${variablePrefix}Members`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ParentOrganizations`),
+        predicate: dataFactory.namedNode(
+          "http://schema.org/parentOrganization",
+        ),
+        subject,
+      },
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ParentOrganizations`),
+        variablePrefix: `${variablePrefix}ParentOrganizations`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}SubOrganizations`),
+        predicate: dataFactory.namedNode("http://schema.org/subOrganization"),
+        subject,
+      },
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SubOrganizations`),
+        variablePrefix: `${variablePrefix}SubOrganizations`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("organization");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "organization");
+    return [
+      ...ThingStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/Organization",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Members`),
+                predicate: dataFactory.namedNode("http://schema.org/member"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Members`),
+            variablePrefix: `${variablePrefix}Members`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ParentOrganizations`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/parentOrganization",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...OrganizationStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}ParentOrganizations`,
+            ),
+            variablePrefix: `${variablePrefix}ParentOrganizations`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}SubOrganizations`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/subOrganization",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...OrganizationStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}SubOrganizations`),
+            variablePrefix: `${variablePrefix}SubOrganizations`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class PerformingGroup extends Organization {
   override readonly type: "PerformingGroup" | "MusicGroup" = "PerformingGroup";
@@ -17629,6 +25350,124 @@ export namespace PerformingGroupStatic {
   }
 
   export const rdfProperties = [...OrganizationStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PerformingGroupStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PerformingGroupStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PerformingGroupStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("performingGroup");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "performingGroup");
+    return [
+      ...OrganizationStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("performingGroup");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "performingGroup");
+    return [
+      ...OrganizationStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/PerformingGroup",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class Order extends Intangible {
   override readonly type = "Order";
@@ -17663,19 +25502,21 @@ export class Order extends Intangible {
   }
 
   override equals(other: Order): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $maybeEquals(left, right, (left, right) => left.equals(right)))(
-        this.partOfInvoice,
-        other.partOfInvoice,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "partOfInvoice",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.partOfInvoice,
+          other.partOfInvoice,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "partOfInvoice",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -17757,7 +25598,9 @@ export namespace Order {
     readonly partOfInvoice: InvoiceStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17911,6 +25754,149 @@ export namespace Order {
     ...IntangibleStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/partOfInvoice") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Order.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Order.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Order.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("order");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "order");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}PartOfInvoice`),
+        predicate: dataFactory.namedNode("http://schema.org/partOfInvoice"),
+        subject,
+      },
+      ...InvoiceStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}PartOfInvoice`),
+        variablePrefix: `${variablePrefix}PartOfInvoice`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("order");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "order");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Order"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}PartOfInvoice`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/partOfInvoice",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...InvoiceStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}PartOfInvoice`),
+            variablePrefix: `${variablePrefix}PartOfInvoice`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class OrderStub extends IntangibleStub {
   override readonly type = "OrderStub";
@@ -18091,6 +26077,117 @@ export namespace OrderStub {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        OrderStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        OrderStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      OrderStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("orderStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "orderStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("orderStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "orderStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Order"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MusicRecording extends CreativeWork {
   override readonly type = "MusicRecording";
@@ -18456,7 +26553,9 @@ export namespace MusicRecording {
     readonly recordingOf: MusicCompositionStub.Json | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18830,6 +26929,318 @@ export namespace MusicRecording {
     { path: dataFactory.namedNode("http://schema.org/inPlaylist") },
     { path: dataFactory.namedNode("http://schema.org/recordingOf") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicRecording.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicRecording.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicRecording.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicRecording");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicRecording");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        predicate: dataFactory.namedNode("http://schema.org/byArtist"),
+        subject,
+      },
+      ...MusicGroupStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+      ...PersonStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Duration`),
+        predicate: dataFactory.namedNode("http://schema.org/duration"),
+        subject,
+      },
+      ...QuantitativeValueStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Duration`),
+        variablePrefix: `${variablePrefix}Duration`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}InAlbum`),
+        predicate: dataFactory.namedNode("http://schema.org/inAlbum"),
+        subject,
+      },
+      ...MusicAlbumStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}InAlbum`),
+        variablePrefix: `${variablePrefix}InAlbum`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}InPlaylists`),
+        predicate: dataFactory.namedNode("http://schema.org/inPlaylist"),
+        subject,
+      },
+      ...MusicPlaylistStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}InPlaylists`),
+        variablePrefix: `${variablePrefix}InPlaylists`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}RecordingOf`),
+        predicate: dataFactory.namedNode("http://schema.org/recordingOf"),
+        subject,
+      },
+      ...MusicCompositionStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}RecordingOf`),
+        variablePrefix: `${variablePrefix}RecordingOf`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicRecording");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicRecording");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicRecording",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}ByArtists`),
+                predicate: dataFactory.namedNode("http://schema.org/byArtist"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...MusicGroupStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...PersonStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Duration`),
+                predicate: dataFactory.namedNode("http://schema.org/duration"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            patterns: [
+              { patterns: [], type: "group" },
+              {
+                patterns: [
+                  ...QuantitativeValueStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(`${variablePrefix}Duration`),
+                    variablePrefix: `${variablePrefix}Duration`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}InAlbum`),
+                predicate: dataFactory.namedNode("http://schema.org/inAlbum"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...MusicAlbumStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}InAlbum`),
+            variablePrefix: `${variablePrefix}InAlbum`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}InPlaylists`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/inPlaylist",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...MusicPlaylistStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}InPlaylists`),
+            variablePrefix: `${variablePrefix}InPlaylists`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}RecordingOf`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/recordingOf",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...MusicCompositionStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}RecordingOf`),
+            variablePrefix: `${variablePrefix}RecordingOf`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MusicRecordingStub extends CreativeWorkStub {
   override readonly type = "MusicRecordingStub";
@@ -19013,6 +27424,124 @@ export namespace MusicRecordingStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicRecordingStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicRecordingStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicRecordingStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicRecordingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicRecordingStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicRecordingStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicRecordingStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicRecording",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MusicPlaylist extends CreativeWork {
   override readonly type = "MusicPlaylist";
@@ -19177,7 +27706,9 @@ export namespace MusicPlaylist {
     readonly tracks: readonly (MusicRecordingStub.Json | ItemListStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19369,6 +27900,179 @@ export namespace MusicPlaylist {
     ...CreativeWorkStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/track") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicPlaylist.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicPlaylist.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicPlaylist.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicPlaylist");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicPlaylist");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Tracks`),
+        predicate: dataFactory.namedNode("http://schema.org/track"),
+        subject,
+      },
+      ...MusicRecordingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Tracks`),
+        variablePrefix: `${variablePrefix}Tracks`,
+      }),
+      ...ItemListStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Tracks`),
+        variablePrefix: `${variablePrefix}Tracks`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicPlaylist");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicPlaylist");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicPlaylist",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Tracks`),
+                predicate: dataFactory.namedNode("http://schema.org/track"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...MusicRecordingStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(`${variablePrefix}Tracks`),
+                    variablePrefix: `${variablePrefix}Tracks`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...ItemListStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(`${variablePrefix}Tracks`),
+                    variablePrefix: `${variablePrefix}Tracks`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MusicPlaylistStub extends CreativeWorkStub {
   override readonly type = "MusicPlaylistStub";
@@ -19552,6 +28256,124 @@ export namespace MusicPlaylistStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicPlaylistStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicPlaylistStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicPlaylistStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicPlaylistStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicPlaylistStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicPlaylistStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicPlaylistStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicPlaylist",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class OrganizationStub extends ThingStub {
   override readonly type:
@@ -19756,6 +28578,124 @@ export namespace OrganizationStubStatic {
   }
 
   export const rdfProperties = [...ThingStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        OrganizationStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        OrganizationStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      OrganizationStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("organizationStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "organizationStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("organizationStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "organizationStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/Organization",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class PerformingGroupStub extends OrganizationStub {
   override readonly type: "PerformingGroupStub" | "MusicGroupStub" =
@@ -19958,6 +28898,127 @@ export namespace PerformingGroupStubStatic {
   }
 
   export const rdfProperties = [...OrganizationStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PerformingGroupStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PerformingGroupStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PerformingGroupStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("performingGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "performingGroupStub");
+    return [
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("performingGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "performingGroupStub");
+    return [
+      ...OrganizationStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/PerformingGroup",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MusicGroup extends PerformingGroup {
   override readonly type = "MusicGroup";
@@ -20140,6 +29201,117 @@ export namespace MusicGroup {
   }
 
   export const rdfProperties = [...PerformingGroupStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicGroup.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicGroup.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicGroup.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("musicGroup");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicGroup");
+    return [
+      ...PerformingGroupStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("musicGroup");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicGroup");
+    return [
+      ...PerformingGroupStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/MusicGroup"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MusicGroupStub extends PerformingGroupStub {
   override readonly type = "MusicGroupStub";
@@ -20323,6 +29495,122 @@ export namespace MusicGroupStub {
   }
 
   export const rdfProperties = [...PerformingGroupStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicGroupStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicGroupStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicGroupStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicGroupStub");
+    return [
+      ...PerformingGroupStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicGroupStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicGroupStub");
+    return [
+      ...PerformingGroupStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/MusicGroup"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MusicComposition extends CreativeWork {
   override readonly type = "MusicComposition";
@@ -20484,7 +29772,9 @@ export namespace MusicComposition {
     readonly recordedAs: readonly MusicRecordingStub.Json[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20690,6 +29980,184 @@ export namespace MusicComposition {
     { path: dataFactory.namedNode("http://schema.org/composer") },
     { path: dataFactory.namedNode("http://schema.org/recordedAs") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicComposition.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicComposition.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicComposition.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicComposition");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicComposition");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Composers`),
+        predicate: dataFactory.namedNode("http://schema.org/composer"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Composers`),
+        variablePrefix: `${variablePrefix}Composers`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}RecordedAs`),
+        predicate: dataFactory.namedNode("http://schema.org/recordedAs"),
+        subject,
+      },
+      ...MusicRecordingStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}RecordedAs`),
+        variablePrefix: `${variablePrefix}RecordedAs`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicComposition");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicComposition");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicComposition",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Composers`),
+                predicate: dataFactory.namedNode("http://schema.org/composer"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Composers`),
+            variablePrefix: `${variablePrefix}Composers`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}RecordedAs`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/recordedAs",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...MusicRecordingStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}RecordedAs`),
+            variablePrefix: `${variablePrefix}RecordedAs`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MusicCompositionStub extends CreativeWorkStub {
   override readonly type = "MusicCompositionStub";
@@ -20873,6 +30341,128 @@ export namespace MusicCompositionStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicCompositionStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicCompositionStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicCompositionStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicCompositionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "musicCompositionStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicCompositionStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "musicCompositionStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MusicComposition",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MusicAlbum extends CreativeWork {
   override readonly type = "MusicAlbum";
@@ -21039,7 +30629,9 @@ export namespace MusicAlbum {
     readonly byArtists: readonly (MusicGroupStub.Json | PersonStub.Json)[];
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21231,6 +30823,176 @@ export namespace MusicAlbum {
     ...CreativeWorkStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/byArtist") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicAlbum.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicAlbum.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicAlbum.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("musicAlbum");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicAlbum");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        predicate: dataFactory.namedNode("http://schema.org/byArtist"),
+        subject,
+      },
+      ...MusicGroupStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+      ...PersonStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("musicAlbum");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicAlbum");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/MusicAlbum"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}ByArtists`),
+                predicate: dataFactory.namedNode("http://schema.org/byArtist"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...MusicGroupStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...PersonStub.sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MusicAlbumStub extends CreativeWorkStub {
   override readonly type = "MusicAlbumStub";
@@ -21414,6 +31176,122 @@ export namespace MusicAlbumStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicAlbumStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicAlbumStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicAlbumStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicAlbumStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicAlbumStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicAlbumStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicAlbumStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/MusicAlbum"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class MonetaryAmount extends StructuredValue {
   override readonly type = "MonetaryAmount";
@@ -21566,7 +31444,9 @@ export namespace MonetaryAmount {
     readonly value: number | undefined;
   } & StructuredValueStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21737,6 +31617,164 @@ export namespace MonetaryAmount {
     { path: dataFactory.namedNode("http://schema.org/currency") },
     { path: dataFactory.namedNode("http://schema.org/value") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MonetaryAmount.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MonetaryAmount.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MonetaryAmount.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("monetaryAmount");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "monetaryAmount");
+    return [
+      ...StructuredValueStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Currency`),
+        predicate: dataFactory.namedNode("http://schema.org/currency"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Value`),
+        predicate: dataFactory.namedNode("http://schema.org/value"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("monetaryAmount");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "monetaryAmount");
+    return [
+      ...StructuredValueStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MonetaryAmount",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Currency`),
+                predicate: dataFactory.namedNode("http://schema.org/currency"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Value`),
+                predicate: dataFactory.namedNode("http://schema.org/value"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MonetaryAmountStub extends StructuredValueStub {
   override readonly type = "MonetaryAmountStub";
@@ -21889,7 +31927,9 @@ export namespace MonetaryAmountStub {
     readonly value: number | undefined;
   } & StructuredValueStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22063,6 +32103,164 @@ export namespace MonetaryAmountStub {
     { path: dataFactory.namedNode("http://schema.org/currency") },
     { path: dataFactory.namedNode("http://schema.org/value") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MonetaryAmountStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MonetaryAmountStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MonetaryAmountStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("monetaryAmountStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
+    return [
+      ...StructuredValueStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Currency`),
+        predicate: dataFactory.namedNode("http://schema.org/currency"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Value`),
+        predicate: dataFactory.namedNode("http://schema.org/value"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("monetaryAmountStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "monetaryAmountStub");
+    return [
+      ...StructuredValueStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/MonetaryAmount",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Currency`),
+                predicate: dataFactory.namedNode("http://schema.org/currency"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Value`),
+                predicate: dataFactory.namedNode("http://schema.org/value"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class Message extends CreativeWork {
   override readonly type = "Message";
@@ -22094,18 +32292,20 @@ export class Message extends CreativeWork {
   }
 
   override equals(other: Message): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
-        this.sender,
-        other.sender,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "sender",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, AgentStub.equals))(
+          this.sender,
+          other.sender,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "sender",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -22187,7 +32387,9 @@ export namespace Message {
       | undefined;
   } & CreativeWorkStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22344,6 +32546,145 @@ export namespace Message {
     ...CreativeWorkStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/sender") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Message.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Message.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Message.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("message");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "message");
+    return [
+      ...CreativeWorkStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Sender`),
+        predicate: dataFactory.namedNode("http://schema.org/sender"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Sender`),
+        variablePrefix: `${variablePrefix}Sender`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("message");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "message");
+    return [
+      ...CreativeWorkStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Message"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Sender`),
+                predicate: dataFactory.namedNode("http://schema.org/sender"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Sender`),
+            variablePrefix: `${variablePrefix}Sender`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class MessageStub extends CreativeWorkStub {
   override readonly type = "MessageStub";
@@ -22527,6 +32868,117 @@ export namespace MessageStub {
   }
 
   export const rdfProperties = [...CreativeWorkStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MessageStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MessageStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MessageStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("messageStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "messageStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("messageStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "messageStub");
+    return [
+      ...CreativeWorkStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Message"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ListItem extends Intangible {
   override readonly type = "ListItem";
@@ -22711,7 +33163,9 @@ export namespace ListItem {
     readonly position: (number | string) | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22906,6 +33360,163 @@ export namespace ListItem {
     { path: dataFactory.namedNode("http://schema.org/item") },
     { path: dataFactory.namedNode("http://schema.org/position") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ListItem.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ListItem.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ListItem.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("listItem");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "listItem");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Item`),
+        predicate: dataFactory.namedNode("http://schema.org/item"),
+        subject,
+      },
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Item`),
+        variablePrefix: `${variablePrefix}Item`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Position`),
+        predicate: dataFactory.namedNode("http://schema.org/position"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("listItem");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "listItem");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/ListItem"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}Item`),
+            predicate: dataFactory.namedNode("http://schema.org/item"),
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Item`),
+        variablePrefix: `${variablePrefix}Item`,
+      }),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Position`),
+                predicate: dataFactory.namedNode("http://schema.org/position"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          { patterns: [{ patterns: [], type: "group" }], type: "union" },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class ListItemStub extends IntangibleStub {
   override readonly type = "ListItemStub";
@@ -23090,7 +33701,9 @@ export namespace ListItemStub {
     readonly position: (number | string) | undefined;
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23285,6 +33898,165 @@ export namespace ListItemStub {
     { path: dataFactory.namedNode("http://schema.org/item") },
     { path: dataFactory.namedNode("http://schema.org/position") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ListItemStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ListItemStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ListItemStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("listItemStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "listItemStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Item`),
+        predicate: dataFactory.namedNode("http://schema.org/item"),
+        subject,
+      },
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Item`),
+        variablePrefix: `${variablePrefix}Item`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Position`),
+        predicate: dataFactory.namedNode("http://schema.org/position"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("listItemStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "listItemStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/ListItem"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}Item`),
+            predicate: dataFactory.namedNode("http://schema.org/item"),
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Item`),
+        variablePrefix: `${variablePrefix}Item`,
+      }),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Position`),
+                predicate: dataFactory.namedNode("http://schema.org/position"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          { patterns: [{ patterns: [], type: "group" }], type: "union" },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class ItemList extends Intangible {
   override readonly type = "ItemList";
@@ -23314,19 +34086,21 @@ export class ItemList extends Intangible {
   }
 
   override equals(other: ItemList): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.itemListElements,
-        other.itemListElements,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "itemListElements",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -23407,7 +34181,9 @@ export namespace ItemList {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23574,6 +34350,151 @@ export namespace ItemList {
     ...IntangibleStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/itemListElement") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ItemList.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ItemList.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ItemList.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("itemList");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "itemList");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+        predicate: dataFactory.namedNode("http://schema.org/itemListElement"),
+        subject,
+      },
+      ...ListItemStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+        variablePrefix: `${variablePrefix}ItemListElements`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("itemList");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "itemList");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/ItemList"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ItemListElements`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/itemListElement",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ListItemStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+            variablePrefix: `${variablePrefix}ItemListElements`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class ItemListStub extends IntangibleStub {
   override readonly type = "ItemListStub";
@@ -23603,19 +34524,21 @@ export class ItemListStub extends IntangibleStub {
   }
 
   override equals(other: ItemListStub): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) =>
-        $arrayEquals(left, right, (left, right) => left.equals(right)))(
-        this.itemListElements,
-        other.itemListElements,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "itemListElements",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.itemListElements,
+          other.itemListElements,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "itemListElements",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -23696,7 +34619,9 @@ export namespace ItemListStub {
     readonly itemListElements: readonly ListItemStub.Json[];
   } & IntangibleStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23863,6 +34788,153 @@ export namespace ItemListStub {
     ...IntangibleStubStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/itemListElement") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ItemListStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ItemListStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ItemListStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("itemListStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "itemListStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+        predicate: dataFactory.namedNode("http://schema.org/itemListElement"),
+        subject,
+      },
+      ...ListItemStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+        variablePrefix: `${variablePrefix}ItemListElements`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("itemListStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "itemListStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/ItemList"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ItemListElements`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/itemListElement",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ListItemStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}ItemListElements`),
+            variablePrefix: `${variablePrefix}ItemListElements`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class Invoice extends Intangible {
   override readonly type = "Invoice";
@@ -24100,7 +35172,9 @@ export namespace Invoice {
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24371,6 +35445,233 @@ export namespace Invoice {
     { path: dataFactory.namedNode("http://schema.org/referencesOrder") },
     { path: dataFactory.namedNode("http://schema.org/totalPaymentDue") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Invoice.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Invoice.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Invoice.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("invoice");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "invoice");
+    return [
+      ...IntangibleStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Category`),
+        predicate: dataFactory.namedNode("http://schema.org/category"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Provider`),
+        predicate: dataFactory.namedNode("http://schema.org/provider"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Provider`),
+        variablePrefix: `${variablePrefix}Provider`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}ReferencesOrder`),
+        predicate: dataFactory.namedNode("http://schema.org/referencesOrder"),
+        subject,
+      },
+      ...OrderStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ReferencesOrder`),
+        variablePrefix: `${variablePrefix}ReferencesOrder`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}TotalPaymentDue`),
+        predicate: dataFactory.namedNode("http://schema.org/totalPaymentDue"),
+        subject,
+      },
+      ...MonetaryAmountStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}TotalPaymentDue`),
+        variablePrefix: `${variablePrefix}TotalPaymentDue`,
+      }),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("invoice");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "invoice");
+    return [
+      ...IntangibleStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Invoice"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Category`),
+                predicate: dataFactory.namedNode("http://schema.org/category"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Provider`),
+                predicate: dataFactory.namedNode("http://schema.org/provider"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Provider`),
+            variablePrefix: `${variablePrefix}Provider`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ReferencesOrder`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/referencesOrder",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...OrderStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}ReferencesOrder`),
+            variablePrefix: `${variablePrefix}ReferencesOrder`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}TotalPaymentDue`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/totalPaymentDue",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...MonetaryAmountStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}TotalPaymentDue`),
+            variablePrefix: `${variablePrefix}TotalPaymentDue`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export class InvoiceStub extends IntangibleStub {
   override readonly type = "InvoiceStub";
@@ -24553,6 +35854,117 @@ export namespace InvoiceStub {
   }
 
   export const rdfProperties = [...IntangibleStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        InvoiceStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        InvoiceStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      InvoiceStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("invoiceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "invoiceStub");
+    return [
+      ...IntangibleStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("invoiceStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "invoiceStub");
+    return [
+      ...IntangibleStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Invoice"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ImageObject extends MediaObject {
   override readonly type = "ImageObject";
@@ -24735,6 +36147,119 @@ export namespace ImageObject {
   }
 
   export const rdfProperties = [...MediaObjectStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ImageObject.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ImageObject.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ImageObject.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("imageObject");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "imageObject");
+    return [
+      ...MediaObjectStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("imageObject");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "imageObject");
+    return [
+      ...MediaObjectStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/ImageObject",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class ImageObjectStub extends MediaObjectStub {
   override readonly type = "ImageObjectStub";
@@ -24917,6 +36442,124 @@ export namespace ImageObjectStub {
   }
 
   export const rdfProperties = [...MediaObjectStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ImageObjectStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ImageObjectStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ImageObjectStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("imageObjectStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "imageObjectStub");
+    return [
+      ...MediaObjectStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("imageObjectStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "imageObjectStub");
+    return [
+      ...MediaObjectStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode(
+                    "http://schema.org/ImageObject",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+    ];
+  }
 }
 export class PersonStub extends ThingStub {
   override readonly type = "PersonStub";
@@ -24948,18 +36591,20 @@ export class PersonStub extends ThingStub {
   }
 
   override equals(other: PersonStub): $EqualsResult {
-    return super.equals(other).chain(() =>
-      ((left, right) => $maybeEquals(left, right, $strictEquals))(
-        this.jobTitle,
-        other.jobTitle,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "jobTitle",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.jobTitle,
+          other.jobTitle,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jobTitle",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -25037,7 +36682,9 @@ export namespace PersonStub {
     readonly jobTitle: string | undefined;
   } & ThingStubStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25183,6 +36830,137 @@ export namespace PersonStub {
     ...ThingStubStatic.rdfProperties,
     { path: dataFactory.namedNode("http://schema.org/jobTitle") },
   ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PersonStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PersonStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PersonStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("personStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "personStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}JobTitle`),
+        predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("personStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "personStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://schema.org/Person"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}JobTitle`),
+                predicate: dataFactory.namedNode("http://schema.org/jobTitle"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
 }
 export type AgentStub = OrganizationStub | PersonStub;
 
@@ -25264,6 +37042,102 @@ export namespace AgentStub {
       OrganizationStubStatic.jsonZodSchema(),
       PersonStub.jsonZodSchema(),
     ]);
+  }
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        AgentStub.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        AgentStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      AgentStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...OrganizationStubStatic.sparqlConstructTemplateTriples({
+        subject:
+          parameters.subject ??
+          dataFactory.variable!("agentStubOrganizationStub"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}OrganizationStub`
+          : "agentStubOrganizationStub",
+      }).concat(),
+      ...PersonStub.sparqlConstructTemplateTriples({
+        subject:
+          parameters.subject ?? dataFactory.variable!("agentStubPersonStub"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}PersonStub`
+          : "agentStubPersonStub",
+      }).concat(),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [
+      {
+        patterns: [
+          {
+            patterns: OrganizationStubStatic.sparqlWherePatterns({
+              subject:
+                parameters.subject ??
+                dataFactory.variable!("agentStubOrganizationStub"),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}OrganizationStub`
+                : "agentStubOrganizationStub",
+            }).concat(),
+            type: "group",
+          },
+          {
+            patterns: PersonStub.sparqlWherePatterns({
+              subject:
+                parameters.subject ??
+                dataFactory.variable!("agentStubPersonStub"),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}PersonStub`
+                : "agentStubPersonStub",
+            }).concat(),
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+    ];
   }
 
   export function toJson(
@@ -26181,23 +38055,6 @@ export interface $ObjectSet {
   ): Promise<readonly purify.Either<Error, Role>[]>;
   rolesCount(
     query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  schemaQuantitativeValueStub(
-    identifier: schema_QuantitativeValueStub.Identifier,
-  ): Promise<purify.Either<Error, schema_QuantitativeValueStub>>;
-  schemaQuantitativeValueStubIdentifiers(
-    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly schema_QuantitativeValueStub.Identifier[]>
-  >;
-  schemaQuantitativeValueStubs(
-    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-  ): Promise<readonly purify.Either<Error, schema_QuantitativeValueStub>[]>;
-  schemaQuantitativeValueStubsCount(
-    query?: Pick<
-      $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-      "where"
-    >,
   ): Promise<purify.Either<Error, number>>;
   service(
     identifier: ServiceStatic.Identifier,
@@ -30778,77 +42635,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<Role, Role.Identifier>(Role, query);
   }
 
-  async schemaQuantitativeValueStub(
-    identifier: schema_QuantitativeValueStub.Identifier,
-  ): Promise<purify.Either<Error, schema_QuantitativeValueStub>> {
-    return this.schemaQuantitativeValueStubSync(identifier);
-  }
-
-  schemaQuantitativeValueStubSync(
-    identifier: schema_QuantitativeValueStub.Identifier,
-  ): purify.Either<Error, schema_QuantitativeValueStub> {
-    return this.schemaQuantitativeValueStubsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
-  }
-
-  async schemaQuantitativeValueStubIdentifiers(
-    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly schema_QuantitativeValueStub.Identifier[]>
-  > {
-    return this.schemaQuantitativeValueStubIdentifiersSync(query);
-  }
-
-  schemaQuantitativeValueStubIdentifiersSync(
-    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-  ): purify.Either<Error, readonly schema_QuantitativeValueStub.Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        schema_QuantitativeValueStub,
-        schema_QuantitativeValueStub.Identifier
-      >(schema_QuantitativeValueStub, query),
-    ]);
-  }
-
-  async schemaQuantitativeValueStubs(
-    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-  ): Promise<readonly purify.Either<Error, schema_QuantitativeValueStub>[]> {
-    return this.schemaQuantitativeValueStubsSync(query);
-  }
-
-  schemaQuantitativeValueStubsSync(
-    query?: $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-  ): readonly purify.Either<Error, schema_QuantitativeValueStub>[] {
-    return [
-      ...this.$objectsSync<
-        schema_QuantitativeValueStub,
-        schema_QuantitativeValueStub.Identifier
-      >(schema_QuantitativeValueStub, query),
-    ];
-  }
-
-  async schemaQuantitativeValueStubsCount(
-    query?: Pick<
-      $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.schemaQuantitativeValueStubsCountSync(query);
-  }
-
-  schemaQuantitativeValueStubsCountSync(
-    query?: Pick<
-      $ObjectSet.Query<schema_QuantitativeValueStub.Identifier>,
-      "where"
-    >,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      schema_QuantitativeValueStub,
-      schema_QuantitativeValueStub.Identifier
-    >(schema_QuantitativeValueStub, query);
-  }
-
   async service(
     identifier: ServiceStatic.Identifier,
   ): Promise<purify.Either<Error, Service>> {
@@ -31572,5 +43358,3318 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     return purify.Either.of(count);
+  }
+}
+
+export class $SparqlObjectSet implements $ObjectSet {
+  protected readonly countVariable = dataFactory.variable!("count");
+  protected readonly objectVariable = dataFactory.variable!("object");
+  protected readonly sparqlClient: {
+    queryBindings: (
+      query: string,
+    ) => Promise<
+      readonly Record<
+        string,
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+      >[]
+    >;
+    queryQuads: (query: string) => Promise<readonly rdfjs.Quad[]>;
+  };
+  protected readonly sparqlGenerator = new sparqljs.Generator();
+
+  constructor({
+    sparqlClient,
+  }: { sparqlClient: $SparqlObjectSet["sparqlClient"] }) {
+    this.sparqlClient = sparqlClient;
+  }
+
+  async action(
+    identifier: ActionStatic.Identifier,
+  ): Promise<purify.Either<Error, Action>> {
+    return (
+      await this.actions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async actionIdentifiers(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ActionStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ActionStatic,
+      query,
+    );
+  }
+
+  async actions(
+    query?: $ObjectSet.Query<ActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Action>[]> {
+    return this.$objects<Action, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ActionStatic,
+      query,
+    );
+  }
+
+  async actionsCount(
+    query?: Pick<$ObjectSet.Query<ActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ActionStatic,
+      query,
+    );
+  }
+
+  async actionStub(
+    identifier: ActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ActionStub>> {
+    return (
+      await this.actionStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async actionStubIdentifiers(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ActionStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ActionStubStatic,
+      query,
+    );
+  }
+
+  async actionStubs(
+    query?: $ObjectSet.Query<ActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ActionStub>[]> {
+    return this.$objects<ActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ActionStubStatic,
+      query,
+    );
+  }
+
+  async actionStubsCount(
+    query?: Pick<$ObjectSet.Query<ActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ActionStubStatic,
+      query,
+    );
+  }
+
+  async article(
+    identifier: ArticleStatic.Identifier,
+  ): Promise<purify.Either<Error, Article>> {
+    return (
+      await this.articles({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async articleIdentifiers(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ArticleStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ArticleStatic,
+      query,
+    );
+  }
+
+  async articles(
+    query?: $ObjectSet.Query<ArticleStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Article>[]> {
+    return this.$objects<Article, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ArticleStatic,
+      query,
+    );
+  }
+
+  async articlesCount(
+    query?: Pick<$ObjectSet.Query<ArticleStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ArticleStatic,
+      query,
+    );
+  }
+
+  async articleStub(
+    identifier: ArticleStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ArticleStub>> {
+    return (
+      await this.articleStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async articleStubIdentifiers(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ArticleStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ArticleStubStatic,
+      query,
+    );
+  }
+
+  async articleStubs(
+    query?: $ObjectSet.Query<ArticleStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ArticleStub>[]> {
+    return this.$objects<ArticleStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ArticleStubStatic,
+      query,
+    );
+  }
+
+  async articleStubsCount(
+    query?: Pick<$ObjectSet.Query<ArticleStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ArticleStubStatic,
+      query,
+    );
+  }
+
+  async assessAction(
+    identifier: AssessActionStatic.Identifier,
+  ): Promise<purify.Either<Error, AssessAction>> {
+    return (
+      await this.assessActions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async assessActionIdentifiers(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly AssessActionStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      AssessActionStatic,
+      query,
+    );
+  }
+
+  async assessActions(
+    query?: $ObjectSet.Query<AssessActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, AssessAction>[]> {
+    return this.$objects<AssessAction, rdfjs.BlankNode | rdfjs.NamedNode>(
+      AssessActionStatic,
+      query,
+    );
+  }
+
+  async assessActionsCount(
+    query?: Pick<$ObjectSet.Query<AssessActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      AssessActionStatic,
+      query,
+    );
+  }
+
+  async assessActionStub(
+    identifier: AssessActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, AssessActionStub>> {
+    return (
+      await this.assessActionStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async assessActionStubIdentifiers(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly AssessActionStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      AssessActionStubStatic,
+      query,
+    );
+  }
+
+  async assessActionStubs(
+    query?: $ObjectSet.Query<AssessActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, AssessActionStub>[]> {
+    return this.$objects<AssessActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      AssessActionStubStatic,
+      query,
+    );
+  }
+
+  async assessActionStubsCount(
+    query?: Pick<$ObjectSet.Query<AssessActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      AssessActionStubStatic,
+      query,
+    );
+  }
+
+  async broadcastEvent(
+    identifier: BroadcastEvent.Identifier,
+  ): Promise<purify.Either<Error, BroadcastEvent>> {
+    return (
+      await this.broadcastEvents({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async broadcastEventIdentifiers(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): Promise<purify.Either<Error, readonly BroadcastEvent.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastEvent,
+      query,
+    );
+  }
+
+  async broadcastEvents(
+    query?: $ObjectSet.Query<BroadcastEvent.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastEvent>[]> {
+    return this.$objects<BroadcastEvent, rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastEvent,
+      query,
+    );
+  }
+
+  async broadcastEventsCount(
+    query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastEvent,
+      query,
+    );
+  }
+
+  async broadcastService(
+    identifier: BroadcastServiceStatic.Identifier,
+  ): Promise<purify.Either<Error, BroadcastService>> {
+    return (
+      await this.broadcastServices({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async broadcastServiceIdentifiers(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BroadcastServiceStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastServiceStatic,
+      query,
+    );
+  }
+
+  async broadcastServices(
+    query?: $ObjectSet.Query<BroadcastServiceStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastService>[]> {
+    return this.$objects<BroadcastService, rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastServiceStatic,
+      query,
+    );
+  }
+
+  async broadcastServicesCount(
+    query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastServiceStatic,
+      query,
+    );
+  }
+
+  async broadcastServiceStub(
+    identifier: BroadcastServiceStubStatic.Identifier,
+  ): Promise<purify.Either<Error, BroadcastServiceStub>> {
+    return (
+      await this.broadcastServiceStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async broadcastServiceStubIdentifiers(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BroadcastServiceStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastServiceStubStatic,
+      query,
+    );
+  }
+
+  async broadcastServiceStubs(
+    query?: $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]> {
+    return this.$objects<
+      BroadcastServiceStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BroadcastServiceStubStatic, query);
+  }
+
+  async broadcastServiceStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<BroadcastServiceStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastServiceStubStatic,
+      query,
+    );
+  }
+
+  async chooseAction(
+    identifier: ChooseActionStatic.Identifier,
+  ): Promise<purify.Either<Error, ChooseAction>> {
+    return (
+      await this.chooseActions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async chooseActionIdentifiers(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ChooseActionStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ChooseActionStatic,
+      query,
+    );
+  }
+
+  async chooseActions(
+    query?: $ObjectSet.Query<ChooseActionStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ChooseAction>[]> {
+    return this.$objects<ChooseAction, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ChooseActionStatic,
+      query,
+    );
+  }
+
+  async chooseActionsCount(
+    query?: Pick<$ObjectSet.Query<ChooseActionStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ChooseActionStatic,
+      query,
+    );
+  }
+
+  async chooseActionStub(
+    identifier: ChooseActionStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ChooseActionStub>> {
+    return (
+      await this.chooseActionStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async chooseActionStubIdentifiers(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ChooseActionStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ChooseActionStubStatic,
+      query,
+    );
+  }
+
+  async chooseActionStubs(
+    query?: $ObjectSet.Query<ChooseActionStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ChooseActionStub>[]> {
+    return this.$objects<ChooseActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ChooseActionStubStatic,
+      query,
+    );
+  }
+
+  async chooseActionStubsCount(
+    query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ChooseActionStubStatic,
+      query,
+    );
+  }
+
+  async creativeWork(
+    identifier: CreativeWorkStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWork>> {
+    return (
+      await this.creativeWorks({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async creativeWorkIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly CreativeWorkStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkStatic,
+      query,
+    );
+  }
+
+  async creativeWorks(
+    query?: $ObjectSet.Query<CreativeWorkStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWork>[]> {
+    return this.$objects<CreativeWork, rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkStatic,
+      query,
+    );
+  }
+
+  async creativeWorksCount(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkStatic,
+      query,
+    );
+  }
+
+  async creativeWorkSeries(
+    identifier: CreativeWorkSeriesStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkSeries>> {
+    return (
+      await this.creativeWorkSeriess({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async creativeWorkSeriesIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkSeriesStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkSeriesStatic,
+      query,
+    );
+  }
+
+  async creativeWorkSeriess(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]> {
+    return this.$objects<CreativeWorkSeries, rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkSeriesStatic,
+      query,
+    );
+  }
+
+  async creativeWorkSeriessCount(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkSeriesStatic,
+      query,
+    );
+  }
+
+  async creativeWorkSeriesStub(
+    identifier: CreativeWorkSeriesStubStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkSeriesStub>> {
+    return (
+      await this.creativeWorkSeriesStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async creativeWorkSeriesStubIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkSeriesStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkSeriesStubStatic,
+      query,
+    );
+  }
+
+  async creativeWorkSeriesStubs(
+    query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]> {
+    return this.$objects<
+      CreativeWorkSeriesStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(CreativeWorkSeriesStubStatic, query);
+  }
+
+  async creativeWorkSeriesStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<CreativeWorkSeriesStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkSeriesStubStatic,
+      query,
+    );
+  }
+
+  async creativeWorkStub(
+    identifier: CreativeWorkStubStatic.Identifier,
+  ): Promise<purify.Either<Error, CreativeWorkStub>> {
+    return (
+      await this.creativeWorkStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async creativeWorkStubIdentifiers(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly CreativeWorkStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkStubStatic,
+      query,
+    );
+  }
+
+  async creativeWorkStubs(
+    query?: $ObjectSet.Query<CreativeWorkStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]> {
+    return this.$objects<CreativeWorkStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkStubStatic,
+      query,
+    );
+  }
+
+  async creativeWorkStubsCount(
+    query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      CreativeWorkStubStatic,
+      query,
+    );
+  }
+
+  async enumeration(
+    identifier: EnumerationStatic.Identifier,
+  ): Promise<purify.Either<Error, Enumeration>> {
+    return (
+      await this.enumerations({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async enumerationIdentifiers(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EnumerationStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EnumerationStatic,
+      query,
+    );
+  }
+
+  async enumerations(
+    query?: $ObjectSet.Query<EnumerationStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Enumeration>[]> {
+    return this.$objects<Enumeration, rdfjs.BlankNode | rdfjs.NamedNode>(
+      EnumerationStatic,
+      query,
+    );
+  }
+
+  async enumerationsCount(
+    query?: Pick<$ObjectSet.Query<EnumerationStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EnumerationStatic,
+      query,
+    );
+  }
+
+  async episode(
+    identifier: EpisodeStatic.Identifier,
+  ): Promise<purify.Either<Error, Episode>> {
+    return (
+      await this.episodes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async episodeIdentifiers(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EpisodeStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EpisodeStatic,
+      query,
+    );
+  }
+
+  async episodes(
+    query?: $ObjectSet.Query<EpisodeStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Episode>[]> {
+    return this.$objects<Episode, rdfjs.BlankNode | rdfjs.NamedNode>(
+      EpisodeStatic,
+      query,
+    );
+  }
+
+  async episodesCount(
+    query?: Pick<$ObjectSet.Query<EpisodeStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EpisodeStatic,
+      query,
+    );
+  }
+
+  async episodeStub(
+    identifier: EpisodeStubStatic.Identifier,
+  ): Promise<purify.Either<Error, EpisodeStub>> {
+    return (
+      await this.episodeStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async episodeStubIdentifiers(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EpisodeStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EpisodeStubStatic,
+      query,
+    );
+  }
+
+  async episodeStubs(
+    query?: $ObjectSet.Query<EpisodeStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, EpisodeStub>[]> {
+    return this.$objects<EpisodeStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      EpisodeStubStatic,
+      query,
+    );
+  }
+
+  async episodeStubsCount(
+    query?: Pick<$ObjectSet.Query<EpisodeStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EpisodeStubStatic,
+      query,
+    );
+  }
+
+  async event(
+    identifier: EventStatic.Identifier,
+  ): Promise<purify.Either<Error, Event>> {
+    return (
+      await this.events({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async eventIdentifiers(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EventStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EventStatic,
+      query,
+    );
+  }
+
+  async events(
+    query?: $ObjectSet.Query<EventStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Event>[]> {
+    return this.$objects<Event, rdfjs.BlankNode | rdfjs.NamedNode>(
+      EventStatic,
+      query,
+    );
+  }
+
+  async eventsCount(
+    query?: Pick<$ObjectSet.Query<EventStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EventStatic,
+      query,
+    );
+  }
+
+  async eventStub(
+    identifier: EventStubStatic.Identifier,
+  ): Promise<purify.Either<Error, EventStub>> {
+    return (
+      await this.eventStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async eventStubIdentifiers(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly EventStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EventStubStatic,
+      query,
+    );
+  }
+
+  async eventStubs(
+    query?: $ObjectSet.Query<EventStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, EventStub>[]> {
+    return this.$objects<EventStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      EventStubStatic,
+      query,
+    );
+  }
+
+  async eventStubsCount(
+    query?: Pick<$ObjectSet.Query<EventStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      EventStubStatic,
+      query,
+    );
+  }
+
+  async genderType(
+    identifier: GenderType.Identifier,
+  ): Promise<purify.Either<Error, GenderType>> {
+    return (
+      await this.genderTypes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async genderTypeIdentifiers(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): Promise<purify.Either<Error, readonly GenderType.Identifier[]>> {
+    return this.$objectIdentifiers<
+      rdfjs.NamedNode<"http://schema.org/Female" | "http://schema.org/Male">
+    >(GenderType, query);
+  }
+
+  async genderTypes(
+    query?: $ObjectSet.Query<GenderType.Identifier>,
+  ): Promise<readonly purify.Either<Error, GenderType>[]> {
+    return this.$objects<
+      GenderType,
+      rdfjs.NamedNode<"http://schema.org/Female" | "http://schema.org/Male">
+    >(GenderType, query);
+  }
+
+  async genderTypesCount(
+    query?: Pick<$ObjectSet.Query<GenderType.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      rdfjs.NamedNode<"http://schema.org/Female" | "http://schema.org/Male">
+    >(GenderType, query);
+  }
+
+  async imageObject(
+    identifier: ImageObject.Identifier,
+  ): Promise<purify.Either<Error, ImageObject>> {
+    return (
+      await this.imageObjects({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async imageObjectIdentifiers(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): Promise<purify.Either<Error, readonly ImageObject.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ImageObject,
+      query,
+    );
+  }
+
+  async imageObjects(
+    query?: $ObjectSet.Query<ImageObject.Identifier>,
+  ): Promise<readonly purify.Either<Error, ImageObject>[]> {
+    return this.$objects<ImageObject, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ImageObject,
+      query,
+    );
+  }
+
+  async imageObjectsCount(
+    query?: Pick<$ObjectSet.Query<ImageObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ImageObject,
+      query,
+    );
+  }
+
+  async imageObjectStub(
+    identifier: ImageObjectStub.Identifier,
+  ): Promise<purify.Either<Error, ImageObjectStub>> {
+    return (
+      await this.imageObjectStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async imageObjectStubIdentifiers(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ImageObjectStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ImageObjectStub,
+      query,
+    );
+  }
+
+  async imageObjectStubs(
+    query?: $ObjectSet.Query<ImageObjectStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ImageObjectStub>[]> {
+    return this.$objects<ImageObjectStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ImageObjectStub,
+      query,
+    );
+  }
+
+  async imageObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<ImageObjectStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ImageObjectStub,
+      query,
+    );
+  }
+
+  async intangible(
+    identifier: IntangibleStatic.Identifier,
+  ): Promise<purify.Either<Error, Intangible>> {
+    return (
+      await this.intangibles({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async intangibleIdentifiers(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly IntangibleStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      IntangibleStatic,
+      query,
+    );
+  }
+
+  async intangibles(
+    query?: $ObjectSet.Query<IntangibleStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Intangible>[]> {
+    return this.$objects<Intangible, rdfjs.BlankNode | rdfjs.NamedNode>(
+      IntangibleStatic,
+      query,
+    );
+  }
+
+  async intangiblesCount(
+    query?: Pick<$ObjectSet.Query<IntangibleStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      IntangibleStatic,
+      query,
+    );
+  }
+
+  async intangibleStub(
+    identifier: IntangibleStubStatic.Identifier,
+  ): Promise<purify.Either<Error, IntangibleStub>> {
+    return (
+      await this.intangibleStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async intangibleStubIdentifiers(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly IntangibleStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      IntangibleStubStatic,
+      query,
+    );
+  }
+
+  async intangibleStubs(
+    query?: $ObjectSet.Query<IntangibleStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, IntangibleStub>[]> {
+    return this.$objects<IntangibleStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      IntangibleStubStatic,
+      query,
+    );
+  }
+
+  async intangibleStubsCount(
+    query?: Pick<$ObjectSet.Query<IntangibleStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      IntangibleStubStatic,
+      query,
+    );
+  }
+
+  async invoice(
+    identifier: Invoice.Identifier,
+  ): Promise<purify.Either<Error, Invoice>> {
+    return (
+      await this.invoices({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async invoiceIdentifiers(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): Promise<purify.Either<Error, readonly Invoice.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Invoice,
+      query,
+    );
+  }
+
+  async invoices(
+    query?: $ObjectSet.Query<Invoice.Identifier>,
+  ): Promise<readonly purify.Either<Error, Invoice>[]> {
+    return this.$objects<Invoice, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Invoice,
+      query,
+    );
+  }
+
+  async invoicesCount(
+    query?: Pick<$ObjectSet.Query<Invoice.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Invoice,
+      query,
+    );
+  }
+
+  async invoiceStub(
+    identifier: InvoiceStub.Identifier,
+  ): Promise<purify.Either<Error, InvoiceStub>> {
+    return (
+      await this.invoiceStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async invoiceStubIdentifiers(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly InvoiceStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      InvoiceStub,
+      query,
+    );
+  }
+
+  async invoiceStubs(
+    query?: $ObjectSet.Query<InvoiceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, InvoiceStub>[]> {
+    return this.$objects<InvoiceStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      InvoiceStub,
+      query,
+    );
+  }
+
+  async invoiceStubsCount(
+    query?: Pick<$ObjectSet.Query<InvoiceStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      InvoiceStub,
+      query,
+    );
+  }
+
+  async itemList(
+    identifier: ItemList.Identifier,
+  ): Promise<purify.Either<Error, ItemList>> {
+    return (
+      await this.itemLists({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async itemListIdentifiers(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): Promise<purify.Either<Error, readonly ItemList.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ItemList,
+      query,
+    );
+  }
+
+  async itemLists(
+    query?: $ObjectSet.Query<ItemList.Identifier>,
+  ): Promise<readonly purify.Either<Error, ItemList>[]> {
+    return this.$objects<ItemList, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ItemList,
+      query,
+    );
+  }
+
+  async itemListsCount(
+    query?: Pick<$ObjectSet.Query<ItemList.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ItemList,
+      query,
+    );
+  }
+
+  async itemListStub(
+    identifier: ItemListStub.Identifier,
+  ): Promise<purify.Either<Error, ItemListStub>> {
+    return (
+      await this.itemListStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async itemListStubIdentifiers(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ItemListStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ItemListStub,
+      query,
+    );
+  }
+
+  async itemListStubs(
+    query?: $ObjectSet.Query<ItemListStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ItemListStub>[]> {
+    return this.$objects<ItemListStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ItemListStub,
+      query,
+    );
+  }
+
+  async itemListStubsCount(
+    query?: Pick<$ObjectSet.Query<ItemListStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ItemListStub,
+      query,
+    );
+  }
+
+  async listItem(
+    identifier: ListItem.Identifier,
+  ): Promise<purify.Either<Error, ListItem>> {
+    return (
+      await this.listItems({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async listItemIdentifiers(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): Promise<purify.Either<Error, readonly ListItem.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ListItem,
+      query,
+    );
+  }
+
+  async listItems(
+    query?: $ObjectSet.Query<ListItem.Identifier>,
+  ): Promise<readonly purify.Either<Error, ListItem>[]> {
+    return this.$objects<ListItem, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ListItem,
+      query,
+    );
+  }
+
+  async listItemsCount(
+    query?: Pick<$ObjectSet.Query<ListItem.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ListItem,
+      query,
+    );
+  }
+
+  async listItemStub(
+    identifier: ListItemStub.Identifier,
+  ): Promise<purify.Either<Error, ListItemStub>> {
+    return (
+      await this.listItemStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async listItemStubIdentifiers(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ListItemStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ListItemStub,
+      query,
+    );
+  }
+
+  async listItemStubs(
+    query?: $ObjectSet.Query<ListItemStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ListItemStub>[]> {
+    return this.$objects<ListItemStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ListItemStub,
+      query,
+    );
+  }
+
+  async listItemStubsCount(
+    query?: Pick<$ObjectSet.Query<ListItemStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ListItemStub,
+      query,
+    );
+  }
+
+  async mediaObject(
+    identifier: MediaObjectStatic.Identifier,
+  ): Promise<purify.Either<Error, MediaObject>> {
+    return (
+      await this.mediaObjects({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async mediaObjectIdentifiers(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly MediaObjectStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MediaObjectStatic,
+      query,
+    );
+  }
+
+  async mediaObjects(
+    query?: $ObjectSet.Query<MediaObjectStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, MediaObject>[]> {
+    return this.$objects<MediaObject, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MediaObjectStatic,
+      query,
+    );
+  }
+
+  async mediaObjectsCount(
+    query?: Pick<$ObjectSet.Query<MediaObjectStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MediaObjectStatic,
+      query,
+    );
+  }
+
+  async mediaObjectStub(
+    identifier: MediaObjectStubStatic.Identifier,
+  ): Promise<purify.Either<Error, MediaObjectStub>> {
+    return (
+      await this.mediaObjectStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async mediaObjectStubIdentifiers(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly MediaObjectStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MediaObjectStubStatic,
+      query,
+    );
+  }
+
+  async mediaObjectStubs(
+    query?: $ObjectSet.Query<MediaObjectStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, MediaObjectStub>[]> {
+    return this.$objects<MediaObjectStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MediaObjectStubStatic,
+      query,
+    );
+  }
+
+  async mediaObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MediaObjectStubStatic,
+      query,
+    );
+  }
+
+  async message(
+    identifier: Message.Identifier,
+  ): Promise<purify.Either<Error, Message>> {
+    return (
+      await this.messages({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async messageIdentifiers(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): Promise<purify.Either<Error, readonly Message.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Message,
+      query,
+    );
+  }
+
+  async messages(
+    query?: $ObjectSet.Query<Message.Identifier>,
+  ): Promise<readonly purify.Either<Error, Message>[]> {
+    return this.$objects<Message, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Message,
+      query,
+    );
+  }
+
+  async messagesCount(
+    query?: Pick<$ObjectSet.Query<Message.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Message,
+      query,
+    );
+  }
+
+  async messageStub(
+    identifier: MessageStub.Identifier,
+  ): Promise<purify.Either<Error, MessageStub>> {
+    return (
+      await this.messageStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async messageStubIdentifiers(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MessageStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MessageStub,
+      query,
+    );
+  }
+
+  async messageStubs(
+    query?: $ObjectSet.Query<MessageStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MessageStub>[]> {
+    return this.$objects<MessageStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MessageStub,
+      query,
+    );
+  }
+
+  async messageStubsCount(
+    query?: Pick<$ObjectSet.Query<MessageStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MessageStub,
+      query,
+    );
+  }
+
+  async monetaryAmount(
+    identifier: MonetaryAmount.Identifier,
+  ): Promise<purify.Either<Error, MonetaryAmount>> {
+    return (
+      await this.monetaryAmounts({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async monetaryAmountIdentifiers(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): Promise<purify.Either<Error, readonly MonetaryAmount.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MonetaryAmount,
+      query,
+    );
+  }
+
+  async monetaryAmounts(
+    query?: $ObjectSet.Query<MonetaryAmount.Identifier>,
+  ): Promise<readonly purify.Either<Error, MonetaryAmount>[]> {
+    return this.$objects<MonetaryAmount, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MonetaryAmount,
+      query,
+    );
+  }
+
+  async monetaryAmountsCount(
+    query?: Pick<$ObjectSet.Query<MonetaryAmount.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MonetaryAmount,
+      query,
+    );
+  }
+
+  async monetaryAmountStub(
+    identifier: MonetaryAmountStub.Identifier,
+  ): Promise<purify.Either<Error, MonetaryAmountStub>> {
+    return (
+      await this.monetaryAmountStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async monetaryAmountStubIdentifiers(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MonetaryAmountStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MonetaryAmountStub,
+      query,
+    );
+  }
+
+  async monetaryAmountStubs(
+    query?: $ObjectSet.Query<MonetaryAmountStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]> {
+    return this.$objects<MonetaryAmountStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MonetaryAmountStub,
+      query,
+    );
+  }
+
+  async monetaryAmountStubsCount(
+    query?: Pick<$ObjectSet.Query<MonetaryAmountStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MonetaryAmountStub,
+      query,
+    );
+  }
+
+  async musicAlbum(
+    identifier: MusicAlbum.Identifier,
+  ): Promise<purify.Either<Error, MusicAlbum>> {
+    return (
+      await this.musicAlbums({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicAlbumIdentifiers(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicAlbum.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicAlbum,
+      query,
+    );
+  }
+
+  async musicAlbums(
+    query?: $ObjectSet.Query<MusicAlbum.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicAlbum>[]> {
+    return this.$objects<MusicAlbum, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicAlbum,
+      query,
+    );
+  }
+
+  async musicAlbumsCount(
+    query?: Pick<$ObjectSet.Query<MusicAlbum.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicAlbum,
+      query,
+    );
+  }
+
+  async musicAlbumStub(
+    identifier: MusicAlbumStub.Identifier,
+  ): Promise<purify.Either<Error, MusicAlbumStub>> {
+    return (
+      await this.musicAlbumStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicAlbumStubIdentifiers(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicAlbumStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicAlbumStub,
+      query,
+    );
+  }
+
+  async musicAlbumStubs(
+    query?: $ObjectSet.Query<MusicAlbumStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]> {
+    return this.$objects<MusicAlbumStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicAlbumStub,
+      query,
+    );
+  }
+
+  async musicAlbumStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicAlbumStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicAlbumStub,
+      query,
+    );
+  }
+
+  async musicComposition(
+    identifier: MusicComposition.Identifier,
+  ): Promise<purify.Either<Error, MusicComposition>> {
+    return (
+      await this.musicCompositions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicCompositionIdentifiers(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicComposition.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicComposition,
+      query,
+    );
+  }
+
+  async musicCompositions(
+    query?: $ObjectSet.Query<MusicComposition.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicComposition>[]> {
+    return this.$objects<MusicComposition, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicComposition,
+      query,
+    );
+  }
+
+  async musicCompositionsCount(
+    query?: Pick<$ObjectSet.Query<MusicComposition.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicComposition,
+      query,
+    );
+  }
+
+  async musicCompositionStub(
+    identifier: MusicCompositionStub.Identifier,
+  ): Promise<purify.Either<Error, MusicCompositionStub>> {
+    return (
+      await this.musicCompositionStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicCompositionStubIdentifiers(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicCompositionStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicCompositionStub,
+      query,
+    );
+  }
+
+  async musicCompositionStubs(
+    query?: $ObjectSet.Query<MusicCompositionStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]> {
+    return this.$objects<
+      MusicCompositionStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(MusicCompositionStub, query);
+  }
+
+  async musicCompositionStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicCompositionStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicCompositionStub,
+      query,
+    );
+  }
+
+  async musicGroup(
+    identifier: MusicGroup.Identifier,
+  ): Promise<purify.Either<Error, MusicGroup>> {
+    return (
+      await this.musicGroups({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicGroupIdentifiers(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicGroup.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicGroup,
+      query,
+    );
+  }
+
+  async musicGroups(
+    query?: $ObjectSet.Query<MusicGroup.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicGroup>[]> {
+    return this.$objects<MusicGroup, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicGroup,
+      query,
+    );
+  }
+
+  async musicGroupsCount(
+    query?: Pick<$ObjectSet.Query<MusicGroup.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicGroup,
+      query,
+    );
+  }
+
+  async musicGroupStub(
+    identifier: MusicGroupStub.Identifier,
+  ): Promise<purify.Either<Error, MusicGroupStub>> {
+    return (
+      await this.musicGroupStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicGroupStubIdentifiers(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicGroupStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicGroupStub,
+      query,
+    );
+  }
+
+  async musicGroupStubs(
+    query?: $ObjectSet.Query<MusicGroupStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicGroupStub>[]> {
+    return this.$objects<MusicGroupStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicGroupStub,
+      query,
+    );
+  }
+
+  async musicGroupStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicGroupStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicGroupStub,
+      query,
+    );
+  }
+
+  async musicPlaylist(
+    identifier: MusicPlaylist.Identifier,
+  ): Promise<purify.Either<Error, MusicPlaylist>> {
+    return (
+      await this.musicPlaylists({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicPlaylistIdentifiers(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicPlaylist.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicPlaylist,
+      query,
+    );
+  }
+
+  async musicPlaylists(
+    query?: $ObjectSet.Query<MusicPlaylist.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicPlaylist>[]> {
+    return this.$objects<MusicPlaylist, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicPlaylist,
+      query,
+    );
+  }
+
+  async musicPlaylistsCount(
+    query?: Pick<$ObjectSet.Query<MusicPlaylist.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicPlaylist,
+      query,
+    );
+  }
+
+  async musicPlaylistStub(
+    identifier: MusicPlaylistStub.Identifier,
+  ): Promise<purify.Either<Error, MusicPlaylistStub>> {
+    return (
+      await this.musicPlaylistStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicPlaylistStubIdentifiers(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicPlaylistStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicPlaylistStub,
+      query,
+    );
+  }
+
+  async musicPlaylistStubs(
+    query?: $ObjectSet.Query<MusicPlaylistStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]> {
+    return this.$objects<MusicPlaylistStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicPlaylistStub,
+      query,
+    );
+  }
+
+  async musicPlaylistStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicPlaylistStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicPlaylistStub,
+      query,
+    );
+  }
+
+  async musicRecording(
+    identifier: MusicRecording.Identifier,
+  ): Promise<purify.Either<Error, MusicRecording>> {
+    return (
+      await this.musicRecordings({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicRecordingIdentifiers(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicRecording.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicRecording,
+      query,
+    );
+  }
+
+  async musicRecordings(
+    query?: $ObjectSet.Query<MusicRecording.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicRecording>[]> {
+    return this.$objects<MusicRecording, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicRecording,
+      query,
+    );
+  }
+
+  async musicRecordingsCount(
+    query?: Pick<$ObjectSet.Query<MusicRecording.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicRecording,
+      query,
+    );
+  }
+
+  async musicRecordingStub(
+    identifier: MusicRecordingStub.Identifier,
+  ): Promise<purify.Either<Error, MusicRecordingStub>> {
+    return (
+      await this.musicRecordingStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicRecordingStubIdentifiers(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicRecordingStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicRecordingStub,
+      query,
+    );
+  }
+
+  async musicRecordingStubs(
+    query?: $ObjectSet.Query<MusicRecordingStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]> {
+    return this.$objects<MusicRecordingStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicRecordingStub,
+      query,
+    );
+  }
+
+  async musicRecordingStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicRecordingStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      MusicRecordingStub,
+      query,
+    );
+  }
+
+  async occupation(
+    identifier: Occupation.Identifier,
+  ): Promise<purify.Either<Error, Occupation>> {
+    return (
+      await this.occupations({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async occupationIdentifiers(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): Promise<purify.Either<Error, readonly Occupation.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Occupation,
+      query,
+    );
+  }
+
+  async occupations(
+    query?: $ObjectSet.Query<Occupation.Identifier>,
+  ): Promise<readonly purify.Either<Error, Occupation>[]> {
+    return this.$objects<Occupation, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Occupation,
+      query,
+    );
+  }
+
+  async occupationsCount(
+    query?: Pick<$ObjectSet.Query<Occupation.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Occupation,
+      query,
+    );
+  }
+
+  async order(
+    identifier: Order.Identifier,
+  ): Promise<purify.Either<Error, Order>> {
+    return (
+      await this.orders({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async orderIdentifiers(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): Promise<purify.Either<Error, readonly Order.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Order,
+      query,
+    );
+  }
+
+  async orders(
+    query?: $ObjectSet.Query<Order.Identifier>,
+  ): Promise<readonly purify.Either<Error, Order>[]> {
+    return this.$objects<Order, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Order,
+      query,
+    );
+  }
+
+  async ordersCount(
+    query?: Pick<$ObjectSet.Query<Order.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Order, query);
+  }
+
+  async orderStub(
+    identifier: OrderStub.Identifier,
+  ): Promise<purify.Either<Error, OrderStub>> {
+    return (
+      await this.orderStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async orderStubIdentifiers(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly OrderStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrderStub,
+      query,
+    );
+  }
+
+  async orderStubs(
+    query?: $ObjectSet.Query<OrderStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, OrderStub>[]> {
+    return this.$objects<OrderStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrderStub,
+      query,
+    );
+  }
+
+  async orderStubsCount(
+    query?: Pick<$ObjectSet.Query<OrderStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrderStub,
+      query,
+    );
+  }
+
+  async organization(
+    identifier: OrganizationStatic.Identifier,
+  ): Promise<purify.Either<Error, Organization>> {
+    return (
+      await this.organizations({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async organizationIdentifiers(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly OrganizationStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrganizationStatic,
+      query,
+    );
+  }
+
+  async organizations(
+    query?: $ObjectSet.Query<OrganizationStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Organization>[]> {
+    return this.$objects<Organization, rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrganizationStatic,
+      query,
+    );
+  }
+
+  async organizationsCount(
+    query?: Pick<$ObjectSet.Query<OrganizationStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrganizationStatic,
+      query,
+    );
+  }
+
+  async organizationStub(
+    identifier: OrganizationStubStatic.Identifier,
+  ): Promise<purify.Either<Error, OrganizationStub>> {
+    return (
+      await this.organizationStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async organizationStubIdentifiers(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly OrganizationStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrganizationStubStatic,
+      query,
+    );
+  }
+
+  async organizationStubs(
+    query?: $ObjectSet.Query<OrganizationStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, OrganizationStub>[]> {
+    return this.$objects<OrganizationStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrganizationStubStatic,
+      query,
+    );
+  }
+
+  async organizationStubsCount(
+    query?: Pick<$ObjectSet.Query<OrganizationStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      OrganizationStubStatic,
+      query,
+    );
+  }
+
+  async performingGroup(
+    identifier: PerformingGroupStatic.Identifier,
+  ): Promise<purify.Either<Error, PerformingGroup>> {
+    return (
+      await this.performingGroups({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async performingGroupIdentifiers(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PerformingGroupStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PerformingGroupStatic,
+      query,
+    );
+  }
+
+  async performingGroups(
+    query?: $ObjectSet.Query<PerformingGroupStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PerformingGroup>[]> {
+    return this.$objects<PerformingGroup, rdfjs.BlankNode | rdfjs.NamedNode>(
+      PerformingGroupStatic,
+      query,
+    );
+  }
+
+  async performingGroupsCount(
+    query?: Pick<$ObjectSet.Query<PerformingGroupStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PerformingGroupStatic,
+      query,
+    );
+  }
+
+  async performingGroupStub(
+    identifier: PerformingGroupStubStatic.Identifier,
+  ): Promise<purify.Either<Error, PerformingGroupStub>> {
+    return (
+      await this.performingGroupStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async performingGroupStubIdentifiers(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PerformingGroupStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PerformingGroupStubStatic,
+      query,
+    );
+  }
+
+  async performingGroupStubs(
+    query?: $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]> {
+    return this.$objects<
+      PerformingGroupStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PerformingGroupStubStatic, query);
+  }
+
+  async performingGroupStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<PerformingGroupStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PerformingGroupStubStatic,
+      query,
+    );
+  }
+
+  async person(
+    identifier: Person.Identifier,
+  ): Promise<purify.Either<Error, Person>> {
+    return (
+      await this.people({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async personIdentifiers(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): Promise<purify.Either<Error, readonly Person.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Person,
+      query,
+    );
+  }
+
+  async people(
+    query?: $ObjectSet.Query<Person.Identifier>,
+  ): Promise<readonly purify.Either<Error, Person>[]> {
+    return this.$objects<Person, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Person,
+      query,
+    );
+  }
+
+  async peopleCount(
+    query?: Pick<$ObjectSet.Query<Person.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Person, query);
+  }
+
+  async personStub(
+    identifier: PersonStub.Identifier,
+  ): Promise<purify.Either<Error, PersonStub>> {
+    return (
+      await this.personStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async personStubIdentifiers(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PersonStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PersonStub,
+      query,
+    );
+  }
+
+  async personStubs(
+    query?: $ObjectSet.Query<PersonStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PersonStub>[]> {
+    return this.$objects<PersonStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      PersonStub,
+      query,
+    );
+  }
+
+  async personStubsCount(
+    query?: Pick<$ObjectSet.Query<PersonStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PersonStub,
+      query,
+    );
+  }
+
+  async place(
+    identifier: Place.Identifier,
+  ): Promise<purify.Either<Error, Place>> {
+    return (
+      await this.places({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async placeIdentifiers(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): Promise<purify.Either<Error, readonly Place.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Place,
+      query,
+    );
+  }
+
+  async places(
+    query?: $ObjectSet.Query<Place.Identifier>,
+  ): Promise<readonly purify.Either<Error, Place>[]> {
+    return this.$objects<Place, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Place,
+      query,
+    );
+  }
+
+  async placesCount(
+    query?: Pick<$ObjectSet.Query<Place.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Place, query);
+  }
+
+  async placeStub(
+    identifier: PlaceStub.Identifier,
+  ): Promise<purify.Either<Error, PlaceStub>> {
+    return (
+      await this.placeStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async placeStubIdentifiers(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PlaceStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PlaceStub,
+      query,
+    );
+  }
+
+  async placeStubs(
+    query?: $ObjectSet.Query<PlaceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PlaceStub>[]> {
+    return this.$objects<PlaceStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      PlaceStub,
+      query,
+    );
+  }
+
+  async placeStubsCount(
+    query?: Pick<$ObjectSet.Query<PlaceStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PlaceStub,
+      query,
+    );
+  }
+
+  async publicationEvent(
+    identifier: PublicationEventStatic.Identifier,
+  ): Promise<purify.Either<Error, PublicationEvent>> {
+    return (
+      await this.publicationEvents({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async publicationEventIdentifiers(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PublicationEventStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PublicationEventStatic,
+      query,
+    );
+  }
+
+  async publicationEvents(
+    query?: $ObjectSet.Query<PublicationEventStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, PublicationEvent>[]> {
+    return this.$objects<PublicationEvent, rdfjs.BlankNode | rdfjs.NamedNode>(
+      PublicationEventStatic,
+      query,
+    );
+  }
+
+  async publicationEventsCount(
+    query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PublicationEventStatic,
+      query,
+    );
+  }
+
+  async publicationEventStub(
+    identifier: PublicationEventStub.Identifier,
+  ): Promise<purify.Either<Error, PublicationEventStub>> {
+    return (
+      await this.publicationEventStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async publicationEventStubIdentifiers(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PublicationEventStub,
+      query,
+    );
+  }
+
+  async publicationEventStubs(
+    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
+    return this.$objects<
+      PublicationEventStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PublicationEventStub, query);
+  }
+
+  async publicationEventStubsCount(
+    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      PublicationEventStub,
+      query,
+    );
+  }
+
+  async quantitativeValue(
+    identifier: QuantitativeValue.Identifier,
+  ): Promise<purify.Either<Error, QuantitativeValue>> {
+    return (
+      await this.quantitativeValues({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async quantitativeValueIdentifiers(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): Promise<purify.Either<Error, readonly QuantitativeValue.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      QuantitativeValue,
+      query,
+    );
+  }
+
+  async quantitativeValues(
+    query?: $ObjectSet.Query<QuantitativeValue.Identifier>,
+  ): Promise<readonly purify.Either<Error, QuantitativeValue>[]> {
+    return this.$objects<QuantitativeValue, rdfjs.BlankNode | rdfjs.NamedNode>(
+      QuantitativeValue,
+      query,
+    );
+  }
+
+  async quantitativeValuesCount(
+    query?: Pick<$ObjectSet.Query<QuantitativeValue.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      QuantitativeValue,
+      query,
+    );
+  }
+
+  async quantitativeValueStub(
+    identifier: QuantitativeValueStub.Identifier,
+  ): Promise<purify.Either<Error, QuantitativeValueStub>> {
+    return (
+      await this.quantitativeValueStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async quantitativeValueStubIdentifiers(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly QuantitativeValueStub.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      QuantitativeValueStub,
+      query,
+    );
+  }
+
+  async quantitativeValueStubs(
+    query?: $ObjectSet.Query<QuantitativeValueStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]> {
+    return this.$objects<
+      QuantitativeValueStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(QuantitativeValueStub, query);
+  }
+
+  async quantitativeValueStubsCount(
+    query?: Pick<$ObjectSet.Query<QuantitativeValueStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      QuantitativeValueStub,
+      query,
+    );
+  }
+
+  async radioBroadcastService(
+    identifier: RadioBroadcastService.Identifier,
+  ): Promise<purify.Either<Error, RadioBroadcastService>> {
+    return (
+      await this.radioBroadcastServices({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async radioBroadcastServiceIdentifiers(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RadioBroadcastService.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioBroadcastService,
+      query,
+    );
+  }
+
+  async radioBroadcastServices(
+    query?: $ObjectSet.Query<RadioBroadcastService.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]> {
+    return this.$objects<
+      RadioBroadcastService,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(RadioBroadcastService, query);
+  }
+
+  async radioBroadcastServicesCount(
+    query?: Pick<$ObjectSet.Query<RadioBroadcastService.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioBroadcastService,
+      query,
+    );
+  }
+
+  async radioBroadcastServiceStub(
+    identifier: RadioBroadcastServiceStub.Identifier,
+  ): Promise<purify.Either<Error, RadioBroadcastServiceStub>> {
+    return (
+      await this.radioBroadcastServiceStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async radioBroadcastServiceStubIdentifiers(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RadioBroadcastServiceStub.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioBroadcastServiceStub,
+      query,
+    );
+  }
+
+  async radioBroadcastServiceStubs(
+    query?: $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]> {
+    return this.$objects<
+      RadioBroadcastServiceStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(RadioBroadcastServiceStub, query);
+  }
+
+  async radioBroadcastServiceStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<RadioBroadcastServiceStub.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioBroadcastServiceStub,
+      query,
+    );
+  }
+
+  async radioEpisode(
+    identifier: RadioEpisode.Identifier,
+  ): Promise<purify.Either<Error, RadioEpisode>> {
+    return (
+      await this.radioEpisodes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async radioEpisodeIdentifiers(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioEpisode.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioEpisode,
+      query,
+    );
+  }
+
+  async radioEpisodes(
+    query?: $ObjectSet.Query<RadioEpisode.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioEpisode>[]> {
+    return this.$objects<RadioEpisode, rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioEpisode,
+      query,
+    );
+  }
+
+  async radioEpisodesCount(
+    query?: Pick<$ObjectSet.Query<RadioEpisode.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioEpisode,
+      query,
+    );
+  }
+
+  async radioEpisodeStub(
+    identifier: RadioEpisodeStub.Identifier,
+  ): Promise<purify.Either<Error, RadioEpisodeStub>> {
+    return (
+      await this.radioEpisodeStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async radioEpisodeStubIdentifiers(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioEpisodeStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioEpisodeStub,
+      query,
+    );
+  }
+
+  async radioEpisodeStubs(
+    query?: $ObjectSet.Query<RadioEpisodeStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]> {
+    return this.$objects<RadioEpisodeStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioEpisodeStub,
+      query,
+    );
+  }
+
+  async radioEpisodeStubsCount(
+    query?: Pick<$ObjectSet.Query<RadioEpisodeStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioEpisodeStub,
+      query,
+    );
+  }
+
+  async radioSeries(
+    identifier: RadioSeries.Identifier,
+  ): Promise<purify.Either<Error, RadioSeries>> {
+    return (
+      await this.radioSeriess({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async radioSeriesIdentifiers(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioSeries.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioSeries,
+      query,
+    );
+  }
+
+  async radioSeriess(
+    query?: $ObjectSet.Query<RadioSeries.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioSeries>[]> {
+    return this.$objects<RadioSeries, rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioSeries,
+      query,
+    );
+  }
+
+  async radioSeriessCount(
+    query?: Pick<$ObjectSet.Query<RadioSeries.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioSeries,
+      query,
+    );
+  }
+
+  async radioSeriesStub(
+    identifier: RadioSeriesStub.Identifier,
+  ): Promise<purify.Either<Error, RadioSeriesStub>> {
+    return (
+      await this.radioSeriesStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async radioSeriesStubIdentifiers(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly RadioSeriesStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioSeriesStub,
+      query,
+    );
+  }
+
+  async radioSeriesStubs(
+    query?: $ObjectSet.Query<RadioSeriesStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]> {
+    return this.$objects<RadioSeriesStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioSeriesStub,
+      query,
+    );
+  }
+
+  async radioSeriesStubsCount(
+    query?: Pick<$ObjectSet.Query<RadioSeriesStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      RadioSeriesStub,
+      query,
+    );
+  }
+
+  async report(
+    identifier: Report.Identifier,
+  ): Promise<purify.Either<Error, Report>> {
+    return (
+      await this.reports({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async reportIdentifiers(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): Promise<purify.Either<Error, readonly Report.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Report,
+      query,
+    );
+  }
+
+  async reports(
+    query?: $ObjectSet.Query<Report.Identifier>,
+  ): Promise<readonly purify.Either<Error, Report>[]> {
+    return this.$objects<Report, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Report,
+      query,
+    );
+  }
+
+  async reportsCount(
+    query?: Pick<$ObjectSet.Query<Report.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Report, query);
+  }
+
+  async reportStub(
+    identifier: ReportStub.Identifier,
+  ): Promise<purify.Either<Error, ReportStub>> {
+    return (
+      await this.reportStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async reportStubIdentifiers(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly ReportStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ReportStub,
+      query,
+    );
+  }
+
+  async reportStubs(
+    query?: $ObjectSet.Query<ReportStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, ReportStub>[]> {
+    return this.$objects<ReportStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ReportStub,
+      query,
+    );
+  }
+
+  async reportStubsCount(
+    query?: Pick<$ObjectSet.Query<ReportStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ReportStub,
+      query,
+    );
+  }
+
+  async role(identifier: Role.Identifier): Promise<purify.Either<Error, Role>> {
+    return (
+      await this.roles({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async roleIdentifiers(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): Promise<purify.Either<Error, readonly Role.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      Role,
+      query,
+    );
+  }
+
+  async roles(
+    query?: $ObjectSet.Query<Role.Identifier>,
+  ): Promise<readonly purify.Either<Error, Role>[]> {
+    return this.$objects<Role, rdfjs.BlankNode | rdfjs.NamedNode>(Role, query);
+  }
+
+  async rolesCount(
+    query?: Pick<$ObjectSet.Query<Role.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(Role, query);
+  }
+
+  async service(
+    identifier: ServiceStatic.Identifier,
+  ): Promise<purify.Either<Error, Service>> {
+    return (
+      await this.services({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async serviceIdentifiers(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ServiceStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ServiceStatic,
+      query,
+    );
+  }
+
+  async services(
+    query?: $ObjectSet.Query<ServiceStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Service>[]> {
+    return this.$objects<Service, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ServiceStatic,
+      query,
+    );
+  }
+
+  async servicesCount(
+    query?: Pick<$ObjectSet.Query<ServiceStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ServiceStatic,
+      query,
+    );
+  }
+
+  async serviceStub(
+    identifier: ServiceStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ServiceStub>> {
+    return (
+      await this.serviceStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async serviceStubIdentifiers(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ServiceStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ServiceStubStatic,
+      query,
+    );
+  }
+
+  async serviceStubs(
+    query?: $ObjectSet.Query<ServiceStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ServiceStub>[]> {
+    return this.$objects<ServiceStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ServiceStubStatic,
+      query,
+    );
+  }
+
+  async serviceStubsCount(
+    query?: Pick<$ObjectSet.Query<ServiceStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ServiceStubStatic,
+      query,
+    );
+  }
+
+  async structuredValue(
+    identifier: StructuredValueStatic.Identifier,
+  ): Promise<purify.Either<Error, StructuredValue>> {
+    return (
+      await this.structuredValues({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async structuredValueIdentifiers(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StructuredValueStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      StructuredValueStatic,
+      query,
+    );
+  }
+
+  async structuredValues(
+    query?: $ObjectSet.Query<StructuredValueStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, StructuredValue>[]> {
+    return this.$objects<StructuredValue, rdfjs.BlankNode | rdfjs.NamedNode>(
+      StructuredValueStatic,
+      query,
+    );
+  }
+
+  async structuredValuesCount(
+    query?: Pick<$ObjectSet.Query<StructuredValueStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      StructuredValueStatic,
+      query,
+    );
+  }
+
+  async structuredValueStub(
+    identifier: StructuredValueStubStatic.Identifier,
+  ): Promise<purify.Either<Error, StructuredValueStub>> {
+    return (
+      await this.structuredValueStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async structuredValueStubIdentifiers(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StructuredValueStubStatic.Identifier[]>
+  > {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      StructuredValueStubStatic,
+      query,
+    );
+  }
+
+  async structuredValueStubs(
+    query?: $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, StructuredValueStub>[]> {
+    return this.$objects<
+      StructuredValueStub,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(StructuredValueStubStatic, query);
+  }
+
+  async structuredValueStubsCount(
+    query?: Pick<
+      $ObjectSet.Query<StructuredValueStubStatic.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      StructuredValueStubStatic,
+      query,
+    );
+  }
+
+  async textObject(
+    identifier: TextObject.Identifier,
+  ): Promise<purify.Either<Error, TextObject>> {
+    return (
+      await this.textObjects({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async textObjectIdentifiers(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): Promise<purify.Either<Error, readonly TextObject.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      TextObject,
+      query,
+    );
+  }
+
+  async textObjects(
+    query?: $ObjectSet.Query<TextObject.Identifier>,
+  ): Promise<readonly purify.Either<Error, TextObject>[]> {
+    return this.$objects<TextObject, rdfjs.BlankNode | rdfjs.NamedNode>(
+      TextObject,
+      query,
+    );
+  }
+
+  async textObjectsCount(
+    query?: Pick<$ObjectSet.Query<TextObject.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      TextObject,
+      query,
+    );
+  }
+
+  async textObjectStub(
+    identifier: TextObjectStub.Identifier,
+  ): Promise<purify.Either<Error, TextObjectStub>> {
+    return (
+      await this.textObjectStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async textObjectStubIdentifiers(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly TextObjectStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      TextObjectStub,
+      query,
+    );
+  }
+
+  async textObjectStubs(
+    query?: $ObjectSet.Query<TextObjectStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, TextObjectStub>[]> {
+    return this.$objects<TextObjectStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      TextObjectStub,
+      query,
+    );
+  }
+
+  async textObjectStubsCount(
+    query?: Pick<$ObjectSet.Query<TextObjectStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      TextObjectStub,
+      query,
+    );
+  }
+
+  async thing(
+    identifier: ThingStatic.Identifier,
+  ): Promise<purify.Either<Error, Thing>> {
+    return (
+      await this.things({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async thingIdentifiers(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ThingStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ThingStatic,
+      query,
+    );
+  }
+
+  async things(
+    query?: $ObjectSet.Query<ThingStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, Thing>[]> {
+    return this.$objects<Thing, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ThingStatic,
+      query,
+    );
+  }
+
+  async thingsCount(
+    query?: Pick<$ObjectSet.Query<ThingStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ThingStatic,
+      query,
+    );
+  }
+
+  async thingStub(
+    identifier: ThingStubStatic.Identifier,
+  ): Promise<purify.Either<Error, ThingStub>> {
+    return (
+      await this.thingStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async thingStubIdentifiers(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ThingStubStatic.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ThingStubStatic,
+      query,
+    );
+  }
+
+  async thingStubs(
+    query?: $ObjectSet.Query<ThingStubStatic.Identifier>,
+  ): Promise<readonly purify.Either<Error, ThingStub>[]> {
+    return this.$objects<ThingStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ThingStubStatic,
+      query,
+    );
+  }
+
+  async thingStubsCount(
+    query?: Pick<$ObjectSet.Query<ThingStubStatic.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      ThingStubStatic,
+      query,
+    );
+  }
+
+  async voteAction(
+    identifier: VoteAction.Identifier,
+  ): Promise<purify.Either<Error, VoteAction>> {
+    return (
+      await this.voteActions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async voteActionIdentifiers(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): Promise<purify.Either<Error, readonly VoteAction.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      VoteAction,
+      query,
+    );
+  }
+
+  async voteActions(
+    query?: $ObjectSet.Query<VoteAction.Identifier>,
+  ): Promise<readonly purify.Either<Error, VoteAction>[]> {
+    return this.$objects<VoteAction, rdfjs.BlankNode | rdfjs.NamedNode>(
+      VoteAction,
+      query,
+    );
+  }
+
+  async voteActionsCount(
+    query?: Pick<$ObjectSet.Query<VoteAction.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      VoteAction,
+      query,
+    );
+  }
+
+  async voteActionStub(
+    identifier: VoteActionStub.Identifier,
+  ): Promise<purify.Either<Error, VoteActionStub>> {
+    return (
+      await this.voteActionStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async voteActionStubIdentifiers(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly VoteActionStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      VoteActionStub,
+      query,
+    );
+  }
+
+  async voteActionStubs(
+    query?: $ObjectSet.Query<VoteActionStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, VoteActionStub>[]> {
+    return this.$objects<VoteActionStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      VoteActionStub,
+      query,
+    );
+  }
+
+  async voteActionStubsCount(
+    query?: Pick<$ObjectSet.Query<VoteActionStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      VoteActionStub,
+      query,
+    );
+  }
+
+  protected $mapBindingsToCount(
+    bindings: readonly Record<
+      string,
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+    >[],
+    variable: string,
+  ): purify.Either<Error, number> {
+    if (bindings.length === 0) {
+      return purify.Left(new Error("empty result rows"));
+    }
+    if (bindings.length > 1) {
+      return purify.Left(new Error("more than one result row"));
+    }
+    const count = bindings[0][variable];
+    if (typeof count === "undefined") {
+      return purify.Left(new Error("no 'count' variable in result row"));
+    }
+    if (count.termType !== "Literal") {
+      return purify.Left(new Error("'count' variable is not a Literal"));
+    }
+    const parsedCount = Number.parseInt(count.value);
+    if (Number.isNaN(parsedCount)) {
+      return purify.Left(new Error("'count' variable is NaN"));
+    }
+    return purify.Either.of(parsedCount);
+  }
+
+  protected $mapBindingsToIdentifiers(
+    bindings: readonly Record<
+      string,
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+    >[],
+    variable: string,
+  ): readonly rdfjs.NamedNode[] {
+    const identifiers: rdfjs.NamedNode[] = [];
+    for (const bindings_ of bindings) {
+      const identifier = bindings_[variable];
+      if (
+        typeof identifier !== "undefined" &&
+        identifier.termType === "NamedNode"
+      ) {
+        identifiers.push(identifier);
+      }
+    }
+    return identifiers;
+  }
+
+  protected async $objectIdentifiers<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: { fromRdfType?: rdfjs.NamedNode },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Promise<purify.Either<Error, readonly ObjectIdentifierT[]>> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (query?.where) {
+      const identifiers = query.where.identifiers;
+      if (
+        identifiers.some((identifier) => identifier.termType === "BlankNode")
+      ) {
+        return purify.Left(
+          new Error("can't use blank node object identifiers with SPARQL"),
+        );
+      }
+      return purify.Either.of(identifiers.slice(offset, offset + limit));
+    }
+
+    if (objectType.fromRdfType) {
+      return purify.EitherAsync(
+        async () =>
+          this.$mapBindingsToIdentifiers(
+            await this.sparqlClient.queryBindings(
+              this.sparqlGenerator.stringify({
+                distinct: true,
+                limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+                offset,
+                order: [{ expression: this.objectVariable }],
+                prefixes: {},
+                queryType: "SELECT",
+                type: "query",
+                variables: [this.objectVariable],
+                where: [
+                  {
+                    triples: [
+                      {
+                        object: objectType.fromRdfType!,
+                        subject: this.objectVariable,
+                        predicate: {
+                          items: [
+                            dataFactory.namedNode(
+                              "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                            ),
+                            {
+                              items: [
+                                dataFactory.namedNode(
+                                  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                                ),
+                              ],
+                              pathType: "*",
+                              type: "path",
+                            },
+                          ],
+                          pathType: "/",
+                          type: "path",
+                        },
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+              }),
+            ),
+            this.objectVariable.value,
+          ) as readonly ObjectIdentifierT[],
+      );
+    }
+    return purify.Left(new Error("object type has no fromRdfType"));
+  }
+
+  async $objects<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+      sparqlConstructQueryString: (
+        parameters?: { subject: sparqljs.Triple["subject"] } & Omit<
+          sparqljs.ConstructQuery,
+          "prefixes" | "queryType" | "type"
+        > &
+          sparqljs.GeneratorOptions,
+      ) => string;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+    const identifiersEither = await this.$objectIdentifiers<ObjectIdentifierT>(
+      objectType,
+      query,
+    );
+    if (identifiersEither.isLeft()) {
+      return [identifiersEither];
+    }
+    const identifiers = identifiersEither.unsafeCoerce();
+    if (identifiers.length === 0) {
+      return [];
+    }
+
+    const constructQueryString = objectType.sparqlConstructQueryString({
+      subject: this.objectVariable,
+      where: [
+        {
+          type: "values" as const,
+          values: identifiers.map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+      ],
+    });
+
+    let quads: readonly rdfjs.Quad[];
+    try {
+      quads = await this.sparqlClient.queryQuads(constructQueryString);
+    } catch (e) {
+      const left = purify.Left<Error, ObjectT>(e as Error);
+      return identifiers.map(() => left);
+    }
+
+    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+    return identifiers.map((identifier) =>
+      objectType.fromRdf({
+        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+          dataset,
+          identifier: identifier as rdfjs.NamedNode,
+        }),
+      }),
+    );
+  }
+
+  protected async $objectsCount<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: { fromRdfType?: rdfjs.NamedNode },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Promise<purify.Either<Error, number>> {
+    if (!objectType.fromRdfType) {
+      return purify.Left(new Error("object type has no fromRdfType"));
+    }
+
+    if (query) {
+      throw new Error("not implemented");
+    }
+
+    return purify.EitherAsync(async ({ liftEither }) =>
+      liftEither(
+        this.$mapBindingsToCount(
+          await this.sparqlClient.queryBindings(
+            this.sparqlGenerator.stringify({
+              distinct: true,
+              prefixes: {},
+              queryType: "SELECT",
+              type: "query",
+              variables: [
+                {
+                  expression: {
+                    aggregation: "COUNT",
+                    distinct: true,
+                    expression: this.objectVariable,
+                    type: "aggregate",
+                  },
+                  variable: this.countVariable,
+                },
+              ],
+              where: [
+                {
+                  triples: [
+                    {
+                      object: objectType.fromRdfType!,
+                      subject: this.objectVariable,
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                          ),
+                          {
+                            items: [
+                              dataFactory.namedNode(
+                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                              ),
+                            ],
+                            pathType: "*",
+                            type: "path",
+                          },
+                        ],
+                        pathType: "/",
+                        type: "path",
+                      },
+                    },
+                  ],
+                  type: "bgp",
+                },
+              ],
+            }),
+          ),
+          this.countVariable.value,
+        ),
+      ),
+    );
   }
 }

@@ -9,6 +9,10 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix void: <http://rdfs.org/ns/void#> .
 
+<http://purl.org/sdapps/ontology#>
+    shaclmate:tsFeatureInclude shaclmate:_TsFeature_Sparql, shaclmate:_TsFeatures_Default ;
+    a owl:Ontology .
+
 sdapps:ActionStub
     shaclmate:name "ActionStub" ;
     shaclmate:rdfType schema:Action ;
@@ -273,7 +277,7 @@ sdapps:VoteActionStub
     rdfs:subClassOf sdapps:ChooseActionStub .
 
 <http://schema.org/>
-    shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
+    shaclmate:tsFeatureInclude shaclmate:_TsFeature_Sparql, shaclmate:_TsFeatures_Default ;
     a owl:Ontology .
 
 schema:Action
@@ -598,14 +602,14 @@ schema:MediaObject-height
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "height" ;
-    sh:node schema:QuantitativeValueStub ;
+    sh:node sdapps:QuantitativeValueStub ;
     sh:path schema:height .
 
 schema:MediaObject-width
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "width" ;
-    sh:node schema:QuantitativeValueStub ;
+    sh:node sdapps:QuantitativeValueStub ;
     sh:path schema:width .
 
 schema:Message
