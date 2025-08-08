@@ -7,16 +7,16 @@ import { WikidataEntity } from "./WikidataEntity.js";
 
 export class WikidataEntityFetcher {
   private readonly logger?: Logger;
-  private readonly fileCache: TextFileDirectoryCache;
   private readonly memoryCache: Record<string, Either<Error, WikidataEntity>> =
     {};
+  private readonly textFileDirectoryCache: TextFileDirectoryCache;
 
   constructor({
     cachesDirectoryPath,
     logger,
   }: { cachesDirectoryPath: string; logger?: Logger }) {
     this.logger = logger;
-    this.fileCache = new TextFileDirectoryCache({
+    this.textFileDirectoryCache = new TextFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikidata", "rdf"),
       fileExtension: ".ttl",
       logger,
@@ -36,7 +36,9 @@ export class WikidataEntityFetcher {
         const dataset = new N3.Store();
         const parser = new N3.Parser();
 
-        const cachedTtl = await liftEither(await this.fileCache.get(id));
+        const cachedTtl = await liftEither(
+          await this.textFileDirectoryCache.get(id),
+        );
         if (cachedTtl.isJust()) {
           for (const quad of parser.parse(cachedTtl.unsafeCoerce())) {
             dataset.add(quad);
@@ -50,7 +52,7 @@ export class WikidataEntityFetcher {
             dataset.add(quad);
           }
           this.logger?.trace(`fetched ${id} Turtle with ${dataset.size} quads`);
-          await this.fileCache.set(id, responseText);
+          await this.textFileDirectoryCache.set(id, responseText);
         }
 
         return new WikidataEntity({

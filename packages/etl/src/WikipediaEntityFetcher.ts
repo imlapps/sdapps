@@ -45,7 +45,7 @@ const pagepropsQueryResponseSchema = z.object({
 type PagePropsQueryResponse = z.infer<typeof pagepropsQueryResponseSchema>;
 
 export class WikipediaEntityFetcher {
-  private readonly fileCache: JsonFileDirectoryCache<PagePropsQueryResponse>;
+  private readonly jsonFileDirectoryCache: JsonFileDirectoryCache<PagePropsQueryResponse>;
   private readonly logger?: Logger;
   private readonly memoryCache: Record<string, Either<Error, WikipediaEntity>> =
     {};
@@ -58,7 +58,7 @@ export class WikipediaEntityFetcher {
     logger?: Logger;
   }) {
     this.logger = logger;
-    this.fileCache = new JsonFileDirectoryCache({
+    this.jsonFileDirectoryCache = new JsonFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikipedia", "pageprops"),
       logger,
       parseJson: async (json: unknown) =>
@@ -88,7 +88,7 @@ export class WikipediaEntityFetcher {
         const urlTitle = url.pathname.substring(urlPathnamePrefix.length);
 
         let pagepropsQueryResponse = (
-          await liftEither(await this.fileCache.get(urlString))
+          await liftEither(await this.jsonFileDirectoryCache.get(urlString))
         ).extract();
 
         if (!pagepropsQueryResponse) {
@@ -102,7 +102,10 @@ export class WikipediaEntityFetcher {
             `fetched ${pagepropsQueryUrl}:\n${JSON.stringify(pagepropsQueryResponse)}`,
           );
 
-          await this.fileCache.set(urlString, pagepropsQueryResponse);
+          await this.jsonFileDirectoryCache.set(
+            urlString,
+            pagepropsQueryResponse,
+          );
         }
 
         const pageEntries = Object.entries(pagepropsQueryResponse.query.pages);
