@@ -33,7 +33,7 @@ const examples: Record<string, readonly string[]> = {
 };
 
 export class WikipediaEntityRecognizer {
-  private readonly jsonFileCache: JsonFileCache<string[]>;
+  private readonly jsonFileCache: JsonFileCache<string[] | null>;
   private readonly logger?: Logger;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
@@ -105,13 +105,18 @@ ${Object.entries(examples).map(
 
       const wikipediaEntries: WikipediaEntity[] = [];
       for (const wikipediaEntityUrl of wikipediaEntityUrls) {
-        wikipediaEntries.push(
-          await liftEither(
-            await this.wikipediaEntityFetcher.fetch(
-              new URL(wikipediaEntityUrl),
+        try {
+          wikipediaEntries.push(
+            await liftEither(
+              await this.wikipediaEntityFetcher.fetch(
+                new URL(wikipediaEntityUrl),
+              ),
             ),
-          ),
-        );
+          );
+        } catch (e) {
+          await this.jsonFileCache.set(qualifiedName, []);
+          throw e;
+        }
       }
       return wikipediaEntries;
     });
