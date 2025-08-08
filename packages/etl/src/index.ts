@@ -6,7 +6,7 @@ export * from "./DocumentTextExtractor.js";
 export * from "./encodeFileName.js";
 export * from "./fileNameCodec.js";
 export * from "./isSafeFileName.js";
-export * from "./JsonFileDirectoryCache.js";
+export * from "./JsonFileCache.js";
 export * from "./readRdfInput.js";
 export * from "./RdfFileLoader.js";
 export * from "./TextFileDirectoryCache.js";
