@@ -78,6 +78,7 @@ async function* transformPlaylistJson({
     publication: [radioEpisodeBroadcastEventStub],
   });
   const radioEpisodeStub = stubify(radioEpisode);
+  radioEpisodeBroadcastEvent.worksPerformed.push(radioEpisodeStub);
   radioSeries.episodes.push(radioEpisodeStub);
 
   const ucsUtcOffsetMs =
@@ -251,7 +252,6 @@ async function* transformPlaylistJson({
       startDate: startDate,
       superEvent: radioEpisodeBroadcastEventStub,
     });
-    yield musicRecordingBroadcastEvent;
     const musicRecordingBroadcastEventStub = stubify(
       musicRecordingBroadcastEvent,
     );
@@ -271,6 +271,8 @@ async function* transformPlaylistJson({
     });
     yield musicRecording;
     const musicRecordingStub = stubify(musicRecording);
+    musicRecordingBroadcastEvent.worksPerformed.push(musicRecordingStub);
+    yield musicRecordingBroadcastEvent;
 
     if (musicComposition) {
       musicComposition.recordedAs.push(musicRecordingStub);

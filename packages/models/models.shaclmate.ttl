@@ -422,7 +422,7 @@ schema:Event
     shaclmate:name "Event" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Thing ;
-    sh:property schema:Event-about, schema:Event-endDate, schema:Event-location, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent .
+    sh:property schema:Event-about, schema:Event-endDate, schema:Event-location, schema:Event-organizers, schema:Event-performers, schema:Event-startDate, schema:Event-subEvents, schema:Event-superEvent, schema:Event-worksPerformed .
 
 schema:Event-about
     a sh:PropertyShape ;
@@ -477,6 +477,13 @@ schema:Event-superEvent
     sh:name "superEvent" ;
     sh:node sdapps:EventStub ;
     sh:path schema:superEvent .
+
+schema:Event-worksPerformed
+    shaclmate:mutable true ;
+    a sh:PropertyShape ;
+    sh:name "worksPerformed" ;
+    sh:node sdapps:CreativeWorkStub ;
+    sh:path schema:workPerformed .
 
 schema:Female
     a schema:GenderType ;
