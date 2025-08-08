@@ -4,6 +4,7 @@ import path from "node:path";
 import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import sanitizeFilename from "sanitize-filename";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 export class TextFileDirectoryCache {
@@ -27,10 +28,8 @@ export class TextFileDirectoryCache {
 
   @Memoize()
   private filePath(key: string): string {
-    return path.join(
-      this.directoryPath,
-      `${sanitizeFilename(key)}${this.fileExtension}`,
-    );
+    invariant(sanitizeFilename(key) === key);
+    return path.join(this.directoryPath, `${key}${this.fileExtension}`);
   }
 
   async get(key: string): Promise<Either<Error, Maybe<string>>> {
