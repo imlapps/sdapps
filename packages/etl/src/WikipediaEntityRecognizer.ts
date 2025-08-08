@@ -34,6 +34,7 @@ const examples: Record<string, readonly string[]> = {
 
 export class WikipediaEntityRecognizer {
   private readonly jsonFileCache: JsonFileCache<string[]>;
+  private readonly logger?: Logger;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
@@ -48,6 +49,7 @@ export class WikipediaEntityRecognizer {
       logger,
       valueSchema: z.array(z.string()),
     });
+    this.logger = logger;
     this.wikipediaEntityFetcher = new WikipediaEntityFetcher({
       cachesDirectoryPath,
       logger,
@@ -67,6 +69,9 @@ export class WikipediaEntityRecognizer {
         await liftEither(await this.jsonFileCache.get(qualifiedName))
       ).extract();
       if (!wikipediaEntityUrls) {
+        this.logger?.info(
+          `querying model for Wikipedia entity URLs for: ${qualifiedName}`,
+        );
         const result = await generateObject({
           messages: [
             {
