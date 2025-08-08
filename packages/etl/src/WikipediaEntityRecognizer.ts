@@ -4,7 +4,7 @@ import { generateObject } from "ai";
 import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
-import { JsonFileCache } from "./JsonFileCache.js";
+import { JsonFileDirectoryCache } from "./JsonFileDirectoryCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 import { WikipediaEntityFetcher } from "./WikipediaEntityFetcher.js";
 
@@ -33,7 +33,7 @@ const examples: Record<string, readonly string[]> = {
 };
 
 export class WikipediaEntityRecognizer {
-  private readonly cache: JsonFileCache<z.infer<typeof schema>>;
+  private readonly cache: JsonFileDirectoryCache<z.infer<typeof schema>>;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
@@ -43,7 +43,7 @@ export class WikipediaEntityRecognizer {
     cachesDirectoryPath: string;
     logger?: Logger;
   }) {
-    this.cache = new JsonFileCache({
+    this.cache = new JsonFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikipedia", "entity"),
       logger,
       parseJson: async (json: unknown) =>

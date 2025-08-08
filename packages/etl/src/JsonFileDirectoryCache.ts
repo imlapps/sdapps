@@ -1,10 +1,10 @@
 import { Logger } from "pino";
 import { Either, EitherAsync, Maybe } from "purify-ts";
-import { TextFileCache } from "./TextFileCache.js";
+import { TextFileDirectoryCache } from "./TextFileDirectoryCache.js";
 
-export class JsonFileCache<JsonT> {
+export class JsonFileDirectoryCache<JsonT> {
   private readonly parseJson: (json: unknown) => Promise<Either<Error, JsonT>>;
-  private readonly textFileCache: TextFileCache;
+  private readonly delegate: TextFileDirectoryCache;
 
   constructor({
     directoryPath,
@@ -15,17 +15,17 @@ export class JsonFileCache<JsonT> {
     logger?: Logger;
     parseJson: (json: unknown) => Promise<Either<Error, JsonT>>;
   }) {
-    this.parseJson = parseJson;
-    this.textFileCache = new TextFileCache({
+    this.delegate = new TextFileDirectoryCache({
       directoryPath,
       fileExtension: ".json",
       logger,
     });
+    this.parseJson = parseJson;
   }
 
   async get(key: string): Promise<Either<Error, Maybe<JsonT>>> {
     return EitherAsync(async ({ liftEither }) => {
-      const textEither = await this.textFileCache.get(key);
+      const textEither = await this.delegate.get(key);
       if (textEither.isLeft()) {
         return await liftEither(textEither);
       }
@@ -50,6 +50,6 @@ export class JsonFileCache<JsonT> {
   }
 
   async set(key: string, value: JsonT): Promise<Either<Error, void>> {
-    return this.textFileCache.set(key, JSON.stringify(value));
+    return this.delegate.set(key, JSON.stringify(value));
   }
 }

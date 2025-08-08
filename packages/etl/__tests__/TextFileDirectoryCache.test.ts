@@ -1,14 +1,16 @@
 import * as tmp from "tmp-promise";
 import { describe, it } from "vitest";
-import { TextFileCache } from "../src/TextFileCache.js";
+import { TextFileDirectoryCache } from "../src/TextFileDirectoryCache.js";
 
-async function withTextFileCache(
-  useTextFileCache: (textFileCache: TextFileCache) => Promise<void>,
+async function withTextFileDirectoryCache(
+  useTextFileDirectoryCache: (
+    textFileCache: TextFileDirectoryCache,
+  ) => Promise<void>,
 ) {
   await tmp.withDir(
     async ({ path: tempDirPath }) => {
-      await useTextFileCache(
-        new TextFileCache({
+      await useTextFileDirectoryCache(
+        new TextFileDirectoryCache({
           directoryPath: tempDirPath,
         }),
       );
@@ -17,16 +19,16 @@ async function withTextFileCache(
   );
 }
 
-describe("TextFileCache", () => {
+describe("TextFileDirectoryCache", () => {
   it("get (miss)", async ({ expect }) =>
-    withTextFileCache(async (textFileCache) => {
+    withTextFileDirectoryCache(async (textFileCache) => {
       expect(
         (await textFileCache.get("testkey")).unsafeCoerce().isNothing(),
       ).toBe(true);
     }));
 
   it("get (hit)", async ({ expect }) =>
-    withTextFileCache(async (textFileCache) => {
+    withTextFileDirectoryCache(async (textFileCache) => {
       await textFileCache.set("testkey", "testvalue");
       const actualValue = (await textFileCache.get("testkey"))
         .unsafeCoerce()
@@ -35,7 +37,7 @@ describe("TextFileCache", () => {
     }));
 
   it("set", async ({ expect }) =>
-    withTextFileCache(async (textFileCache) => {
+    withTextFileDirectoryCache(async (textFileCache) => {
       await textFileCache.set("testkey", "testvalue");
     }));
 });

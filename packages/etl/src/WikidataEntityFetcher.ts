@@ -2,12 +2,12 @@ import path from "node:path";
 import N3 from "n3";
 import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
-import { TextFileCache } from "./TextFileCache.js";
+import { TextFileDirectoryCache } from "./TextFileDirectoryCache.js";
 import { WikidataEntity } from "./WikidataEntity.js";
 
 export class WikidataEntityFetcher {
   private readonly logger?: Logger;
-  private readonly fileCache: TextFileCache;
+  private readonly fileCache: TextFileDirectoryCache;
   private readonly memoryCache: Record<string, Either<Error, WikidataEntity>> =
     {};
 
@@ -16,7 +16,7 @@ export class WikidataEntityFetcher {
     logger,
   }: { cachesDirectoryPath: string; logger?: Logger }) {
     this.logger = logger;
-    this.fileCache = new TextFileCache({
+    this.fileCache = new TextFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikidata", "rdf"),
       fileExtension: ".ttl",
       logger,

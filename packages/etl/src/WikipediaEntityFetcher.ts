@@ -2,7 +2,7 @@ import path from "node:path";
 import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
-import { JsonFileCache } from "./JsonFileCache.js";
+import { JsonFileDirectoryCache } from "./JsonFileDirectoryCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 
 // {
@@ -45,7 +45,7 @@ const pagepropsQueryResponseSchema = z.object({
 type PagePropsQueryResponse = z.infer<typeof pagepropsQueryResponseSchema>;
 
 export class WikipediaEntityFetcher {
-  private readonly fileCache: JsonFileCache<PagePropsQueryResponse>;
+  private readonly fileCache: JsonFileDirectoryCache<PagePropsQueryResponse>;
   private readonly logger?: Logger;
   private readonly memoryCache: Record<string, Either<Error, WikipediaEntity>> =
     {};
@@ -58,7 +58,7 @@ export class WikipediaEntityFetcher {
     logger?: Logger;
   }) {
     this.logger = logger;
-    this.fileCache = new JsonFileCache({
+    this.fileCache = new JsonFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikipedia", "pageprops"),
       logger,
       parseJson: async (json: unknown) =>

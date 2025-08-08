@@ -6,7 +6,7 @@ import { Either, EitherAsync, Maybe } from "purify-ts";
 import sanitizeFilename from "sanitize-filename";
 import { Memoize } from "typescript-memoize";
 
-export class TextFileCache {
+export class TextFileDirectoryCache {
   private readonly directoryPath: string;
   private readonly fileExtension: string;
   private readonly logger?: Logger;
