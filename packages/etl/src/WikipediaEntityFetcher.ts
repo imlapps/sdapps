@@ -3,7 +3,6 @@ import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
 import { JsonFileCache } from "./JsonFileCache.js";
-import { JsonFileDirectoryCache } from "./JsonFileDirectoryCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 
 // {
@@ -47,7 +46,6 @@ type PagePropsQueryResponse = z.infer<typeof pagepropsQueryResponseSchema>;
 
 export class WikipediaEntityFetcher {
   private readonly jsonFileCache: JsonFileCache<string>;
-  private readonly jsonFileDirectoryCache: JsonFileDirectoryCache<PagePropsQueryResponse>;
   private readonly logger?: Logger;
   private readonly memoryCache: Record<string, Either<Error, WikipediaEntity>> =
     {};
@@ -68,12 +66,6 @@ export class WikipediaEntityFetcher {
       ),
       logger,
       valueSchema: z.string(),
-    });
-    this.jsonFileDirectoryCache = new JsonFileDirectoryCache({
-      directoryPath: path.join(cachesDirectoryPath, "wikipedia", "pageprops"),
-      logger,
-      parseJson: async (json: unknown) =>
-        EitherAsync(() => pagepropsQueryResponseSchema.parseAsync(json)),
     });
   }
 
@@ -98,14 +90,14 @@ export class WikipediaEntityFetcher {
         }
         const urlTitle = url.pathname.substring(urlPathnamePrefix.length);
 
-        let pagepropsQueryResponse = (
-          await liftEither(await this.jsonFileDirectoryCache.get(urlString))
+        let wikidataEntityId = (
+          await liftEither(await this.jsonFileCache.get(urlString))
         ).extract();
 
-        if (!pagepropsQueryResponse) {
+        if (!wikidataEntityId) {
           const pagepropsQueryUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&titles=${urlTitle}&format=json`;
           this.logger?.trace(`fetching ${pagepropsQueryUrl}`);
-          pagepropsQueryResponse =
+          const pagepropsQueryResponse =
             await pagepropsQueryResponseSchema.parseAsync(
               await (await fetch(pagepropsQueryUrl)).json(),
             );
@@ -113,44 +105,37 @@ export class WikipediaEntityFetcher {
             `fetched ${pagepropsQueryUrl}:\n${JSON.stringify(pagepropsQueryResponse)}`,
           );
 
-          await this.jsonFileDirectoryCache.set(
-            urlString,
-            pagepropsQueryResponse,
+          const pageEntries = Object.entries(
+            pagepropsQueryResponse.query.pages,
           );
-        }
+          if (pageEntries.length !== 1) {
+            throw new Error(
+              `MediaWiki query for page ${urlTitle} returned more than one page`,
+            );
+          }
+          const [pageId, page] = pageEntries[0];
+          if (pageId === "-1") {
+            throw new Error(`page ${urlTitle} does not exist`);
+          }
+          if (!page.pageprops.wikibase_item) {
+            throw new Error(`page ${urlTitle} has no wikibase_item`);
+          }
+          wikidataEntityId = page.pageprops.wikibase_item;
 
-        const pageEntries = Object.entries(pagepropsQueryResponse.query.pages);
-        if (pageEntries.length !== 1) {
-          throw new Error(
-            `MediaWiki query for page ${urlTitle} returned more than one page`,
-          );
-        }
-        const [pageId, page] = pageEntries[0];
-        if (pageId === "-1") {
-          throw new Error(`page ${urlTitle} does not exist`);
-        }
-        if (!page.pageprops.wikibase_item) {
-          throw new Error(`page ${urlTitle} has no wikibase_item`);
-        }
-
-        if (
-          !(await liftEither(await this.jsonFileCache.get(urlString))).isJust()
-        ) {
-          await liftEither(
-            await this.jsonFileCache.set(
-              urlString,
-              page.pageprops.wikibase_item,
-            ),
-          );
+          await this.jsonFileCache.set(urlString, wikidataEntityId);
         }
 
         return new WikipediaEntity({
           url,
           urlTitle,
-          wikidataEntityId: page.pageprops.wikibase_item,
+          wikidataEntityId,
         });
       },
     );
+
+    result.ifLeft((error) => {
+      this.logger?.error(error.message);
+    });
 
     this.memoryCache[urlString] = result;
     return result;

@@ -5,7 +5,6 @@ import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
 import { JsonFileCache } from "./JsonFileCache.js";
-import { JsonFileDirectoryCache } from "./JsonFileDirectoryCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 import { WikipediaEntityFetcher } from "./WikipediaEntityFetcher.js";
 
@@ -35,9 +34,6 @@ const examples: Record<string, readonly string[]> = {
 
 export class WikipediaEntityRecognizer {
   private readonly jsonFileCache: JsonFileCache<string[]>;
-  private readonly jsonFileDirectoryCache: JsonFileDirectoryCache<
-    z.infer<typeof schema>
-  >;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
@@ -51,12 +47,6 @@ export class WikipediaEntityRecognizer {
       filePath: path.join(cachesDirectoryPath, "wikipedia", "entities.json"),
       logger,
       valueSchema: z.array(z.string()),
-    });
-    this.jsonFileDirectoryCache = new JsonFileDirectoryCache({
-      directoryPath: path.join(cachesDirectoryPath, "wikipedia", "entity"),
-      logger,
-      parseJson: async (json: unknown) =>
-        EitherAsync(() => schema.parseAsync(json)),
     });
     this.wikipediaEntityFetcher = new WikipediaEntityFetcher({
       cachesDirectoryPath,
@@ -73,10 +63,10 @@ export class WikipediaEntityRecognizer {
     return EitherAsync(async ({ liftEither }) => {
       const qualifiedName = role ? `${name} (${role})` : name;
 
-      let generatedObject = (
-        await liftEither(await this.jsonFileDirectoryCache.get(qualifiedName))
+      let wikipediaEntityUrls = (
+        await liftEither(await this.jsonFileCache.get(qualifiedName))
       ).extract();
-      if (!generatedObject) {
+      if (!wikipediaEntityUrls) {
         const result = await generateObject({
           messages: [
             {
@@ -103,25 +93,13 @@ ${Object.entries(examples).map(
           model: openai("gpt-4o"),
           schema,
         });
-        generatedObject = result.object;
-        await this.jsonFileDirectoryCache.set(qualifiedName, generatedObject);
-      }
+        wikipediaEntityUrls = result.object.wikipedia;
 
-      if (
-        !(
-          await liftEither(await this.jsonFileCache.get(qualifiedName))
-        ).isJust()
-      ) {
-        await liftEither(
-          await this.jsonFileCache.set(
-            qualifiedName,
-            generatedObject.wikipedia,
-          ),
-        );
+        await this.jsonFileCache.set(qualifiedName, wikipediaEntityUrls);
       }
 
       const wikipediaEntries: WikipediaEntity[] = [];
-      for (const wikipediaEntityUrl of generatedObject.wikipedia) {
+      for (const wikipediaEntityUrl of wikipediaEntityUrls) {
         wikipediaEntries.push(
           await liftEither(
             await this.wikipediaEntityFetcher.fetch(
