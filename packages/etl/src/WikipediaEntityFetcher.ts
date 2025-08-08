@@ -2,6 +2,7 @@ import path from "node:path";
 import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
+import { JsonFileCache } from "./JsonFileCache.js";
 import { JsonFileDirectoryCache } from "./JsonFileDirectoryCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 
@@ -45,6 +46,7 @@ const pagepropsQueryResponseSchema = z.object({
 type PagePropsQueryResponse = z.infer<typeof pagepropsQueryResponseSchema>;
 
 export class WikipediaEntityFetcher {
+  private readonly jsonFileCache: JsonFileCache<string>;
   private readonly jsonFileDirectoryCache: JsonFileDirectoryCache<PagePropsQueryResponse>;
   private readonly logger?: Logger;
   private readonly memoryCache: Record<string, Either<Error, WikipediaEntity>> =
@@ -58,6 +60,15 @@ export class WikipediaEntityFetcher {
     logger?: Logger;
   }) {
     this.logger = logger;
+    this.jsonFileCache = new JsonFileCache({
+      filePath: path.join(
+        cachesDirectoryPath,
+        "wikipedia",
+        "wikidataEntityIds.json",
+      ),
+      logger,
+      valueSchema: z.string(),
+    });
     this.jsonFileDirectoryCache = new JsonFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikipedia", "pageprops"),
       logger,
@@ -120,6 +131,17 @@ export class WikipediaEntityFetcher {
         }
         if (!page.pageprops.wikibase_item) {
           throw new Error(`page ${urlTitle} has no wikibase_item`);
+        }
+
+        if (
+          !(await liftEither(await this.jsonFileCache.get(urlString))).isJust()
+        ) {
+          await liftEither(
+            await this.jsonFileCache.set(
+              urlString,
+              page.pageprops.wikibase_item,
+            ),
+          );
         }
 
         return new WikipediaEntity({

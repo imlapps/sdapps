@@ -4,6 +4,7 @@ import { generateObject } from "ai";
 import { Logger } from "pino";
 import { Either, EitherAsync } from "purify-ts";
 import { z } from "zod";
+import { JsonFileCache } from "./JsonFileCache.js";
 import { JsonFileDirectoryCache } from "./JsonFileDirectoryCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 import { WikipediaEntityFetcher } from "./WikipediaEntityFetcher.js";
@@ -33,7 +34,10 @@ const examples: Record<string, readonly string[]> = {
 };
 
 export class WikipediaEntityRecognizer {
-  private readonly cache: JsonFileDirectoryCache<z.infer<typeof schema>>;
+  private readonly jsonFileCache: JsonFileCache<string[]>;
+  private readonly jsonFileDirectoryCache: JsonFileDirectoryCache<
+    z.infer<typeof schema>
+  >;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
@@ -43,7 +47,12 @@ export class WikipediaEntityRecognizer {
     cachesDirectoryPath: string;
     logger?: Logger;
   }) {
-    this.cache = new JsonFileDirectoryCache({
+    this.jsonFileCache = new JsonFileCache({
+      filePath: path.join(cachesDirectoryPath, "wikipedia", "entities.json"),
+      logger,
+      valueSchema: z.array(z.string()),
+    });
+    this.jsonFileDirectoryCache = new JsonFileDirectoryCache({
       directoryPath: path.join(cachesDirectoryPath, "wikipedia", "entity"),
       logger,
       parseJson: async (json: unknown) =>
@@ -65,7 +74,7 @@ export class WikipediaEntityRecognizer {
       const qualifiedName = role ? `${name} (${role})` : name;
 
       let generatedObject = (
-        await liftEither(await this.cache.get(qualifiedName))
+        await liftEither(await this.jsonFileDirectoryCache.get(qualifiedName))
       ).extract();
       if (!generatedObject) {
         const result = await generateObject({
@@ -95,7 +104,20 @@ ${Object.entries(examples).map(
           schema,
         });
         generatedObject = result.object;
-        await this.cache.set(qualifiedName, generatedObject);
+        await this.jsonFileDirectoryCache.set(qualifiedName, generatedObject);
+      }
+
+      if (
+        !(
+          await liftEither(await this.jsonFileCache.get(qualifiedName))
+        ).isJust()
+      ) {
+        await liftEither(
+          await this.jsonFileCache.set(
+            qualifiedName,
+            generatedObject.wikipedia,
+          ),
+        );
       }
 
       const wikipediaEntries: WikipediaEntity[] = [];
