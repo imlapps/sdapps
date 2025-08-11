@@ -211,6 +211,7 @@ export abstract class Model {
     | "AssessAction"
     | "AssessActionStub"
     | "BroadcastEvent"
+    | "BroadcastEventStub"
     | "BroadcastService"
     | "BroadcastServiceStub"
     | "ChooseAction"
@@ -390,6 +391,7 @@ export namespace ModelStatic {
       | "AssessAction"
       | "AssessActionStub"
       | "BroadcastEvent"
+      | "BroadcastEventStub"
       | "BroadcastService"
       | "BroadcastServiceStub"
       | "ChooseAction"
@@ -533,6 +535,7 @@ export namespace ModelStatic {
         "AssessAction",
         "AssessActionStub",
         "BroadcastEvent",
+        "BroadcastEventStub",
         "BroadcastService",
         "BroadcastServiceStub",
         "ChooseAction",
@@ -1078,6 +1081,12 @@ export class Thing extends Model {
                 return ((left, right) => left.equals(right))(left, right);
               }
               if (
+                left.type === "BroadcastEventStub" &&
+                right.type === "BroadcastEventStub"
+              ) {
+                return ((left, right) => left.equals(right))(left, right);
+              }
+              if (
                 left.type === "PublicationEventStub" &&
                 right.type === "PublicationEventStub"
               ) {
@@ -1185,6 +1194,7 @@ export class Thing extends Model {
           break;
         }
         case "EventStub":
+        case "BroadcastEventStub":
         case "PublicationEventStub": {
           _item0.hash(_hasher);
           break;
@@ -1217,7 +1227,9 @@ export class Thing extends Model {
         order: this.order.map((_item) => _item).extract(),
         sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
         subjectOf: this.subjectOf.map((_item) =>
-          _item.type === "EventStub" || _item.type === "PublicationEventStub"
+          _item.type === "EventStub" ||
+          _item.type === "BroadcastEventStub" ||
+          _item.type === "PublicationEventStub"
             ? _item.toJson()
             : _item.toJson(),
         ),
@@ -1283,7 +1295,9 @@ export class Thing extends Model {
     _resource.add(
       dataFactory.namedNode("http://schema.org/subjectOf"),
       this.subjectOf.map((_item) =>
-        _item.type === "EventStub" || _item.type === "PublicationEventStub"
+        _item.type === "EventStub" ||
+        _item.type === "BroadcastEventStub" ||
+        _item.type === "PublicationEventStub"
           ? _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
           : _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
@@ -1367,7 +1381,9 @@ export namespace ThingStatic {
       dataFactory.namedNode(_item["@id"]),
     );
     const subjectOf = _jsonObject["subjectOf"].map((_item) =>
-      _item.type === "EventStub" || _item.type === "PublicationEventStub"
+      _item.type === "EventStub" ||
+      _item.type === "BroadcastEventStub" ||
+      _item.type === "PublicationEventStub"
         ? EventStubStatic.fromJson(_item).unsafeCoerce()
         : CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
     );
@@ -4604,2192 +4620,6 @@ export namespace GenderType {
     ];
   }
 }
-export class Event extends Thing {
-  override readonly type: "Event" | "BroadcastEvent" | "PublicationEvent" =
-    "Event";
-  readonly about: readonly ThingStub[];
-  readonly endDate: purify.Maybe<Date>;
-  readonly location: purify.Maybe<PlaceStub>;
-  readonly organizers: readonly AgentStub[];
-  readonly performers: readonly AgentStub[];
-  readonly startDate: purify.Maybe<Date>;
-  subEvents: EventStub[];
-  superEvent: purify.Maybe<EventStub>;
-  worksPerformed: CreativeWorkStub[];
-
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly about?: readonly ThingStub[];
-      readonly endDate?: Date | purify.Maybe<Date>;
-      readonly location?: PlaceStub | purify.Maybe<PlaceStub>;
-      readonly organizers?: readonly AgentStub[];
-      readonly performers?: readonly AgentStub[];
-      readonly startDate?: Date | purify.Maybe<Date>;
-      readonly subEvents?: readonly EventStub[];
-      readonly superEvent?: EventStub | purify.Maybe<EventStub>;
-      readonly worksPerformed?: readonly CreativeWorkStub[];
-    } & ConstructorParameters<typeof Thing>[0],
-  ) {
-    super(parameters);
-    if (typeof parameters.about === "undefined") {
-      this.about = [];
-    } else if (typeof parameters.about === "object") {
-      this.about = parameters.about;
-    } else {
-      this.about = parameters.about satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.endDate)) {
-      this.endDate = parameters.endDate;
-    } else if (
-      typeof parameters.endDate === "object" &&
-      parameters.endDate instanceof Date
-    ) {
-      this.endDate = purify.Maybe.of(parameters.endDate);
-    } else if (typeof parameters.endDate === "undefined") {
-      this.endDate = purify.Maybe.empty();
-    } else {
-      this.endDate = parameters.endDate satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.location)) {
-      this.location = parameters.location;
-    } else if (
-      typeof parameters.location === "object" &&
-      parameters.location instanceof PlaceStub
-    ) {
-      this.location = purify.Maybe.of(parameters.location);
-    } else if (typeof parameters.location === "undefined") {
-      this.location = purify.Maybe.empty();
-    } else {
-      this.location = parameters.location satisfies never;
-    }
-
-    if (typeof parameters.organizers === "undefined") {
-      this.organizers = [];
-    } else if (typeof parameters.organizers === "object") {
-      this.organizers = parameters.organizers;
-    } else {
-      this.organizers = parameters.organizers satisfies never;
-    }
-
-    if (typeof parameters.performers === "undefined") {
-      this.performers = [];
-    } else if (typeof parameters.performers === "object") {
-      this.performers = parameters.performers;
-    } else {
-      this.performers = parameters.performers satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.startDate)) {
-      this.startDate = parameters.startDate;
-    } else if (
-      typeof parameters.startDate === "object" &&
-      parameters.startDate instanceof Date
-    ) {
-      this.startDate = purify.Maybe.of(parameters.startDate);
-    } else if (typeof parameters.startDate === "undefined") {
-      this.startDate = purify.Maybe.empty();
-    } else {
-      this.startDate = parameters.startDate satisfies never;
-    }
-
-    if (typeof parameters.subEvents === "undefined") {
-      this.subEvents = [];
-    } else if (typeof parameters.subEvents === "object") {
-      this.subEvents = parameters.subEvents.concat();
-    } else {
-      this.subEvents = parameters.subEvents satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.superEvent)) {
-      this.superEvent = parameters.superEvent;
-    } else if (
-      typeof parameters.superEvent === "object" &&
-      parameters.superEvent instanceof EventStub
-    ) {
-      this.superEvent = purify.Maybe.of(parameters.superEvent);
-    } else if (typeof parameters.superEvent === "undefined") {
-      this.superEvent = purify.Maybe.empty();
-    } else {
-      this.superEvent = parameters.superEvent satisfies never;
-    }
-
-    if (typeof parameters.worksPerformed === "undefined") {
-      this.worksPerformed = [];
-    } else if (typeof parameters.worksPerformed === "object") {
-      this.worksPerformed = parameters.worksPerformed.concat();
-    } else {
-      this.worksPerformed = parameters.worksPerformed satisfies never;
-    }
-  }
-
-  override get identifier(): EventStatic.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override equals(other: Event): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.about,
-          other.about,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "about",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          this.endDate,
-          other.endDate,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "endDate",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.location,
-          other.location,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "location",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
-          this.organizers,
-          other.organizers,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "organizers",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
-          this.performers,
-          other.performers,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "performers",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          this.startDate,
-          other.startDate,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "startDate",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.subEvents,
-          other.subEvents,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "subEvents",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.superEvent,
-          other.superEvent,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "superEvent",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.worksPerformed,
-          other.worksPerformed,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "worksPerformed",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected override hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hashShaclProperties(_hasher);
-    for (const _item0 of this.about) {
-      _item0.hash(_hasher);
-    }
-
-    this.endDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
-    });
-    this.location.ifJust((_value0) => {
-      _value0.hash(_hasher);
-    });
-    for (const _item0 of this.organizers) {
-      _item0.hash(_hasher);
-    }
-
-    for (const _item0 of this.performers) {
-      _item0.hash(_hasher);
-    }
-
-    this.startDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
-    });
-    for (const _item0 of this.subEvents) {
-      _item0.hash(_hasher);
-    }
-
-    this.superEvent.ifJust((_value0) => {
-      _value0.hash(_hasher);
-    });
-    for (const _item0 of this.worksPerformed) {
-      _item0.hash(_hasher);
-    }
-
-    return _hasher;
-  }
-
-  override toJson(): EventStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...super.toJson(),
-        about: this.about.map((_item) => _item.toJson()),
-        endDate: this.endDate.map((_item) => _item.toISOString()).extract(),
-        location: this.location.map((_item) => _item.toJson()).extract(),
-        organizers: this.organizers.map((_item) => _item.toJson()),
-        performers: this.performers.map((_item) => _item.toJson()),
-        startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
-        subEvents: this.subEvents.map((_item) => _item.toJson()),
-        superEvent: this.superEvent.map((_item) => _item.toJson()).extract(),
-        worksPerformed: this.worksPerformed.map((_item) => _item.toJson()),
-      } satisfies EventStatic.Json),
-    );
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/Event"),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/about"),
-      this.about.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/endDate"),
-      this.endDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
-          dataFactory,
-          datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#dateTime",
-          ),
-        }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/location"),
-      this.location.map((_value) =>
-        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/organizer"),
-      this.organizers.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/performer"),
-      this.performers.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/startDate"),
-      this.startDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
-          dataFactory,
-          datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#dateTime",
-          ),
-        }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/subEvent"),
-      this.subEvents.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/superEvent"),
-      this.superEvent.map((_value) =>
-        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/workPerformed"),
-      this.worksPerformed.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace EventStatic {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Event",
-  );
-  export type Identifier = ThingStatic.Identifier;
-  export const Identifier = ThingStatic.Identifier;
-  export type Json = {
-    readonly about: readonly ThingStubStatic.Json[];
-    readonly endDate: string | undefined;
-    readonly location: PlaceStub.Json | undefined;
-    readonly organizers: readonly (
-      | OrganizationStubStatic.Json
-      | PersonStub.Json
-    )[];
-    readonly performers: readonly (
-      | OrganizationStubStatic.Json
-      | PersonStub.Json
-    )[];
-    readonly startDate: string | undefined;
-    readonly subEvents: readonly EventStubStatic.Json[];
-    readonly superEvent: EventStubStatic.Json | undefined;
-    readonly worksPerformed: readonly CreativeWorkStubStatic.Json[];
-  } & ThingStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      about: readonly ThingStub[];
-      endDate: purify.Maybe<Date>;
-      location: purify.Maybe<PlaceStub>;
-      organizers: readonly AgentStub[];
-      performers: readonly AgentStub[];
-      startDate: purify.Maybe<Date>;
-      subEvents: EventStub[];
-      superEvent: purify.Maybe<EventStub>;
-      worksPerformed: CreativeWorkStub[];
-    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const about = _jsonObject["about"].map((_item) =>
-      ThingStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
-      (_item) => new Date(_item),
-    );
-    const location = purify.Maybe.fromNullable(_jsonObject["location"]).map(
-      (_item) => PlaceStub.fromJson(_item).unsafeCoerce(),
-    );
-    const organizers = _jsonObject["organizers"].map((_item) =>
-      AgentStub.fromJson(_item).unsafeCoerce(),
-    );
-    const performers = _jsonObject["performers"].map((_item) =>
-      AgentStub.fromJson(_item).unsafeCoerce(),
-    );
-    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
-      (_item) => new Date(_item),
-    );
-    const subEvents = _jsonObject["subEvents"].map((_item) =>
-      EventStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
-      (_item) => EventStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    const worksPerformed = _jsonObject["worksPerformed"].map((_item) =>
-      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
-    );
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      about,
-      endDate,
-      location,
-      organizers,
-      performers,
-      startDate,
-      subEvents,
-      superEvent,
-      worksPerformed,
-    });
-  }
-
-  export function fromJson(json: unknown): purify.Either<zod.ZodError, Event> {
-    return (
-      PublicationEventStatic.fromJson(json) as purify.Either<
-        zod.ZodError,
-        Event
-      >
-    ).altLazy(() =>
-      propertiesFromJson(json).map((properties) => new Event(properties)),
-    );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ThingStatic.jsonUiSchema({ scopePrefix }),
-        ThingStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/about`,
-        }),
-        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
-        PlaceStub.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/location`,
-        }),
-        { scope: `${scopePrefix}/properties/organizers`, type: "Control" },
-        { scope: `${scopePrefix}/properties/performers`, type: "Control" },
-        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-        EventStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/subEvents`,
-        }),
-        EventStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/superEvent`,
-        }),
-        CreativeWorkStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/worksPerformed`,
-        }),
-      ],
-      label: "Event",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return ThingStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["Event", "BroadcastEvent", "PublicationEvent"]),
-        about: ThingStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
-        endDate: zod.string().datetime().optional(),
-        location: PlaceStub.jsonZodSchema().optional(),
-        organizers: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        performers: AgentStub.jsonZodSchema()
-          .array()
-          .default(() => []),
-        startDate: zod.string().datetime().optional(),
-        subEvents: EventStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
-        superEvent: EventStubStatic.jsonZodSchema().optional(),
-        worksPerformed: CreativeWorkStubStatic.jsonZodSchema()
-          .array()
-          .default(() => []),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      about: readonly ThingStub[];
-      endDate: purify.Maybe<Date>;
-      location: purify.Maybe<PlaceStub>;
-      organizers: readonly AgentStub[];
-      performers: readonly AgentStub[];
-      startDate: purify.Maybe<Date>;
-      subEvents: EventStub[];
-      superEvent: purify.Maybe<EventStub>;
-      worksPerformed: CreativeWorkStub[];
-    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
-  > {
-    const _super0Either = ThingStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Event"))
-    ) {
-      return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-            }),
-          ),
-        );
-    }
-
-    const identifier: EventStatic.Identifier = _resource.identifier;
-    const _aboutEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly ThingStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/about"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ThingStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_aboutEither.isLeft()) {
-      return _aboutEither;
-    }
-
-    const about = _aboutEither.unsafeCoerce();
-    const _endDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/endDate"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
-    if (_endDateEither.isLeft()) {
-      return _endDateEither;
-    }
-
-    const endDate = _endDateEither.unsafeCoerce();
-    const _locationEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<PlaceStub>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/location"), {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          PlaceStub.fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
-    if (_locationEither.isLeft()) {
-      return _locationEither;
-    }
-
-    const location = _locationEither.unsafeCoerce();
-    const _organizersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/organizer"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_organizersEither.isLeft()) {
-      return _organizersEither;
-    }
-
-    const organizers = _organizersEither.unsafeCoerce();
-    const _performersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/performer"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_performersEither.isLeft()) {
-      return _performersEither;
-    }
-
-    const performers = _performersEither.unsafeCoerce();
-    const _startDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/startDate"), {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
-    if (_startDateEither.isLeft()) {
-      return _startDateEither;
-    }
-
-    const startDate = _startDateEither.unsafeCoerce();
-    const _subEventsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      EventStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/subEvent"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              EventStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_subEventsEither.isLeft()) {
-      return _subEventsEither;
-    }
-
-    const subEvents = _subEventsEither.unsafeCoerce();
-    const _superEventEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<EventStub>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/superEvent"), {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          EventStubStatic.fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
-    if (_superEventEither.isLeft()) {
-      return _superEventEither;
-    }
-
-    const superEvent = _superEventEither.unsafeCoerce();
-    const _worksPerformedEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      CreativeWorkStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values(dataFactory.namedNode("http://schema.org/workPerformed"), {
-          unique: true,
-        })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              CreativeWorkStubStatic.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_worksPerformedEither.isLeft()) {
-      return _worksPerformedEither;
-    }
-
-    const worksPerformed = _worksPerformedEither.unsafeCoerce();
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      about,
-      endDate,
-      location,
-      organizers,
-      performers,
-      startDate,
-      subEvents,
-      superEvent,
-      worksPerformed,
-    });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof EventStatic.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Event> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return (
-      PublicationEventStatic.fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Event
-      >
-    ).altLazy(() =>
-      EventStatic.propertiesFromRdf(parameters).map(
-        (properties) => new Event(properties),
-      ),
-    );
-  }
-
-  export const rdfProperties = [
-    ...ThingStatic.rdfProperties,
-    { path: dataFactory.namedNode("http://schema.org/about") },
-    { path: dataFactory.namedNode("http://schema.org/endDate") },
-    { path: dataFactory.namedNode("http://schema.org/location") },
-    { path: dataFactory.namedNode("http://schema.org/organizer") },
-    { path: dataFactory.namedNode("http://schema.org/performer") },
-    { path: dataFactory.namedNode("http://schema.org/startDate") },
-    { path: dataFactory.namedNode("http://schema.org/subEvent") },
-    { path: dataFactory.namedNode("http://schema.org/superEvent") },
-    { path: dataFactory.namedNode("http://schema.org/workPerformed") },
-  ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        EventStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        EventStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      EventStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("event");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "event");
-    return [
-      ...ThingStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-            {
-              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}About`),
-        predicate: dataFactory.namedNode("http://schema.org/about"),
-        subject,
-      },
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}About`),
-        variablePrefix: `${variablePrefix}About`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}EndDate`),
-        predicate: dataFactory.namedNode("http://schema.org/endDate"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}Location`),
-        predicate: dataFactory.namedNode("http://schema.org/location"),
-        subject,
-      },
-      ...PlaceStub.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}Location`),
-        variablePrefix: `${variablePrefix}Location`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}Organizers`),
-        predicate: dataFactory.namedNode("http://schema.org/organizer"),
-        subject,
-      },
-      ...AgentStub.sparqlConstructTemplateTriples({
-        subject: dataFactory.variable!(`${variablePrefix}Organizers`),
-        variablePrefix: `${variablePrefix}Organizers`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}Performers`),
-        predicate: dataFactory.namedNode("http://schema.org/performer"),
-        subject,
-      },
-      ...AgentStub.sparqlConstructTemplateTriples({
-        subject: dataFactory.variable!(`${variablePrefix}Performers`),
-        variablePrefix: `${variablePrefix}Performers`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}StartDate`),
-        predicate: dataFactory.namedNode("http://schema.org/startDate"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}SubEvents`),
-        predicate: dataFactory.namedNode("http://schema.org/subEvent"),
-        subject,
-      },
-      ...EventStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}SubEvents`),
-        variablePrefix: `${variablePrefix}SubEvents`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
-        predicate: dataFactory.namedNode("http://schema.org/superEvent"),
-        subject,
-      },
-      ...EventStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}SuperEvent`),
-        variablePrefix: `${variablePrefix}SuperEvent`,
-      }),
-      {
-        object: dataFactory.variable!(`${variablePrefix}WorksPerformed`),
-        predicate: dataFactory.namedNode("http://schema.org/workPerformed"),
-        subject,
-      },
-      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}WorksPerformed`),
-        variablePrefix: `${variablePrefix}WorksPerformed`,
-      }),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("event");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "event");
-    return [
-      ...ThingStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
-                      {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.namedNode("http://schema.org/Event"),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      subject: dataFactory.variable!(
-                        `${variablePrefix}RdfType`,
-                      ),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
-                        pathType: "+" as const,
-                        type: "path" as const,
-                      },
-                      object: dataFactory.variable!(
-                        `${variablePrefix}RdfClass`,
-                      ),
-                    },
-                  ],
-                  type: "bgp" as const,
-                },
-              ],
-              type: "optional" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}About`),
-                predicate: dataFactory.namedNode("http://schema.org/about"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...ThingStubStatic.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}About`),
-            variablePrefix: `${variablePrefix}About`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}EndDate`),
-                predicate: dataFactory.namedNode("http://schema.org/endDate"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Location`),
-                predicate: dataFactory.namedNode("http://schema.org/location"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...PlaceStub.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}Location`),
-            variablePrefix: `${variablePrefix}Location`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Organizers`),
-                predicate: dataFactory.namedNode("http://schema.org/organizer"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...AgentStub.sparqlWherePatterns({
-            subject: dataFactory.variable!(`${variablePrefix}Organizers`),
-            variablePrefix: `${variablePrefix}Organizers`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}Performers`),
-                predicate: dataFactory.namedNode("http://schema.org/performer"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...AgentStub.sparqlWherePatterns({
-            subject: dataFactory.variable!(`${variablePrefix}Performers`),
-            variablePrefix: `${variablePrefix}Performers`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}StartDate`),
-                predicate: dataFactory.namedNode("http://schema.org/startDate"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}SubEvents`),
-                predicate: dataFactory.namedNode("http://schema.org/subEvent"),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...EventStubStatic.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}SubEvents`),
-            variablePrefix: `${variablePrefix}SubEvents`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
-                predicate: dataFactory.namedNode(
-                  "http://schema.org/superEvent",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...EventStubStatic.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}SuperEvent`),
-            variablePrefix: `${variablePrefix}SuperEvent`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}WorksPerformed`,
-                ),
-                predicate: dataFactory.namedNode(
-                  "http://schema.org/workPerformed",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...CreativeWorkStubStatic.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}WorksPerformed`),
-            variablePrefix: `${variablePrefix}WorksPerformed`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-  }
-}
-export class PublicationEvent extends Event {
-  override readonly type: "PublicationEvent" | "BroadcastEvent" =
-    "PublicationEvent";
-  readonly publishedOn: purify.Maybe<BroadcastServiceStub>;
-
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly publishedOn?:
-        | BroadcastServiceStub
-        | purify.Maybe<BroadcastServiceStub>;
-    } & ConstructorParameters<typeof Event>[0],
-  ) {
-    super(parameters);
-    if (purify.Maybe.isMaybe(parameters.publishedOn)) {
-      this.publishedOn = parameters.publishedOn;
-    } else if (
-      typeof parameters.publishedOn === "object" &&
-      parameters.publishedOn instanceof BroadcastServiceStub
-    ) {
-      this.publishedOn = purify.Maybe.of(parameters.publishedOn);
-    } else if (typeof parameters.publishedOn === "undefined") {
-      this.publishedOn = purify.Maybe.empty();
-    } else {
-      this.publishedOn = parameters.publishedOn satisfies never;
-    }
-  }
-
-  override get identifier(): PublicationEventStatic.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override equals(other: PublicationEvent): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.equals(right)))(
-          this.publishedOn,
-          other.publishedOn,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "publishedOn",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  override hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected override hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.hashShaclProperties(_hasher);
-    this.publishedOn.ifJust((_value0) => {
-      _value0.hash(_hasher);
-    });
-    return _hasher;
-  }
-
-  override toJson(): PublicationEventStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...super.toJson(),
-        publishedOn: this.publishedOn.map((_item) => _item.toJson()).extract(),
-      } satisfies PublicationEventStatic.Json),
-    );
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/PublicationEvent"),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://schema.org/publishedOn"),
-      this.publishedOn.map((_value) =>
-        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace PublicationEventStatic {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/PublicationEvent",
-  );
-  export type Identifier = EventStatic.Identifier;
-  export const Identifier = EventStatic.Identifier;
-  export type Json = {
-    readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
-  } & EventStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      publishedOn: purify.Maybe<BroadcastServiceStub>;
-    } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromJson>>
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = EventStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const publishedOn = purify.Maybe.fromNullable(
-      _jsonObject["publishedOn"],
-    ).map((_item) => BroadcastServiceStubStatic.fromJson(_item).unsafeCoerce());
-    return purify.Either.of({ ..._super0, identifier, publishedOn });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, PublicationEvent> {
-    return (
-      BroadcastEvent.fromJson(json) as purify.Either<
-        zod.ZodError,
-        PublicationEvent
-      >
-    ).altLazy(() =>
-      propertiesFromJson(json).map(
-        (properties) => new PublicationEvent(properties),
-      ),
-    );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        EventStatic.jsonUiSchema({ scopePrefix }),
-        BroadcastServiceStubStatic.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/publishedOn`,
-        }),
-      ],
-      label: "PublicationEvent",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return EventStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum(["PublicationEvent", "BroadcastEvent"]),
-        publishedOn: BroadcastServiceStubStatic.jsonZodSchema().optional(),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      publishedOn: purify.Maybe<BroadcastServiceStub>;
-    } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromRdf>>
-  > {
-    const _super0Either = EventStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/PublicationEvent"),
-      )
-    ) {
-      return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-            }),
-          ),
-        );
-    }
-
-    const identifier: PublicationEventStatic.Identifier = _resource.identifier;
-    const _publishedOnEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<BroadcastServiceStub>
-    > = purify.Either.of(
-      _resource
-        .values(dataFactory.namedNode("http://schema.org/publishedOn"), {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          BroadcastServiceStubStatic.fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
-    if (_publishedOnEither.isLeft()) {
-      return _publishedOnEither;
-    }
-
-    const publishedOn = _publishedOnEither.unsafeCoerce();
-    return purify.Either.of({ ..._super0, identifier, publishedOn });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof PublicationEventStatic.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEvent> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return (
-      BroadcastEvent.fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        PublicationEvent
-      >
-    ).altLazy(() =>
-      PublicationEventStatic.propertiesFromRdf(parameters).map(
-        (properties) => new PublicationEvent(properties),
-      ),
-    );
-  }
-
-  export const rdfProperties = [
-    ...EventStatic.rdfProperties,
-    { path: dataFactory.namedNode("http://schema.org/publishedOn") },
-  ];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PublicationEventStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PublicationEventStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PublicationEventStatic.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("publicationEvent");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "publicationEvent");
-    return [
-      ...EventStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-            {
-              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-            },
-          ]),
-      {
-        object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
-        predicate: dataFactory.namedNode("http://schema.org/publishedOn"),
-        subject,
-      },
-      ...BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}PublishedOn`),
-        variablePrefix: `${variablePrefix}PublishedOn`,
-      }),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("publicationEvent");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "publicationEvent");
-    return [
-      ...EventStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
-                      {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.namedNode(
-                    "http://schema.org/PublicationEvent",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      subject: dataFactory.variable!(
-                        `${variablePrefix}RdfType`,
-                      ),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
-                        pathType: "+" as const,
-                        type: "path" as const,
-                      },
-                      object: dataFactory.variable!(
-                        `${variablePrefix}RdfClass`,
-                      ),
-                    },
-                  ],
-                  type: "bgp" as const,
-                },
-              ],
-              type: "optional" as const,
-            },
-          ]),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
-                predicate: dataFactory.namedNode(
-                  "http://schema.org/publishedOn",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...BroadcastServiceStubStatic.sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}PublishedOn`),
-            variablePrefix: `${variablePrefix}PublishedOn`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-  }
-}
-export class BroadcastEvent extends PublicationEvent {
-  override readonly type = "BroadcastEvent";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof PublicationEvent>[0],
-  ) {
-    super(parameters);
-  }
-
-  override get identifier(): BroadcastEvent.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
-    }
-    return this._identifier;
-  }
-
-  override toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode("http://schema.org/BroadcastEvent"),
-      );
-    }
-
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.toJson());
-  }
-}
-
-export namespace BroadcastEvent {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/BroadcastEvent",
-  );
-  export type Identifier = PublicationEventStatic.Identifier;
-  export const Identifier = PublicationEventStatic.Identifier;
-  export type Json = PublicationEventStatic.Json;
-
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof PublicationEventStatic.propertiesFromJson>
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either =
-      PublicationEventStatic.propertiesFromJson(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, BroadcastEvent> {
-    return propertiesFromJson(json).map(
-      (properties) => new BroadcastEvent(properties),
-    );
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [PublicationEventStatic.jsonUiSchema({ scopePrefix })],
-      label: "BroadcastEvent",
-      type: "Group",
-    };
-  }
-
-  export function jsonZodSchema() {
-    return PublicationEventStatic.jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("BroadcastEvent"),
-      }),
-    );
-  }
-
-  export function propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof PublicationEventStatic.propertiesFromRdf>
-    >
-  > {
-    const _super0Either = PublicationEventStatic.propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://schema.org/BroadcastEvent"),
-      )
-    ) {
-      return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-            }),
-          ),
-        );
-    }
-
-    const identifier: BroadcastEvent.Identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof BroadcastEvent.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastEvent> {
-    return BroadcastEvent.propertiesFromRdf(parameters).map(
-      (properties) => new BroadcastEvent(properties),
-    );
-  }
-
-  export const rdfProperties = [...PublicationEventStatic.rdfProperties];
-
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        BroadcastEvent.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        BroadcastEvent.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      BroadcastEvent.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("broadcastEvent");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "broadcastEvent");
-    return [
-      ...PublicationEventStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfType`),
-            },
-            {
-              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
-              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-            },
-          ]),
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("broadcastEvent");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "broadcastEvent");
-    return [
-      ...PublicationEventStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-      ...(parameters?.ignoreRdfType
-        ? []
-        : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
-                      {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.namedNode(
-                    "http://schema.org/BroadcastEvent",
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
-                },
-              ],
-              type: "bgp" as const,
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      subject: dataFactory.variable!(
-                        `${variablePrefix}RdfType`,
-                      ),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
-                        pathType: "+" as const,
-                        type: "path" as const,
-                      },
-                      object: dataFactory.variable!(
-                        `${variablePrefix}RdfClass`,
-                      ),
-                    },
-                  ],
-                  type: "bgp" as const,
-                },
-              ],
-              type: "optional" as const,
-            },
-          ]),
-    ];
-  }
-}
 export class Action extends Thing {
   override readonly type:
     | "Action"
@@ -8653,6 +6483,7 @@ export class ThingStub extends Model {
     | "ActionStub"
     | "ArticleStub"
     | "AssessActionStub"
+    | "BroadcastEventStub"
     | "BroadcastServiceStub"
     | "ChooseActionStub"
     | "CreativeWorkSeriesStub"
@@ -8948,6 +6779,7 @@ export namespace ThingStubStatic {
           "ActionStub",
           "ArticleStub",
           "AssessActionStub",
+          "BroadcastEventStub",
           "BroadcastServiceStub",
           "ChooseActionStub",
           "CreativeWorkSeriesStub",
@@ -11156,7 +8988,7 @@ export namespace CreativeWorkStatic {
     readonly hasParts: readonly CreativeWorkStubStatic.Json[];
     readonly isBasedOn: readonly { readonly "@id": string }[];
     readonly isPartOf: readonly CreativeWorkStubStatic.Json[];
-    readonly publication: readonly PublicationEventStub.Json[];
+    readonly publication: readonly PublicationEventStubStatic.Json[];
   } & ThingStatic.Json;
 
   export function propertiesFromJson(
@@ -11208,7 +9040,7 @@ export namespace CreativeWorkStatic {
       CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
     );
     const publication = _jsonObject["publication"].map((_item) =>
-      PublicationEventStub.fromJson(_item).unsafeCoerce(),
+      PublicationEventStubStatic.fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({
       ..._super0,
@@ -11310,7 +9142,7 @@ export namespace CreativeWorkStatic {
         CreativeWorkStubStatic.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/isPartOf`,
         }),
-        PublicationEventStub.jsonUiSchema({
+        PublicationEventStubStatic.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/publication`,
         }),
       ],
@@ -11357,7 +9189,7 @@ export namespace CreativeWorkStatic {
         isPartOf: CreativeWorkStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
-        publication: PublicationEventStub.jsonZodSchema()
+        publication: PublicationEventStubStatic.jsonZodSchema()
           .array()
           .default(() => []),
       }),
@@ -11598,7 +9430,7 @@ export namespace CreativeWorkStatic {
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
-              PublicationEventStub.fromRdf({
+              PublicationEventStubStatic.fromRdf({
                 ..._context,
                 ignoreRdfType: true,
                 languageIn: _languageIn,
@@ -11838,7 +9670,7 @@ export namespace CreativeWorkStatic {
         predicate: dataFactory.namedNode("http://schema.org/publication"),
         subject,
       },
-      ...PublicationEventStub.sparqlConstructTemplateTriples({
+      ...PublicationEventStubStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}Publication`),
         variablePrefix: `${variablePrefix}Publication`,
@@ -12059,7 +9891,7 @@ export namespace CreativeWorkStatic {
             ],
             type: "bgp",
           },
-          ...PublicationEventStub.sparqlWherePatterns({
+          ...PublicationEventStubStatic.sparqlWherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(`${variablePrefix}Publication`),
             variablePrefix: `${variablePrefix}Publication`,
@@ -24138,22 +21970,84 @@ export namespace QuantitativeValueStub {
     ];
   }
 }
-export class EventStub extends ThingStub {
-  override readonly type: "EventStub" | "PublicationEventStub" = "EventStub";
+export class Event extends Thing {
+  override readonly type: "Event" | "BroadcastEvent" | "PublicationEvent" =
+    "Event";
+  readonly about: readonly ThingStub[];
+  readonly endDate: purify.Maybe<Date>;
+  readonly location: purify.Maybe<PlaceStub>;
+  readonly organizers: readonly AgentStub[];
+  readonly performers: readonly AgentStub[];
   readonly startDate: purify.Maybe<Date>;
-  superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+  subEvents: EventStub[];
+  superEvent: purify.Maybe<EventStub>;
+  worksPerformed: CreativeWorkStub[];
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly about?: readonly ThingStub[];
+      readonly endDate?: Date | purify.Maybe<Date>;
+      readonly location?: PlaceStub | purify.Maybe<PlaceStub>;
+      readonly organizers?: readonly AgentStub[];
+      readonly performers?: readonly AgentStub[];
       readonly startDate?: Date | purify.Maybe<Date>;
-      readonly superEvent?:
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
-        | string;
-    } & ConstructorParameters<typeof ThingStub>[0],
+      readonly subEvents?: readonly EventStub[];
+      readonly superEvent?: EventStub | purify.Maybe<EventStub>;
+      readonly worksPerformed?: readonly CreativeWorkStub[];
+    } & ConstructorParameters<typeof Thing>[0],
   ) {
     super(parameters);
+    if (typeof parameters.about === "undefined") {
+      this.about = [];
+    } else if (typeof parameters.about === "object") {
+      this.about = parameters.about;
+    } else {
+      this.about = parameters.about satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.endDate)) {
+      this.endDate = parameters.endDate;
+    } else if (
+      typeof parameters.endDate === "object" &&
+      parameters.endDate instanceof Date
+    ) {
+      this.endDate = purify.Maybe.of(parameters.endDate);
+    } else if (typeof parameters.endDate === "undefined") {
+      this.endDate = purify.Maybe.empty();
+    } else {
+      this.endDate = parameters.endDate satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.location)) {
+      this.location = parameters.location;
+    } else if (
+      typeof parameters.location === "object" &&
+      parameters.location instanceof PlaceStub
+    ) {
+      this.location = purify.Maybe.of(parameters.location);
+    } else if (typeof parameters.location === "undefined") {
+      this.location = purify.Maybe.empty();
+    } else {
+      this.location = parameters.location satisfies never;
+    }
+
+    if (typeof parameters.organizers === "undefined") {
+      this.organizers = [];
+    } else if (typeof parameters.organizers === "object") {
+      this.organizers = parameters.organizers;
+    } else {
+      this.organizers = parameters.organizers satisfies never;
+    }
+
+    if (typeof parameters.performers === "undefined") {
+      this.performers = [];
+    } else if (typeof parameters.performers === "object") {
+      this.performers = parameters.performers;
+    } else {
+      this.performers = parameters.performers satisfies never;
+    }
+
     if (purify.Maybe.isMaybe(parameters.startDate)) {
       this.startDate = parameters.startDate;
     } else if (
@@ -24167,31 +22061,108 @@ export class EventStub extends ThingStub {
       this.startDate = parameters.startDate satisfies never;
     }
 
+    if (typeof parameters.subEvents === "undefined") {
+      this.subEvents = [];
+    } else if (typeof parameters.subEvents === "object") {
+      this.subEvents = parameters.subEvents.concat();
+    } else {
+      this.subEvents = parameters.subEvents satisfies never;
+    }
+
     if (purify.Maybe.isMaybe(parameters.superEvent)) {
       this.superEvent = parameters.superEvent;
-    } else if (typeof parameters.superEvent === "object") {
+    } else if (
+      typeof parameters.superEvent === "object" &&
+      parameters.superEvent instanceof EventStub
+    ) {
       this.superEvent = purify.Maybe.of(parameters.superEvent);
-    } else if (typeof parameters.superEvent === "string") {
-      this.superEvent = purify.Maybe.of(
-        dataFactory.namedNode(parameters.superEvent),
-      );
     } else if (typeof parameters.superEvent === "undefined") {
       this.superEvent = purify.Maybe.empty();
     } else {
       this.superEvent = parameters.superEvent satisfies never;
     }
+
+    if (typeof parameters.worksPerformed === "undefined") {
+      this.worksPerformed = [];
+    } else if (typeof parameters.worksPerformed === "object") {
+      this.worksPerformed = parameters.worksPerformed.concat();
+    } else {
+      this.worksPerformed = parameters.worksPerformed satisfies never;
+    }
   }
 
-  override get identifier(): EventStubStatic.Identifier {
+  override get identifier(): EventStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  override equals(other: EventStub): $EqualsResult {
+  override equals(other: Event): $EqualsResult {
     return super
       .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.about,
+          other.about,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "about",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
+          this.endDate,
+          other.endDate,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "endDate",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.location,
+          other.location,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "location",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
+          this.organizers,
+          other.organizers,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "organizers",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, AgentStub.equals))(
+          this.performers,
+          other.performers,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "performers",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
       .chain(() =>
         ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.startDate,
@@ -24205,13 +22176,40 @@ export class EventStub extends ThingStub {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.subEvents,
+          other.subEvents,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "subEvents",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.superEvent,
           other.superEvent,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
           propertyName: "superEvent",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) => left.equals(right)))(
+          this.worksPerformed,
+          other.worksPerformed,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "worksPerformed",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -24233,29 +22231,55 @@ export class EventStub extends ThingStub {
     },
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
+    for (const _item0 of this.about) {
+      _item0.hash(_hasher);
+    }
+
+    this.endDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
+    this.location.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    for (const _item0 of this.organizers) {
+      _item0.hash(_hasher);
+    }
+
+    for (const _item0 of this.performers) {
+      _item0.hash(_hasher);
+    }
+
     this.startDate.ifJust((_value0) => {
       _hasher.update(_value0.toISOString());
     });
+    for (const _item0 of this.subEvents) {
+      _item0.hash(_hasher);
+    }
+
     this.superEvent.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+      _value0.hash(_hasher);
     });
+    for (const _item0 of this.worksPerformed) {
+      _item0.hash(_hasher);
+    }
+
     return _hasher;
   }
 
-  override toJson(): EventStubStatic.Json {
+  override toJson(): EventStatic.Json {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
+        about: this.about.map((_item) => _item.toJson()),
+        endDate: this.endDate.map((_item) => _item.toISOString()).extract(),
+        location: this.location.map((_item) => _item.toJson()).extract(),
+        organizers: this.organizers.map((_item) => _item.toJson()),
+        performers: this.performers.map((_item) => _item.toJson()),
         startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
-        superEvent: this.superEvent
-          .map((_item) =>
-            _item.termType === "BlankNode"
-              ? { "@id": `_:${_item.value}` }
-              : { "@id": _item.value },
-          )
-          .extract(),
-      } satisfies EventStubStatic.Json),
+        subEvents: this.subEvents.map((_item) => _item.toJson()),
+        superEvent: this.superEvent.map((_item) => _item.toJson()).extract(),
+        worksPerformed: this.worksPerformed.map((_item) => _item.toJson()),
+      } satisfies EventStatic.Json),
     );
   }
 
@@ -24283,6 +22307,41 @@ export class EventStub extends ThingStub {
     }
 
     _resource.add(
+      dataFactory.namedNode("http://schema.org/about"),
+      this.about.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/endDate"),
+      this.endDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/location"),
+      this.location.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/organizer"),
+      this.organizers.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/performer"),
+      this.performers.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/startDate"),
       this.startDate.map((_value) =>
         rdfLiteral.toRdf(_value, {
@@ -24294,8 +22353,22 @@ export class EventStub extends ThingStub {
       ),
     );
     _resource.add(
+      dataFactory.namedNode("http://schema.org/subEvent"),
+      this.subEvents.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/superEvent"),
-      this.superEvent,
+      this.superEvent.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/workPerformed"),
+      this.worksPerformed.map((_item) =>
+        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
     );
     return _resource;
   }
@@ -24305,16 +22378,29 @@ export class EventStub extends ThingStub {
   }
 }
 
-export namespace EventStubStatic {
+export namespace EventStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/Event",
   );
-  export type Identifier = ThingStubStatic.Identifier;
-  export const Identifier = ThingStubStatic.Identifier;
+  export type Identifier = ThingStatic.Identifier;
+  export const Identifier = ThingStatic.Identifier;
   export type Json = {
+    readonly about: readonly ThingStubStatic.Json[];
+    readonly endDate: string | undefined;
+    readonly location: PlaceStub.Json | undefined;
+    readonly organizers: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
+    readonly performers: readonly (
+      | OrganizationStubStatic.Json
+      | PersonStub.Json
+    )[];
     readonly startDate: string | undefined;
-    readonly superEvent: { readonly "@id": string } | undefined;
-  } & ThingStubStatic.Json;
+    readonly subEvents: readonly EventStubStatic.Json[];
+    readonly superEvent: EventStubStatic.Json | undefined;
+    readonly worksPerformed: readonly CreativeWorkStubStatic.Json[];
+  } & ThingStatic.Json;
 
   export function propertiesFromJson(
     _json: unknown,
@@ -24322,9 +22408,16 @@ export namespace EventStubStatic {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      about: readonly ThingStub[];
+      endDate: purify.Maybe<Date>;
+      location: purify.Maybe<PlaceStub>;
+      organizers: readonly AgentStub[];
+      performers: readonly AgentStub[];
       startDate: purify.Maybe<Date>;
-      superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromJson>>
+      subEvents: EventStub[];
+      superEvent: purify.Maybe<EventStub>;
+      worksPerformed: CreativeWorkStub[];
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -24332,7 +22425,7 @@ export namespace EventStubStatic {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
+    const _super0Either = ThingStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -24341,28 +22434,56 @@ export namespace EventStubStatic {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
+    const about = _jsonObject["about"].map((_item) =>
+      ThingStubStatic.fromJson(_item).unsafeCoerce(),
+    );
+    const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
+      (_item) => new Date(_item),
+    );
+    const location = purify.Maybe.fromNullable(_jsonObject["location"]).map(
+      (_item) => PlaceStub.fromJson(_item).unsafeCoerce(),
+    );
+    const organizers = _jsonObject["organizers"].map((_item) =>
+      AgentStub.fromJson(_item).unsafeCoerce(),
+    );
+    const performers = _jsonObject["performers"].map((_item) =>
+      AgentStub.fromJson(_item).unsafeCoerce(),
+    );
     const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
       (_item) => new Date(_item),
     );
-    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
-      (_item) =>
-        _item["@id"].startsWith("_:")
-          ? dataFactory.blankNode(_item["@id"].substring(2))
-          : dataFactory.namedNode(_item["@id"]),
+    const subEvents = _jsonObject["subEvents"].map((_item) =>
+      EventStubStatic.fromJson(_item).unsafeCoerce(),
     );
-    return purify.Either.of({ ..._super0, identifier, startDate, superEvent });
+    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
+      (_item) => EventStubStatic.fromJson(_item).unsafeCoerce(),
+    );
+    const worksPerformed = _jsonObject["worksPerformed"].map((_item) =>
+      CreativeWorkStubStatic.fromJson(_item).unsafeCoerce(),
+    );
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      about,
+      endDate,
+      location,
+      organizers,
+      performers,
+      startDate,
+      subEvents,
+      superEvent,
+      worksPerformed,
+    });
   }
 
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, EventStub> {
+  export function fromJson(json: unknown): purify.Either<zod.ZodError, Event> {
     return (
-      PublicationEventStub.fromJson(json) as purify.Either<
+      PublicationEventStatic.fromJson(json) as purify.Either<
         zod.ZodError,
-        EventStub
+        Event
       >
     ).altLazy(() =>
-      propertiesFromJson(json).map((properties) => new EventStub(properties)),
+      propertiesFromJson(json).map((properties) => new Event(properties)),
     );
   }
 
@@ -24374,22 +22495,56 @@ export namespace EventStubStatic {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        ThingStubStatic.jsonUiSchema({ scopePrefix }),
+        ThingStatic.jsonUiSchema({ scopePrefix }),
+        ThingStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/about`,
+        }),
+        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
+        PlaceStub.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/location`,
+        }),
+        { scope: `${scopePrefix}/properties/organizers`, type: "Control" },
+        { scope: `${scopePrefix}/properties/performers`, type: "Control" },
         { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-        { scope: `${scopePrefix}/properties/superEvent`, type: "Control" },
+        EventStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/subEvents`,
+        }),
+        EventStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/superEvent`,
+        }),
+        CreativeWorkStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/worksPerformed`,
+        }),
       ],
-      label: "EventStub",
+      label: "Event",
       type: "Group",
     };
   }
 
   export function jsonZodSchema() {
-    return ThingStubStatic.jsonZodSchema().merge(
+    return ThingStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["EventStub", "PublicationEventStub"]),
+        type: zod.enum(["Event", "BroadcastEvent", "PublicationEvent"]),
+        about: ThingStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        endDate: zod.string().datetime().optional(),
+        location: PlaceStub.jsonZodSchema().optional(),
+        organizers: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
+        performers: AgentStub.jsonZodSchema()
+          .array()
+          .default(() => []),
         startDate: zod.string().datetime().optional(),
-        superEvent: zod.object({ "@id": zod.string().min(1) }).optional(),
+        subEvents: EventStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
+        superEvent: EventStubStatic.jsonZodSchema().optional(),
+        worksPerformed: CreativeWorkStubStatic.jsonZodSchema()
+          .array()
+          .default(() => []),
       }),
     );
   }
@@ -24409,11 +22564,18 @@ export namespace EventStubStatic {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      about: readonly ThingStub[];
+      endDate: purify.Maybe<Date>;
+      location: purify.Maybe<PlaceStub>;
+      organizers: readonly AgentStub[];
+      performers: readonly AgentStub[];
       startDate: purify.Maybe<Date>;
-      superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromRdf>>
+      subEvents: EventStub[];
+      superEvent: purify.Maybe<EventStub>;
+      worksPerformed: CreativeWorkStub[];
+    } & $UnwrapR<ReturnType<typeof ThingStatic.propertiesFromRdf>>
   > {
-    const _super0Either = ThingStubStatic.propertiesFromRdf({
+    const _super0Either = ThingStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -24448,7 +22610,137 @@ export namespace EventStubStatic {
         );
     }
 
-    const identifier: EventStubStatic.Identifier = _resource.identifier;
+    const identifier: EventStatic.Identifier = _resource.identifier;
+    const _aboutEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly ThingStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/about"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              ThingStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_aboutEither.isLeft()) {
+      return _aboutEither;
+    }
+
+    const about = _aboutEither.unsafeCoerce();
+    const _endDateEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/endDate"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_endDateEither.isLeft()) {
+      return _endDateEither;
+    }
+
+    const endDate = _endDateEither.unsafeCoerce();
+    const _locationEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<PlaceStub>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/location"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          PlaceStub.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_locationEither.isLeft()) {
+      return _locationEither;
+    }
+
+    const location = _locationEither.unsafeCoerce();
+    const _organizersEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly AgentStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/organizer"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              AgentStub.fromRdf({
+                ..._context,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_organizersEither.isLeft()) {
+      return _organizersEither;
+    }
+
+    const organizers = _organizersEither.unsafeCoerce();
+    const _performersEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      readonly AgentStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/performer"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              AgentStub.fromRdf({
+                ..._context,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_performersEither.isLeft()) {
+      return _performersEither;
+    }
+
+    const performers = _performersEither.unsafeCoerce();
     const _startDateEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<Date>
@@ -24466,16 +22758,54 @@ export namespace EventStubStatic {
     }
 
     const startDate = _startDateEither.unsafeCoerce();
+    const _subEventsEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      EventStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/subEvent"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              EventStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_subEventsEither.isLeft()) {
+      return _subEventsEither;
+    }
+
+    const subEvents = _subEventsEither.unsafeCoerce();
     const _superEventEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+      purify.Maybe<EventStub>
     > = purify.Either.of(
       _resource
         .values(dataFactory.namedNode("http://schema.org/superEvent"), {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toIdentifier())
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          EventStubStatic.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
         .toMaybe(),
     );
     if (_superEventEither.isLeft()) {
@@ -24483,29 +22813,78 @@ export namespace EventStubStatic {
     }
 
     const superEvent = _superEventEither.unsafeCoerce();
-    return purify.Either.of({ ..._super0, identifier, startDate, superEvent });
+    const _worksPerformedEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      CreativeWorkStub[]
+    > = purify.Either.of([
+      ..._resource
+        .values(dataFactory.namedNode("http://schema.org/workPerformed"), {
+          unique: true,
+        })
+        .flatMap((_item) =>
+          _item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              CreativeWorkStubStatic.fromRdf({
+                ..._context,
+                ignoreRdfType: true,
+                languageIn: _languageIn,
+                resource: _resource,
+              }),
+            )
+            .toMaybe()
+            .toList(),
+        ),
+    ]);
+    if (_worksPerformedEither.isLeft()) {
+      return _worksPerformedEither;
+    }
+
+    const worksPerformed = _worksPerformedEither.unsafeCoerce();
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      about,
+      endDate,
+      location,
+      organizers,
+      performers,
+      startDate,
+      subEvents,
+      superEvent,
+      worksPerformed,
+    });
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof EventStubStatic.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, EventStub> {
+    parameters: Parameters<typeof EventStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Event> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      PublicationEventStub.fromRdf(otherParameters) as purify.Either<
+      PublicationEventStatic.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
-        EventStub
+        Event
       >
     ).altLazy(() =>
-      EventStubStatic.propertiesFromRdf(parameters).map(
-        (properties) => new EventStub(properties),
+      EventStatic.propertiesFromRdf(parameters).map(
+        (properties) => new Event(properties),
       ),
     );
   }
 
   export const rdfProperties = [
-    ...ThingStubStatic.rdfProperties,
+    ...ThingStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/about") },
+    { path: dataFactory.namedNode("http://schema.org/endDate") },
+    { path: dataFactory.namedNode("http://schema.org/location") },
+    { path: dataFactory.namedNode("http://schema.org/organizer") },
+    { path: dataFactory.namedNode("http://schema.org/performer") },
     { path: dataFactory.namedNode("http://schema.org/startDate") },
+    { path: dataFactory.namedNode("http://schema.org/subEvent") },
     { path: dataFactory.namedNode("http://schema.org/superEvent") },
+    { path: dataFactory.namedNode("http://schema.org/workPerformed") },
   ];
 
   export function sparqlConstructQuery(
@@ -24522,14 +22901,11 @@ export namespace EventStubStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        EventStubStatic.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        EventStatic.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        EventStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+        EventStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -24543,7 +22919,7 @@ export namespace EventStubStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      EventStubStatic.sparqlConstructQuery(parameters),
+      EventStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -24552,12 +22928,12 @@ export namespace EventStubStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
+    const subject = parameters?.subject ?? dataFactory.variable!("event");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "eventStub");
+      (subject.termType === "Variable" ? subject.value : "event");
     return [
-      ...ThingStubStatic.sparqlConstructTemplateTriples({
+      ...ThingStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -24581,15 +22957,83 @@ export namespace EventStubStatic {
             },
           ]),
       {
+        object: dataFactory.variable!(`${variablePrefix}About`),
+        predicate: dataFactory.namedNode("http://schema.org/about"),
+        subject,
+      },
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}About`),
+        variablePrefix: `${variablePrefix}About`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}EndDate`),
+        predicate: dataFactory.namedNode("http://schema.org/endDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}Location`),
+        predicate: dataFactory.namedNode("http://schema.org/location"),
+        subject,
+      },
+      ...PlaceStub.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}Location`),
+        variablePrefix: `${variablePrefix}Location`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Organizers`),
+        predicate: dataFactory.namedNode("http://schema.org/organizer"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Organizers`),
+        variablePrefix: `${variablePrefix}Organizers`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}Performers`),
+        predicate: dataFactory.namedNode("http://schema.org/performer"),
+        subject,
+      },
+      ...AgentStub.sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}Performers`),
+        variablePrefix: `${variablePrefix}Performers`,
+      }),
+      {
         object: dataFactory.variable!(`${variablePrefix}StartDate`),
         predicate: dataFactory.namedNode("http://schema.org/startDate"),
         subject,
       },
       {
+        object: dataFactory.variable!(`${variablePrefix}SubEvents`),
+        predicate: dataFactory.namedNode("http://schema.org/subEvent"),
+        subject,
+      },
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SubEvents`),
+        variablePrefix: `${variablePrefix}SubEvents`,
+      }),
+      {
         object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
         predicate: dataFactory.namedNode("http://schema.org/superEvent"),
         subject,
       },
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+        variablePrefix: `${variablePrefix}SuperEvent`,
+      }),
+      {
+        object: dataFactory.variable!(`${variablePrefix}WorksPerformed`),
+        predicate: dataFactory.namedNode("http://schema.org/workPerformed"),
+        subject,
+      },
+      ...CreativeWorkStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}WorksPerformed`),
+        variablePrefix: `${variablePrefix}WorksPerformed`,
+      }),
     ];
   }
 
@@ -24598,12 +23042,12 @@ export namespace EventStubStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
+    const subject = parameters?.subject ?? dataFactory.variable!("event");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "eventStub");
+      (subject.termType === "Variable" ? subject.value : "event");
     return [
-      ...ThingStubStatic.sparqlWherePatterns({
+      ...ThingStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -24683,6 +23127,99 @@ export namespace EventStubStatic {
           {
             triples: [
               {
+                object: dataFactory.variable!(`${variablePrefix}About`),
+                predicate: dataFactory.namedNode("http://schema.org/about"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...ThingStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}About`),
+            variablePrefix: `${variablePrefix}About`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}EndDate`),
+                predicate: dataFactory.namedNode("http://schema.org/endDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Location`),
+                predicate: dataFactory.namedNode("http://schema.org/location"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...PlaceStub.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}Location`),
+            variablePrefix: `${variablePrefix}Location`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Organizers`),
+                predicate: dataFactory.namedNode("http://schema.org/organizer"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Organizers`),
+            variablePrefix: `${variablePrefix}Organizers`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}Performers`),
+                predicate: dataFactory.namedNode("http://schema.org/performer"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...AgentStub.sparqlWherePatterns({
+            subject: dataFactory.variable!(`${variablePrefix}Performers`),
+            variablePrefix: `${variablePrefix}Performers`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
                 object: dataFactory.variable!(`${variablePrefix}StartDate`),
                 predicate: dataFactory.namedNode("http://schema.org/startDate"),
                 subject,
@@ -24690,6 +23227,26 @@ export namespace EventStubStatic {
             ],
             type: "bgp",
           },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SubEvents`),
+                predicate: dataFactory.namedNode("http://schema.org/subEvent"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...EventStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}SubEvents`),
+            variablePrefix: `${variablePrefix}SubEvents`,
+          }),
         ],
         type: "optional",
       },
@@ -24707,29 +23264,122 @@ export namespace EventStubStatic {
             ],
             type: "bgp",
           },
+          ...EventStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+            variablePrefix: `${variablePrefix}SuperEvent`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}WorksPerformed`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/workPerformed",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...CreativeWorkStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}WorksPerformed`),
+            variablePrefix: `${variablePrefix}WorksPerformed`,
+          }),
         ],
         type: "optional",
       },
     ];
   }
 }
-export class PublicationEventStub extends EventStub {
-  override readonly type = "PublicationEventStub";
+export class PublicationEvent extends Event {
+  override readonly type: "PublicationEvent" | "BroadcastEvent" =
+    "PublicationEvent";
+  readonly publishedOn: purify.Maybe<BroadcastServiceStub>;
 
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof EventStub>[0],
+      readonly publishedOn?:
+        | BroadcastServiceStub
+        | purify.Maybe<BroadcastServiceStub>;
+    } & ConstructorParameters<typeof Event>[0],
   ) {
     super(parameters);
+    if (purify.Maybe.isMaybe(parameters.publishedOn)) {
+      this.publishedOn = parameters.publishedOn;
+    } else if (
+      typeof parameters.publishedOn === "object" &&
+      parameters.publishedOn instanceof BroadcastServiceStub
+    ) {
+      this.publishedOn = purify.Maybe.of(parameters.publishedOn);
+    } else if (typeof parameters.publishedOn === "undefined") {
+      this.publishedOn = purify.Maybe.empty();
+    } else {
+      this.publishedOn = parameters.publishedOn satisfies never;
+    }
   }
 
-  override get identifier(): PublicationEventStub.Identifier {
+  override get identifier(): PublicationEventStatic.Identifier {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
+  }
+
+  override equals(other: PublicationEvent): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
+          this.publishedOn,
+          other.publishedOn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "publishedOn",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.publishedOn.ifJust((_value0) => {
+      _value0.hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  override toJson(): PublicationEventStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        publishedOn: this.publishedOn.map((_item) => _item.toJson()).extract(),
+      } satisfies PublicationEventStatic.Json),
+    );
   }
 
   override toRdf({
@@ -24755,6 +23405,12 @@ export class PublicationEventStub extends EventStub {
       );
     }
 
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/publishedOn"),
+      this.publishedOn.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
     return _resource;
   }
 
@@ -24763,21 +23419,24 @@ export class PublicationEventStub extends EventStub {
   }
 }
 
-export namespace PublicationEventStub {
+export namespace PublicationEventStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://schema.org/PublicationEvent",
   );
-  export type Identifier = EventStubStatic.Identifier;
-  export const Identifier = EventStubStatic.Identifier;
-  export type Json = EventStubStatic.Json;
+  export type Identifier = EventStatic.Identifier;
+  export const Identifier = EventStatic.Identifier;
+  export type Json = {
+    readonly publishedOn: BroadcastServiceStubStatic.Json | undefined;
+  } & EventStatic.Json;
 
   export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof EventStubStatic.propertiesFromJson>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      publishedOn: purify.Maybe<BroadcastServiceStub>;
+    } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromJson>>
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
@@ -24785,7 +23444,7 @@ export namespace PublicationEventStub {
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either = EventStubStatic.propertiesFromJson(_jsonObject);
+    const _super0Either = EventStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -24794,14 +23453,24 @@ export namespace PublicationEventStub {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ..._super0, identifier });
+    const publishedOn = purify.Maybe.fromNullable(
+      _jsonObject["publishedOn"],
+    ).map((_item) => BroadcastServiceStubStatic.fromJson(_item).unsafeCoerce());
+    return purify.Either.of({ ..._super0, identifier, publishedOn });
   }
 
   export function fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, PublicationEventStub> {
-    return propertiesFromJson(json).map(
-      (properties) => new PublicationEventStub(properties),
+  ): purify.Either<zod.ZodError, PublicationEvent> {
+    return (
+      BroadcastEvent.fromJson(json) as purify.Either<
+        zod.ZodError,
+        PublicationEvent
+      >
+    ).altLazy(() =>
+      propertiesFromJson(json).map(
+        (properties) => new PublicationEvent(properties),
+      ),
     );
   }
 
@@ -24812,17 +23481,23 @@ export namespace PublicationEventStub {
   export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
-      elements: [EventStubStatic.jsonUiSchema({ scopePrefix })],
-      label: "PublicationEventStub",
+      elements: [
+        EventStatic.jsonUiSchema({ scopePrefix }),
+        BroadcastServiceStubStatic.jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/publishedOn`,
+        }),
+      ],
+      label: "PublicationEvent",
       type: "Group",
     };
   }
 
   export function jsonZodSchema() {
-    return EventStubStatic.jsonZodSchema().merge(
+    return EventStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.literal("PublicationEventStub"),
+        type: zod.enum(["PublicationEvent", "BroadcastEvent"]),
+        publishedOn: BroadcastServiceStubStatic.jsonZodSchema().optional(),
       }),
     );
   }
@@ -24840,11 +23515,12 @@ export namespace PublicationEventStub {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof EventStubStatic.propertiesFromRdf>
-    >
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      publishedOn: purify.Maybe<BroadcastServiceStub>;
+    } & $UnwrapR<ReturnType<typeof EventStatic.propertiesFromRdf>>
   > {
-    const _super0Either = EventStubStatic.propertiesFromRdf({
+    const _super0Either = EventStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -24881,19 +23557,55 @@ export namespace PublicationEventStub {
         );
     }
 
-    const identifier: PublicationEventStub.Identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
+    const identifier: PublicationEventStatic.Identifier = _resource.identifier;
+    const _publishedOnEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<BroadcastServiceStub>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/publishedOn"), {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          BroadcastServiceStubStatic.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
+    );
+    if (_publishedOnEither.isLeft()) {
+      return _publishedOnEither;
+    }
+
+    const publishedOn = _publishedOnEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, publishedOn });
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof PublicationEventStub.propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEventStub> {
-    return PublicationEventStub.propertiesFromRdf(parameters).map(
-      (properties) => new PublicationEventStub(properties),
+    parameters: Parameters<typeof PublicationEventStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEvent> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      BroadcastEvent.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        PublicationEvent
+      >
+    ).altLazy(() =>
+      PublicationEventStatic.propertiesFromRdf(parameters).map(
+        (properties) => new PublicationEvent(properties),
+      ),
     );
   }
 
-  export const rdfProperties = [...EventStubStatic.rdfProperties];
+  export const rdfProperties = [
+    ...EventStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/publishedOn") },
+  ];
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -24909,14 +23621,14 @@ export namespace PublicationEventStub {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PublicationEventStub.sparqlConstructTemplateTriples({
+        PublicationEventStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PublicationEventStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+        PublicationEventStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
@@ -24930,7 +23642,7 @@ export namespace PublicationEventStub {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      PublicationEventStub.sparqlConstructQuery(parameters),
+      PublicationEventStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -24940,14 +23652,12 @@ export namespace PublicationEventStub {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
+      parameters?.subject ?? dataFactory.variable!("publicationEvent");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "publicationEventStub");
+      (subject.termType === "Variable" ? subject.value : "publicationEvent");
     return [
-      ...EventStubStatic.sparqlConstructTemplateTriples({
+      ...EventStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -24970,6 +23680,16 @@ export namespace PublicationEventStub {
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+        predicate: dataFactory.namedNode("http://schema.org/publishedOn"),
+        subject,
+      },
+      ...BroadcastServiceStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+        variablePrefix: `${variablePrefix}PublishedOn`,
+      }),
     ];
   }
 
@@ -24979,14 +23699,12 @@ export namespace PublicationEventStub {
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
+      parameters?.subject ?? dataFactory.variable!("publicationEvent");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "publicationEventStub");
+      (subject.termType === "Variable" ? subject.value : "publicationEvent");
     return [
-      ...EventStubStatic.sparqlWherePatterns({
+      ...EventStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -25063,6 +23781,28 @@ export namespace PublicationEventStub {
               type: "optional" as const,
             },
           ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/publishedOn",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...BroadcastServiceStubStatic.sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(`${variablePrefix}PublishedOn`),
+            variablePrefix: `${variablePrefix}PublishedOn`,
+          }),
+        ],
+        type: "optional",
+      },
     ];
   }
 }
@@ -40594,6 +39334,1663 @@ export namespace ImageObjectStub {
     ];
   }
 }
+export class EventStub extends ThingStub {
+  override readonly type:
+    | "EventStub"
+    | "BroadcastEventStub"
+    | "PublicationEventStub" = "EventStub";
+  readonly startDate: purify.Maybe<Date>;
+  superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly startDate?: Date | purify.Maybe<Date>;
+      readonly superEvent?:
+        | (rdfjs.BlankNode | rdfjs.NamedNode)
+        | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+        | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
+    if (purify.Maybe.isMaybe(parameters.startDate)) {
+      this.startDate = parameters.startDate;
+    } else if (
+      typeof parameters.startDate === "object" &&
+      parameters.startDate instanceof Date
+    ) {
+      this.startDate = purify.Maybe.of(parameters.startDate);
+    } else if (typeof parameters.startDate === "undefined") {
+      this.startDate = purify.Maybe.empty();
+    } else {
+      this.startDate = parameters.startDate satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.superEvent)) {
+      this.superEvent = parameters.superEvent;
+    } else if (typeof parameters.superEvent === "object") {
+      this.superEvent = purify.Maybe.of(parameters.superEvent);
+    } else if (typeof parameters.superEvent === "string") {
+      this.superEvent = purify.Maybe.of(
+        dataFactory.namedNode(parameters.superEvent),
+      );
+    } else if (typeof parameters.superEvent === "undefined") {
+      this.superEvent = purify.Maybe.empty();
+    } else {
+      this.superEvent = parameters.superEvent satisfies never;
+    }
+  }
+
+  override get identifier(): EventStubStatic.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override equals(other: EventStub): $EqualsResult {
+    return super
+      .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
+          this.startDate,
+          other.startDate,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "startDate",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.superEvent,
+          other.superEvent,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "superEvent",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.hashShaclProperties(_hasher);
+    this.startDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
+    this.superEvent.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    return _hasher;
+  }
+
+  override toJson(): EventStubStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.toJson(),
+        startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
+        superEvent: this.superEvent
+          .map((_item) =>
+            _item.termType === "BlankNode"
+              ? { "@id": `_:${_item.value}` }
+              : { "@id": _item.value },
+          )
+          .extract(),
+      } satisfies EventStubStatic.Json),
+    );
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/Event"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/startDate"),
+      this.startDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://schema.org/superEvent"),
+      this.superEvent,
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace EventStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Event",
+  );
+  export type Identifier = ThingStubStatic.Identifier;
+  export const Identifier = ThingStubStatic.Identifier;
+  export type Json = {
+    readonly startDate: string | undefined;
+    readonly superEvent: { readonly "@id": string } | undefined;
+  } & ThingStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      startDate: purify.Maybe<Date>;
+      superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromJson>>
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = ThingStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
+      (_item) => new Date(_item),
+    );
+    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
+      (_item) =>
+        _item["@id"].startsWith("_:")
+          ? dataFactory.blankNode(_item["@id"].substring(2))
+          : dataFactory.namedNode(_item["@id"]),
+    );
+    return purify.Either.of({ ..._super0, identifier, startDate, superEvent });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, EventStub> {
+    return (
+      PublicationEventStubStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        EventStub
+      >
+    ).altLazy(() =>
+      propertiesFromJson(json).map((properties) => new EventStub(properties)),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ThingStubStatic.jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/superEvent`, type: "Control" },
+      ],
+      label: "EventStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return ThingStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "EventStub",
+          "BroadcastEventStub",
+          "PublicationEventStub",
+        ]),
+        startDate: zod.string().datetime().optional(),
+        superEvent: zod.object({ "@id": zod.string().min(1) }).optional(),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      startDate: purify.Maybe<Date>;
+      superEvent: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+    } & $UnwrapR<ReturnType<typeof ThingStubStatic.propertiesFromRdf>>
+  > {
+    const _super0Either = ThingStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(dataFactory.namedNode("http://schema.org/Event"))
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: EventStubStatic.Identifier = _resource.identifier;
+    const _startDateEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/startDate"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_startDateEither.isLeft()) {
+      return _startDateEither;
+    }
+
+    const startDate = _startDateEither.unsafeCoerce();
+    const _superEventEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/superEvent"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toIdentifier())
+        .toMaybe(),
+    );
+    if (_superEventEither.isLeft()) {
+      return _superEventEither;
+    }
+
+    const superEvent = _superEventEither.unsafeCoerce();
+    return purify.Either.of({ ..._super0, identifier, startDate, superEvent });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof EventStubStatic.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, EventStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      PublicationEventStubStatic.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        EventStub
+      >
+    ).altLazy(() =>
+      EventStubStatic.propertiesFromRdf(parameters).map(
+        (properties) => new EventStub(properties),
+      ),
+    );
+  }
+
+  export const rdfProperties = [
+    ...ThingStubStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/startDate") },
+    { path: dataFactory.namedNode("http://schema.org/superEvent") },
+  ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        EventStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        EventStubStatic.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      EventStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "eventStub");
+    return [
+      ...ThingStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}StartDate`),
+        predicate: dataFactory.namedNode("http://schema.org/startDate"),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+        predicate: dataFactory.namedNode("http://schema.org/superEvent"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("eventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "eventStub");
+    return [
+      ...ThingStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.namedNode("http://schema.org/Event"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartDate`),
+                predicate: dataFactory.namedNode("http://schema.org/startDate"),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}SuperEvent`),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/superEvent",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+  }
+}
+export class PublicationEventStub extends EventStub {
+  override readonly type: "PublicationEventStub" | "BroadcastEventStub" =
+    "PublicationEventStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof EventStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): PublicationEventStubStatic.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/PublicationEvent"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace PublicationEventStubStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/PublicationEvent",
+  );
+  export type Identifier = EventStubStatic.Identifier;
+  export const Identifier = EventStubStatic.Identifier;
+  export type Json = EventStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EventStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either = EventStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PublicationEventStub> {
+    return (
+      BroadcastEventStub.fromJson(json) as purify.Either<
+        zod.ZodError,
+        PublicationEventStub
+      >
+    ).altLazy(() =>
+      propertiesFromJson(json).map(
+        (properties) => new PublicationEventStub(properties),
+      ),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [EventStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "PublicationEventStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return EventStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum(["PublicationEventStub", "BroadcastEventStub"]),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof EventStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = EventStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/PublicationEvent"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: PublicationEventStubStatic.Identifier =
+      _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<
+      typeof PublicationEventStubStatic.propertiesFromRdf
+    >[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEventStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      BroadcastEventStub.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        PublicationEventStub
+      >
+    ).altLazy(() =>
+      PublicationEventStubStatic.propertiesFromRdf(parameters).map(
+        (properties) => new PublicationEventStub(properties),
+      ),
+    );
+  }
+
+  export const rdfProperties = [...EventStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PublicationEventStubStatic.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PublicationEventStubStatic.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PublicationEventStubStatic.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "publicationEventStub");
+    return [
+      ...EventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("publicationEventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "publicationEventStub");
+    return [
+      ...EventStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.namedNode(
+                    "http://schema.org/PublicationEvent",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class BroadcastEvent extends PublicationEvent {
+  override readonly type = "BroadcastEvent";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof PublicationEvent>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): BroadcastEvent.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/BroadcastEvent"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace BroadcastEvent {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/BroadcastEvent",
+  );
+  export type Identifier = PublicationEventStatic.Identifier;
+  export const Identifier = PublicationEventStatic.Identifier;
+  export type Json = PublicationEventStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PublicationEventStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      PublicationEventStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BroadcastEvent> {
+    return propertiesFromJson(json).map(
+      (properties) => new BroadcastEvent(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [PublicationEventStatic.jsonUiSchema({ scopePrefix })],
+      label: "BroadcastEvent",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return PublicationEventStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("BroadcastEvent"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PublicationEventStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = PublicationEventStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/BroadcastEvent"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: BroadcastEvent.Identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof BroadcastEvent.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastEvent> {
+    return BroadcastEvent.propertiesFromRdf(parameters).map(
+      (properties) => new BroadcastEvent(properties),
+    );
+  }
+
+  export const rdfProperties = [...PublicationEventStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BroadcastEvent.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BroadcastEvent.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BroadcastEvent.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastEvent");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastEvent");
+    return [
+      ...PublicationEventStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastEvent");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastEvent");
+    return [
+      ...PublicationEventStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.namedNode(
+                    "http://schema.org/BroadcastEvent",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ]),
+    ];
+  }
+}
+export class BroadcastEventStub extends PublicationEventStub {
+  override readonly type = "BroadcastEventStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof PublicationEventStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get identifier(): BroadcastEventStub.Identifier {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  override toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://schema.org/BroadcastEvent"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace BroadcastEventStub {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/BroadcastEvent",
+  );
+  export type Identifier = PublicationEventStubStatic.Identifier;
+  export const Identifier = PublicationEventStubStatic.Identifier;
+  export type Json = PublicationEventStubStatic.Json;
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PublicationEventStubStatic.propertiesFromJson>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      PublicationEventStubStatic.propertiesFromJson(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BroadcastEventStub> {
+    return propertiesFromJson(json).map(
+      (properties) => new BroadcastEventStub(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [PublicationEventStubStatic.jsonUiSchema({ scopePrefix })],
+      label: "BroadcastEventStub",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return PublicationEventStubStatic.jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("BroadcastEventStub"),
+      }),
+    );
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof PublicationEventStubStatic.propertiesFromRdf>
+    >
+  > {
+    const _super0Either = PublicationEventStubStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://schema.org/BroadcastEvent"),
+      )
+    ) {
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
+    }
+
+    const identifier: BroadcastEventStub.Identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<typeof BroadcastEventStub.propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastEventStub> {
+    return BroadcastEventStub.propertiesFromRdf(parameters).map(
+      (properties) => new BroadcastEventStub(properties),
+    );
+  }
+
+  export const rdfProperties = [...PublicationEventStubStatic.rdfProperties];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BroadcastEventStub.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BroadcastEventStub.sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BroadcastEventStub.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastEventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastEventStub");
+    return [
+      ...PublicationEventStubStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+            {
+              subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+            },
+          ]),
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("broadcastEventStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "broadcastEventStub");
+    return [
+      ...PublicationEventStubStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: {
+                    items: [
+                      dataFactory.namedNode(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                      ),
+                      {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "*" as const,
+                        type: "path" as const,
+                      },
+                    ],
+                    pathType: "/" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.namedNode(
+                    "http://schema.org/BroadcastEvent",
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                          ),
+                        ],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ]),
+    ];
+  }
+}
 export class PersonStub extends ThingStub {
   override readonly type = "PersonStub";
   readonly jobTitle: purify.Maybe<string>;
@@ -41345,6 +41742,18 @@ export interface $ObjectSet {
   broadcastEventsCount(
     query?: Pick<$ObjectSet.Query<BroadcastEvent.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  broadcastEventStub(
+    identifier: BroadcastEventStub.Identifier,
+  ): Promise<purify.Either<Error, BroadcastEventStub>>;
+  broadcastEventStubIdentifiers(
+    query?: $ObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly BroadcastEventStub.Identifier[]>>;
+  broadcastEventStubs(
+    query?: $ObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastEventStub>[]>;
+  broadcastEventStubsCount(
+    query?: Pick<$ObjectSet.Query<BroadcastEventStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
   broadcastService(
     identifier: BroadcastServiceStatic.Identifier,
   ): Promise<purify.Either<Error, BroadcastService>>;
@@ -41994,16 +42403,21 @@ export interface $ObjectSet {
     query?: Pick<$ObjectSet.Query<PublicationEventStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   publicationEventStub(
-    identifier: PublicationEventStub.Identifier,
+    identifier: PublicationEventStubStatic.Identifier,
   ): Promise<purify.Either<Error, PublicationEventStub>>;
   publicationEventStubIdentifiers(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
-  ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>>;
+    query?: $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PublicationEventStubStatic.Identifier[]>
+  >;
   publicationEventStubs(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+    query?: $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, PublicationEventStub>[]>;
   publicationEventStubsCount(
-    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+    query?: Pick<
+      $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
   quantitativeValue(
     identifier: QuantitativeValue.Identifier,
@@ -42724,6 +43138,69 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<BroadcastEvent.Identifier>(
       BroadcastEvent,
+      query,
+    );
+  }
+
+  async broadcastEventStub(
+    identifier: BroadcastEventStub.Identifier,
+  ): Promise<purify.Either<Error, BroadcastEventStub>> {
+    return this.broadcastEventStubSync(identifier);
+  }
+
+  broadcastEventStubSync(
+    identifier: BroadcastEventStub.Identifier,
+  ): purify.Either<Error, BroadcastEventStub> {
+    return this.broadcastEventStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async broadcastEventStubIdentifiers(
+    query?: $ObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly BroadcastEventStub.Identifier[]>> {
+    return this.broadcastEventStubIdentifiersSync(query);
+  }
+
+  broadcastEventStubIdentifiersSync(
+    query?: $ObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): purify.Either<Error, readonly BroadcastEventStub.Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<BroadcastEventStub.Identifier>(
+        BroadcastEventStub,
+        query,
+      ),
+    ]);
+  }
+
+  async broadcastEventStubs(
+    query?: $ObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastEventStub>[]> {
+    return this.broadcastEventStubsSync(query);
+  }
+
+  broadcastEventStubsSync(
+    query?: $ObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): readonly purify.Either<Error, BroadcastEventStub>[] {
+    return [
+      ...this.$objectsSync<BroadcastEventStub, BroadcastEventStub.Identifier>(
+        BroadcastEventStub,
+        query,
+      ),
+    ];
+  }
+
+  async broadcastEventStubsCount(
+    query?: Pick<$ObjectSet.Query<BroadcastEventStub.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.broadcastEventStubsCountSync(query);
+  }
+
+  broadcastEventStubsCountSync(
+    query?: Pick<$ObjectSet.Query<BroadcastEventStub.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<BroadcastEventStub.Identifier>(
+      BroadcastEventStub,
       query,
     );
   }
@@ -45897,13 +46374,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async publicationEventStub(
-    identifier: PublicationEventStub.Identifier,
+    identifier: PublicationEventStubStatic.Identifier,
   ): Promise<purify.Either<Error, PublicationEventStub>> {
     return this.publicationEventStubSync(identifier);
   }
 
   publicationEventStubSync(
-    identifier: PublicationEventStub.Identifier,
+    identifier: PublicationEventStubStatic.Identifier,
   ): purify.Either<Error, PublicationEventStub> {
     return this.publicationEventStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -45911,50 +46388,58 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async publicationEventStubIdentifiers(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
-  ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>> {
+    query?: $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PublicationEventStubStatic.Identifier[]>
+  > {
     return this.publicationEventStubIdentifiersSync(query);
   }
 
   publicationEventStubIdentifiersSync(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
-  ): purify.Either<Error, readonly PublicationEventStub.Identifier[]> {
+    query?: $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
+  ): purify.Either<Error, readonly PublicationEventStubStatic.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<PublicationEventStub.Identifier>(
-        PublicationEventStub,
+      ...this.$objectIdentifiersSync<PublicationEventStubStatic.Identifier>(
+        PublicationEventStubStatic,
         query,
       ),
     ]);
   }
 
   async publicationEventStubs(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+    query?: $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
     return this.publicationEventStubsSync(query);
   }
 
   publicationEventStubsSync(
-    query?: $ObjectSet.Query<PublicationEventStub.Identifier>,
+    query?: $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
   ): readonly purify.Either<Error, PublicationEventStub>[] {
     return [
       ...this.$objectsSync<
         PublicationEventStub,
-        PublicationEventStub.Identifier
-      >(PublicationEventStub, query),
+        PublicationEventStubStatic.Identifier
+      >(PublicationEventStubStatic, query),
     ];
   }
 
   async publicationEventStubsCount(
-    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+    query?: Pick<
+      $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
     return this.publicationEventStubsCountSync(query);
   }
 
   publicationEventStubsCountSync(
-    query?: Pick<$ObjectSet.Query<PublicationEventStub.Identifier>, "where">,
+    query?: Pick<
+      $ObjectSet.Query<PublicationEventStubStatic.Identifier>,
+      "where"
+    >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<PublicationEventStub.Identifier>(
-      PublicationEventStub,
+    return this.$objectsCountSync<PublicationEventStubStatic.Identifier>(
+      PublicationEventStubStatic,
       query,
     );
   }
@@ -47608,6 +48093,46 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
       BroadcastEvent,
+      query,
+    );
+  }
+
+  async broadcastEventStub(
+    identifier: BroadcastEventStub.Identifier,
+  ): Promise<purify.Either<Error, BroadcastEventStub>> {
+    return (
+      await this.broadcastEventStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async broadcastEventStubIdentifiers(
+    query?: $SparqlObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): Promise<purify.Either<Error, readonly BroadcastEventStub.Identifier[]>> {
+    return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastEventStub,
+      query,
+    );
+  }
+
+  async broadcastEventStubs(
+    query?: $SparqlObjectSet.Query<BroadcastEventStub.Identifier>,
+  ): Promise<readonly purify.Either<Error, BroadcastEventStub>[]> {
+    return this.$objects<BroadcastEventStub, rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastEventStub,
+      query,
+    );
+  }
+
+  async broadcastEventStubsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BroadcastEventStub.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
+      BroadcastEventStub,
       query,
     );
   }
@@ -49602,7 +50127,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventStub(
-    identifier: PublicationEventStub.Identifier,
+    identifier: PublicationEventStubStatic.Identifier,
   ): Promise<purify.Either<Error, PublicationEventStub>> {
     return (
       await this.publicationEventStubs({
@@ -49612,31 +50137,33 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async publicationEventStubIdentifiers(
-    query?: $SparqlObjectSet.Query<PublicationEventStub.Identifier>,
-  ): Promise<purify.Either<Error, readonly PublicationEventStub.Identifier[]>> {
+    query?: $SparqlObjectSet.Query<PublicationEventStubStatic.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PublicationEventStubStatic.Identifier[]>
+  > {
     return this.$objectIdentifiers<rdfjs.BlankNode | rdfjs.NamedNode>(
-      PublicationEventStub,
+      PublicationEventStubStatic,
       query,
     );
   }
 
   async publicationEventStubs(
-    query?: $SparqlObjectSet.Query<PublicationEventStub.Identifier>,
+    query?: $SparqlObjectSet.Query<PublicationEventStubStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
     return this.$objects<
       PublicationEventStub,
       rdfjs.BlankNode | rdfjs.NamedNode
-    >(PublicationEventStub, query);
+    >(PublicationEventStubStatic, query);
   }
 
   async publicationEventStubsCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PublicationEventStub.Identifier>,
+      $SparqlObjectSet.Query<PublicationEventStubStatic.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<rdfjs.BlankNode | rdfjs.NamedNode>(
-      PublicationEventStub,
+      PublicationEventStubStatic,
       query,
     );
   }

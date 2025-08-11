@@ -22,5 +22,5 @@ describe("lastRadioBroadcastServiceBroadcastEvent", () => {
     expect(actualResult.identifier.value).toStrictEqual(
       "https://api.composer.nprstations.org/v1/episode/677ef8a09ea18c2245c6142b/playlist/track/688cedb16c98f8b3a8c3d82f/broadcast-event",
     );
-  }, 30000);
+  });
 });

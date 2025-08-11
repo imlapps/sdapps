@@ -38,6 +38,12 @@ sdapps:AssessActionStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ActionStub .
 
+sdapps:BroadcastEventStub
+    shaclmate:name "BroadcastEventStub" ;
+    shaclmate:rdfType schema:BroadcastEvent ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:PublicationEventStub .
+
 sdapps:BroadcastServiceStub
     shaclmate:name "BroadcastServiceStub" ;
     shaclmate:rdfType schema:BroadcastService ;
