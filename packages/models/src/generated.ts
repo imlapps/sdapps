@@ -50508,7 +50508,9 @@ export class $SparqlObjectSet implements $ObjectSet {
               distinct: true,
               limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
               offset,
-              order: [{ expression: this.objectVariable }],
+              order: query?.order
+                ? query.order(this.objectVariable).concat()
+                : [{ expression: this.objectVariable }],
               prefixes: {},
               queryType: "SELECT",
               type: "query",
@@ -50692,6 +50694,9 @@ export namespace $SparqlObjectSet {
   export type Query<
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   > = Omit<$ObjectSet.Query<ObjectIdentifierT>, "where"> & {
+    readonly order?: (
+      objectVariable: rdfjs.Variable,
+    ) => readonly sparqljs.Ordering[];
     readonly where?: Where<ObjectIdentifierT>;
   };
   export type Where<
