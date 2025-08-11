@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Identifier } from "./Identifier.js";
 
 export function displayLabel({
+  callSign,
   currency,
   identifier,
   jobTitle,
@@ -9,6 +10,7 @@ export function displayLabel({
   unitText,
   value,
 }: {
+  callSign?: Maybe<string>;
   currency?: Maybe<string>;
   identifier: Identifier;
   jobTitle?: Maybe<string>;
@@ -17,10 +19,14 @@ export function displayLabel({
   value?: Maybe<number>;
 }): string {
   const parts: string[] = [];
-  name.ifJust((name) => {
-    jobTitle?.ifJust((jobTitle) => parts.push(jobTitle));
-    parts.push(name);
-  });
+  name
+    .ifJust((name) => {
+      jobTitle?.ifJust((jobTitle) => parts.push(jobTitle));
+      parts.push(name);
+    })
+    .ifNothing(() => {
+      callSign?.ifJust((callSign) => parts.push(callSign));
+    });
 
   if (parts.length === 0) {
     value?.ifJust((value) => {

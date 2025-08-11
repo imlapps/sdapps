@@ -1,5 +1,6 @@
 import { Locale } from "@/lib/models/Locale";
-import {} from "@sdapps/models";
+import { encodeFileName } from "@kos-kit/next-utils";
+import { Identifier } from "@sdapps/models";
 
 export class Hrefs {
   private readonly basePath: string;
@@ -12,5 +13,11 @@ export class Hrefs {
 
   get locale() {
     return `${this.basePath}/${this._locale}`;
+  }
+
+  radioBroadcastService(radioBroadcastService: {
+    identifier: Identifier;
+  }) {
+    return `${this.locale}/radio-broadcast-service/${encodeFileName(Identifier.toString(radioBroadcastService.identifier))}`;
   }
 }
