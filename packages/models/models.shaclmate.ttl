@@ -337,7 +337,14 @@ schema:BroadcastService
     shaclmate:name "BroadcastService" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Service ;
-    sh:property schema:BroadcastService-callSign .
+    sh:property schema:BroadcastService-broadcastTimezone, schema:BroadcastService-callSign .
+
+schema:BroadcastService-broadcastTimezone
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "broadcastTimezone" ;
+    sh:path schema:broadcastTimezone .
 
 schema:BroadcastService-callSign
     a sh:PropertyShape ;

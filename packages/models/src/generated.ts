@@ -18116,15 +18116,27 @@ export namespace RadioEpisodeStub {
 export class BroadcastService extends Service {
   override readonly type: "BroadcastService" | "RadioBroadcastService" =
     "BroadcastService";
+  readonly broadcastTimezone: purify.Maybe<string>;
   readonly callSign: purify.Maybe<string>;
 
   constructor(
     parameters: {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly broadcastTimezone?: purify.Maybe<string> | string;
       readonly callSign?: purify.Maybe<string> | string;
     } & ConstructorParameters<typeof Service>[0],
   ) {
     super(parameters);
+    if (purify.Maybe.isMaybe(parameters.broadcastTimezone)) {
+      this.broadcastTimezone = parameters.broadcastTimezone;
+    } else if (typeof parameters.broadcastTimezone === "string") {
+      this.broadcastTimezone = purify.Maybe.of(parameters.broadcastTimezone);
+    } else if (typeof parameters.broadcastTimezone === "undefined") {
+      this.broadcastTimezone = purify.Maybe.empty();
+    } else {
+      this.broadcastTimezone = parameters.broadcastTimezone satisfies never;
+    }
+
     if (purify.Maybe.isMaybe(parameters.callSign)) {
       this.callSign = parameters.callSign;
     } else if (typeof parameters.callSign === "string") {
@@ -18146,6 +18158,18 @@ export class BroadcastService extends Service {
   override equals(other: BroadcastService): $EqualsResult {
     return super
       .equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.broadcastTimezone,
+          other.broadcastTimezone,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "broadcastTimezone",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
       .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.callSign,
@@ -18175,6 +18199,9 @@ export class BroadcastService extends Service {
     },
   >(_hasher: HasherT): HasherT {
     super.hashShaclProperties(_hasher);
+    this.broadcastTimezone.ifJust((_value0) => {
+      _hasher.update(_value0);
+    });
     this.callSign.ifJust((_value0) => {
       _hasher.update(_value0);
     });
@@ -18185,6 +18212,9 @@ export class BroadcastService extends Service {
     return JSON.parse(
       JSON.stringify({
         ...super.toJson(),
+        broadcastTimezone: this.broadcastTimezone
+          .map((_item) => _item)
+          .extract(),
         callSign: this.callSign.map((_item) => _item).extract(),
       } satisfies BroadcastServiceStatic.Json),
     );
@@ -18214,6 +18244,10 @@ export class BroadcastService extends Service {
     }
 
     _resource.add(
+      dataFactory.namedNode("http://schema.org/broadcastTimezone"),
+      this.broadcastTimezone,
+    );
+    _resource.add(
       dataFactory.namedNode("http://schema.org/callSign"),
       this.callSign,
     );
@@ -18232,6 +18266,7 @@ export namespace BroadcastServiceStatic {
   export type Identifier = ServiceStatic.Identifier;
   export const Identifier = ServiceStatic.Identifier;
   export type Json = {
+    readonly broadcastTimezone: string | undefined;
     readonly callSign: string | undefined;
   } & ServiceStatic.Json;
 
@@ -18241,6 +18276,7 @@ export namespace BroadcastServiceStatic {
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      broadcastTimezone: purify.Maybe<string>;
       callSign: purify.Maybe<string>;
     } & $UnwrapR<ReturnType<typeof ServiceStatic.propertiesFromJson>>
   > {
@@ -18259,8 +18295,16 @@ export namespace BroadcastServiceStatic {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
+    const broadcastTimezone = purify.Maybe.fromNullable(
+      _jsonObject["broadcastTimezone"],
+    );
     const callSign = purify.Maybe.fromNullable(_jsonObject["callSign"]);
-    return purify.Either.of({ ..._super0, identifier, callSign });
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      broadcastTimezone,
+      callSign,
+    });
   }
 
   export function fromJson(
@@ -18287,6 +18331,10 @@ export namespace BroadcastServiceStatic {
     return {
       elements: [
         ServiceStatic.jsonUiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/broadcastTimezone`,
+          type: "Control",
+        },
         { scope: `${scopePrefix}/properties/callSign`, type: "Control" },
       ],
       label: "BroadcastService",
@@ -18299,6 +18347,7 @@ export namespace BroadcastServiceStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum(["BroadcastService", "RadioBroadcastService"]),
+        broadcastTimezone: zod.string().optional(),
         callSign: zod.string().optional(),
       }),
     );
@@ -18319,6 +18368,7 @@ export namespace BroadcastServiceStatic {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      broadcastTimezone: purify.Maybe<string>;
       callSign: purify.Maybe<string>;
     } & $UnwrapR<ReturnType<typeof ServiceStatic.propertiesFromRdf>>
   > {
@@ -18360,6 +18410,23 @@ export namespace BroadcastServiceStatic {
     }
 
     const identifier: BroadcastServiceStatic.Identifier = _resource.identifier;
+    const _broadcastTimezoneEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
+        .values(dataFactory.namedNode("http://schema.org/broadcastTimezone"), {
+          unique: true,
+        })
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
+    );
+    if (_broadcastTimezoneEither.isLeft()) {
+      return _broadcastTimezoneEither;
+    }
+
+    const broadcastTimezone = _broadcastTimezoneEither.unsafeCoerce();
     const _callSignEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -18377,7 +18444,12 @@ export namespace BroadcastServiceStatic {
     }
 
     const callSign = _callSignEither.unsafeCoerce();
-    return purify.Either.of({ ..._super0, identifier, callSign });
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      broadcastTimezone,
+      callSign,
+    });
   }
 
   export function fromRdf(
@@ -18398,6 +18470,7 @@ export namespace BroadcastServiceStatic {
 
   export const rdfProperties = [
     ...ServiceStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://schema.org/broadcastTimezone") },
     { path: dataFactory.namedNode("http://schema.org/callSign") },
   ];
 
@@ -18474,6 +18547,11 @@ export namespace BroadcastServiceStatic {
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}BroadcastTimezone`),
+        predicate: dataFactory.namedNode("http://schema.org/broadcastTimezone"),
+        subject,
+      },
       {
         object: dataFactory.variable!(`${variablePrefix}CallSign`),
         predicate: dataFactory.namedNode("http://schema.org/callSign"),
@@ -18570,6 +18648,25 @@ export namespace BroadcastServiceStatic {
               type: "optional" as const,
             },
           ]),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}BroadcastTimezone`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://schema.org/broadcastTimezone",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
       {
         patterns: [
           {
