@@ -37,6 +37,9 @@ export default async function RadioBroadcastServicePage({
     notFound();
   }
 
+  // Get the latest broadcast event date and redirect to that
+  // const broadcastEvents
+
   //   const hrefs = await getHrefs();
   const translations = await getTranslations("RadioBroadcastServicePage");
 
