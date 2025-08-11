@@ -3,6 +3,7 @@
 @prefix schema: <http://schema.org/> .
 
 radio:wmht a schema:RadioBroadcastService ;
+    schema:broadcastTimezone "America/New_York" ;
     schema:callSign "WMHT" ;
     schema:name "WMHT" ;
     schema:sameAs <https://api.composer.nprstations.org/v1/ucs/51892578e1c81d34d1474a5d> ;
