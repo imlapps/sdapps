@@ -11,7 +11,7 @@ import {
   MusicRecording,
   Organization,
   Person,
-  RadioBroadcastService,
+  RadioBroadcastServiceStub,
   RadioEpisode,
   RadioSeries,
   Thing,
@@ -54,7 +54,7 @@ async function* transformPlaylistJson({
 }: {
   cachesDirectoryPath: string;
   playlistJson: PlaylistJson;
-  radioBroadcastService: RadioBroadcastService;
+  radioBroadcastService: RadioBroadcastServiceStub;
   ucsId: string;
 }): AsyncIterable<Thing> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
@@ -62,7 +62,7 @@ async function* transformPlaylistJson({
     identifier: Iris.episodeBroadcastEvent({
       episodeId: playlistJson.episode_id,
     }),
-    publishedOn: stubify(radioBroadcastService),
+    publishedOn: radioBroadcastService,
     startDate: new Date(playlistJson.start_utc),
   });
   const radioEpisodeBroadcastEventStub = stubify(radioEpisodeBroadcastEvent);
@@ -248,7 +248,7 @@ async function* transformPlaylistJson({
         episodeId: playlistJson.episode_id,
         playlistItemId: playlistItemJson.id,
       }),
-      publishedOn: stubify(radioBroadcastService),
+      publishedOn: radioBroadcastService,
       startDate: startDate,
       superEvent: radioEpisodeBroadcastEventStub,
     });
@@ -325,7 +325,7 @@ export async function* transform({
       for await (const model of transformPlaylistJson({
         cachesDirectoryPath,
         playlistJson,
-        radioBroadcastService: extractResult.radioBroadcastService,
+        radioBroadcastService: stubify(extractResult.radioBroadcastService),
         ucsId: extractResult.ucsIdentifier,
       })) {
         yield model.toRdf({
