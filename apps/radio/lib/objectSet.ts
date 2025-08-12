@@ -10,11 +10,11 @@ import {
 import { OxigraphSparqlClient } from "@kos-kit/sparql-client";
 import { $SparqlObjectSet } from "@sdapps/models";
 import N3 from "n3";
-import * as oxigraph from "oxigraph";
 
 const objectSetGlobalRef = new GlobalRef<$SparqlObjectSet>("objectSet");
 
 if (!objectSetGlobalRef.value) {
+  const oxigraph: any = await import("oxigraph");
   const store = new oxigraph.Store();
   if (serverConfiguration.dataPaths.length > 0) {
     logger.info(
@@ -34,7 +34,9 @@ if (!objectSetGlobalRef.value) {
               logger,
               path: absoluteDataPath,
             }).files()) {
-              store.load(file.path, { format: file.format.rdfFormat });
+              store.load((await fs.readFile(file.path)).toString("utf-8"), {
+                format: file.format.rdfFormat,
+              });
             }
           } else if (stat.isFile()) {
             await getRdfFileFormat(absoluteDataPath)
@@ -45,10 +47,13 @@ if (!objectSetGlobalRef.value) {
                   error.message,
                 );
               })
-              .map((rdfFileFormat) => {
-                store.load(absoluteDataPath, {
-                  format: rdfFileFormat.rdfFormat,
-                });
+              .map(async (rdfFileFormat) => {
+                store.load(
+                  (await fs.readFile(absoluteDataPath)).toString("utf-8"),
+                  {
+                    format: rdfFileFormat.rdfFormat,
+                  },
+                );
               })
               .extract();
           } else {
