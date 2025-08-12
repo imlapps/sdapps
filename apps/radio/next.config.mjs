@@ -1,3 +1,5 @@
+import CopyPlugin from "copy-webpack-plugin";
+
 import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
@@ -19,6 +21,21 @@ const nextConfig = {
     //   isServer && !dev
     //     ? "../static/wasm/[modulehash].wasm"
     //     : "static/wasm/[modulehash].wasm";
+
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: [
+          {
+            from: "../../node_modules/oxigraph/node_bg.wasm",
+            to: "server/chunks/",
+          },
+          {
+            from: "../../node_modules/oxigraph/node_bg.wasm",
+            to: "server/vendor-chunks/",
+          },
+        ],
+      }),
+    );
 
     // Since Webpack 5 doesn't enable WebAssembly by default, we should do it manually
     config.experiments = { ...config.experiments, asyncWebAssembly: true };
