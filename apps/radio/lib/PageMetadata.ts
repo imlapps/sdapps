@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Maybe } from "purify-ts";
 
 export class PageMetadata {
+  // @ts-expect-error Unused for now
   private readonly translations: Awaited<
     ReturnType<typeof getTranslations<"PageMetadata">>
   >;

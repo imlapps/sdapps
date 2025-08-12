@@ -14,6 +14,7 @@ import N3 from "n3";
 const objectSetGlobalRef = new GlobalRef<$SparqlObjectSet>("objectSet");
 
 if (!objectSetGlobalRef.value) {
+  // https://github.com/vercel/next.js/blob/canary/examples/with-webassembly/
   const oxigraph: any = await import("oxigraph");
   const store = new oxigraph.Store();
   if (serverConfiguration.dataPaths.length > 0) {

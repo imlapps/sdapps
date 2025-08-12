@@ -82,7 +82,6 @@ export function SearchBox({
         invariant(searchResult);
         // const identifier = Identifier.fromString(searchResult.identifier);
         // const hrefs = new Hrefs({ basePath: "", locale });
-        const href: string = "";
         // switch (searchResult.type) {
         //   case "Event":
         //     throw new Error("not implemented");

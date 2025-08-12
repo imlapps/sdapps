@@ -1,5 +1,5 @@
 import { BroadcastDay } from "@/lib/models/BroadcastDay";
-import { firstOrLastBroadcastDay } from "@/lib/queries/firstOrLastBroadcastday";
+import { firstOrLastBroadcastDay } from "@/lib/queries/firstOrLastBroadcastDay";
 import { $SparqlObjectSet, Identifier } from "@sdapps/models";
 import { Either, Maybe } from "purify-ts";
 
