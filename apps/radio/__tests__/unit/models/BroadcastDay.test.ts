@@ -25,6 +25,25 @@ describe("BroadcastDay", () => {
     expect(actual.year).toStrictEqual(2024);
   });
 
+  it("toDateRange", ({ expect }) => {
+    const [startDate, endDate] = BroadcastDay.fromDate({
+      broadcastService: { broadcastTimezone: Maybe.of("America/New_York") },
+      date: new Date("2025-01-01T01:00:00.000Z"),
+    }).toDateRange();
+    expect(startDate.getDate()).toStrictEqual(31);
+    expect(startDate.getMonth()).toStrictEqual(11);
+    expect(startDate.getFullYear()).toStrictEqual(2024);
+    expect(startDate.getHours()).toStrictEqual(0);
+    expect(startDate.getMinutes()).toStrictEqual(0);
+    expect(startDate.getSeconds()).toStrictEqual(0);
+    expect(endDate.getDate()).toStrictEqual(31);
+    expect(endDate.getMonth()).toStrictEqual(11);
+    expect(endDate.getFullYear()).toStrictEqual(2024);
+    expect(endDate.getHours()).toStrictEqual(23);
+    expect(endDate.getMinutes()).toStrictEqual(59);
+    expect(endDate.getSeconds()).toStrictEqual(59);
+  });
+
   it("toString", ({ expect }) => {
     expect(
       BroadcastDay.fromDate({
