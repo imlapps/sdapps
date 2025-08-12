@@ -1,3 +1,4 @@
+import { BroadcastDay } from "@/lib/models/BroadcastDay";
 import { Locale } from "@/lib/models/Locale";
 import { encodeFileName } from "@kos-kit/next-utils";
 import { Identifier } from "@sdapps/models";
@@ -13,6 +14,16 @@ export class Hrefs {
 
   get locale() {
     return `${this.basePath}/${this._locale}`;
+  }
+
+  playlist({
+    broadcastDay,
+    radioBroadcastService,
+  }: {
+    broadcastDay: BroadcastDay;
+    radioBroadcastService: { identifier: Identifier };
+  }) {
+    return `${this.radioBroadcastService(radioBroadcastService)}/playlist/${broadcastDay.year}/${broadcastDay.month}/${broadcastDay.day}`;
   }
 
   radioBroadcastService(radioBroadcastService: {

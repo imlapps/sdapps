@@ -1,17 +1,16 @@
 import { PageMetadata } from "@/lib/PageMetadata";
-import { AppShell } from "@/lib/components/AppShell";
-import { ClientProvidersServer } from "@/lib/components/ClientProvidersServer";
-import { getSearchEngineJson } from "@/lib/getSearchEngineJson";
+import { getHrefs } from "@/lib/getHrefs";
+import { logger } from "@/lib/logger";
 import { Locale } from "@/lib/models/Locale";
 import { objectSet } from "@/lib/objectSet";
+import { lastBroadcastDay } from "@/lib/queries/lastBroadcastDay";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import { Stack } from "@mantine/core";
-import { Identifier, displayLabel } from "@sdapps/models";
+import { Identifier } from "@sdapps/models";
 import { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
+import { notFound, redirect } from "next/navigation";
 
 interface RadioBroadcastServicePageParams {
   locale: Locale;
@@ -27,7 +26,7 @@ export default async function RadioBroadcastServicePage({
   setRequestLocale(locale);
 
   const radioBroadcastService = (
-    await objectSet.radioBroadcastService(
+    await objectSet.radioBroadcastServiceStub(
       Identifier.fromString(decodeFileName(radioBroadcastServiceIdentifier)),
     )
   )
@@ -37,35 +36,23 @@ export default async function RadioBroadcastServicePage({
     notFound();
   }
 
-  // Get the latest broadcast event date and redirect to that
-  // const broadcastEvents
+  const lastBroadcastDay_ = (
+    await lastBroadcastDay({
+      broadcastService: radioBroadcastService,
+    })
+  ).unsafeCoerce();
+  if (lastBroadcastDay_.isNothing()) {
+    logger.warn(
+      `radio broadcast service ${Identifier.toString(radioBroadcastService.identifier)} has no last broadcast day`,
+    );
+    notFound();
+  }
 
-  //   const hrefs = await getHrefs();
-  const translations = await getTranslations("RadioBroadcastServicePage");
-
-  return (
-    <ClientProvidersServer>
-      <AppShell
-        searchEngineJson={await getSearchEngineJson()}
-        title={`${translations("RadioBroadcastService")}: ${displayLabel(radioBroadcastService)}`}
-      >
-        <Stack>
-          {/* {radioBroadcastService.subjectOf.length > 0 ? (
-            <Fieldset legend={translations("Subject of")}>
-              <SubjectOfList
-                objectSet={objectSet}
-                thing={radioBroadcastService}
-              />
-            </Fieldset>
-          ) : null} */}
-          {/* {radioBroadcastService.members.length > 0 ? (
-            <Fieldset legend={translations("Members")}>
-              <AgentList agents={radioBroadcastService.members} hrefs={hrefs} />
-            </Fieldset>
-          ) : null} */}
-        </Stack>
-      </AppShell>
-    </ClientProvidersServer>
+  redirect(
+    (await getHrefs()).playlist({
+      broadcastDay: lastBroadcastDay_.unsafeCoerce(),
+      radioBroadcastService,
+    }),
   );
 }
 
