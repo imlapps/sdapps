@@ -48,7 +48,8 @@ sdapps:BroadcastServiceStub
     shaclmate:name "BroadcastServiceStub" ;
     shaclmate:rdfType schema:BroadcastService ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf sdapps:ServiceStub .
+    rdfs:subClassOf sdapps:ServiceStub ;
+    sh:property schema:BroadcastService-broadcastTimezone, schema:BroadcastService-callSign .
 
 sdapps:ChooseActionStub
     shaclmate:name "ChooseActionStub" ;
