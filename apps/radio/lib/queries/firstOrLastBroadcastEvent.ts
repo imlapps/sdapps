@@ -1,19 +1,21 @@
 import { dataFactory } from "@/lib/dataFactory";
-import { BroadcastDay } from "@/lib/models/BroadcastDay";
 import { objectSet as defaultObjectSet } from "@/lib/objectSet";
-import { $SparqlObjectSet, Identifier } from "@sdapps/models";
+import {
+  $SparqlObjectSet,
+  BroadcastEventStub,
+  Identifier,
+} from "@sdapps/models";
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 
-export async function firstOrLastBroadcastDay(parameters: {
+export async function firstOrLastBroadcastEvent(parameters: {
   broadcastService: {
-    broadcastTimezone: Maybe<string>;
     identifier: Identifier;
   };
   firstOrLast: "first" | "last";
   objectSet?: $SparqlObjectSet;
-}): Promise<Either<Error, Maybe<BroadcastDay>>> {
+}): Promise<Either<Error, Maybe<BroadcastEventStub>>> {
   return EitherAsync(async ({ liftEither }) => {
     const { broadcastService, firstOrLast } = parameters;
     const objectSet = parameters?.objectSet ?? defaultObjectSet;
@@ -64,12 +66,8 @@ export async function firstOrLastBroadcastDay(parameters: {
     }
     invariant(broadcastEventIdentifiers.length === 1);
 
-    return (await objectSet.broadcastEventStub(broadcastEventIdentifiers[0]))
-      .toMaybe()
-      .chain((broadcastEvent) =>
-        broadcastEvent.startDate.map((startDate) =>
-          BroadcastDay.fromDate({ broadcastService, date: startDate }),
-        ),
-      );
+    return (
+      await objectSet.broadcastEventStub(broadcastEventIdentifiers[0])
+    ).toMaybe();
   });
 }

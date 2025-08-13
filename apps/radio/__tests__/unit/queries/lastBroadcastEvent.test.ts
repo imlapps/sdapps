@@ -1,28 +1,27 @@
 import { testObjectSet } from "@/__tests__/unit/testObjectSet";
-import { firstBroadcastDay } from "@/lib/queries/firstBroadcastDay";
-import { Maybe } from "purify-ts";
+import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
 import { describe, it } from "vitest";
 
-describe("firstBroadcastDay", () => {
+describe("lastBroadcastEvent", () => {
   it("return correct result", async ({ expect }) => {
     const radioBroadcastServiceIdentifiers = (
       await testObjectSet.radioBroadcastServiceIdentifiers()
     ).unsafeCoerce();
     expect(radioBroadcastServiceIdentifiers).toHaveLength(1);
 
-    const actualResult = (
-      await firstBroadcastDay({
+    const broadcastEvent = (
+      await lastBroadcastEvent({
         objectSet: testObjectSet,
         broadcastService: {
-          broadcastTimezone: Maybe.of("America/New_York"),
           identifier: radioBroadcastServiceIdentifiers[0],
         },
       })
     )
       .unsafeCoerce()
       .unsafeCoerce();
-    expect(actualResult.day).toStrictEqual(8);
-    expect(actualResult.month).toStrictEqual(8);
-    expect(actualResult.year).toStrictEqual(2025);
+    const startDate = broadcastEvent.startDate.unsafeCoerce();
+    expect(startDate.getUTCDate()).toStrictEqual(11);
+    expect(startDate.getUTCMonth() + 1).toStrictEqual(8);
+    expect(startDate.getUTCFullYear()).toStrictEqual(2025);
   });
 });

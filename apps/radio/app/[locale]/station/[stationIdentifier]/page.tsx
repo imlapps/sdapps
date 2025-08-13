@@ -3,7 +3,7 @@ import { getHrefs } from "@/lib/getHrefs";
 import { logger } from "@/lib/logger";
 import { Locale } from "@/lib/models/Locale";
 import { objectSet } from "@/lib/objectSet";
-import { lastBroadcastDay } from "@/lib/queries/lastBroadcastDay";
+import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
@@ -12,22 +12,22 @@ import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 
-interface RadioBroadcastServicePageParams {
+interface StationPageParams {
   locale: Locale;
-  radioBroadcastServiceIdentifier: string;
+  stationIdentifier: string;
 }
 
-export default async function RadioBroadcastServicePage({
+export default async function StationPage({
   params,
 }: {
-  params: Promise<RadioBroadcastServicePageParams>;
+  params: Promise<StationPageParams>;
 }) {
-  const { locale, radioBroadcastServiceIdentifier } = await params;
+  const { locale, stationIdentifier } = await params;
   setRequestLocale(locale);
 
   const radioBroadcastService = (
     await objectSet.radioBroadcastServiceStub(
-      Identifier.fromString(decodeFileName(radioBroadcastServiceIdentifier)),
+      Identifier.fromString(decodeFileName(stationIdentifier)),
     )
   )
     .toMaybe()
@@ -37,7 +37,7 @@ export default async function RadioBroadcastServicePage({
   }
 
   const lastBroadcastDay_ = (
-    await lastBroadcastDay({
+    await lastBroadcastEvent({
       broadcastService: radioBroadcastService,
     })
   ).unsafeCoerce();
@@ -59,15 +59,15 @@ export default async function RadioBroadcastServicePage({
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<RadioBroadcastServicePageParams>;
+  params: Promise<StationPageParams>;
 }): Promise<Metadata> {
-  const { locale, radioBroadcastServiceIdentifier } = await params;
+  const { locale, stationIdentifier } = await params;
 
   const pageMetadata = await PageMetadata.get({ locale });
 
   return (
     await objectSet.radioBroadcastServiceStub(
-      Identifier.fromString(decodeFileName(radioBroadcastServiceIdentifier)),
+      Identifier.fromString(decodeFileName(stationIdentifier)),
     )
   )
     .map((radioBroadcastService) =>
@@ -76,22 +76,20 @@ export async function generateMetadata({
     .orDefault({} satisfies Metadata);
 }
 
-export async function generateStaticParams(): Promise<
-  RadioBroadcastServicePageParams[]
-> {
+export async function generateStaticParams(): Promise<StationPageParams[]> {
   if (serverConfiguration.dynamic) {
     return [];
   }
 
-  const staticParams: RadioBroadcastServicePageParams[] = [];
+  const staticParams: StationPageParams[] = [];
 
   for (const locale of routing.locales) {
-    for (const radioBroadcastServiceIdentifier of (
+    for (const stationIdentifier of (
       await objectSet.radioBroadcastServiceIdentifiers()
     ).orDefault([])) {
       staticParams.push({
-        radioBroadcastServiceIdentifier: encodeFileName(
-          Identifier.toString(radioBroadcastServiceIdentifier),
+        stationIdentifier: encodeFileName(
+          Identifier.toString(stationIdentifier),
         ),
         locale,
       });
