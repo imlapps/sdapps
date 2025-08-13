@@ -1,18 +1,20 @@
 import { PageMetadata } from "@/lib/PageMetadata";
+import { logger } from "@/lib/logger";
 import { Locale } from "@/lib/models/Locale";
 import { objectSet } from "@/lib/objectSet";
-import { firstBroadcastDay } from "@/lib/queries/firstBroadcastEvent";
+import { firstBroadcastEvent } from "@/lib/queries/firstBroadcastEvent";
 import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { TZDateMini } from "@date-fns/tz";
+import { LocalDate, nativeJs } from "@js-joda/core";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Identifier } from "@sdapps/models";
-import { addDays } from "date-fns";
 import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Either } from "purify-ts";
+import "@js-joda/timezone";
+import { broadcastTimeZone } from "@/lib/models/broadcastTimeZone";
 
 interface PlaylistPageParams {
   locale: Locale;
@@ -36,9 +38,11 @@ export default async function PlaylistPage({
   } = await params;
   setRequestLocale(locale);
 
-  const day = Number.parseInt(dayString);
-  const month = Number.parseInt(monthString);
-  const year = Number.parseInt(yearString);
+  const date = LocalDate.of(
+    Number.parseInt(yearString),
+    Number.parseInt(monthString),
+    Number.parseInt(dayString),
+  );
 
   const radioBroadcastService = (
     await objectSet.radioBroadcastServiceStub(
@@ -51,12 +55,7 @@ export default async function PlaylistPage({
     notFound();
   }
 
-  const date = new TZDateMini(
-    year,
-    month - 1,
-    day,
-    radioBroadcastService.broadcastTimezone.orDefault("UTC"),
-  );
+  const broadcastTimeZone_ = broadcastTimeZone(radioBroadcastService);
 }
 
 export async function generateMetadata({
@@ -90,54 +89,59 @@ export async function generateStaticParams(): Promise<PlaylistPageParams[]> {
     for (const radioBroadcastService of Either.rights(
       await objectSet.radioBroadcastServiceStubs(),
     )) {
-      const firstBroadcastDay_ = (
-        await firstBroadcastDay({
+      const broadcastTimeZone_ = broadcastTimeZone(radioBroadcastService);
+
+      const firstBroadcastEventStartDate = (
+        await firstBroadcastEvent({
           broadcastService: radioBroadcastService,
         })
       )
         .unsafeCoerce()
+        .chain((event) => event.startDate)
+        .map((date) => nativeJs(date, broadcastTimeZone_).toLocalDate())
         .extract();
-      const lastBroadcastDay_ = (
+      if (!firstBroadcastEventStartDate) {
+        logger.warn(
+          "radio broadcast service %s has no first broadcast event",
+          Identifier.toString(radioBroadcastService.identifier),
+        );
+        continue;
+      }
+
+      const lastBroadcastEventStartDate = (
         await lastBroadcastEvent({
           broadcastService: radioBroadcastService,
         })
       )
         .unsafeCoerce()
-        .extract();
+        .chain((event) => event.startDate)
+        .map((date) => nativeJs(date, broadcastTimeZone_).toLocalDate())
+        .unsafeCoerce();
 
-      if (!firstBroadcastDay_ || !lastBroadcastDay_) {
+      if (firstBroadcastEventStartDate.equals(lastBroadcastEventStartDate)) {
+        logger.warn(
+          "radio broadcast service %s only has a single broadcast event",
+          Identifier.toString(radioBroadcastService.identifier),
+        );
         continue;
       }
 
-      const timeZone = radioBroadcastService.broadcastTimezone.orDefault("UTC");
-
-      let broadcastDay = firstBroadcastDay_;
-      while (broadcastDay.getTime() !== lastBroadcastDay_.getTime()) {
+      let date: LocalDate = firstBroadcastEventStartDate;
+      while (
+        date.isBefore(lastBroadcastEventStartDate) ||
+        date.equals(lastBroadcastEventStartDate)
+      ) {
         staticParams.push({
-          day: (timeZone === "UTC"
-            ? broadcastDay.getUTCDate()
-            : broadcastDay.getDate()
-          )
-            .toString()
-            .padStart(2, "0"),
+          day: date.dayOfMonth().toString().padStart(2, "0"),
           locale,
-          month: (
-            (timeZone === "UTC"
-              ? broadcastDay.getUTCMonth()
-              : broadcastDay.getMonth()) + 1
-          )
-            .toString()
-            .padStart(2, "0"),
+          month: date.monthValue().toString().padStart(2, "0"),
           stationIdentifier: encodeFileName(
             Identifier.toString(radioBroadcastService.identifier),
           ),
-          year: (timeZone === "UTC"
-            ? broadcastDay.getUTCFullYear()
-            : broadcastDay.getFullYear()
-          ).toString(),
+          year: date.year().toString(),
         });
 
-        broadcastDay = addDays(broadcastDay, 1);
+        date = date.plusDays(1);
       }
     }
   }
