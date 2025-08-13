@@ -37821,7 +37821,7 @@ export class Invoice extends Intangible {
   override readonly type = "Invoice";
   readonly category: purify.Maybe<string>;
   readonly provider: purify.Maybe<AgentStub>;
-  readonly referencesOrder: readonly OrderStub[];
+  readonly referencesOrders: readonly OrderStub[];
   readonly totalPaymentDue: purify.Maybe<MonetaryAmountStub>;
 
   constructor(
@@ -37829,7 +37829,7 @@ export class Invoice extends Intangible {
       readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
       readonly category?: purify.Maybe<string> | string;
       readonly provider?: AgentStub | purify.Maybe<AgentStub>;
-      readonly referencesOrder?: readonly OrderStub[];
+      readonly referencesOrders?: readonly OrderStub[];
       readonly totalPaymentDue?:
         | MonetaryAmountStub
         | purify.Maybe<MonetaryAmountStub>;
@@ -37856,12 +37856,12 @@ export class Invoice extends Intangible {
       this.provider = parameters.provider satisfies never;
     }
 
-    if (typeof parameters.referencesOrder === "undefined") {
-      this.referencesOrder = [];
-    } else if (typeof parameters.referencesOrder === "object") {
-      this.referencesOrder = parameters.referencesOrder;
+    if (typeof parameters.referencesOrders === "undefined") {
+      this.referencesOrders = [];
+    } else if (typeof parameters.referencesOrders === "object") {
+      this.referencesOrders = parameters.referencesOrders;
     } else {
-      this.referencesOrder = parameters.referencesOrder satisfies never;
+      this.referencesOrders = parameters.referencesOrders satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.totalPaymentDue)) {
@@ -37915,12 +37915,12 @@ export class Invoice extends Intangible {
       .chain(() =>
         ((left, right) =>
           $arrayEquals(left, right, (left, right) => left.equals(right)))(
-          this.referencesOrder,
-          other.referencesOrder,
+          this.referencesOrders,
+          other.referencesOrders,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "referencesOrder",
+          propertyName: "referencesOrders",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -37961,7 +37961,7 @@ export class Invoice extends Intangible {
     this.provider.ifJust((_value0) => {
       _value0.hash(_hasher);
     });
-    for (const _item0 of this.referencesOrder) {
+    for (const _item0 of this.referencesOrders) {
       _item0.hash(_hasher);
     }
 
@@ -37977,7 +37977,7 @@ export class Invoice extends Intangible {
         ...super.toJson(),
         category: this.category.map((_item) => _item).extract(),
         provider: this.provider.map((_item) => _item.toJson()).extract(),
-        referencesOrder: this.referencesOrder.map((_item) => _item.toJson()),
+        referencesOrders: this.referencesOrders.map((_item) => _item.toJson()),
         totalPaymentDue: this.totalPaymentDue
           .map((_item) => _item.toJson())
           .extract(),
@@ -38020,7 +38020,7 @@ export class Invoice extends Intangible {
     );
     _resource.add(
       dataFactory.namedNode("http://schema.org/referencesOrder"),
-      this.referencesOrder.map((_item) =>
+      this.referencesOrders.map((_item) =>
         _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
@@ -38049,7 +38049,7 @@ export namespace Invoice {
     readonly provider:
       | (OrganizationStubStatic.Json | PersonStub.Json)
       | undefined;
-    readonly referencesOrder: readonly OrderStub.Json[];
+    readonly referencesOrders: readonly OrderStub.Json[];
     readonly totalPaymentDue: MonetaryAmountStub.Json | undefined;
   } & IntangibleStatic.Json;
 
@@ -38061,7 +38061,7 @@ export namespace Invoice {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       category: purify.Maybe<string>;
       provider: purify.Maybe<AgentStub>;
-      referencesOrder: readonly OrderStub[];
+      referencesOrders: readonly OrderStub[];
       totalPaymentDue: purify.Maybe<MonetaryAmountStub>;
     } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromJson>>
   > {
@@ -38084,7 +38084,7 @@ export namespace Invoice {
     const provider = purify.Maybe.fromNullable(_jsonObject["provider"]).map(
       (_item) => AgentStub.fromJson(_item).unsafeCoerce(),
     );
-    const referencesOrder = _jsonObject["referencesOrder"].map((_item) =>
+    const referencesOrders = _jsonObject["referencesOrders"].map((_item) =>
       OrderStub.fromJson(_item).unsafeCoerce(),
     );
     const totalPaymentDue = purify.Maybe.fromNullable(
@@ -38095,7 +38095,7 @@ export namespace Invoice {
       identifier,
       category,
       provider,
-      referencesOrder,
+      referencesOrders,
       totalPaymentDue,
     });
   }
@@ -38120,7 +38120,7 @@ export namespace Invoice {
         { scope: `${scopePrefix}/properties/category`, type: "Control" },
         { scope: `${scopePrefix}/properties/provider`, type: "Control" },
         OrderStub.jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/referencesOrder`,
+          scopePrefix: `${scopePrefix}/properties/referencesOrders`,
         }),
         MonetaryAmountStub.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/totalPaymentDue`,
@@ -38138,7 +38138,7 @@ export namespace Invoice {
         type: zod.literal("Invoice"),
         category: zod.string().optional(),
         provider: AgentStub.jsonZodSchema().optional(),
-        referencesOrder: OrderStub.jsonZodSchema()
+        referencesOrders: OrderStub.jsonZodSchema()
           .array()
           .default(() => []),
         totalPaymentDue: MonetaryAmountStub.jsonZodSchema().optional(),
@@ -38163,7 +38163,7 @@ export namespace Invoice {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       category: purify.Maybe<string>;
       provider: purify.Maybe<AgentStub>;
-      referencesOrder: readonly OrderStub[];
+      referencesOrders: readonly OrderStub[];
       totalPaymentDue: purify.Maybe<MonetaryAmountStub>;
     } & $UnwrapR<ReturnType<typeof IntangibleStatic.propertiesFromRdf>>
   > {
@@ -38246,7 +38246,7 @@ export namespace Invoice {
     }
 
     const provider = _providerEither.unsafeCoerce();
-    const _referencesOrderEither: purify.Either<
+    const _referencesOrdersEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly OrderStub[]
     > = purify.Either.of([
@@ -38271,11 +38271,11 @@ export namespace Invoice {
             .toList(),
         ),
     ]);
-    if (_referencesOrderEither.isLeft()) {
-      return _referencesOrderEither;
+    if (_referencesOrdersEither.isLeft()) {
+      return _referencesOrdersEither;
     }
 
-    const referencesOrder = _referencesOrderEither.unsafeCoerce();
+    const referencesOrders = _referencesOrdersEither.unsafeCoerce();
     const _totalPaymentDueEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<MonetaryAmountStub>
@@ -38306,7 +38306,7 @@ export namespace Invoice {
       identifier,
       category,
       provider,
-      referencesOrder,
+      referencesOrders,
       totalPaymentDue,
     });
   }
@@ -38411,14 +38411,14 @@ export namespace Invoice {
         variablePrefix: `${variablePrefix}Provider`,
       }),
       {
-        object: dataFactory.variable!(`${variablePrefix}ReferencesOrder`),
+        object: dataFactory.variable!(`${variablePrefix}ReferencesOrders`),
         predicate: dataFactory.namedNode("http://schema.org/referencesOrder"),
         subject,
       },
       ...OrderStub.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}ReferencesOrder`),
-        variablePrefix: `${variablePrefix}ReferencesOrder`,
+        subject: dataFactory.variable!(`${variablePrefix}ReferencesOrders`),
+        variablePrefix: `${variablePrefix}ReferencesOrders`,
       }),
       {
         object: dataFactory.variable!(`${variablePrefix}TotalPaymentDue`),
@@ -38558,7 +38558,7 @@ export namespace Invoice {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}ReferencesOrder`,
+                  `${variablePrefix}ReferencesOrders`,
                 ),
                 predicate: dataFactory.namedNode(
                   "http://schema.org/referencesOrder",
@@ -38570,8 +38570,8 @@ export namespace Invoice {
           },
           ...OrderStub.sparqlWherePatterns({
             ignoreRdfType: true,
-            subject: dataFactory.variable!(`${variablePrefix}ReferencesOrder`),
-            variablePrefix: `${variablePrefix}ReferencesOrder`,
+            subject: dataFactory.variable!(`${variablePrefix}ReferencesOrders`),
+            variablePrefix: `${variablePrefix}ReferencesOrders`,
           }),
         ],
         type: "optional",
