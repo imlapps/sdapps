@@ -1,18 +1,12 @@
-name: Build and test packages
+name: Continuous Integration
 on:
   push:
-    paths:
-      - "data/towndex/**"
-      - ".github/workflows/packages-ci.yml"
-      - "packages/**"
-      - "package.json"
-      - "package-lock.json"
   workflow_dispatch:
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
 jobs:
-  build:
-    name: Build and test packages
+  build-test:
+    name: Build and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,5 +18,7 @@ jobs:
         run: npm install
       - name: Build packages
         run: npm run build:packages
-      - name: Test packages
-        run: npm run test:packages
+      - name: Check types on apps
+        run: npm run check-types:apps
+      - name: Test
+        run: npm run test
