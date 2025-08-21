@@ -76,7 +76,7 @@ export class LunrSearchEngine implements SearchEngine {
         }
 
         indexDocuments.push({
-          identifier: Identifier.toString(model.identifier),
+          identifier: Identifier.toString(model.$identifier),
           label,
           type: indexDocumentType,
         });

@@ -4,7 +4,7 @@ import { displayLabel } from "./displayLabel.js";
 
 export function compare<
   ModelT extends {
-    identifier: Identifier;
+    $identifier: Identifier;
     name: Maybe<string>;
     order: Maybe<number>;
     startDate?: Maybe<Date>;

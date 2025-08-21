@@ -4,7 +4,7 @@ import { Identifier } from "./Identifier.js";
 export function displayLabel({
   callSign,
   currency,
-  identifier,
+  $identifier,
   jobTitle,
   name,
   unitText,
@@ -12,7 +12,7 @@ export function displayLabel({
 }: {
   callSign?: Maybe<string>;
   currency?: Maybe<string>;
-  identifier: Identifier;
+  $identifier: Identifier;
   jobTitle?: Maybe<string>;
   name: Maybe<string>;
   unitText?: Maybe<string>;
@@ -40,5 +40,5 @@ export function displayLabel({
     return parts.join(" ");
   }
 
-  return Identifier.toString(identifier);
+  return Identifier.toString($identifier);
 }

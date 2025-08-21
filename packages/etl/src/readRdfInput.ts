@@ -104,7 +104,7 @@ async function readExcelFile({
         let modelFromJson: Either<ZodError, Thing>;
         switch (worksheet.name) {
           case "TextObject":
-            modelFromJson = TextObject.fromJson(dataRowJson);
+            modelFromJson = TextObject.$fromJson(dataRowJson);
             break;
           default:
             logger?.warn(
@@ -119,7 +119,7 @@ async function readExcelFile({
           );
           return;
         }
-        modelFromJson.unsafeCoerce().toRdf({
+        modelFromJson.unsafeCoerce().$toRdf({
           mutateGraph: N3.DataFactory.defaultGraph(),
           resourceSet: new MutableResourceSet({
             dataFactory: N3.DataFactory,

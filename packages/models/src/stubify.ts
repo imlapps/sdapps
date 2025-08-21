@@ -49,17 +49,17 @@ function stubifyEvent(event: Event): ReturnType<typeof stubifyThing> & {
   return {
     ...stubifyThing(event),
     startDate: event.startDate,
-    superEvent: event.superEvent.map((event) => event.identifier),
+    superEvent: event.superEvent.map((event) => event.$identifier),
   };
 }
 
 function stubifyThing(thing: Thing): {
-  identifier: Thing["identifier"];
+  identifier: Thing["$identifier"];
   name: Maybe<string>;
   order: Maybe<number>;
 } {
   return {
-    identifier: thing.identifier,
+    identifier: thing.$identifier,
     name: thing.name,
     order: thing.order,
   };
@@ -119,7 +119,7 @@ export function stubify(
   | RadioBroadcastServiceStub
   | RadioEpisodeStub
   | RadioSeriesStub {
-  switch (model.type) {
+  switch (model.$type) {
     case "Article":
       return new ArticleStub(stubifyThing(model));
     case "CreativeWork":
