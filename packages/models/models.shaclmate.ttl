@@ -131,6 +131,12 @@ sdapps:MusicAlbumStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
+sdapps:MusicArtistStub
+    a sh:NodeShape ;
+    sh:xone (sdapps:MusicGroupStub
+        sdapps:PersonStub
+    ) .
+
 sdapps:MusicCompositionStub
     shaclmate:rdfType schema:MusicComposition ;
     a owl:Class, sh:NodeShape ;
@@ -584,14 +590,8 @@ schema:MusicAlbum
 schema:MusicAlbum-byArtists
     a sh:PropertyShape ;
     sh:name "byArtists" ;
-    sh:path schema:byArtist ;
-    sh:xone ([
-            sh:node sdapps:MusicGroupStub
-        ]
-        [
-            sh:node sdapps:PersonStub
-        ]
-    ) .
+    sh:node sdapps:MusicArtistStub ;
+    sh:path schema:byArtist .
 
 schema:MusicComposition
     a owl:Class, sh:NodeShape ;
@@ -640,14 +640,8 @@ schema:MusicRecording
 schema:MusicRecording-byArtists
     a sh:PropertyShape ;
     sh:name "byArtists" ;
-    sh:path schema:byArtist ;
-    sh:xone ([
-            sh:node sdapps:MusicGroupStub
-        ]
-        [
-            sh:node sdapps:PersonStub
-        ]
-    ) .
+    sh:node sdapps:MusicArtistStub ;
+    sh:path schema:byArtist .
 
 schema:MusicRecording-duration
     a sh:PropertyShape ;
@@ -896,7 +890,7 @@ schema:TextObject-uriSpace
 schema:Thing
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:Model ;
-    sh:property sdapps:Thing-order, schema:Thing-alternateNames, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-images, schema:Thing-localIdentifiers, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
+    sh:property sdapps:Thing-order, schema:Thing-alternateNames, schema:Thing-description, schema:Thing-disambiguatingDescription, schema:Thing-identifiers, schema:Thing-images, schema:Thing-name, schema:Thing-sameAs, schema:Thing-subjectOf, schema:Thing-url .
 
 schema:Thing-alternateNames
     a sh:PropertyShape ;
@@ -916,17 +910,17 @@ schema:Thing-disambiguatingDescription
     sh:maxCount 1 ;
     sh:path schema:disambiguatingDescription .
 
+schema:Thing-identifiers
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "identifiers" ;
+    sh:path schema:identifier .
+
 schema:Thing-images
     a sh:PropertyShape ;
     sh:name "images" ;
     sh:node sdapps:ImageObjectStub ;
     sh:path schema:image .
-
-schema:Thing-localIdentifiers
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:name "localIdentifiers" ;
-    sh:path schema:identifier .
 
 schema:Thing-name
     a sh:PropertyShape ;
