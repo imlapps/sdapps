@@ -8,7 +8,7 @@ import { Either, Maybe } from "purify-ts";
 
 export async function firstBroadcastEvent(parameters: {
   broadcastService: {
-    identifier: Identifier;
+    $identifier: Identifier;
   };
   objectSet?: $SparqlObjectSet;
 }): Promise<Either<Error, Maybe<BroadcastEventStub>>> {

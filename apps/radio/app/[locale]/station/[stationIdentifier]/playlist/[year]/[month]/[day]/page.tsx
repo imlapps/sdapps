@@ -6,7 +6,7 @@ import { firstBroadcastEvent } from "@/lib/queries/firstBroadcastEvent";
 import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
-import { LocalDate, nativeJs } from "@js-joda/core";
+import { LocalDate, LocalTime, ZonedDateTime, nativeJs } from "@js-joda/core";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Identifier } from "@sdapps/models";
 import { Metadata } from "next";
@@ -56,6 +56,17 @@ export default async function PlaylistPage({
   }
 
   const broadcastTimeZone_ = broadcastTimeZone(radioBroadcastService);
+  const startDateTime = ZonedDateTime.of(
+    date.atStartOfDay(),
+    broadcastTimeZone_,
+  );
+  const endDateTime = ZonedDateTime.of(date, LocalTime.MAX, broadcastTimeZone_);
+  logger.info(
+    "playlist date %s start and end: %s - %s",
+    date,
+    startDateTime,
+    endDateTime,
+  );
 }
 
 export async function generateMetadata({
@@ -103,7 +114,7 @@ export async function generateStaticParams(): Promise<PlaylistPageParams[]> {
       if (!firstBroadcastEventStartDate) {
         logger.warn(
           "radio broadcast service %s has no first broadcast event",
-          Identifier.toString(radioBroadcastService.identifier),
+          Identifier.toString(radioBroadcastService.$identifier),
         );
         continue;
       }
@@ -121,7 +132,7 @@ export async function generateStaticParams(): Promise<PlaylistPageParams[]> {
       if (firstBroadcastEventStartDate.equals(lastBroadcastEventStartDate)) {
         logger.warn(
           "radio broadcast service %s only has a single broadcast event",
-          Identifier.toString(radioBroadcastService.identifier),
+          Identifier.toString(radioBroadcastService.$identifier),
         );
         continue;
       }
@@ -136,7 +147,7 @@ export async function generateStaticParams(): Promise<PlaylistPageParams[]> {
           locale,
           month: date.monthValue().toString().padStart(2, "0"),
           stationIdentifier: encodeFileName(
-            Identifier.toString(radioBroadcastService.identifier),
+            Identifier.toString(radioBroadcastService.$identifier),
           ),
           year: date.year().toString(),
         });

@@ -2,10 +2,12 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { getHrefs } from "@/lib/getHrefs";
 import { logger } from "@/lib/logger";
 import { Locale } from "@/lib/models/Locale";
+import { broadcastTimeZone } from "@/lib/models/broadcastTimeZone";
 import { objectSet } from "@/lib/objectSet";
 import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
 import { routing } from "@/lib/routing";
 import { serverConfiguration } from "@/lib/serverConfiguration";
+import { nativeJs } from "@js-joda/core";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Identifier } from "@sdapps/models";
 import { Metadata } from "next";
@@ -36,21 +38,26 @@ export default async function StationPage({
     notFound();
   }
 
-  const lastBroadcastDay_ = (
+  const lastBroadcastDate = (
     await lastBroadcastEvent({
       broadcastService: radioBroadcastService,
     })
-  ).unsafeCoerce();
-  if (lastBroadcastDay_.isNothing()) {
+  )
+    .unsafeCoerce()
+    .chain((event) => event.startDate)
+    .map(nativeJs)
+    .map((_) => _.withZoneSameLocal(broadcastTimeZone(radioBroadcastService)))
+    .map((_) => _.toLocalDate());
+  if (lastBroadcastDate.isNothing()) {
     logger.warn(
-      `radio broadcast service ${Identifier.toString(radioBroadcastService.identifier)} has no last broadcast day`,
+      `radio broadcast service ${Identifier.toString(radioBroadcastService.$identifier)} has no last broadcast event`,
     );
     notFound();
   }
 
   redirect(
     (await getHrefs()).playlist({
-      broadcastDay: lastBroadcastDay_.unsafeCoerce(),
+      date: lastBroadcastDate.unsafeCoerce(),
       radioBroadcastService,
     }),
   );

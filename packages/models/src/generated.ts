@@ -140,6 +140,38 @@ export function $strictEquals<T extends bigint | boolean | number | string>(
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: rdfjs.NamedNode;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export function $arrayEquals<T>(
   leftArray: readonly T[],
@@ -2126,27 +2158,7 @@ export namespace ThingStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -2771,27 +2783,7 @@ export namespace IntangibleStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -3351,27 +3343,7 @@ export namespace Role {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -3709,27 +3681,7 @@ export namespace Occupation {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -4037,27 +3989,7 @@ export namespace EnumerationStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -4420,27 +4352,7 @@ export namespace GenderType {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -5111,27 +5023,7 @@ export namespace ActionStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -5513,27 +5405,7 @@ export namespace AssessActionStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -5843,27 +5715,7 @@ export namespace ChooseActionStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -6156,27 +6008,7 @@ export namespace VoteAction {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -6801,27 +6633,7 @@ export namespace ThingStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -7169,27 +6981,7 @@ export namespace ActionStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -7510,27 +7302,7 @@ export namespace AssessActionStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -7846,27 +7618,7 @@ export namespace ChooseActionStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -8165,27 +7917,7 @@ export namespace VoteActionStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -9264,27 +8996,7 @@ export namespace CreativeWorkStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -10095,27 +9807,7 @@ export namespace MediaObjectStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -10574,27 +10266,7 @@ export namespace TextObject {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -11070,27 +10742,7 @@ export namespace CreativeWorkStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -11779,27 +11431,7 @@ export namespace MediaObjectStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -12172,27 +11804,7 @@ export namespace TextObjectStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -12528,27 +12140,7 @@ export namespace StructuredValueStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -12864,27 +12456,7 @@ export namespace ServiceStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -13190,27 +12762,7 @@ export namespace ArticleStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -13500,27 +13052,7 @@ export namespace Report {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -13829,27 +13361,7 @@ export namespace ArticleStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -14142,27 +13654,7 @@ export namespace ReportStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -14482,27 +13974,7 @@ export namespace CreativeWorkSeriesStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -14919,27 +14391,7 @@ export namespace RadioSeries {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -15284,27 +14736,7 @@ export namespace CreativeWorkSeriesStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -15603,27 +15035,7 @@ export namespace RadioSeriesStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -16053,27 +15465,7 @@ export namespace EpisodeStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -16391,27 +15783,7 @@ export namespace RadioEpisode {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -16723,27 +16095,7 @@ export namespace EpisodeStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -17041,27 +16393,7 @@ export namespace RadioEpisodeStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -17550,27 +16882,7 @@ export namespace BroadcastServiceStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -17911,27 +17223,7 @@ export namespace RadioBroadcastService {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -18339,27 +17631,7 @@ export namespace IntangibleStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -18677,27 +17949,7 @@ export namespace ServiceStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -19196,27 +18448,7 @@ export namespace BroadcastServiceStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -19566,27 +18798,7 @@ export namespace RadioBroadcastServiceStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -20039,27 +19251,7 @@ export namespace QuantitativeValue {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -20431,27 +19623,7 @@ export namespace StructuredValueStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -20912,27 +20084,7 @@ export namespace QuantitativeValueStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -22062,27 +21214,7 @@ export namespace EventStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -22689,27 +21821,7 @@ export namespace PublicationEventStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -23016,27 +22128,7 @@ export namespace Place {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -23329,27 +22421,7 @@ export namespace PlaceStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -24496,27 +23568,7 @@ export namespace Person {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -25311,27 +24363,7 @@ export namespace OrganizationStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -25710,27 +24742,7 @@ export namespace PerformingGroupStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -26139,27 +25151,7 @@ export namespace Order {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -26472,27 +25464,7 @@ export namespace OrderStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -27324,27 +26296,7 @@ export namespace MusicRecording {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -27753,27 +26705,7 @@ export namespace MusicRecordingStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -28266,27 +27198,7 @@ export namespace MusicPlaylist {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -28625,27 +27537,7 @@ export namespace MusicPlaylistStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -28966,27 +27858,7 @@ export namespace OrganizationStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -29307,27 +28179,7 @@ export namespace PerformingGroupStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -29621,27 +28473,7 @@ export namespace MusicGroup {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -30145,27 +28977,7 @@ export namespace MusicComposition {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -30508,27 +29320,7 @@ export namespace MusicCompositionStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -30827,27 +29619,7 @@ export namespace MusicGroupStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -31256,27 +30028,7 @@ export namespace MusicAlbum {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -31594,27 +30346,7 @@ export namespace MusicAlbumStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -32064,27 +30796,7 @@ export namespace MonetaryAmount {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -32568,27 +31280,7 @@ export namespace MonetaryAmountStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -33021,27 +31713,7 @@ export namespace Message {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -33354,27 +32026,7 @@ export namespace MessageStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -33879,27 +32531,7 @@ export namespace ListItem {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -34440,27 +33072,7 @@ export namespace ListItemStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -34905,27 +33517,7 @@ export namespace ItemList {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -35367,27 +33959,7 @@ export namespace ItemListStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -36062,27 +34634,7 @@ export namespace Invoice {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -36453,27 +35005,7 @@ export namespace InvoiceStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -36766,27 +35298,7 @@ export namespace ImageObject {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -37085,27 +35597,7 @@ export namespace ImageObjectStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -37606,27 +36098,7 @@ export namespace EventStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -37980,27 +36452,7 @@ export namespace PublicationEventStubStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -38299,27 +36751,7 @@ export namespace BroadcastEvent {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -38618,27 +37050,7 @@ export namespace BroadcastEventStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -39023,27 +37435,7 @@ export namespace PersonStub {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {

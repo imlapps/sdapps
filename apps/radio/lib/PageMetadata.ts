@@ -35,7 +35,7 @@ export class PageMetadata {
   }
 
   radioBroadcastService(radioBroadcastService: {
-    identifier: Identifier;
+    $identifier: Identifier;
     name: Maybe<string>;
   }): Metadata {
     return {

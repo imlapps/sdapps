@@ -11,7 +11,7 @@ import { invariant } from "ts-invariant";
 
 export async function firstOrLastBroadcastEvent(parameters: {
   broadcastService: {
-    identifier: Identifier;
+    $identifier: Identifier;
   };
   firstOrLast: "first" | "last";
   objectSet?: $SparqlObjectSet;
@@ -40,7 +40,7 @@ export async function firstOrLastBroadcastEvent(parameters: {
                 {
                   subject: broadcastEventVariable,
                   predicate: schema.publishedOn,
-                  object: broadcastService.identifier,
+                  object: broadcastService.$identifier,
                 },
               ],
               type: "bgp",

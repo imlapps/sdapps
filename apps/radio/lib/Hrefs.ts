@@ -1,5 +1,5 @@
-import { BroadcastDay } from "@/lib/models/BroadcastDay";
 import { Locale } from "@/lib/models/Locale";
+import { LocalDate } from "@js-joda/core";
 import { encodeFileName } from "@kos-kit/next-utils";
 import { Identifier } from "@sdapps/models";
 
@@ -17,18 +17,18 @@ export class Hrefs {
   }
 
   playlist({
-    broadcastDay,
+    date,
     radioBroadcastService,
   }: {
-    broadcastDay: BroadcastDay;
-    radioBroadcastService: { identifier: Identifier };
+    date: LocalDate;
+    radioBroadcastService: { $identifier: Identifier };
   }) {
-    return `${this.radioBroadcastService(radioBroadcastService)}/playlist/${broadcastDay.year}/${broadcastDay.month}/${broadcastDay.day}`;
+    return `${this.radioBroadcastService(radioBroadcastService)}/playlist/${date.year()}/${date.month()}/${date.dayOfMonth()}`;
   }
 
   radioBroadcastService(radioBroadcastService: {
-    identifier: Identifier;
+    $identifier: Identifier;
   }) {
-    return `${this.locale}/radio-broadcast-service/${encodeFileName(Identifier.toString(radioBroadcastService.identifier))}`;
+    return `${this.locale}/radio-broadcast-service/${encodeFileName(Identifier.toString(radioBroadcastService.$identifier))}`;
   }
 }
