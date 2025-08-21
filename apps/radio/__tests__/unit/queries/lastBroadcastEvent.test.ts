@@ -13,7 +13,7 @@ describe("lastBroadcastEvent", () => {
       await lastBroadcastEvent({
         objectSet: testObjectSet,
         broadcastService: {
-          identifier: radioBroadcastServiceIdentifiers[0],
+          $identifier: radioBroadcastServiceIdentifiers[0],
         },
       })
     )

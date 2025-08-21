@@ -8,18 +8,25 @@ import {
   AgentStub,
   BroadcastEvent,
   Identifier,
-  MusicAlbumStub,
-  MusicArtistStub,
-  MusicComposition,
-  MusicCompositionStub,
+  Model,
   MusicRecording,
-  MusicRecordingStub,
-  stubify,
+  RadioEpisodeStub,
 } from "@sdapps/models";
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { Either, EitherAsync, Maybe } from "purify-ts";
 import { toRdf } from "rdf-literal";
 import * as sparqljs from "sparqljs";
+
+function modelsByIdentifier<ModelT extends Model>(
+  models: readonly Either<Error, ModelT>[],
+): TermMap<Identifier, ModelT> {
+  return models.reduce((map, model) => {
+    model.ifRight((model) => {
+      map.set(model.$identifier, model);
+    });
+    return map;
+  }, new TermMap<Identifier, ModelT>());
+}
 
 export async function musicRecordingBroadcastEvents(parameters: {
   broadcastService: {
@@ -32,12 +39,11 @@ export async function musicRecordingBroadcastEvents(parameters: {
   Either<
     Error,
     readonly {
-      readonly broadcastEvent: BroadcastEvent;
-      readonly musicArtists: readonly MusicArtistStub[];
-      readonly musicComposition: Maybe<MusicCompositionStub>;
       readonly musicComposers: readonly AgentStub[];
-      readonly musicAlbum: Maybe<MusicAlbumStub>;
-      readonly musicRecording: MusicRecordingStub;
+      readonly musicRecording: MusicRecording;
+      readonly musicRecordingBroadcastEvent: BroadcastEvent;
+      readonly radioEpisode: Maybe<RadioEpisodeStub>;
+      readonly radioEpisodeBroadcastEvent: Maybe<BroadcastEvent>;
     }[]
   >
 > {
@@ -45,188 +51,223 @@ export async function musicRecordingBroadcastEvents(parameters: {
   const objectSet = parameters?.objectSet ?? defaultObjectSet;
 
   return EitherAsync(async () => {
-    const broadcastEventEithers = await objectSet.broadcastEvents({
-      where: {
-        patterns: (objectVariable) => {
-          const patterns: sparqljs.Pattern[] = [];
+    const musicRecordingBroadcastEvents = Either.rights(
+      await objectSet.broadcastEvents({
+        where: {
+          patterns: (objectVariable) => {
+            const patterns: sparqljs.Pattern[] = [];
 
-          const musicRecordingVariable = dataFactory.variable(
-            `${objectVariable.value}MusicRecording`,
-          );
-
-          if (endDate) {
-            const endDateVariable = dataFactory.variable(
-              `${objectVariable.value}EndDate`,
+            const musicRecordingVariable = dataFactory.variable(
+              `${objectVariable.value}MusicRecording`,
             );
 
-            patterns.push(
-              {
-                triples: [
-                  {
-                    subject: objectVariable,
-                    predicate: schema.endDate,
-                    object: endDateVariable,
-                  },
-                ],
-                type: "bgp",
-              },
-              {
-                expression: {
-                  args: [endDateVariable, toRdf(endDate)],
-                  operator: "<=",
-                  type: "operation",
+            if (endDate) {
+              const endDateVariable = dataFactory.variable(
+                `${objectVariable.value}EndDate`,
+              );
+
+              patterns.push(
+                {
+                  triples: [
+                    {
+                      subject: objectVariable,
+                      predicate: schema.endDate,
+                      object: endDateVariable,
+                    },
+                  ],
+                  type: "bgp",
                 },
-                type: "filter",
-              },
-            );
-          }
-
-          if (startDate) {
-            const startDateVariable = dataFactory.variable(
-              `${objectVariable.value}StartDate`,
-            );
-
-            patterns.push(
-              {
-                triples: [
-                  {
-                    subject: objectVariable,
-                    predicate: schema.startDate,
-                    object: startDateVariable,
+                {
+                  expression: {
+                    args: [endDateVariable, toRdf(endDate)],
+                    operator: "<=",
+                    type: "operation",
                   },
-                ],
-                type: "bgp",
-              },
-              {
-                expression: {
-                  args: [startDateVariable, toRdf(startDate)],
-                  operator: ">=",
-                  type: "operation",
+                  type: "filter",
                 },
-                type: "filter",
-              },
-            );
-          }
+              );
+            }
 
-          // Broadcast service
-          patterns.push({
-            triples: [
-              {
-                subject: objectVariable,
-                predicate: schema.publishedOn,
-                object: broadcastService.$identifier,
-              },
-            ],
-            type: "bgp",
-          });
+            if (startDate) {
+              const startDateVariable = dataFactory.variable(
+                `${objectVariable.value}StartDate`,
+              );
 
-          // Music recording
-          patterns.push(
-            {
+              patterns.push(
+                {
+                  triples: [
+                    {
+                      subject: objectVariable,
+                      predicate: schema.startDate,
+                      object: startDateVariable,
+                    },
+                  ],
+                  type: "bgp",
+                },
+                {
+                  expression: {
+                    args: [startDateVariable, toRdf(startDate)],
+                    operator: ">=",
+                    type: "operation",
+                  },
+                  type: "filter",
+                },
+              );
+            }
+
+            // Broadcast service
+            patterns.push({
               triples: [
                 {
                   subject: objectVariable,
-                  predicate: schema.workPerformed,
-                  object: musicRecordingVariable,
+                  predicate: schema.publishedOn,
+                  object: broadcastService.$identifier,
                 },
               ],
               type: "bgp",
-            },
-            $sparqlInstancesOfPattern({
-              rdfType: schema.MusicRecording,
-              subject: musicRecordingVariable,
-            }),
-          );
+            });
 
-          return patterns;
-        },
-        type: "patterns",
-      },
-    });
+            // Music recording
+            patterns.push(
+              {
+                triples: [
+                  {
+                    subject: objectVariable,
+                    predicate: schema.workPerformed,
+                    object: musicRecordingVariable,
+                  },
+                ],
+                type: "bgp",
+              },
+              $sparqlInstancesOfPattern({
+                rdfType: schema.MusicRecording,
+                subject: musicRecordingVariable,
+              }),
+            );
 
-    const broadcastEvents: BroadcastEvent[] = [];
-    const musicRecordingIdentifiers = new TermSet<Identifier>();
-    for (const broadcastEventEither of broadcastEventEithers) {
-      broadcastEventEither.ifRight((broadcastEvent) => {
-        broadcastEvents.push(broadcastEvent);
-        for (const creativeWorkStub of broadcastEvent.worksPerformed) {
-          musicRecordingIdentifiers.add(creativeWorkStub.$identifier);
-        }
-      });
-    }
-
-    const musicRecordings = await objectSet.musicRecordings({
-      where: {
-        identifiers: [...musicRecordingIdentifiers],
-        type: "identifiers",
-      },
-    });
-
-    const musicCompositionIdentifiers = new TermSet<Identifier>();
-    const musicRecordingsByIdentifier = new TermMap<
-      Identifier,
-      MusicRecording
-    >();
-    for (const musicRecording of musicRecordings) {
-      musicRecording.ifRight((musicRecording) => {
-        musicRecordingsByIdentifier.set(
-          musicRecording.$identifier,
-          musicRecording,
-        );
-        musicRecording.recordingOf.ifJust((musicComposition) =>
-          musicCompositionIdentifiers.add(musicComposition.$identifier),
-        );
-      });
-    }
-
-    const musicCompositionsByIdentifier = new TermMap<
-      Identifier,
-      MusicComposition
-    >();
-    for (const musicComposition of await objectSet.musicCompositions({
-      where: {
-        identifiers: [...musicCompositionIdentifiers],
-        type: "identifiers",
-      },
-    })) {
-      musicComposition.ifRight((musicComposition) =>
-        musicCompositionsByIdentifier.set(
-          musicComposition.$identifier,
-          musicComposition,
-        ),
-      );
-    }
-
-    return broadcastEvents.flatMap((broadcastEvent) => {
-      return broadcastEvent.worksPerformed.flatMap((creativeWorkStub) => {
-        const musicRecording = musicRecordingsByIdentifier.get(
-          creativeWorkStub.$identifier,
-        );
-        if (!musicRecording) {
-          return [];
-        }
-
-        const musicComposers: AgentStub[] = [];
-        musicRecording.recordingOf.ifJust((musicCompositionStub) => {
-          const musicComposition = musicCompositionsByIdentifier.get(
-            musicCompositionStub.$identifier,
-          );
-          if (musicComposition) {
-            musicComposers.push(...musicComposition.composers);
-          }
-        });
-
-        return [
-          {
-            broadcastEvent,
-            musicAlbum: musicRecording.inAlbum,
-            musicArtists: musicRecording.byArtists,
-            musicComposers,
-            musicComposition: musicRecording.recordingOf,
-            musicRecording: stubify(musicRecording),
+            return patterns;
           },
-        ];
-      });
-    });
+          type: "patterns",
+        },
+      }),
+    );
+
+    const radioEpisodeBroadcastEventsByIdentifier = modelsByIdentifier(
+      await objectSet.broadcastEvents({
+        where: {
+          identifiers: [
+            ...musicRecordingBroadcastEvents.reduce((set, broadcastEvent) => {
+              broadcastEvent.superEvent.ifJust((event) =>
+                set.add(event.$identifier),
+              );
+              return set;
+            }, new TermSet<Identifier>()),
+          ],
+          type: "identifiers",
+        },
+      }),
+    );
+
+    const radioEpisodesByIdentifier = modelsByIdentifier(
+      await objectSet.radioEpisodeStubs({
+        where: {
+          identifiers: [
+            ...radioEpisodeBroadcastEventsByIdentifier
+              .values()
+              .reduce((set, broadcastEvent) => {
+                broadcastEvent.superEvent.ifJust((event) =>
+                  set.add(event.$identifier),
+                );
+                return set;
+              }, new TermSet<Identifier>()),
+          ],
+          type: "identifiers",
+        },
+      }),
+    );
+
+    const musicRecordingsByIdentifier = modelsByIdentifier(
+      await objectSet.musicRecordings({
+        where: {
+          identifiers: [
+            ...musicRecordingBroadcastEvents.reduce((set, broadcastEvent) => {
+              for (const creativeWorkStub of broadcastEvent.worksPerformed) {
+                set.add(creativeWorkStub.$identifier);
+              }
+              return set;
+            }, new TermSet<Identifier>()),
+          ],
+          type: "identifiers",
+        },
+      }),
+    );
+
+    const musicCompositionsByIdentifier = modelsByIdentifier(
+      await objectSet.musicCompositions({
+        where: {
+          identifiers: [
+            ...musicRecordingsByIdentifier
+              .values()
+              .reduce((set, musicRecording) => {
+                musicRecording.recordingOf.ifJust((musicComposition) =>
+                  set.add(musicComposition.$identifier),
+                );
+                return set;
+              }, new TermSet<Identifier>()),
+          ],
+          type: "identifiers",
+        },
+      }),
+    );
+
+    return musicRecordingBroadcastEvents.flatMap(
+      (musicRecordingBroadcastEvent) => {
+        return musicRecordingBroadcastEvent.worksPerformed.flatMap(
+          (creativeWorkStub) => {
+            const musicRecording = musicRecordingsByIdentifier.get(
+              creativeWorkStub.$identifier,
+            );
+            if (!musicRecording) {
+              return [];
+            }
+
+            const radioEpisodeBroadcastEvent =
+              musicRecordingBroadcastEvent.superEvent.chain((event) =>
+                Maybe.fromNullable(
+                  radioEpisodeBroadcastEventsByIdentifier.get(
+                    event.$identifier,
+                  ),
+                ),
+              );
+
+            return [
+              {
+                musicComposers: musicRecording.recordingOf
+                  .toList()
+                  .flatMap(
+                    (recordingOf) =>
+                      musicCompositionsByIdentifier.get(recordingOf.$identifier)
+                        ?.composers ?? [],
+                  ),
+                musicRecording,
+                musicRecordingBroadcastEvent,
+                radioEpisode: radioEpisodeBroadcastEvent.chain(
+                  (radioEpisodeBoadcastEvent) =>
+                    radioEpisodeBoadcastEvent.worksPerformed.length === 1
+                      ? Maybe.fromNullable(
+                          radioEpisodesByIdentifier.get(
+                            radioEpisodeBoadcastEvent.worksPerformed[0]
+                              .$identifier,
+                          ),
+                        )
+                      : Maybe.empty(),
+                ),
+                radioEpisodeBroadcastEvent,
+              },
+            ];
+          },
+        );
+      },
+    );
   });
 }
