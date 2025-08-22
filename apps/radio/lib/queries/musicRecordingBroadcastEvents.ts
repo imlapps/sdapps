@@ -32,9 +32,8 @@ export async function musicRecordingBroadcastEvents(parameters: {
   broadcastService: {
     $identifier: Identifier;
   };
-  endDate?: Date;
   objectSet?: $SparqlObjectSet;
-  startDate?: Date;
+  startDateRange?: [Date, Date];
 }): Promise<
   Either<
     Error,
@@ -47,12 +46,20 @@ export async function musicRecordingBroadcastEvents(parameters: {
     }[]
   >
 > {
-  const { broadcastService, endDate, startDate } = parameters;
+  const { broadcastService, startDateRange } = parameters;
   const objectSet = parameters?.objectSet ?? defaultObjectSet;
 
   return EitherAsync(async () => {
     const musicRecordingBroadcastEvents = Either.rights(
       await objectSet.broadcastEvents({
+        order: (objectVariable) => [
+          {
+            descending: false,
+            expression: dataFactory.variable(
+              `${objectVariable.value}StartDate`,
+            ),
+          },
+        ],
         where: {
           patterns: (objectVariable) => {
             const patterns: sparqljs.Pattern[] = [];
@@ -61,34 +68,7 @@ export async function musicRecordingBroadcastEvents(parameters: {
               `${objectVariable.value}MusicRecording`,
             );
 
-            if (endDate) {
-              const endDateVariable = dataFactory.variable(
-                `${objectVariable.value}EndDate`,
-              );
-
-              patterns.push(
-                {
-                  triples: [
-                    {
-                      subject: objectVariable,
-                      predicate: schema.endDate,
-                      object: endDateVariable,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  expression: {
-                    args: [endDateVariable, toRdf(endDate)],
-                    operator: "<=",
-                    type: "operation",
-                  },
-                  type: "filter",
-                },
-              );
-            }
-
-            if (startDate) {
+            if (startDateRange) {
               const startDateVariable = dataFactory.variable(
                 `${objectVariable.value}StartDate`,
               );
@@ -106,8 +86,19 @@ export async function musicRecordingBroadcastEvents(parameters: {
                 },
                 {
                   expression: {
-                    args: [startDateVariable, toRdf(startDate)],
-                    operator: ">=",
+                    args: [
+                      {
+                        args: [startDateVariable, toRdf(startDateRange[0])],
+                        operator: ">=",
+                        type: "operation",
+                      },
+                      {
+                        args: [startDateVariable, toRdf(startDateRange[1])],
+                        operator: "<=",
+                        type: "operation",
+                      },
+                    ],
+                    operator: "&&",
                     type: "operation",
                   },
                   type: "filter",
@@ -175,9 +166,9 @@ export async function musicRecordingBroadcastEvents(parameters: {
             ...radioEpisodeBroadcastEventsByIdentifier
               .values()
               .reduce((set, broadcastEvent) => {
-                broadcastEvent.superEvent.ifJust((event) =>
-                  set.add(event.$identifier),
-                );
+                for (const creativeWorkStub of broadcastEvent.worksPerformed) {
+                  set.add(creativeWorkStub.$identifier);
+                }
                 return set;
               }, new TermSet<Identifier>()),
           ],
