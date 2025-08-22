@@ -6,8 +6,8 @@ import { testData } from "./testData.js";
 export function behavesLikeTestObjectSet(objectSet: $ObjectSet): void {
   it("persons", async ({ expect }) => {
     expect(
-      Either.rights(await objectSet.people()).map((model) => model.toJson()),
-    ).toEqual(testData.models.people.map((model) => model.toJson()));
+      Either.rights(await objectSet.people()).map((model) => model.$toJson()),
+    ).toEqual(testData.models.people.map((model) => model.$toJson()));
   });
 
   it("person count", async ({ expect }) => {
