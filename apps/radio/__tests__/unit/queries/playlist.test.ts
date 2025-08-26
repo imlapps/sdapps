@@ -1,5 +1,5 @@
 import { testObjectSet } from "@/__tests__/unit/testObjectSet";
-import { musicRecordingBroadcastEvents } from "@/lib/queries/musicRecordingBroadcastEvents";
+import { musicRecordingBroadcastEvents } from "@/lib/queries/playlist";
 import { Identifier } from "@sdapps/models";
 import { beforeAll, describe, expect, it } from "vitest";
 

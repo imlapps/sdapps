@@ -1,16 +1,17 @@
 import { dataFactory } from "@/lib/dataFactory";
+import { logger } from "@/lib/logger";
+import { Playlist } from "@/lib/models/Playlist";
+import { broadcastTimeZoneId } from "@/lib/models/broadcastTimeZoneId";
 import { objectSet as defaultObjectSet } from "@/lib/objectSet";
+import { DateTimeFormatter, nativeJs } from "@js-joda/core";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import {
   $SparqlObjectSet,
   $sparqlInstancesOfPattern,
-  AgentStub,
-  BroadcastEvent,
+  Event,
   Identifier,
   Model,
-  MusicRecording,
-  RadioEpisodeStub,
 } from "@sdapps/models";
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { Either, EitherAsync, Maybe } from "purify-ts";
@@ -28,25 +29,16 @@ function modelsByIdentifier<ModelT extends Model>(
   }, new TermMap<Identifier, ModelT>());
 }
 
-export async function musicRecordingBroadcastEvents(parameters: {
+export async function playlist(parameters: {
   broadcastService: {
     $identifier: Identifier;
+    broadcastTimezone: Maybe<string>;
   };
   objectSet?: $SparqlObjectSet;
   startDateRange?: [Date, Date];
-}): Promise<
-  Either<
-    Error,
-    readonly {
-      readonly musicComposers: readonly AgentStub[];
-      readonly musicRecording: MusicRecording;
-      readonly musicRecordingBroadcastEvent: BroadcastEvent;
-      readonly radioEpisode: Maybe<RadioEpisodeStub>;
-      readonly radioEpisodeBroadcastEvent: Maybe<BroadcastEvent>;
-    }[]
-  >
-> {
+}): Promise<Either<Error, Playlist>> {
   const { broadcastService, startDateRange } = parameters;
+  const broadcastTimeZoneId_ = broadcastTimeZoneId(broadcastService);
   const objectSet = parameters?.objectSet ?? defaultObjectSet;
 
   return EitherAsync(async () => {
@@ -211,54 +203,138 @@ export async function musicRecordingBroadcastEvents(parameters: {
       }),
     );
 
-    return musicRecordingBroadcastEvents.flatMap(
-      (musicRecordingBroadcastEvent) => {
-        return musicRecordingBroadcastEvent.worksPerformed.flatMap(
-          (creativeWorkStub) => {
-            const musicRecording = musicRecordingsByIdentifier.get(
-              creativeWorkStub.$identifier,
-            );
-            if (!musicRecording) {
-              return [];
-            }
+    const playlist: Playlist = {
+      artistsByIdentifier: {},
+      composersByIdentifier: {},
+      compositionsByIdentifier: {},
+      episodes: [],
+    };
 
-            const radioEpisodeBroadcastEvent =
-              musicRecordingBroadcastEvent.superEvent.chain((event) =>
-                Maybe.fromNullable(
-                  radioEpisodeBroadcastEventsByIdentifier.get(
-                    event.$identifier,
-                  ),
-                ),
-              );
+    const eventDates = (
+      event: Event,
+    ): { endDate: string; startDate: string } => {
+      const startDate = event.startDate.unsafeCoerce();
+      const endDate = event.endDate.unsafeCoerce();
+      return {
+        endDate: DateTimeFormatter.ISO_DATE_TIME.format(
+          nativeJs(endDate).withZoneSameLocal(broadcastTimeZoneId_),
+        ),
+        startDate: DateTimeFormatter.ISO_DATE_TIME.format(
+          nativeJs(startDate).withZoneSameLocal(broadcastTimeZoneId_),
+        ),
+      };
+    };
 
-            return [
-              {
-                musicComposers: musicRecording.recordingOf
-                  .toList()
-                  .flatMap(
-                    (recordingOf) =>
-                      musicCompositionsByIdentifier.get(recordingOf.$identifier)
-                        ?.composers ?? [],
-                  ),
-                musicRecording,
-                musicRecordingBroadcastEvent,
-                radioEpisode: radioEpisodeBroadcastEvent.chain(
-                  (radioEpisodeBoadcastEvent) =>
-                    radioEpisodeBoadcastEvent.worksPerformed.length === 1
-                      ? Maybe.fromNullable(
-                          radioEpisodesByIdentifier.get(
-                            radioEpisodeBoadcastEvent.worksPerformed[0]
-                              .$identifier,
-                          ),
-                        )
-                      : Maybe.empty(),
-                ),
-                radioEpisodeBroadcastEvent,
-              },
-            ];
-          },
+    for (const musicRecordingBroadcastEvent of musicRecordingBroadcastEvents) {
+      if (musicRecordingBroadcastEvent.worksPerformed.length !== 1) {
+        continue;
+      }
+      const musicRecording = musicRecordingsByIdentifier.get(
+        musicRecordingBroadcastEvent.worksPerformed[0].$identifier,
+      );
+      if (!musicRecording) {
+        logger.warn(
+          "missing music recording %s",
+          Identifier.toString(
+            musicRecordingBroadcastEvent.worksPerformed[0].$identifier,
+          ),
         );
-      },
-    );
+        continue;
+      }
+
+      let playlistEpisode: Playlist["episodes"][0] | undefined;
+
+      const radioEpisodeBroadcastEvent = musicRecordingBroadcastEvent.superEvent
+        .chain((event) =>
+          Maybe.fromNullable(
+            radioEpisodeBroadcastEventsByIdentifier.get(event.$identifier),
+          ),
+        )
+        .extract();
+      if (radioEpisodeBroadcastEvent) {
+        if (radioEpisodeBroadcastEvent.worksPerformed.length === 1) {
+          const radioEpisode = radioEpisodesByIdentifier.get(
+            radioEpisodeBroadcastEvent.worksPerformed[0].$identifier,
+          );
+          if (radioEpisode) {
+            const playlistEpisodeIdentifier = Identifier.toString(
+              radioEpisode.$identifier,
+            );
+            if (
+              playlist.episodes.length === 0 ||
+              playlist.episodes.at(-1)!.identifier !== playlistEpisodeIdentifier
+            ) {
+              playlistEpisode = {
+                ...eventDates(radioEpisodeBroadcastEvent),
+                identifier: Identifier.toString(radioEpisode.$identifier),
+                items: [],
+                name: radioEpisode.name.unsafeCoerce(),
+              };
+              playlist.episodes.push(playlistEpisode);
+            }
+          }
+        }
+      }
+
+      if (!playlistEpisode) {
+        // Synthesize an episode
+        playlistEpisode = {
+          ...eventDates(musicRecordingBroadcastEvent),
+          identifier: Identifier.toString(
+            musicRecordingBroadcastEvent.$identifier,
+          ),
+          items: [],
+          name: musicRecording.name.unsafeCoerce(),
+        };
+        playlist.episodes.push(playlistEpisode);
+      }
+
+      playlistEpisode.items.push({
+        ...eventDates(musicRecordingBroadcastEvent),
+        // Populate the artist, composer, and composition lookups as side effects of map.
+        // Inelegant but concise.
+        artistIdentifiers: musicRecording.byArtists.map((artist) => {
+          const artistIdentifier = Identifier.toString(artist.$identifier);
+          if (!playlist.artistsByIdentifier[artistIdentifier]) {
+            playlist.artistsByIdentifier[artistIdentifier] = {
+              name: artist.name.unsafeCoerce(),
+            };
+          }
+          return artistIdentifier;
+        }),
+        compositionIdentifier: musicRecording.recordingOf
+          .map((compositionStub) => {
+            const compositionIdentifier = Identifier.toString(
+              compositionStub.$identifier,
+            );
+            if (!playlist.compositionsByIdentifier[compositionIdentifier]) {
+              const composition = musicCompositionsByIdentifier.get(
+                compositionStub.$identifier,
+              );
+              playlist.compositionsByIdentifier[compositionIdentifier] = {
+                composerIdentifiers: composition
+                  ? composition.composers.map((composer) => {
+                      const composerIdentifier = Identifier.toString(
+                        composer.$identifier,
+                      );
+                      if (!playlist.composersByIdentifier[composerIdentifier]) {
+                        playlist.composersByIdentifier[composerIdentifier] = {
+                          name: composer.name.unsafeCoerce(),
+                        };
+                      }
+                      return composerIdentifier;
+                    })
+                  : [],
+                name: compositionStub.name.unsafeCoerce(),
+              };
+            }
+            return compositionIdentifier;
+          })
+          .extract(),
+        name: musicRecording.name.unsafeCoerce(),
+      });
+    }
+
+    return playlist;
   });
 }

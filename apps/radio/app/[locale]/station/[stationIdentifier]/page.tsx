@@ -2,7 +2,7 @@ import { PageMetadata } from "@/lib/PageMetadata";
 import { getHrefs } from "@/lib/getHrefs";
 import { logger } from "@/lib/logger";
 import { Locale } from "@/lib/models/Locale";
-import { broadcastTimeZone } from "@/lib/models/broadcastTimeZone";
+import { broadcastTimeZoneId } from "@/lib/models/broadcastTimeZoneId";
 import { objectSet } from "@/lib/objectSet";
 import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
 import { routing } from "@/lib/routing";
@@ -46,7 +46,7 @@ export default async function StationPage({
     .unsafeCoerce()
     .chain((event) => event.startDate)
     .map(nativeJs)
-    .map((_) => _.withZoneSameLocal(broadcastTimeZone(radioBroadcastService)))
+    .map((_) => _.withZoneSameLocal(broadcastTimeZoneId(radioBroadcastService)))
     .map((_) => _.toLocalDate());
   if (lastBroadcastDate.isNothing()) {
     logger.warn(

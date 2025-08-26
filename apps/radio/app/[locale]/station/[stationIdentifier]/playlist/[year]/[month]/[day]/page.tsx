@@ -14,7 +14,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Either } from "purify-ts";
 import "@js-joda/timezone";
-import { broadcastTimeZone } from "@/lib/models/broadcastTimeZone";
+import { broadcastTimeZoneId } from "@/lib/models/broadcastTimeZoneId";
 
 interface PlaylistPageParams {
   locale: Locale;
@@ -55,7 +55,7 @@ export default async function PlaylistPage({
     notFound();
   }
 
-  const broadcastTimeZone_ = broadcastTimeZone(radioBroadcastService);
+  const broadcastTimeZone_ = broadcastTimeZoneId(radioBroadcastService);
   const startDateTime = ZonedDateTime.of(
     date.atStartOfDay(),
     broadcastTimeZone_,
@@ -100,7 +100,7 @@ export async function generateStaticParams(): Promise<PlaylistPageParams[]> {
     for (const radioBroadcastService of Either.rights(
       await objectSet.radioBroadcastServiceStubs(),
     )) {
-      const broadcastTimeZone_ = broadcastTimeZone(radioBroadcastService);
+      const broadcastTimeZone_ = broadcastTimeZoneId(radioBroadcastService);
 
       const firstBroadcastEventStartDate = (
         await firstBroadcastEvent({
