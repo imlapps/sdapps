@@ -1,5 +1,5 @@
 import { testObjectSet } from "@/__tests__/unit/testObjectSet";
-import { lastBroadcastEvent } from "@/lib/queries/lastBroadcastEvent";
+import * as queries from "@/lib/queries";
 import { describe, it } from "vitest";
 
 describe("lastBroadcastEvent", () => {
@@ -10,7 +10,7 @@ describe("lastBroadcastEvent", () => {
     expect(radioBroadcastServiceIdentifiers).toHaveLength(1);
 
     const broadcastEvent = (
-      await lastBroadcastEvent({
+      await queries.lastBroadcastEvent({
         objectSet: testObjectSet,
         broadcastService: {
           $identifier: radioBroadcastServiceIdentifiers[0],
