@@ -17,7 +17,6 @@ import {
   Thing,
   stubify,
 } from "@sdapps/models";
-import {} from "@tpluscode/rdf-ns-builders";
 import * as dates from "date-fns";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
@@ -59,7 +58,7 @@ async function* transformPlaylistJson({
 }): AsyncIterable<Thing> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
     endDate: new Date(playlistJson.end_utc),
-    identifier: Iris.episodeBroadcastEvent({
+    $identifier: Iris.episodeBroadcastEvent({
       episodeId: playlistJson.episode_id,
     }),
     publishedOn: radioBroadcastService,
@@ -68,12 +67,12 @@ async function* transformPlaylistJson({
   const radioEpisodeBroadcastEventStub = stubify(radioEpisodeBroadcastEvent);
 
   const radioSeries = new RadioSeries({
-    identifier: Iris.program(playlistJson.program_id),
+    $identifier: Iris.program(playlistJson.program_id),
     name: playlistJson.name,
   });
 
   const radioEpisode = new RadioEpisode({
-    identifier: Iris.episode(playlistJson.episode_id),
+    $identifier: Iris.episode(playlistJson.episode_id),
     partOfSeries: stubify(radioSeries),
     publication: [radioEpisodeBroadcastEventStub],
   });
@@ -89,13 +88,13 @@ async function* transformPlaylistJson({
   // logger.debug(`UCS UTC offset hours: ${utcOffsetHours}`);
 
   const musicPlaylist = new MusicPlaylist({
-    identifier: Iris.episodePlaylist({ episodeId: playlistJson.episode_id }),
+    $identifier: Iris.episodePlaylist({ episodeId: playlistJson.episode_id }),
     isPartOf: [radioEpisodeStub],
   });
   const musicPlaylistStub = stubify(musicPlaylist);
   radioEpisode.hasParts.push(musicPlaylistStub);
   const musicPlaylistItemList = new ItemList({
-    identifier: Iris.episodePlaylistItemList({
+    $identifier: Iris.episodePlaylistItemList({
       episodeId: playlistJson.episode_id,
     }),
   });
@@ -151,18 +150,20 @@ async function* transformPlaylistJson({
         )
           .ifLeft((error) =>
             logger.warn(
-              `error converting Wikidata entity ${wikidataEntity.id} to schema.org: ${error.message}`,
+              "error converting Wikidata entity %s to schema.org: %s",
+              wikidataEntity.id,
+              error.message,
             ),
           )
           .ifRight((thing) => {
-            switch (thing.type) {
+            switch (thing.$type) {
               case "MusicGroup":
               case "Person":
                 wikidataArtists.push(thing as MusicGroup | Person);
                 break;
               default:
                 logger.warn(
-                  `Wikidata entity ${wikidataEntity.id} converted to a ${thing.type}`,
+                  `Wikidata entity ${wikidataEntity.id} converted to a ${thing.$type}`,
                 );
                 break;
             }
@@ -179,7 +180,7 @@ async function* transformPlaylistJson({
               `${wikidataEntity.id} (${wikidataArtists[i].name.extract()})`,
           )
           .join(", ");
-        logger.debug(
+        logger.trace(
           `recognized Wikidata entities in "${qualifiedName}": ${wikidataEntitiesString}`,
         );
         artists.push(...wikidataArtists);
@@ -192,7 +193,7 @@ async function* transformPlaylistJson({
         //   `unable to recognize Wikidata entities in "${qualifiedName}", synthesizing MusicGroup`,
         // );
         const syntheticMusicGroup = new MusicGroup({
-          identifier: Iris.musicGroup({ name: qualifiedName }),
+          $identifier: Iris.musicGroup({ name: qualifiedName }),
           name: qualifiedName,
         });
         artists.push(syntheticMusicGroup);
@@ -210,7 +211,7 @@ async function* transformPlaylistJson({
       continue;
     }
     const artistStubs = artists.map((artist) => {
-      switch (artist.type) {
+      switch (artist.$type) {
         case "MusicGroup":
           return stubify(artist);
         case "Person":
@@ -221,7 +222,7 @@ async function* transformPlaylistJson({
     const musicAlbum = playlistItemJson.collectionName
       ? new MusicAlbum({
           byArtists: artistStubs,
-          identifier: Iris.musicAlbum(playlistItemJson),
+          $identifier: Iris.musicAlbum(playlistItemJson),
           name: playlistItemJson.collectionName,
         })
       : undefined;
@@ -233,18 +234,18 @@ async function* transformPlaylistJson({
       composers.length > 0
         ? new MusicComposition({
             composers: composers.map((composer) =>
-              composer.type === "Person"
+              composer.$type === "Person"
                 ? stubify(composer)
                 : stubify(composer),
             ),
-            identifier: Iris.musicComposition(playlistItemJson),
+            $identifier: Iris.musicComposition(playlistItemJson),
             name: playlistItemJson.trackName,
           })
         : undefined;
 
     const musicRecordingBroadcastEvent = new BroadcastEvent({
       endDate: new Date(startDate.getTime() + playlistItemJson._duration),
-      identifier: Iris.episodePlaylistItemBroadcastEvent({
+      $identifier: Iris.episodePlaylistItemBroadcastEvent({
         episodeId: playlistJson.episode_id,
         playlistItemId: playlistItemJson.id,
       }),
@@ -263,7 +264,7 @@ async function* transformPlaylistJson({
       ),
       byArtists: artistStubs,
       inAlbum: musicAlbum ? stubify(musicAlbum) : undefined,
-      identifier: Iris.musicRecording(playlistItemJson),
+      $identifier: Iris.musicRecording(playlistItemJson),
       inPlaylists: [musicPlaylistStub],
       name: playlistItemJson.trackName,
       publication: [musicRecordingBroadcastEventStub],
@@ -281,7 +282,7 @@ async function* transformPlaylistJson({
 
     const musicPlaylistItem = new ListItem({
       disambiguatingDescription: JSON.stringify(playlistItemJson),
-      identifier: Iris.episodePlaylistItem({
+      $identifier: Iris.episodePlaylistItem({
         episodeId: playlistJson.episode_id,
         playlistItemId: playlistItemJson.id,
       }),
@@ -328,7 +329,7 @@ export async function* transform({
         radioBroadcastService: stubify(extractResult.radioBroadcastService),
         ucsId: extractResult.ucsIdentifier,
       })) {
-        yield model.toRdf({
+        yield model.$toRdf({
           mutateGraph: N3.DataFactory.defaultGraph(),
           resourceSet: new MutableResourceSet({
             dataFactory: N3.DataFactory,
