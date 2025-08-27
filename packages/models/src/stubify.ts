@@ -1,6 +1,3 @@
-import { Maybe } from "purify-ts";
-
-import { Identifier } from "./Identifier";
 import {
   ArticleStub,
   CreativeWork,
@@ -8,6 +5,7 @@ import {
   CreativeWorkStub,
   EpisodeStub,
   Event,
+  EventStub,
   ItemList,
   ItemListStub,
   ListItem,
@@ -40,12 +38,12 @@ import {
   ReportStub,
   TextObjectStub,
   Thing,
+  ThingStub,
 } from "./generated";
 
-function stubifyEvent(event: Event): ReturnType<typeof stubifyThing> & {
-  startDate: Maybe<Date>;
-  superEvent: Maybe<Identifier>;
-} {
+function stubifyEvent(
+  event: Event,
+): ConstructorParameters<typeof EventStub>[0] {
   return {
     ...stubifyThing(event),
     startDate: event.startDate,
@@ -53,13 +51,11 @@ function stubifyEvent(event: Event): ReturnType<typeof stubifyThing> & {
   };
 }
 
-function stubifyThing(thing: Thing): {
-  identifier: Thing["$identifier"];
-  name: Maybe<string>;
-  order: Maybe<number>;
-} {
+function stubifyThing(
+  thing: Thing,
+): ConstructorParameters<typeof ThingStub>[0] {
   return {
-    identifier: thing.$identifier,
+    $identifier: thing.$identifier,
     name: thing.name,
     order: thing.order,
   };
