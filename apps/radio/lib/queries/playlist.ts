@@ -12,6 +12,7 @@ import {
   Event,
   Identifier,
   Model,
+  displayLabel,
 } from "@sdapps/models";
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { Either, EitherAsync, Maybe } from "purify-ts";
@@ -268,7 +269,7 @@ export async function playlist(parameters: {
                 ...eventDates(radioEpisodeBroadcastEvent),
                 identifier: Identifier.toString(radioEpisode.$identifier),
                 items: [],
-                name: radioEpisode.name.unsafeCoerce(),
+                label: displayLabel(radioEpisode),
               };
               playlist.episodes.push(playlistEpisode);
             }
@@ -284,7 +285,7 @@ export async function playlist(parameters: {
             musicRecordingBroadcastEvent.$identifier,
           ),
           items: [],
-          name: musicRecording.name.unsafeCoerce(),
+          label: displayLabel(musicRecording),
         };
         playlist.episodes.push(playlistEpisode);
       }
@@ -297,7 +298,7 @@ export async function playlist(parameters: {
           const artistIdentifier = Identifier.toString(artist.$identifier);
           if (!playlist.artistsByIdentifier[artistIdentifier]) {
             playlist.artistsByIdentifier[artistIdentifier] = {
-              name: artist.name.unsafeCoerce(),
+              label: displayLabel(artist),
             };
           }
           return artistIdentifier;
@@ -319,19 +320,19 @@ export async function playlist(parameters: {
                       );
                       if (!playlist.composersByIdentifier[composerIdentifier]) {
                         playlist.composersByIdentifier[composerIdentifier] = {
-                          name: composer.name.unsafeCoerce(),
+                          label: displayLabel(composer),
                         };
                       }
                       return composerIdentifier;
                     })
                   : [],
-                name: compositionStub.name.unsafeCoerce(),
+                label: displayLabel(compositionStub),
               };
             }
             return compositionIdentifier;
           })
           .extract(),
-        name: musicRecording.name.unsafeCoerce(),
+        label: displayLabel(musicRecording),
       });
     }
 
