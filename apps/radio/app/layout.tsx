@@ -1,4 +1,5 @@
 import "@mantine/core/styles.layer.css";
+import "mantine-datatable/styles.layer.css";
 import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 
 export default function RootLayout({ children }: { children: any }) {
