@@ -73,6 +73,7 @@ async function* transformPlaylistJson({
 
   const radioEpisode = new RadioEpisode({
     $identifier: Iris.episode(playlistJson.episode_id),
+    name: playlistJson.name,
     partOfSeries: stubify(radioSeries),
     publication: [radioEpisodeBroadcastEventStub],
   });
