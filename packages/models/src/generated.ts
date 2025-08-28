@@ -316,6 +316,7 @@ export abstract class Model {
     | "MonetaryAmountStub"
     | "MusicAlbum"
     | "MusicAlbumStub"
+    | "MusicArtistRoleStub"
     | "MusicComposition"
     | "MusicCompositionStub"
     | "MusicGroup"
@@ -324,7 +325,7 @@ export abstract class Model {
     | "MusicPlaylistStub"
     | "MusicRecording"
     | "MusicRecordingStub"
-    | "Occupation"
+    | "OccupationStub"
     | "Order"
     | "OrderStub"
     | "Organization"
@@ -347,7 +348,7 @@ export abstract class Model {
     | "RadioSeriesStub"
     | "Report"
     | "ReportStub"
-    | "Role"
+    | "RoleStub"
     | "Service"
     | "ServiceStub"
     | "StructuredValue"
@@ -496,6 +497,7 @@ export namespace ModelStatic {
       | "MonetaryAmountStub"
       | "MusicAlbum"
       | "MusicAlbumStub"
+      | "MusicArtistRoleStub"
       | "MusicComposition"
       | "MusicCompositionStub"
       | "MusicGroup"
@@ -504,7 +506,7 @@ export namespace ModelStatic {
       | "MusicPlaylistStub"
       | "MusicRecording"
       | "MusicRecordingStub"
-      | "Occupation"
+      | "OccupationStub"
       | "Order"
       | "OrderStub"
       | "Organization"
@@ -527,7 +529,7 @@ export namespace ModelStatic {
       | "RadioSeriesStub"
       | "Report"
       | "ReportStub"
-      | "Role"
+      | "RoleStub"
       | "Service"
       | "ServiceStub"
       | "StructuredValue"
@@ -640,6 +642,7 @@ export namespace ModelStatic {
         "MonetaryAmountStub",
         "MusicAlbum",
         "MusicAlbumStub",
+        "MusicArtistRoleStub",
         "MusicComposition",
         "MusicCompositionStub",
         "MusicGroup",
@@ -648,7 +651,7 @@ export namespace ModelStatic {
         "MusicPlaylistStub",
         "MusicRecording",
         "MusicRecordingStub",
-        "Occupation",
+        "OccupationStub",
         "Order",
         "OrderStub",
         "Organization",
@@ -671,7 +674,7 @@ export namespace ModelStatic {
         "RadioSeriesStub",
         "Report",
         "ReportStub",
-        "Role",
+        "RoleStub",
         "Service",
         "ServiceStub",
         "StructuredValue",
@@ -806,7 +809,6 @@ export class Thing extends Model {
     | "MusicGroup"
     | "MusicPlaylist"
     | "MusicRecording"
-    | "Occupation"
     | "Order"
     | "Organization"
     | "PerformingGroup"
@@ -818,7 +820,6 @@ export class Thing extends Model {
     | "RadioEpisode"
     | "RadioSeries"
     | "Report"
-    | "Role"
     | "Service"
     | "StructuredValue"
     | "TextObject"
@@ -1583,7 +1584,6 @@ export namespace ThingStatic {
           "MusicGroup",
           "MusicPlaylist",
           "MusicRecording",
-          "Occupation",
           "Order",
           "Organization",
           "PerformingGroup",
@@ -1595,7 +1595,6 @@ export namespace ThingStatic {
           "RadioEpisode",
           "RadioSeries",
           "Report",
-          "Role",
           "Service",
           "StructuredValue",
           "TextObject",
@@ -2421,11 +2420,9 @@ export class Intangible extends Thing {
     | "ItemList"
     | "ListItem"
     | "MonetaryAmount"
-    | "Occupation"
     | "Order"
     | "QuantitativeValue"
     | "RadioBroadcastService"
-    | "Role"
     | "Service"
     | "StructuredValue" = "Intangible";
 
@@ -2544,13 +2541,6 @@ export namespace IntangibleStatic {
             Intangible
           >,
       )
-      .altLazy(
-        () =>
-          Occupation.$fromJson(json) as purify.Either<zod.ZodError, Intangible>,
-      )
-      .altLazy(
-        () => Role.$fromJson(json) as purify.Either<zod.ZodError, Intangible>,
-      )
       .altLazy(() =>
         $propertiesFromJson(json).map(
           (properties) => new Intangible(properties),
@@ -2584,11 +2574,9 @@ export namespace IntangibleStatic {
           "ItemList",
           "ListItem",
           "MonetaryAmount",
-          "Occupation",
           "Order",
           "QuantitativeValue",
           "RadioBroadcastService",
-          "Role",
           "Service",
           "StructuredValue",
         ]),
@@ -2695,20 +2683,6 @@ export namespace IntangibleStatic {
             Intangible
           >,
       )
-      .altLazy(
-        () =>
-          Occupation.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Intangible
-          >,
-      )
-      .altLazy(
-        () =>
-          Role.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Intangible
-          >,
-      )
       .altLazy(() =>
         IntangibleStatic.$propertiesFromRdf(parameters).map(
           (properties) => new Intangible(properties),
@@ -2804,930 +2778,6 @@ export namespace IntangibleStatic {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "intangible");
     for (const pattern of ThingStatic.$sparqlWherePatterns({
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
-      );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
-                },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-export class Role extends Intangible {
-  protected readonly _$identifierPrefix?: string;
-  override readonly $type = "Role";
-  readonly endDate: purify.Maybe<Date>;
-  readonly roleName: purify.Maybe<rdfjs.NamedNode>;
-  readonly startDate: purify.Maybe<Date>;
-
-  constructor(
-    parameters: {
-      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly $identifierPrefix?: string;
-      readonly endDate?: Date | purify.Maybe<Date>;
-      readonly roleName?:
-        | rdfjs.NamedNode
-        | purify.Maybe<rdfjs.NamedNode>
-        | string;
-      readonly startDate?: Date | purify.Maybe<Date>;
-    } & ConstructorParameters<typeof Intangible>[0],
-  ) {
-    super(parameters);
-    this._$identifierPrefix = parameters.$identifierPrefix;
-    if (purify.Maybe.isMaybe(parameters.endDate)) {
-      this.endDate = parameters.endDate;
-    } else if (
-      typeof parameters.endDate === "object" &&
-      parameters.endDate instanceof Date
-    ) {
-      this.endDate = purify.Maybe.of(parameters.endDate);
-    } else if (typeof parameters.endDate === "undefined") {
-      this.endDate = purify.Maybe.empty();
-    } else {
-      this.endDate = parameters.endDate satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.roleName)) {
-      this.roleName = parameters.roleName;
-    } else if (typeof parameters.roleName === "object") {
-      this.roleName = purify.Maybe.of(parameters.roleName);
-    } else if (typeof parameters.roleName === "string") {
-      this.roleName = purify.Maybe.of(
-        dataFactory.namedNode(parameters.roleName),
-      );
-    } else if (typeof parameters.roleName === "undefined") {
-      this.roleName = purify.Maybe.empty();
-    } else {
-      this.roleName = parameters.roleName satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.startDate)) {
-      this.startDate = parameters.startDate;
-    } else if (
-      typeof parameters.startDate === "object" &&
-      parameters.startDate instanceof Date
-    ) {
-      this.startDate = purify.Maybe.of(parameters.startDate);
-    } else if (typeof parameters.startDate === "undefined") {
-      this.startDate = purify.Maybe.empty();
-    } else {
-      this.startDate = parameters.startDate satisfies never;
-    }
-  }
-
-  override get $identifier(): Role.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
-    }
-    return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
-  }
-
-  override $equals(other: Role): $EqualsResult {
-    return super
-      .$equals(other)
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          this.endDate,
-          other.endDate,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "endDate",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          this.roleName,
-          other.roleName,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "roleName",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          this.startDate,
-          other.startDate,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "startDate",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  override $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected override $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    super.$hashShaclProperties(_hasher);
-    this.endDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
-    });
-    this.roleName.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
-    });
-    this.startDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
-    });
-    return _hasher;
-  }
-
-  override $toJson(): Role.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...super.$toJson(),
-        endDate: this.endDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
-          .extract(),
-        roleName: this.roleName
-          .map((_item) => ({ "@id": _item.value }))
-          .extract(),
-        startDate: this.startDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
-          .extract(),
-      } satisfies Role.$Json),
-    );
-  }
-
-  override $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.$toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://schema.org/Role"),
-      );
-    }
-
-    _resource.add(
-      Role.$properties.endDate["identifier"],
-      this.endDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.date,
-        }),
-      ),
-    );
-    _resource.add(Role.$properties.roleName["identifier"], this.roleName);
-    _resource.add(
-      Role.$properties.startDate["identifier"],
-      this.startDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.date,
-        }),
-      ),
-    );
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace Role {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Role",
-  );
-  export type $Identifier = IntangibleStatic.$Identifier;
-  export const $Identifier = IntangibleStatic.$Identifier;
-  export type $Json = {
-    readonly endDate: string | undefined;
-    readonly roleName: { readonly "@id": string } | undefined;
-    readonly startDate: string | undefined;
-  } & IntangibleStatic.$Json;
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      endDate: purify.Maybe<Date>;
-      roleName: purify.Maybe<rdfjs.NamedNode>;
-      startDate: purify.Maybe<Date>;
-    } & $UnwrapR<ReturnType<typeof IntangibleStatic.$propertiesFromJson>>
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
-      (_item) => new Date(_item),
-    );
-    const roleName = purify.Maybe.fromNullable(_jsonObject["roleName"]).map(
-      (_item) => dataFactory.namedNode(_item["@id"]),
-    );
-    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
-      (_item) => new Date(_item),
-    );
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      endDate,
-      roleName,
-      startDate,
-    });
-  }
-
-  export function $fromJson(json: unknown): purify.Either<zod.ZodError, Role> {
-    return $propertiesFromJson(json).map((properties) => new Role(properties));
-  }
-
-  export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        IntangibleStatic.$jsonUiSchema({ scopePrefix }),
-        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
-        { scope: `${scopePrefix}/properties/roleName`, type: "Control" },
-        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
-      ],
-      label: "Role",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IntangibleStatic.$jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        $type: zod.literal("Role"),
-        endDate: zod.string().date().optional(),
-        roleName: zod.object({ "@id": zod.string().min(1) }).optional(),
-        startDate: zod.string().date().optional(),
-      }),
-    );
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      endDate: purify.Maybe<Date>;
-      roleName: purify.Maybe<rdfjs.NamedNode>;
-      startDate: purify.Maybe<Date>;
-    } & $UnwrapR<ReturnType<typeof IntangibleStatic.$propertiesFromRdf>>
-  > {
-    const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
-          ),
-        );
-    }
-
-    const $identifier: Role.$Identifier = _resource.identifier;
-    const _endDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.endDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
-    if (_endDateEither.isLeft()) {
-      return _endDateEither;
-    }
-
-    const endDate = _endDateEither.unsafeCoerce();
-    const _roleNameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values($properties.roleName["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toIri())
-        .toMaybe(),
-    );
-    if (_roleNameEither.isLeft()) {
-      return _roleNameEither;
-    }
-
-    const roleName = _roleNameEither.unsafeCoerce();
-    const _startDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.startDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
-    if (_startDateEither.isLeft()) {
-      return _startDateEither;
-    }
-
-    const startDate = _startDateEither.unsafeCoerce();
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      endDate,
-      roleName,
-      startDate,
-    });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof Role.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Role> {
-    return Role.$propertiesFromRdf(parameters).map(
-      (properties) => new Role(properties),
-    );
-  }
-
-  export const $properties = {
-    ...IntangibleStatic.$properties,
-    endDate: { identifier: dataFactory.namedNode("http://schema.org/endDate") },
-    roleName: {
-      identifier: dataFactory.namedNode("http://schema.org/roleName"),
-    },
-    startDate: {
-      identifier: dataFactory.namedNode("http://schema.org/startDate"),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        Role.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        Role.$sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      Role.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("role");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "role");
-    triples.push(
-      ...IntangibleStatic.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-        },
-      );
-    }
-
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}EndDate`),
-      predicate: Role.$properties.endDate["identifier"],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}RoleName`),
-      predicate: Role.$properties.roleName["identifier"],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}StartDate`),
-      predicate: Role.$properties.startDate["identifier"],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("role");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "role");
-    for (const pattern of IntangibleStatic.$sparqlWherePatterns({
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
-      );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
-                },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
-    }
-
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}EndDate`),
-                predicate: Role.$properties.endDate["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}RoleName`),
-                predicate: Role.$properties.roleName["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(`${variablePrefix}StartDate`),
-                predicate: Role.$properties.startDate["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-export class Occupation extends Intangible {
-  override readonly $type = "Occupation";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof Intangible>[0],
-  ) {
-    super(parameters);
-  }
-
-  override get $identifier(): Occupation.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  override $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.$toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://schema.org/Occupation"),
-      );
-    }
-
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace Occupation {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Occupation",
-  );
-  export type $Identifier = IntangibleStatic.$Identifier;
-  export const $Identifier = IntangibleStatic.$Identifier;
-  export type $Json = IntangibleStatic.$Json;
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof IntangibleStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, Occupation> {
-    return $propertiesFromJson(json).map(
-      (properties) => new Occupation(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IntangibleStatic.$jsonUiSchema({ scopePrefix })],
-      label: "Occupation",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IntangibleStatic.$jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        $type: zod.literal("Occupation"),
-      }),
-    );
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof IntangibleStatic.$propertiesFromRdf>
-    >
-  > {
-    const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Occupation)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
-          ),
-        );
-    }
-
-    const $identifier: Occupation.$Identifier = _resource.identifier;
-    return purify.Either.of({ ...$super0, $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof Occupation.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Occupation> {
-    return Occupation.$propertiesFromRdf(parameters).map(
-      (properties) => new Occupation(properties),
-    );
-  }
-
-  export const $properties = { ...IntangibleStatic.$properties };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        Occupation.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        Occupation.$sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      Occupation.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("occupation");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "occupation");
-    triples.push(
-      ...IntangibleStatic.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-        },
-      );
-    }
-
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("occupation");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "occupation");
-    for (const pattern of IntangibleStatic.$sparqlWherePatterns({
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -6189,10 +5239,12 @@ export class ThingStub extends Model {
     | "MessageStub"
     | "MonetaryAmountStub"
     | "MusicAlbumStub"
+    | "MusicArtistRoleStub"
     | "MusicCompositionStub"
     | "MusicGroupStub"
     | "MusicPlaylistStub"
     | "MusicRecordingStub"
+    | "OccupationStub"
     | "OrderStub"
     | "OrganizationStub"
     | "PerformingGroupStub"
@@ -6204,6 +5256,7 @@ export class ThingStub extends Model {
     | "RadioEpisodeStub"
     | "RadioSeriesStub"
     | "ReportStub"
+    | "RoleStub"
     | "ServiceStub"
     | "StructuredValueStub"
     | "TextObjectStub"
@@ -6482,10 +5535,12 @@ export namespace ThingStubStatic {
           "MessageStub",
           "MonetaryAmountStub",
           "MusicAlbumStub",
+          "MusicArtistRoleStub",
           "MusicCompositionStub",
           "MusicGroupStub",
           "MusicPlaylistStub",
           "MusicRecordingStub",
+          "OccupationStub",
           "OrderStub",
           "OrganizationStub",
           "PerformingGroupStub",
@@ -6497,6 +5552,7 @@ export namespace ThingStubStatic {
           "RadioEpisodeStub",
           "RadioSeriesStub",
           "ReportStub",
+          "RoleStub",
           "ServiceStub",
           "StructuredValueStub",
           "TextObjectStub",
@@ -12786,6 +11842,1103 @@ export namespace ServiceStatic {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+export class IntangibleStub extends ThingStub {
+  override readonly $type:
+    | "IntangibleStub"
+    | "BroadcastServiceStub"
+    | "InvoiceStub"
+    | "ItemListStub"
+    | "ListItemStub"
+    | "MonetaryAmountStub"
+    | "MusicArtistRoleStub"
+    | "OccupationStub"
+    | "OrderStub"
+    | "QuantitativeValueStub"
+    | "RadioBroadcastServiceStub"
+    | "RoleStub"
+    | "ServiceStub"
+    | "StructuredValueStub" = "IntangibleStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof ThingStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get $identifier(): IntangibleStubStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  override $toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode("http://schema.org/Intangible"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IntangibleStubStatic {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Intangible",
+  );
+  export type $Identifier = ThingStubStatic.$Identifier;
+  export const $Identifier = ThingStubStatic.$Identifier;
+  export type $Json = ThingStubStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IntangibleStub> {
+    return (
+      ServiceStubStatic.$fromJson(json) as purify.Either<
+        zod.ZodError,
+        IntangibleStub
+      >
+    )
+      .altLazy(
+        () =>
+          InvoiceStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ItemListStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ListItemStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          StructuredValueStubStatic.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicArtistRoleStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          OccupationStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          OrderStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          RoleStub.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(() =>
+        $propertiesFromJson(json).map(
+          (properties) => new IntangibleStub(properties),
+        ),
+      );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IntangibleStub",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return ThingStubStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.enum([
+          "IntangibleStub",
+          "BroadcastServiceStub",
+          "InvoiceStub",
+          "ItemListStub",
+          "ListItemStub",
+          "MonetaryAmountStub",
+          "MusicArtistRoleStub",
+          "OccupationStub",
+          "OrderStub",
+          "QuantitativeValueStub",
+          "RadioBroadcastServiceStub",
+          "RoleStub",
+          "ServiceStub",
+          "StructuredValueStub",
+        ]),
+      }),
+    );
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = ThingStubStatic.$propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
+      return _resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
+              predicate: $RdfVocabularies.rdf.type,
+            }),
+          ),
+        );
+    }
+
+    const $identifier: IntangibleStubStatic.$Identifier = _resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof IntangibleStubStatic.$propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, IntangibleStub> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ServiceStubStatic.$fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        IntangibleStub
+      >
+    )
+      .altLazy(
+        () =>
+          InvoiceStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ItemListStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          ListItemStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          StructuredValueStubStatic.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          MusicArtistRoleStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          OccupationStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          OrderStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(
+        () =>
+          RoleStub.$fromRdf(otherParameters) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            IntangibleStub
+          >,
+      )
+      .altLazy(() =>
+        IntangibleStubStatic.$propertiesFromRdf(parameters).map(
+          (properties) => new IntangibleStub(properties),
+        ),
+      );
+  }
+
+  export const $properties = { ...ThingStubStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IntangibleStubStatic.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IntangibleStubStatic.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IntangibleStubStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("intangibleStub");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangibleStub");
+    triples.push(
+      ...ThingStubStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("intangibleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "intangibleStub");
+    for (const pattern of ThingStubStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class RoleStub extends IntangibleStub {
+  protected readonly _$identifierPrefix?: string;
+  override readonly $type = "RoleStub";
+  readonly endDate: purify.Maybe<Date>;
+  readonly roleName: purify.Maybe<rdfjs.NamedNode>;
+  readonly startDate: purify.Maybe<Date>;
+
+  constructor(
+    parameters: {
+      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly $identifierPrefix?: string;
+      readonly endDate?: Date | purify.Maybe<Date>;
+      readonly roleName?:
+        | rdfjs.NamedNode
+        | purify.Maybe<rdfjs.NamedNode>
+        | string;
+      readonly startDate?: Date | purify.Maybe<Date>;
+    } & ConstructorParameters<typeof IntangibleStub>[0],
+  ) {
+    super(parameters);
+    this._$identifierPrefix = parameters.$identifierPrefix;
+    if (purify.Maybe.isMaybe(parameters.endDate)) {
+      this.endDate = parameters.endDate;
+    } else if (
+      typeof parameters.endDate === "object" &&
+      parameters.endDate instanceof Date
+    ) {
+      this.endDate = purify.Maybe.of(parameters.endDate);
+    } else if (typeof parameters.endDate === "undefined") {
+      this.endDate = purify.Maybe.empty();
+    } else {
+      this.endDate = parameters.endDate satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.roleName)) {
+      this.roleName = parameters.roleName;
+    } else if (typeof parameters.roleName === "object") {
+      this.roleName = purify.Maybe.of(parameters.roleName);
+    } else if (typeof parameters.roleName === "string") {
+      this.roleName = purify.Maybe.of(
+        dataFactory.namedNode(parameters.roleName),
+      );
+    } else if (typeof parameters.roleName === "undefined") {
+      this.roleName = purify.Maybe.empty();
+    } else {
+      this.roleName = parameters.roleName satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.startDate)) {
+      this.startDate = parameters.startDate;
+    } else if (
+      typeof parameters.startDate === "object" &&
+      parameters.startDate instanceof Date
+    ) {
+      this.startDate = purify.Maybe.of(parameters.startDate);
+    } else if (typeof parameters.startDate === "undefined") {
+      this.startDate = purify.Maybe.empty();
+    } else {
+      this.startDate = parameters.startDate satisfies never;
+    }
+  }
+
+  override get $identifier(): RoleStub.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+    return this._$identifier;
+  }
+
+  protected get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
+  }
+
+  override $equals(other: RoleStub): $EqualsResult {
+    return super
+      .$equals(other)
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
+          this.endDate,
+          other.endDate,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "endDate",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.roleName,
+          other.roleName,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "roleName",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
+          this.startDate,
+          other.startDate,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "startDate",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  override $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.$hashShaclProperties(_hasher);
+    this.endDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
+    this.roleName.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    this.startDate.ifJust((_value0) => {
+      _hasher.update(_value0.toISOString());
+    });
+    return _hasher;
+  }
+
+  override $toJson(): RoleStub.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.$toJson(),
+        endDate: this.endDate
+          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .extract(),
+        roleName: this.roleName
+          .map((_item) => ({ "@id": _item.value }))
+          .extract(),
+        startDate: this.startDate
+          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .extract(),
+      } satisfies RoleStub.$Json),
+    );
+  }
+
+  override $toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode(
+          "http://purl.org/sdapps/ontology#RoleStub",
+        ),
+      );
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode("http://schema.org/Role"),
+      );
+    }
+
+    _resource.add(
+      RoleStub.$properties.endDate["identifier"],
+      this.endDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: $RdfVocabularies.xsd.date,
+        }),
+      ),
+    );
+    _resource.add(RoleStub.$properties.roleName["identifier"], this.roleName);
+    _resource.add(
+      RoleStub.$properties.startDate["identifier"],
+      this.startDate.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: $RdfVocabularies.xsd.date,
+        }),
+      ),
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace RoleStub {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Role",
+  );
+  export type $Identifier = IntangibleStubStatic.$Identifier;
+  export const $Identifier = IntangibleStubStatic.$Identifier;
+  export type $Json = {
+    readonly endDate: string | undefined;
+    readonly roleName: { readonly "@id": string } | undefined;
+    readonly startDate: string | undefined;
+  } & IntangibleStubStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      endDate: purify.Maybe<Date>;
+      roleName: purify.Maybe<rdfjs.NamedNode>;
+      startDate: purify.Maybe<Date>;
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromJson>>
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
+      (_item) => new Date(_item),
+    );
+    const roleName = purify.Maybe.fromNullable(_jsonObject["roleName"]).map(
+      (_item) => dataFactory.namedNode(_item["@id"]),
+    );
+    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
+      (_item) => new Date(_item),
+    );
+    return purify.Either.of({
+      ...$super0,
+      $identifier,
+      endDate,
+      roleName,
+      startDate,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, RoleStub> {
+    return $propertiesFromJson(json).map(
+      (properties) => new RoleStub(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStubStatic.$jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/endDate`, type: "Control" },
+        { scope: `${scopePrefix}/properties/roleName`, type: "Control" },
+        { scope: `${scopePrefix}/properties/startDate`, type: "Control" },
+      ],
+      label: "RoleStub",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IntangibleStubStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.literal("RoleStub"),
+        endDate: zod.string().date().optional(),
+        roleName: zod.object({ "@id": zod.string().min(1) }).optional(),
+        startDate: zod.string().date().optional(),
+      }),
+    );
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      endDate: purify.Maybe<Date>;
+      roleName: purify.Maybe<rdfjs.NamedNode>;
+      startDate: purify.Maybe<Date>;
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>>
+  > {
+    const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
+      return _resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
+              predicate: $RdfVocabularies.rdf.type,
+            }),
+          ),
+        );
+    }
+
+    const $identifier: RoleStub.$Identifier = _resource.identifier;
+    const _endDateEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values($properties.endDate["identifier"], { unique: true })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_endDateEither.isLeft()) {
+      return _endDateEither;
+    }
+
+    const endDate = _endDateEither.unsafeCoerce();
+    const _roleNameEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.NamedNode>
+    > = purify.Either.of(
+      _resource
+        .values($properties.roleName["identifier"], { unique: true })
+        .head()
+        .chain((_value) => _value.toIri())
+        .toMaybe(),
+    );
+    if (_roleNameEither.isLeft()) {
+      return _roleNameEither;
+    }
+
+    const roleName = _roleNameEither.unsafeCoerce();
+    const _startDateEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<Date>
+    > = purify.Either.of(
+      _resource
+        .values($properties.startDate["identifier"], { unique: true })
+        .head()
+        .chain((_value) => _value.toDate())
+        .toMaybe(),
+    );
+    if (_startDateEither.isLeft()) {
+      return _startDateEither;
+    }
+
+    const startDate = _startDateEither.unsafeCoerce();
+    return purify.Either.of({
+      ...$super0,
+      $identifier,
+      endDate,
+      roleName,
+      startDate,
+    });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof RoleStub.$propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, RoleStub> {
+    return RoleStub.$propertiesFromRdf(parameters).map(
+      (properties) => new RoleStub(properties),
+    );
+  }
+
+  export const $properties = {
+    ...IntangibleStubStatic.$properties,
+    endDate: { identifier: dataFactory.namedNode("http://schema.org/endDate") },
+    roleName: {
+      identifier: dataFactory.namedNode("http://schema.org/roleName"),
+    },
+    startDate: {
+      identifier: dataFactory.namedNode("http://schema.org/startDate"),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RoleStub.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RoleStub.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RoleStub.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("roleStub");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "roleStub");
+    triples.push(
+      ...IntangibleStubStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}EndDate`),
+      predicate: RoleStub.$properties.endDate["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}RoleName`),
+      predicate: RoleStub.$properties.roleName["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}StartDate`),
+      predicate: RoleStub.$properties.startDate["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject = parameters?.subject ?? dataFactory.variable!("roleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "roleStub");
+    for (const pattern of IntangibleStubStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}EndDate`),
+                predicate: RoleStub.$properties.endDate["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}RoleName`),
+                predicate: RoleStub.$properties.roleName["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(`${variablePrefix}StartDate`),
+                predicate: RoleStub.$properties.startDate["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
 export class Article extends CreativeWork {
   override readonly $type: "Article" | "Report" = "Article";
 
@@ -17650,422 +17803,6 @@ export namespace RadioBroadcastService {
         ? subject.value
         : "radioBroadcastService");
     for (const pattern of BroadcastServiceStatic.$sparqlWherePatterns({
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
-      );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
-                },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-export class IntangibleStub extends ThingStub {
-  override readonly $type:
-    | "IntangibleStub"
-    | "BroadcastServiceStub"
-    | "InvoiceStub"
-    | "ItemListStub"
-    | "ListItemStub"
-    | "MonetaryAmountStub"
-    | "OrderStub"
-    | "QuantitativeValueStub"
-    | "RadioBroadcastServiceStub"
-    | "ServiceStub"
-    | "StructuredValueStub" = "IntangibleStub";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof ThingStub>[0],
-  ) {
-    super(parameters);
-  }
-
-  override get $identifier(): IntangibleStubStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  override $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = super.$toRdf({
-      ignoreRdfType: true,
-      mutateGraph,
-      resourceSet,
-    });
-    if (!ignoreRdfType) {
-      _resource.add(
-        $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://schema.org/Intangible"),
-      );
-    }
-
-    return _resource;
-  }
-
-  override toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace IntangibleStubStatic {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://schema.org/Intangible",
-  );
-  export type $Identifier = ThingStubStatic.$Identifier;
-  export const $Identifier = ThingStubStatic.$Identifier;
-  export type $Json = ThingStubStatic.$Json;
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof ThingStubStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, IntangibleStub> {
-    return (
-      ServiceStubStatic.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        IntangibleStub
-      >
-    )
-      .altLazy(
-        () =>
-          InvoiceStub.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          ItemListStub.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          ListItemStub.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          StructuredValueStubStatic.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          OrderStub.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(() =>
-        $propertiesFromJson(json).map(
-          (properties) => new IntangibleStub(properties),
-        ),
-      );
-  }
-
-  export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IntangibleStub",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return ThingStubStatic.$jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        $type: zod.enum([
-          "IntangibleStub",
-          "BroadcastServiceStub",
-          "InvoiceStub",
-          "ItemListStub",
-          "ListItemStub",
-          "MonetaryAmountStub",
-          "OrderStub",
-          "QuantitativeValueStub",
-          "RadioBroadcastServiceStub",
-          "ServiceStub",
-          "StructuredValueStub",
-        ]),
-      }),
-    );
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
-    >
-  > {
-    const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
-          ),
-        );
-    }
-
-    const $identifier: IntangibleStubStatic.$Identifier = _resource.identifier;
-    return purify.Either.of({ ...$super0, $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof IntangibleStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, IntangibleStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return (
-      ServiceStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        IntangibleStub
-      >
-    )
-      .altLazy(
-        () =>
-          InvoiceStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          ItemListStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          ListItemStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          StructuredValueStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(
-        () =>
-          OrderStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            IntangibleStub
-          >,
-      )
-      .altLazy(() =>
-        IntangibleStubStatic.$propertiesFromRdf(parameters).map(
-          (properties) => new IntangibleStub(properties),
-        ),
-      );
-  }
-
-  export const $properties = { ...ThingStubStatic.$properties };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IntangibleStubStatic.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        IntangibleStubStatic.$sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IntangibleStubStatic.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("intangibleStub");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "intangibleStub");
-    triples.push(
-      ...ThingStubStatic.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-        },
-      );
-    }
-
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("intangibleStub");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "intangibleStub");
-    for (const pattern of ThingStubStatic.$sparqlWherePatterns({
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -23060,7 +22797,7 @@ export class Person extends Thing {
     rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
   >;
   readonly givenName: purify.Maybe<string>;
-  readonly hasOccupation: readonly (Occupation | Role)[];
+  readonly hasOccupation: readonly (OccupationStub | RoleStub)[];
   readonly jobTitle: purify.Maybe<string>;
   memberOf: OrganizationStub[];
   performerIn: EventStub[];
@@ -23079,7 +22816,7 @@ export class Person extends Thing {
         | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
         | string;
       readonly givenName?: purify.Maybe<string> | string;
-      readonly hasOccupation?: readonly (Occupation | Role)[];
+      readonly hasOccupation?: readonly (OccupationStub | RoleStub)[];
       readonly jobTitle?: purify.Maybe<string> | string;
       readonly memberOf?: readonly OrganizationStub[];
       readonly performerIn?: readonly EventStub[];
@@ -23269,11 +23006,17 @@ export class Person extends Thing {
           $arrayEquals(
             left,
             right,
-            (left: Occupation | Role, right: Occupation | Role) => {
-              if (left.$type === "Occupation" && right.$type === "Occupation") {
+            (
+              left: OccupationStub | RoleStub,
+              right: OccupationStub | RoleStub,
+            ) => {
+              if (
+                left.$type === "OccupationStub" &&
+                right.$type === "OccupationStub"
+              ) {
                 return ((left, right) => left.$equals(right))(left, right);
               }
-              if (left.$type === "Role" && right.$type === "Role") {
+              if (left.$type === "RoleStub" && right.$type === "RoleStub") {
                 return ((left, right) => left.$equals(right))(left, right);
               }
 
@@ -23372,11 +23115,11 @@ export class Person extends Thing {
     });
     for (const _item0 of this.hasOccupation) {
       switch (_item0.$type) {
-        case "Occupation": {
+        case "OccupationStub": {
           _item0.$hash(_hasher);
           break;
         }
-        case "Role": {
+        case "RoleStub": {
           _item0.$hash(_hasher);
           break;
         }
@@ -23432,7 +23175,7 @@ export class Person extends Thing {
           .extract(),
         givenName: this.givenName.map((_item) => _item).extract(),
         hasOccupation: this.hasOccupation.map((_item) =>
-          _item.$type === "Role" ? _item.$toJson() : _item.$toJson(),
+          _item.$type === "RoleStub" ? _item.$toJson() : _item.$toJson(),
         ),
         jobTitle: this.jobTitle.map((_item) => _item).extract(),
         memberOf: this.memberOf.map((_item) => _item.$toJson()),
@@ -23486,7 +23229,7 @@ export class Person extends Thing {
     _resource.add(
       Person.$properties.hasOccupation["identifier"],
       this.hasOccupation.map((_item) =>
-        _item.$type === "Role"
+        _item.$type === "RoleStub"
           ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
           : _item.$toRdf({
               mutateGraph: mutateGraph,
@@ -23540,7 +23283,7 @@ export namespace Person {
         )
       | undefined;
     readonly givenName: string | undefined;
-    readonly hasOccupation: readonly (Occupation.$Json | Role.$Json)[];
+    readonly hasOccupation: readonly (OccupationStub.$Json | RoleStub.$Json)[];
     readonly jobTitle: string | undefined;
     readonly memberOf: readonly OrganizationStubStatic.$Json[];
     readonly performerIn: readonly EventStubStatic.$Json[];
@@ -23557,7 +23300,7 @@ export namespace Person {
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
-      hasOccupation: readonly (Occupation | Role)[];
+      hasOccupation: readonly (OccupationStub | RoleStub)[];
       jobTitle: purify.Maybe<string>;
       memberOf: OrganizationStub[];
       performerIn: EventStub[];
@@ -23602,9 +23345,9 @@ export namespace Person {
     );
     const givenName = purify.Maybe.fromNullable(_jsonObject["givenName"]);
     const hasOccupation = _jsonObject["hasOccupation"].map((_item) =>
-      _item.$type === "Role"
-        ? Role.$fromJson(_item).unsafeCoerce()
-        : Occupation.$fromJson(_item).unsafeCoerce(),
+      _item.$type === "RoleStub"
+        ? RoleStub.$fromJson(_item).unsafeCoerce()
+        : OccupationStub.$fromJson(_item).unsafeCoerce(),
     );
     const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
     const memberOf = _jsonObject["memberOf"].map((_item) =>
@@ -23693,8 +23436,8 @@ export namespace Person {
         givenName: zod.string().optional(),
         hasOccupation: zod
           .discriminatedUnion("$type", [
-            Occupation.$jsonZodSchema(),
-            Role.$jsonZodSchema(),
+            OccupationStub.$jsonZodSchema(),
+            RoleStub.$jsonZodSchema(),
           ])
           .array()
           .default(() => []),
@@ -23729,7 +23472,7 @@ export namespace Person {
       familyName: purify.Maybe<string>;
       gender: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>;
       givenName: purify.Maybe<string>;
-      hasOccupation: readonly (Occupation | Role)[];
+      hasOccupation: readonly (OccupationStub | RoleStub)[];
       jobTitle: purify.Maybe<string>;
       memberOf: OrganizationStub[];
       performerIn: EventStub[];
@@ -23839,7 +23582,7 @@ export namespace Person {
     const givenName = _givenNameEither.unsafeCoerce();
     const _hasOccupationEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly (Occupation | Role)[]
+      readonly (OccupationStub | RoleStub)[]
     > = purify.Either.of([
       ..._resource
         .values($properties.hasOccupation["identifier"], { unique: true })
@@ -23850,14 +23593,14 @@ export namespace Person {
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
-                Occupation.$fromRdf({
+                OccupationStub.$fromRdf({
                   ..._context,
                   languageIn: _languageIn,
                   resource: _resource,
                 }),
               ) as purify.Either<
               rdfjsResource.Resource.ValueError,
-              Occupation | Role
+              OccupationStub | RoleStub
             >
           )
             .altLazy(
@@ -23867,14 +23610,14 @@ export namespace Person {
                   .head()
                   .chain((value) => value.toResource())
                   .chain((_resource) =>
-                    Role.$fromRdf({
+                    RoleStub.$fromRdf({
                       ..._context,
                       languageIn: _languageIn,
                       resource: _resource,
                     }),
                   ) as purify.Either<
                   rdfjsResource.Resource.ValueError,
-                  Occupation | Role
+                  OccupationStub | RoleStub
                 >,
             )
             .toMaybe()
@@ -24108,14 +23851,14 @@ export namespace Person {
       subject,
     });
     triples.push(
-      ...Occupation.$sparqlConstructTemplateTriples({
+      ...OccupationStub.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}HasOccupation`),
         variablePrefix: `${variablePrefix}HasOccupation`,
       }),
     );
     triples.push(
-      ...Role.$sparqlConstructTemplateTriples({
+      ...RoleStub.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}HasOccupation`),
         variablePrefix: `${variablePrefix}HasOccupation`,
@@ -24303,7 +24046,7 @@ export namespace Person {
             patterns: [
               {
                 patterns: [
-                  ...Occupation.$sparqlWherePatterns({
+                  ...OccupationStub.$sparqlWherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}HasOccupation`,
@@ -24315,7 +24058,7 @@ export namespace Person {
               },
               {
                 patterns: [
-                  ...Role.$sparqlWherePatterns({
+                  ...RoleStub.$sparqlWherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}HasOccupation`,
@@ -26179,9 +25922,319 @@ export namespace OrderStub {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+export class OccupationStub extends IntangibleStub {
+  override readonly $type = "OccupationStub";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    } & ConstructorParameters<typeof IntangibleStub>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get $identifier(): OccupationStub.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  override $toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode("http://schema.org/Occupation"),
+      );
+    }
+
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace OccupationStub {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Occupation",
+  );
+  export type $Identifier = IntangibleStubStatic.$Identifier;
+  export const $Identifier = IntangibleStubStatic.$Identifier;
+  export type $Json = IntangibleStubStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, OccupationStub> {
+    return $propertiesFromJson(json).map(
+      (properties) => new OccupationStub(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IntangibleStubStatic.$jsonUiSchema({ scopePrefix })],
+      label: "OccupationStub",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IntangibleStubStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.literal("OccupationStub"),
+      }),
+    );
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
+      return _resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Occupation)`,
+              predicate: $RdfVocabularies.rdf.type,
+            }),
+          ),
+        );
+    }
+
+    const $identifier: OccupationStub.$Identifier = _resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof OccupationStub.$propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, OccupationStub> {
+    return OccupationStub.$propertiesFromRdf(parameters).map(
+      (properties) => new OccupationStub(properties),
+    );
+  }
+
+  export const $properties = { ...IntangibleStubStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        OccupationStub.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        OccupationStub.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      OccupationStub.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("occupationStub");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "occupationStub");
+    triples.push(
+      ...IntangibleStubStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("occupationStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "occupationStub");
+    for (const pattern of IntangibleStubStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
 export class MusicRecording extends CreativeWork {
   override readonly $type = "MusicRecording";
-  readonly byArtists: readonly MusicArtistStub[];
+  readonly byArtists: readonly (
+    | MusicGroupStub
+    | PersonStub
+    | MusicArtistRoleStub
+  )[];
   readonly duration: purify.Maybe<string | QuantitativeValueStub>;
   readonly inAlbum: purify.Maybe<MusicAlbumStub>;
   readonly inPlaylists: readonly MusicPlaylistStub[];
@@ -26190,7 +26243,11 @@ export class MusicRecording extends CreativeWork {
   constructor(
     parameters: {
       readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly byArtists?: readonly MusicArtistStub[];
+      readonly byArtists?: readonly (
+        | MusicGroupStub
+        | PersonStub
+        | MusicArtistRoleStub
+      )[];
       readonly duration?:
         | QuantitativeValueStub
         | purify.Maybe<string | QuantitativeValueStub>
@@ -26269,16 +26326,51 @@ export class MusicRecording extends CreativeWork {
     return super
       .$equals(other)
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, MusicArtistStub.$equals))(
-          this.byArtists,
-          other.byArtists,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "byArtists",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (
+              left: MusicGroupStub | PersonStub | MusicArtistRoleStub,
+              right: MusicGroupStub | PersonStub | MusicArtistRoleStub,
+            ) => {
+              if (
+                left.$type === "MusicGroupStub" &&
+                right.$type === "MusicGroupStub"
+              ) {
+                return ((left, right) => left.$equals(right))(left, right);
+              }
+              if (left.$type === "PersonStub" && right.$type === "PersonStub") {
+                return ((left, right) => left.$equals(right))(left, right);
+              }
+              if (
+                left.$type === "MusicArtistRoleStub" &&
+                right.$type === "MusicArtistRoleStub"
+              ) {
+                return ((left, right) => left.$equals(right))(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.byArtists, other.byArtists).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "byArtists",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
       )
       .chain(() =>
         ((left, right) =>
@@ -26375,7 +26467,23 @@ export class MusicRecording extends CreativeWork {
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
     for (const _item0 of this.byArtists) {
-      _item0.$hash(_hasher);
+      switch (_item0.$type) {
+        case "MusicGroupStub": {
+          _item0.$hash(_hasher);
+          break;
+        }
+        case "PersonStub": {
+          _item0.$hash(_hasher);
+          break;
+        }
+        case "MusicArtistRoleStub": {
+          _item0.$hash(_hasher);
+          break;
+        }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
     }
 
     this.duration.ifJust((_value0) => {
@@ -26410,7 +26518,13 @@ export class MusicRecording extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        byArtists: this.byArtists.map((_item) => _item.$toJson()),
+        byArtists: this.byArtists.map((_item) =>
+          _item.$type === "MusicArtistRoleStub"
+            ? _item.$toJson()
+            : _item.$type === "PersonStub"
+              ? _item.$toJson()
+              : _item.$toJson(),
+        ),
         duration: this.duration
           .map((_item) => (typeof _item === "object" ? _item.$toJson() : _item))
           .extract(),
@@ -26445,7 +26559,17 @@ export class MusicRecording extends CreativeWork {
     _resource.add(
       MusicRecording.$properties.byArtists["identifier"],
       this.byArtists.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+        _item.$type === "MusicArtistRoleStub"
+          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _item.$type === "PersonStub"
+            ? _item.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              })
+            : _item.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              }),
       ),
     );
     _resource.add(
@@ -26492,7 +26616,11 @@ export namespace MusicRecording {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly byArtists: readonly (MusicGroupStub.$Json | PersonStub.$Json)[];
+    readonly byArtists: readonly (
+      | MusicGroupStub.$Json
+      | PersonStub.$Json
+      | MusicArtistRoleStub.$Json
+    )[];
     readonly duration: (string | QuantitativeValueStub.$Json) | undefined;
     readonly inAlbum: MusicAlbumStub.$Json | undefined;
     readonly inPlaylists: readonly MusicPlaylistStub.$Json[];
@@ -26505,7 +26633,7 @@ export namespace MusicRecording {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      byArtists: readonly MusicArtistStub[];
+      byArtists: readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[];
       duration: purify.Maybe<string | QuantitativeValueStub>;
       inAlbum: purify.Maybe<MusicAlbumStub>;
       inPlaylists: readonly MusicPlaylistStub[];
@@ -26528,7 +26656,11 @@ export namespace MusicRecording {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const byArtists = _jsonObject["byArtists"].map((_item) =>
-      MusicArtistStub.$fromJson(_item).unsafeCoerce(),
+      _item.$type === "MusicArtistRoleStub"
+        ? MusicArtistRoleStub.$fromJson(_item).unsafeCoerce()
+        : _item.$type === "PersonStub"
+          ? PersonStub.$fromJson(_item).unsafeCoerce()
+          : MusicGroupStub.$fromJson(_item).unsafeCoerce(),
     );
     const duration = purify.Maybe.fromNullable(_jsonObject["duration"]).map(
       (_item) =>
@@ -26595,7 +26727,12 @@ export namespace MusicRecording {
       zod.object({
         "@id": zod.string().min(1),
         $type: zod.literal("MusicRecording"),
-        byArtists: MusicArtistStub.$jsonZodSchema()
+        byArtists: zod
+          .discriminatedUnion("$type", [
+            MusicGroupStub.$jsonZodSchema(),
+            PersonStub.$jsonZodSchema(),
+            MusicArtistRoleStub.$jsonZodSchema(),
+          ])
           .array()
           .default(() => []),
         duration: zod
@@ -26625,7 +26762,7 @@ export namespace MusicRecording {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      byArtists: readonly MusicArtistStub[];
+      byArtists: readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[];
       duration: purify.Maybe<string | QuantitativeValueStub>;
       inAlbum: purify.Maybe<MusicAlbumStub>;
       inPlaylists: readonly MusicPlaylistStub[];
@@ -26661,21 +26798,60 @@ export namespace MusicRecording {
     const $identifier: MusicRecording.$Identifier = _resource.identifier;
     const _byArtistsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly MusicArtistStub[]
+      readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[]
     > = purify.Either.of([
       ..._resource
         .values($properties.byArtists["identifier"], { unique: true })
         .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              MusicArtistStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
+          (
+            _item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                MusicGroupStub.$fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              MusicGroupStub | PersonStub | MusicArtistRoleStub
+            >
+          )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    PersonStub.$fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicGroupStub | PersonStub | MusicArtistRoleStub
+                >,
+            )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    MusicArtistRoleStub.$fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicGroupStub | PersonStub | MusicArtistRoleStub
+                >,
             )
             .toMaybe()
             .toList(),
@@ -26911,7 +27087,22 @@ export namespace MusicRecording {
       subject,
     });
     triples.push(
-      ...MusicArtistStub.$sparqlConstructTemplateTriples({
+      ...MusicGroupStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+    );
+    triples.push(
+      ...PersonStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+    );
+    triples.push(
+      ...MusicArtistRoleStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
@@ -27039,10 +27230,47 @@ export namespace MusicRecording {
             ],
             type: "bgp",
           },
-          ...MusicArtistStub.$sparqlWherePatterns({
-            subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
-            variablePrefix: `${variablePrefix}ByArtists`,
-          }),
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...MusicGroupStub.$sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...PersonStub.$sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...MusicArtistRoleStub.$sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
         ],
         type: "optional",
       },
@@ -30462,14 +30690,615 @@ export namespace MusicGroupStub {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
-export class MusicAlbum extends CreativeWork {
-  override readonly $type = "MusicAlbum";
-  readonly byArtists: readonly MusicArtistStub[];
+export class MusicArtistRoleStub extends IntangibleStub {
+  protected readonly _$identifierPrefix?: string;
+  override readonly $type = "MusicArtistRoleStub";
+  readonly byArtist: MusicArtistStub;
+  readonly roleName: rdfjs.NamedNode<
+    | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+    | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+    | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+  >;
 
   constructor(
     parameters: {
       readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly byArtists?: readonly MusicArtistStub[];
+      readonly $identifierPrefix?: string;
+      readonly byArtist: MusicArtistStub;
+      readonly roleName:
+        | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+        | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+        | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+        | rdfjs.NamedNode<
+            | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+            | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+            | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+          >;
+    } & ConstructorParameters<typeof IntangibleStub>[0],
+  ) {
+    super(parameters);
+    this._$identifierPrefix = parameters.$identifierPrefix;
+    this.byArtist = parameters.byArtist;
+    if (typeof parameters.roleName === "object") {
+      this.roleName = parameters.roleName;
+    } else if (typeof parameters.roleName === "string") {
+      this.roleName = dataFactory.namedNode(parameters.roleName);
+    } else {
+      this.roleName = parameters.roleName satisfies never;
+    }
+  }
+
+  override get $identifier(): MusicArtistRoleStub.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+    return this._$identifier;
+  }
+
+  protected get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
+  }
+
+  override $equals(other: MusicArtistRoleStub): $EqualsResult {
+    return super
+      .$equals(other)
+      .chain(() =>
+        MusicArtistStub.$equals(this.byArtist, other.byArtist).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "byArtist",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $booleanEquals(this.roleName, other.roleName).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "roleName",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  override $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected override $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    super.$hashShaclProperties(_hasher);
+    this.byArtist.$hash(_hasher);
+    _hasher.update(this.roleName.termType);
+    _hasher.update(this.roleName.value);
+    return _hasher;
+  }
+
+  override $toJson(): MusicArtistRoleStub.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.$toJson(),
+        byArtist: this.byArtist.$toJson(),
+        roleName: { "@id": this.roleName.value },
+      } satisfies MusicArtistRoleStub.$Json),
+    );
+  }
+
+  override $toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode(
+          "http://purl.org/sdapps/ontology#MusicArtistRoleStub",
+        ),
+      );
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode("http://schema.org/Role"),
+      );
+    }
+
+    _resource.add(
+      MusicArtistRoleStub.$properties.byArtist["identifier"],
+      this.byArtist.$toRdf({
+        mutateGraph: mutateGraph,
+        resourceSet: resourceSet,
+      }),
+    );
+    _resource.add(
+      MusicArtistRoleStub.$properties.roleName["identifier"],
+      this.roleName,
+    );
+    return _resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace MusicArtistRoleStub {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://schema.org/Role",
+  );
+  export type $Identifier = IntangibleStubStatic.$Identifier;
+  export const $Identifier = IntangibleStubStatic.$Identifier;
+  export type $Json = {
+    readonly byArtist: MusicGroupStub.$Json | PersonStub.$Json;
+    readonly roleName: {
+      readonly "@id":
+        | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+        | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+        | "http://purl.org/sdapps/ontology#MusicSoloistRoleName";
+    };
+  } & IntangibleStubStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      byArtist: MusicArtistStub;
+      roleName: rdfjs.NamedNode<
+        | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+        | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+        | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+      >;
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromJson>>
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const byArtist = MusicArtistStub.$fromJson(
+      _jsonObject["byArtist"],
+    ).unsafeCoerce();
+    const roleName = dataFactory.namedNode(_jsonObject["roleName"]["@id"]);
+    return purify.Either.of({ ...$super0, $identifier, byArtist, roleName });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MusicArtistRoleStub> {
+    return $propertiesFromJson(json).map(
+      (properties) => new MusicArtistRoleStub(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        IntangibleStubStatic.$jsonUiSchema({ scopePrefix }),
+        { scope: `${scopePrefix}/properties/byArtist`, type: "Control" },
+        { scope: `${scopePrefix}/properties/roleName`, type: "Control" },
+      ],
+      label: "MusicArtistRoleStub",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IntangibleStubStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.literal("MusicArtistRoleStub"),
+        byArtist: MusicArtistStub.$jsonZodSchema(),
+        roleName: zod.object({
+          "@id": zod.enum([
+            "http://purl.org/sdapps/ontology#MusicConductorRoleName",
+            "http://purl.org/sdapps/ontology#MusicEnsembleRoleName",
+            "http://purl.org/sdapps/ontology#MusicSoloistRoleName",
+          ]),
+        }),
+      }),
+    );
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      byArtist: MusicArtistStub;
+      roleName: rdfjs.NamedNode<
+        | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+        | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+        | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+      >;
+    } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>>
+  > {
+    const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
+      return _resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
+              predicate: $RdfVocabularies.rdf.type,
+            }),
+          ),
+        );
+    }
+
+    const $identifier: MusicArtistRoleStub.$Identifier = _resource.identifier;
+    const _byArtistEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      MusicArtistStub
+    > = _resource
+      .values($properties.byArtist["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        MusicArtistStub.$fromRdf({
+          ..._context,
+          languageIn: _languageIn,
+          resource: _resource,
+        }),
+      );
+    if (_byArtistEither.isLeft()) {
+      return _byArtistEither;
+    }
+
+    const byArtist = _byArtistEither.unsafeCoerce();
+    const _roleNameEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      rdfjs.NamedNode<
+        | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+        | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+        | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+      >
+    > = _resource
+      .values($properties.roleName["identifier"], { unique: true })
+      .head()
+      .chain((_value) =>
+        _value.toIri().chain((iri) => {
+          switch (iri.value) {
+            case "http://purl.org/sdapps/ontology#MusicConductorRoleName":
+              return purify.Either.of<
+                rdfjsResource.Resource.ValueError,
+                rdfjs.NamedNode<
+                  | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+                >
+              >(
+                iri as rdfjs.NamedNode<"http://purl.org/sdapps/ontology#MusicConductorRoleName">,
+              );
+            case "http://purl.org/sdapps/ontology#MusicEnsembleRoleName":
+              return purify.Either.of<
+                rdfjsResource.Resource.ValueError,
+                rdfjs.NamedNode<
+                  | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+                >
+              >(
+                iri as rdfjs.NamedNode<"http://purl.org/sdapps/ontology#MusicEnsembleRoleName">,
+              );
+            case "http://purl.org/sdapps/ontology#MusicSoloistRoleName":
+              return purify.Either.of<
+                rdfjsResource.Resource.ValueError,
+                rdfjs.NamedNode<
+                  | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+                >
+              >(
+                iri as rdfjs.NamedNode<"http://purl.org/sdapps/ontology#MusicSoloistRoleName">,
+              );
+            default:
+              return purify.Left(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: iri,
+                  expectedValueType:
+                    'rdfjs.NamedNode<"http://purl.org/sdapps/ontology#MusicConductorRoleName" | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName" | "http://purl.org/sdapps/ontology#MusicSoloistRoleName">',
+                  focusResource: _resource,
+                  predicate:
+                    MusicArtistRoleStub.$properties.roleName["identifier"],
+                }),
+              );
+          }
+        }),
+      );
+    if (_roleNameEither.isLeft()) {
+      return _roleNameEither;
+    }
+
+    const roleName = _roleNameEither.unsafeCoerce();
+    return purify.Either.of({ ...$super0, $identifier, byArtist, roleName });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof MusicArtistRoleStub.$propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, MusicArtistRoleStub> {
+    return MusicArtistRoleStub.$propertiesFromRdf(parameters).map(
+      (properties) => new MusicArtistRoleStub(properties),
+    );
+  }
+
+  export const $properties = {
+    ...IntangibleStubStatic.$properties,
+    byArtist: {
+      identifier: dataFactory.namedNode("http://schema.org/byArtist"),
+    },
+    roleName: {
+      identifier: dataFactory.namedNode("http://schema.org/roleName"),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MusicArtistRoleStub.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        MusicArtistRoleStub.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MusicArtistRoleStub.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicArtistRoleStub");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicArtistRoleStub");
+    triples.push(
+      ...IntangibleStubStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}ByArtist`),
+      predicate: MusicArtistRoleStub.$properties.byArtist["identifier"],
+      subject,
+    });
+    triples.push(
+      ...MusicArtistStub.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(`${variablePrefix}ByArtist`),
+        variablePrefix: `${variablePrefix}ByArtist`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}RoleName`),
+      predicate: MusicArtistRoleStub.$properties.roleName["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("musicArtistRoleStub");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "musicArtistRoleStub");
+    for (const pattern of IntangibleStubStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}ByArtist`),
+            predicate: MusicArtistRoleStub.$properties.byArtist["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...MusicArtistStub.$sparqlWherePatterns({
+        subject: dataFactory.variable!(`${variablePrefix}ByArtist`),
+        variablePrefix: `${variablePrefix}ByArtist`,
+      }),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}RoleName`),
+            predicate: MusicArtistRoleStub.$properties.roleName["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class MusicAlbum extends CreativeWork {
+  override readonly $type = "MusicAlbum";
+  readonly byArtists: readonly (
+    | MusicGroupStub
+    | PersonStub
+    | MusicArtistRoleStub
+  )[];
+
+  constructor(
+    parameters: {
+      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly byArtists?: readonly (
+        | MusicGroupStub
+        | PersonStub
+        | MusicArtistRoleStub
+      )[];
     } & ConstructorParameters<typeof CreativeWork>[0],
   ) {
     super(parameters);
@@ -30490,20 +31319,53 @@ export class MusicAlbum extends CreativeWork {
   }
 
   override $equals(other: MusicAlbum): $EqualsResult {
-    return super
-      .$equals(other)
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, MusicArtistStub.$equals))(
-          this.byArtists,
-          other.byArtists,
-        ).mapLeft((propertyValuesUnequal) => ({
+    return super.$equals(other).chain(() =>
+      ((left, right) =>
+        $arrayEquals(
+          left,
+          right,
+          (
+            left: MusicGroupStub | PersonStub | MusicArtistRoleStub,
+            right: MusicGroupStub | PersonStub | MusicArtistRoleStub,
+          ) => {
+            if (
+              left.$type === "MusicGroupStub" &&
+              right.$type === "MusicGroupStub"
+            ) {
+              return ((left, right) => left.$equals(right))(left, right);
+            }
+            if (left.$type === "PersonStub" && right.$type === "PersonStub") {
+              return ((left, right) => left.$equals(right))(left, right);
+            }
+            if (
+              left.$type === "MusicArtistRoleStub" &&
+              right.$type === "MusicArtistRoleStub"
+            ) {
+              return ((left, right) => left.$equals(right))(left, right);
+            }
+
+            return purify.Left({
+              left,
+              right,
+              propertyName: "type",
+              propertyValuesUnequal: {
+                left: typeof left,
+                right: typeof right,
+                type: "BooleanEquals" as const,
+              },
+              type: "Property" as const,
+            });
+          },
+        ))(this.byArtists, other.byArtists).mapLeft(
+        (propertyValuesUnequal) => ({
           left: this,
           right: other,
           propertyName: "byArtists",
           propertyValuesUnequal,
           type: "Property" as const,
-        })),
-      );
+        }),
+      ),
+    );
   }
 
   override $hash<
@@ -30522,7 +31384,23 @@ export class MusicAlbum extends CreativeWork {
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
     for (const _item0 of this.byArtists) {
-      _item0.$hash(_hasher);
+      switch (_item0.$type) {
+        case "MusicGroupStub": {
+          _item0.$hash(_hasher);
+          break;
+        }
+        case "PersonStub": {
+          _item0.$hash(_hasher);
+          break;
+        }
+        case "MusicArtistRoleStub": {
+          _item0.$hash(_hasher);
+          break;
+        }
+        default:
+          _item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
     }
 
     return _hasher;
@@ -30532,7 +31410,13 @@ export class MusicAlbum extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        byArtists: this.byArtists.map((_item) => _item.$toJson()),
+        byArtists: this.byArtists.map((_item) =>
+          _item.$type === "MusicArtistRoleStub"
+            ? _item.$toJson()
+            : _item.$type === "PersonStub"
+              ? _item.$toJson()
+              : _item.$toJson(),
+        ),
       } satisfies MusicAlbum.$Json),
     );
   }
@@ -30561,7 +31445,17 @@ export class MusicAlbum extends CreativeWork {
     _resource.add(
       MusicAlbum.$properties.byArtists["identifier"],
       this.byArtists.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+        _item.$type === "MusicArtistRoleStub"
+          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _item.$type === "PersonStub"
+            ? _item.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              })
+            : _item.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              }),
       ),
     );
     return _resource;
@@ -30579,7 +31473,11 @@ export namespace MusicAlbum {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly byArtists: readonly (MusicGroupStub.$Json | PersonStub.$Json)[];
+    readonly byArtists: readonly (
+      | MusicGroupStub.$Json
+      | PersonStub.$Json
+      | MusicArtistRoleStub.$Json
+    )[];
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -30588,7 +31486,7 @@ export namespace MusicAlbum {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      byArtists: readonly MusicArtistStub[];
+      byArtists: readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromJson>>
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -30607,7 +31505,11 @@ export namespace MusicAlbum {
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
     const byArtists = _jsonObject["byArtists"].map((_item) =>
-      MusicArtistStub.$fromJson(_item).unsafeCoerce(),
+      _item.$type === "MusicArtistRoleStub"
+        ? MusicArtistRoleStub.$fromJson(_item).unsafeCoerce()
+        : _item.$type === "PersonStub"
+          ? PersonStub.$fromJson(_item).unsafeCoerce()
+          : MusicGroupStub.$fromJson(_item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, byArtists });
   }
@@ -30641,7 +31543,12 @@ export namespace MusicAlbum {
       zod.object({
         "@id": zod.string().min(1),
         $type: zod.literal("MusicAlbum"),
-        byArtists: MusicArtistStub.$jsonZodSchema()
+        byArtists: zod
+          .discriminatedUnion("$type", [
+            MusicGroupStub.$jsonZodSchema(),
+            PersonStub.$jsonZodSchema(),
+            MusicArtistRoleStub.$jsonZodSchema(),
+          ])
           .array()
           .default(() => []),
       }),
@@ -30663,7 +31570,7 @@ export namespace MusicAlbum {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      byArtists: readonly MusicArtistStub[];
+      byArtists: readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
@@ -30695,21 +31602,60 @@ export namespace MusicAlbum {
     const $identifier: MusicAlbum.$Identifier = _resource.identifier;
     const _byArtistsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      readonly MusicArtistStub[]
+      readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[]
     > = purify.Either.of([
       ..._resource
         .values($properties.byArtists["identifier"], { unique: true })
         .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              MusicArtistStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
+          (
+            _item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                MusicGroupStub.$fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              MusicGroupStub | PersonStub | MusicArtistRoleStub
+            >
+          )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    PersonStub.$fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicGroupStub | PersonStub | MusicArtistRoleStub
+                >,
+            )
+            .altLazy(
+              () =>
+                _item
+                  .toValues()
+                  .head()
+                  .chain((value) => value.toResource())
+                  .chain((_resource) =>
+                    MusicArtistRoleStub.$fromRdf({
+                      ..._context,
+                      languageIn: _languageIn,
+                      resource: _resource,
+                    }),
+                  ) as purify.Either<
+                  rdfjsResource.Resource.ValueError,
+                  MusicGroupStub | PersonStub | MusicArtistRoleStub
+                >,
             )
             .toMaybe()
             .toList(),
@@ -30812,7 +31758,22 @@ export namespace MusicAlbum {
       subject,
     });
     triples.push(
-      ...MusicArtistStub.$sparqlConstructTemplateTriples({
+      ...MusicGroupStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+    );
+    triples.push(
+      ...PersonStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
+        variablePrefix: `${variablePrefix}ByArtists`,
+      }),
+    );
+    triples.push(
+      ...MusicArtistRoleStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
@@ -30891,10 +31852,47 @@ export namespace MusicAlbum {
             ],
             type: "bgp",
           },
-          ...MusicArtistStub.$sparqlWherePatterns({
-            subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
-            variablePrefix: `${variablePrefix}ByArtists`,
-          }),
+          {
+            patterns: [
+              {
+                patterns: [
+                  ...MusicGroupStub.$sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...PersonStub.$sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  ...MusicArtistRoleStub.$sparqlWherePatterns({
+                    ignoreRdfType: true,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}ByArtists`,
+                    ),
+                    variablePrefix: `${variablePrefix}ByArtists`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
         ],
         type: "optional",
       },
@@ -39547,6 +40545,18 @@ export interface $ObjectSet {
   musicAlbumStubsCount(
     query?: Pick<$ObjectSet.Query<MusicAlbumStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  musicArtistRoleStub(
+    identifier: MusicArtistRoleStub.$Identifier,
+  ): Promise<purify.Either<Error, MusicArtistRoleStub>>;
+  musicArtistRoleStubIdentifiers(
+    query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicArtistRoleStub.$Identifier[]>>;
+  musicArtistRoleStubs(
+    query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicArtistRoleStub>[]>;
+  musicArtistRoleStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicArtistRoleStub.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
   musicComposition(
     identifier: MusicComposition.$Identifier,
   ): Promise<purify.Either<Error, MusicComposition>>;
@@ -39643,17 +40653,17 @@ export interface $ObjectSet {
   musicRecordingStubsCount(
     query?: Pick<$ObjectSet.Query<MusicRecordingStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  occupation(
-    identifier: Occupation.$Identifier,
-  ): Promise<purify.Either<Error, Occupation>>;
-  occupationIdentifiers(
-    query?: $ObjectSet.Query<Occupation.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Occupation.$Identifier[]>>;
-  occupations(
-    query?: $ObjectSet.Query<Occupation.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Occupation>[]>;
-  occupationsCount(
-    query?: Pick<$ObjectSet.Query<Occupation.$Identifier>, "where">,
+  occupationStub(
+    identifier: OccupationStub.$Identifier,
+  ): Promise<purify.Either<Error, OccupationStub>>;
+  occupationStubIdentifiers(
+    query?: $ObjectSet.Query<OccupationStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly OccupationStub.$Identifier[]>>;
+  occupationStubs(
+    query?: $ObjectSet.Query<OccupationStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, OccupationStub>[]>;
+  occupationStubsCount(
+    query?: Pick<$ObjectSet.Query<OccupationStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   order(identifier: Order.$Identifier): Promise<purify.Either<Error, Order>>;
   orderIdentifiers(
@@ -39936,15 +40946,17 @@ export interface $ObjectSet {
   reportStubsCount(
     query?: Pick<$ObjectSet.Query<ReportStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  role(identifier: Role.$Identifier): Promise<purify.Either<Error, Role>>;
-  roleIdentifiers(
-    query?: $ObjectSet.Query<Role.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Role.$Identifier[]>>;
-  roles(
-    query?: $ObjectSet.Query<Role.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Role>[]>;
-  rolesCount(
-    query?: Pick<$ObjectSet.Query<Role.$Identifier>, "where">,
+  roleStub(
+    identifier: RoleStub.$Identifier,
+  ): Promise<purify.Either<Error, RoleStub>>;
+  roleStubIdentifiers(
+    query?: $ObjectSet.Query<RoleStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RoleStub.$Identifier[]>>;
+  roleStubs(
+    query?: $ObjectSet.Query<RoleStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, RoleStub>[]>;
+  roleStubsCount(
+    query?: Pick<$ObjectSet.Query<RoleStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   service(
     identifier: ServiceStatic.$Identifier,
@@ -42647,6 +43659,69 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async musicArtistRoleStub(
+    identifier: MusicArtistRoleStub.$Identifier,
+  ): Promise<purify.Either<Error, MusicArtistRoleStub>> {
+    return this.musicArtistRoleStubSync(identifier);
+  }
+
+  musicArtistRoleStubSync(
+    identifier: MusicArtistRoleStub.$Identifier,
+  ): purify.Either<Error, MusicArtistRoleStub> {
+    return this.musicArtistRoleStubsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async musicArtistRoleStubIdentifiers(
+    query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicArtistRoleStub.$Identifier[]>> {
+    return this.musicArtistRoleStubIdentifiersSync(query);
+  }
+
+  musicArtistRoleStubIdentifiersSync(
+    query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): purify.Either<Error, readonly MusicArtistRoleStub.$Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        MusicArtistRoleStub,
+        MusicArtistRoleStub.$Identifier
+      >(MusicArtistRoleStub, query),
+    ]);
+  }
+
+  async musicArtistRoleStubs(
+    query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicArtistRoleStub>[]> {
+    return this.musicArtistRoleStubsSync(query);
+  }
+
+  musicArtistRoleStubsSync(
+    query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): readonly purify.Either<Error, MusicArtistRoleStub>[] {
+    return [
+      ...this.$objectsSync<
+        MusicArtistRoleStub,
+        MusicArtistRoleStub.$Identifier
+      >(MusicArtistRoleStub, query),
+    ];
+  }
+
+  async musicArtistRoleStubsCount(
+    query?: Pick<$ObjectSet.Query<MusicArtistRoleStub.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.musicArtistRoleStubsCountSync(query);
+  }
+
+  musicArtistRoleStubsCountSync(
+    query?: Pick<$ObjectSet.Query<MusicArtistRoleStub.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      MusicArtistRoleStub,
+      MusicArtistRoleStub.$Identifier
+    >(MusicArtistRoleStub, query);
+  }
+
   async musicComposition(
     identifier: MusicComposition.$Identifier,
   ): Promise<purify.Either<Error, MusicComposition>> {
@@ -43153,65 +44228,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >(MusicRecordingStub, query);
   }
 
-  async occupation(
-    identifier: Occupation.$Identifier,
-  ): Promise<purify.Either<Error, Occupation>> {
-    return this.occupationSync(identifier);
+  async occupationStub(
+    identifier: OccupationStub.$Identifier,
+  ): Promise<purify.Either<Error, OccupationStub>> {
+    return this.occupationStubSync(identifier);
   }
 
-  occupationSync(
-    identifier: Occupation.$Identifier,
-  ): purify.Either<Error, Occupation> {
-    return this.occupationsSync({
+  occupationStubSync(
+    identifier: OccupationStub.$Identifier,
+  ): purify.Either<Error, OccupationStub> {
+    return this.occupationStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
     })[0];
   }
 
-  async occupationIdentifiers(
-    query?: $ObjectSet.Query<Occupation.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Occupation.$Identifier[]>> {
-    return this.occupationIdentifiersSync(query);
+  async occupationStubIdentifiers(
+    query?: $ObjectSet.Query<OccupationStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly OccupationStub.$Identifier[]>> {
+    return this.occupationStubIdentifiersSync(query);
   }
 
-  occupationIdentifiersSync(
-    query?: $ObjectSet.Query<Occupation.$Identifier>,
-  ): purify.Either<Error, readonly Occupation.$Identifier[]> {
+  occupationStubIdentifiersSync(
+    query?: $ObjectSet.Query<OccupationStub.$Identifier>,
+  ): purify.Either<Error, readonly OccupationStub.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Occupation, Occupation.$Identifier>(
-        Occupation,
-        query,
-      ),
+      ...this.$objectIdentifiersSync<
+        OccupationStub,
+        OccupationStub.$Identifier
+      >(OccupationStub, query),
     ]);
   }
 
-  async occupations(
-    query?: $ObjectSet.Query<Occupation.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Occupation>[]> {
-    return this.occupationsSync(query);
+  async occupationStubs(
+    query?: $ObjectSet.Query<OccupationStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, OccupationStub>[]> {
+    return this.occupationStubsSync(query);
   }
 
-  occupationsSync(
-    query?: $ObjectSet.Query<Occupation.$Identifier>,
-  ): readonly purify.Either<Error, Occupation>[] {
+  occupationStubsSync(
+    query?: $ObjectSet.Query<OccupationStub.$Identifier>,
+  ): readonly purify.Either<Error, OccupationStub>[] {
     return [
-      ...this.$objectsSync<Occupation, Occupation.$Identifier>(
-        Occupation,
+      ...this.$objectsSync<OccupationStub, OccupationStub.$Identifier>(
+        OccupationStub,
         query,
       ),
     ];
   }
 
-  async occupationsCount(
-    query?: Pick<$ObjectSet.Query<Occupation.$Identifier>, "where">,
+  async occupationStubsCount(
+    query?: Pick<$ObjectSet.Query<OccupationStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.occupationsCountSync(query);
+    return this.occupationStubsCountSync(query);
   }
 
-  occupationsCountSync(
-    query?: Pick<$ObjectSet.Query<Occupation.$Identifier>, "where">,
+  occupationStubsCountSync(
+    query?: Pick<$ObjectSet.Query<OccupationStub.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Occupation, Occupation.$Identifier>(
-      Occupation,
+    return this.$objectsCountSync<OccupationStub, OccupationStub.$Identifier>(
+      OccupationStub,
       query,
     );
   }
@@ -44578,54 +45653,64 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async role(
-    identifier: Role.$Identifier,
-  ): Promise<purify.Either<Error, Role>> {
-    return this.roleSync(identifier);
+  async roleStub(
+    identifier: RoleStub.$Identifier,
+  ): Promise<purify.Either<Error, RoleStub>> {
+    return this.roleStubSync(identifier);
   }
 
-  roleSync(identifier: Role.$Identifier): purify.Either<Error, Role> {
-    return this.rolesSync({
+  roleStubSync(
+    identifier: RoleStub.$Identifier,
+  ): purify.Either<Error, RoleStub> {
+    return this.roleStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
     })[0];
   }
 
-  async roleIdentifiers(
-    query?: $ObjectSet.Query<Role.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Role.$Identifier[]>> {
-    return this.roleIdentifiersSync(query);
+  async roleStubIdentifiers(
+    query?: $ObjectSet.Query<RoleStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RoleStub.$Identifier[]>> {
+    return this.roleStubIdentifiersSync(query);
   }
 
-  roleIdentifiersSync(
-    query?: $ObjectSet.Query<Role.$Identifier>,
-  ): purify.Either<Error, readonly Role.$Identifier[]> {
+  roleStubIdentifiersSync(
+    query?: $ObjectSet.Query<RoleStub.$Identifier>,
+  ): purify.Either<Error, readonly RoleStub.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Role, Role.$Identifier>(Role, query),
+      ...this.$objectIdentifiersSync<RoleStub, RoleStub.$Identifier>(
+        RoleStub,
+        query,
+      ),
     ]);
   }
 
-  async roles(
-    query?: $ObjectSet.Query<Role.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Role>[]> {
-    return this.rolesSync(query);
+  async roleStubs(
+    query?: $ObjectSet.Query<RoleStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, RoleStub>[]> {
+    return this.roleStubsSync(query);
   }
 
-  rolesSync(
-    query?: $ObjectSet.Query<Role.$Identifier>,
-  ): readonly purify.Either<Error, Role>[] {
-    return [...this.$objectsSync<Role, Role.$Identifier>(Role, query)];
+  roleStubsSync(
+    query?: $ObjectSet.Query<RoleStub.$Identifier>,
+  ): readonly purify.Either<Error, RoleStub>[] {
+    return [
+      ...this.$objectsSync<RoleStub, RoleStub.$Identifier>(RoleStub, query),
+    ];
   }
 
-  async rolesCount(
-    query?: Pick<$ObjectSet.Query<Role.$Identifier>, "where">,
+  async roleStubsCount(
+    query?: Pick<$ObjectSet.Query<RoleStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.rolesCountSync(query);
+    return this.roleStubsCountSync(query);
   }
 
-  rolesCountSync(
-    query?: Pick<$ObjectSet.Query<Role.$Identifier>, "where">,
+  roleStubsCountSync(
+    query?: Pick<$ObjectSet.Query<RoleStub.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Role, Role.$Identifier>(Role, query);
+    return this.$objectsCountSync<RoleStub, RoleStub.$Identifier>(
+      RoleStub,
+      query,
+    );
   }
 
   async service(
@@ -47109,6 +48194,46 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
+  async musicArtistRoleStub(
+    identifier: MusicArtistRoleStub.$Identifier,
+  ): Promise<purify.Either<Error, MusicArtistRoleStub>> {
+    return (
+      await this.musicArtistRoleStubs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async musicArtistRoleStubIdentifiers(
+    query?: $SparqlObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly MusicArtistRoleStub.$Identifier[]>> {
+    return this.$objectIdentifiers<MusicArtistRoleStub.$Identifier>(
+      MusicArtistRoleStub,
+      query,
+    );
+  }
+
+  async musicArtistRoleStubs(
+    query?: $SparqlObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, MusicArtistRoleStub>[]> {
+    return this.$objects<MusicArtistRoleStub, MusicArtistRoleStub.$Identifier>(
+      MusicArtistRoleStub,
+      query,
+    );
+  }
+
+  async musicArtistRoleStubsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<MusicArtistRoleStub.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<MusicArtistRoleStub.$Identifier>(
+      MusicArtistRoleStub,
+      query,
+    );
+  }
+
   async musicComposition(
     identifier: MusicComposition.$Identifier,
   ): Promise<purify.Either<Error, MusicComposition>> {
@@ -47404,32 +48529,41 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async occupation(
-    identifier: Occupation.$Identifier,
-  ): Promise<purify.Either<Error, Occupation>> {
+  async occupationStub(
+    identifier: OccupationStub.$Identifier,
+  ): Promise<purify.Either<Error, OccupationStub>> {
     return (
-      await this.occupations({
+      await this.occupationStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     )[0];
   }
 
-  async occupationIdentifiers(
-    query?: $SparqlObjectSet.Query<Occupation.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Occupation.$Identifier[]>> {
-    return this.$objectIdentifiers<Occupation.$Identifier>(Occupation, query);
+  async occupationStubIdentifiers(
+    query?: $SparqlObjectSet.Query<OccupationStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly OccupationStub.$Identifier[]>> {
+    return this.$objectIdentifiers<OccupationStub.$Identifier>(
+      OccupationStub,
+      query,
+    );
   }
 
-  async occupations(
-    query?: $SparqlObjectSet.Query<Occupation.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Occupation>[]> {
-    return this.$objects<Occupation, Occupation.$Identifier>(Occupation, query);
+  async occupationStubs(
+    query?: $SparqlObjectSet.Query<OccupationStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, OccupationStub>[]> {
+    return this.$objects<OccupationStub, OccupationStub.$Identifier>(
+      OccupationStub,
+      query,
+    );
   }
 
-  async occupationsCount(
-    query?: Pick<$SparqlObjectSet.Query<Occupation.$Identifier>, "where">,
+  async occupationStubsCount(
+    query?: Pick<$SparqlObjectSet.Query<OccupationStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<Occupation.$Identifier>(Occupation, query);
+    return this.$objectsCount<OccupationStub.$Identifier>(
+      OccupationStub,
+      query,
+    );
   }
 
   async order(
@@ -48211,32 +49345,32 @@ export class $SparqlObjectSet implements $ObjectSet {
     return this.$objectsCount<ReportStub.$Identifier>(ReportStub, query);
   }
 
-  async role(
-    identifier: Role.$Identifier,
-  ): Promise<purify.Either<Error, Role>> {
+  async roleStub(
+    identifier: RoleStub.$Identifier,
+  ): Promise<purify.Either<Error, RoleStub>> {
     return (
-      await this.roles({
+      await this.roleStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     )[0];
   }
 
-  async roleIdentifiers(
-    query?: $SparqlObjectSet.Query<Role.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Role.$Identifier[]>> {
-    return this.$objectIdentifiers<Role.$Identifier>(Role, query);
+  async roleStubIdentifiers(
+    query?: $SparqlObjectSet.Query<RoleStub.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RoleStub.$Identifier[]>> {
+    return this.$objectIdentifiers<RoleStub.$Identifier>(RoleStub, query);
   }
 
-  async roles(
-    query?: $SparqlObjectSet.Query<Role.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Role>[]> {
-    return this.$objects<Role, Role.$Identifier>(Role, query);
+  async roleStubs(
+    query?: $SparqlObjectSet.Query<RoleStub.$Identifier>,
+  ): Promise<readonly purify.Either<Error, RoleStub>[]> {
+    return this.$objects<RoleStub, RoleStub.$Identifier>(RoleStub, query);
   }
 
-  async rolesCount(
-    query?: Pick<$SparqlObjectSet.Query<Role.$Identifier>, "where">,
+  async roleStubsCount(
+    query?: Pick<$SparqlObjectSet.Query<RoleStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<Role.$Identifier>(Role, query);
+    return this.$objectsCount<RoleStub.$Identifier>(RoleStub, query);
   }
 
   async service(
@@ -48837,7 +49971,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       (pattern) => pattern.type !== "optional",
     );
     if (wherePatterns.length === 0) {
-      return purify.Left(new Error("no SPARQL WHERE patterns for count"));
+      return purify.Left(
+        new Error("no required SPARQL WHERE patterns for count"),
+      );
     }
 
     const selectQueryString = this.$sparqlGenerator.stringify({

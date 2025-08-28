@@ -131,6 +131,33 @@ sdapps:MusicAlbumStub
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
+sdapps:MusicArtistRoleStub
+    shaclmate:fromRdfType schema:Role ;
+    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub ;
+    sh:property sdapps:MusicArtistRoleStub-byArtist, sdapps:MusicArtistRoleStub-roleName .
+
+sdapps:MusicArtistRoleStub-byArtist
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "byArtist" ;
+    sh:node sdapps:MusicArtistStub ;
+    sh:path schema:byArtist .
+
+sdapps:MusicArtistRoleStub-roleName
+    a sh:PropertyShape ;
+    sh:in (sdapps:MusicConductorRoleName
+        sdapps:MusicEnsembleRoleName
+        sdapps:MusicSoloistRoleName
+    ) ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "roleName" ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:roleName .
+
 sdapps:MusicArtistStub
     a sh:NodeShape ;
     sh:xone (sdapps:MusicGroupStub
@@ -156,6 +183,11 @@ sdapps:MusicRecordingStub
     shaclmate:rdfType schema:MusicRecording ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:CreativeWorkStub .
+
+sdapps:OccupationStub
+    shaclmate:rdfType schema:Occupation ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub .
 
 sdapps:OrderStub
     shaclmate:rdfType schema:Order ;
@@ -213,6 +245,13 @@ sdapps:ReportStub
     shaclmate:rdfType schema:Report ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:ArticleStub .
+
+sdapps:RoleStub
+    shaclmate:fromRdfType schema:Role ;
+    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf sdapps:IntangibleStub ;
+    sh:property schema:Role-endDate, schema:Role-roleName, schema:Role-startDate .
 
 sdapps:ServiceStub
     shaclmate:rdfType schema:Service ;
@@ -590,8 +629,14 @@ schema:MusicAlbum
 schema:MusicAlbum-byArtists
     a sh:PropertyShape ;
     sh:name "byArtists" ;
-    sh:node sdapps:MusicArtistStub ;
-    sh:path schema:byArtist .
+    sh:path schema:byArtist ;
+    sh:xone ([
+            sh:node sdapps:MusicArtistStub
+        ]
+        [
+            sh:node sdapps:MusicArtistRoleStub
+        ]
+    ) .
 
 schema:MusicComposition
     a owl:Class, sh:NodeShape ;
@@ -640,8 +685,14 @@ schema:MusicRecording
 schema:MusicRecording-byArtists
     a sh:PropertyShape ;
     sh:name "byArtists" ;
-    sh:node sdapps:MusicArtistStub ;
-    sh:path schema:byArtist .
+    sh:path schema:byArtist ;
+    sh:xone ([
+            sh:node sdapps:MusicArtistStub
+        ]
+        [
+            sh:node sdapps:MusicArtistRoleStub
+        ]
+    ) .
 
 schema:MusicRecording-duration
     a sh:PropertyShape ;
@@ -672,10 +723,6 @@ schema:MusicRecording-recordingOf
     sh:maxCount 1 ;
     sh:node sdapps:MusicCompositionStub ;
     sh:path schema:recordingOf .
-
-schema:Occupation
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:Intangible .
 
 schema:Order
     a owl:Class, sh:NodeShape ;
@@ -763,10 +810,10 @@ schema:Person-hasOccupation
     a sh:PropertyShape ;
     sh:path schema:hasOccupation ;
     sh:xone ([
-            sh:node schema:Occupation
+            sh:node sdapps:OccupationStub
         ]
         [
-            sh:node schema:Role
+            sh:node sdapps:RoleStub
         ]
     ) .
 
@@ -843,12 +890,6 @@ schema:RadioSeries-episodes
 schema:Report
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf schema:Article .
-
-schema:Role
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf schema:Intangible ;
-    sh:property schema:Role-endDate, schema:Role-roleName, schema:Role-startDate .
 
 schema:Role-endDate
     a sh:PropertyShape ;
