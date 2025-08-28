@@ -132,8 +132,8 @@ sdapps:MusicAlbumStub
     rdfs:subClassOf sdapps:CreativeWorkStub .
 
 sdapps:MusicArtistRoleStub
-    shaclmate:fromRdfType schema:Role ;
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
+    shaclmate:rdfType schema:Role ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub ;
     sh:property sdapps:MusicArtistRoleStub-byArtist, sdapps:MusicArtistRoleStub-roleName .
@@ -247,8 +247,8 @@ sdapps:ReportStub
     rdfs:subClassOf sdapps:ArticleStub .
 
 sdapps:RoleStub
-    shaclmate:fromRdfType schema:Role ;
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
+    shaclmate:rdfType schema:Role ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf sdapps:IntangibleStub ;
     sh:property schema:Role-endDate, schema:Role-roleName, schema:Role-startDate .

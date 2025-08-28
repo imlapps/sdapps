@@ -12486,12 +12486,6 @@ export class RoleStub extends IntangibleStub {
     if (!ignoreRdfType) {
       _resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
-          "http://purl.org/sdapps/ontology#RoleStub",
-        ),
-      );
-      _resource.add(
-        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://schema.org/Role"),
       );
     }
@@ -30816,12 +30810,6 @@ export class MusicArtistRoleStub extends IntangibleStub {
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
-        $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
-          "http://purl.org/sdapps/ontology#MusicArtistRoleStub",
-        ),
-      );
       _resource.add(
         $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://schema.org/Role"),
