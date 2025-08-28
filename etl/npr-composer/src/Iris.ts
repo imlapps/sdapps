@@ -38,17 +38,12 @@ export namespace Iris {
 
   export function album(playlistItem: PlaylistItem): NamedNode {
     return dataFactory.namedNode(
-      `${radioBaseIri}music-album/${hashStrings(playlistItem.artistName, playlistItem.collectionName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists)}`,
+      `${radioBaseIri}album/${hashStrings(playlistItem.artistName, playlistItem.collectionName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists)}`,
     );
   }
 
-  export function artist({
-    name,
-    roleName,
-  }: { name: string; roleName?: MusicArtistRoleStub["roleName"] }): NamedNode {
-    return dataFactory.namedNode(
-      `${radioBaseIri}${artistRoleNameSlug(roleName)}/${hashStrings(name)}`,
-    );
+  export function artist({ name }: { name: string }): NamedNode {
+    return dataFactory.namedNode(`${radioBaseIri}artist/${hashStrings(name)}`);
   }
 
   export function artistRole({
@@ -71,7 +66,7 @@ export namespace Iris {
       case "http://purl.org/sdapps/ontology#MusicEnsembleRoleName":
         return "ensemble";
       case "http://purl.org/sdapps/ontology#MusicSoloistRoleName":
-        return "solist";
+        return "soloist";
     }
   }
 
@@ -133,7 +128,7 @@ export namespace Iris {
 
   export function recording(playlistItem: PlaylistItem): NamedNode {
     return dataFactory.namedNode(
-      `${radioBaseIri}music-recording/${hashStrings(playlistItem.artistName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists, playlistItem.trackName)}`,
+      `${radioBaseIri}recording/${hashStrings(playlistItem.artistName, playlistItem.composerName, playlistItem.conductor, playlistItem.ensembles, playlistItem.soloists, playlistItem.trackName)}`,
     );
   }
 
