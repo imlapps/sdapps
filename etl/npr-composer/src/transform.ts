@@ -4,7 +4,10 @@ import {
   BroadcastEvent,
   ItemList,
   ListItem,
+  Model,
   MusicAlbum,
+  MusicArtistRoleStub,
+  MusicArtistStub,
   MusicComposition,
   MusicGroup,
   MusicPlaylist,
@@ -14,17 +17,19 @@ import {
   RadioBroadcastServiceStub,
   RadioEpisode,
   RadioSeries,
-  Thing,
   stubify,
 } from "@sdapps/models";
 import * as dates from "date-fns";
-import N3 from "n3";
+import N3, { DataFactory } from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { z } from "zod";
 import { ExtractResult } from "./ExtractResult";
 import { Iris } from "./Iris";
 import { logger } from "./logger";
+
+const RECOGNIZE_ARTIST_WIKIDATA_ENTITIES = false;
+const RECOGNIZE_COMPOSER_WIKIDATA_ENTITIES = true;
 
 type PlaylistJson = z.infer<typeof playlistJsonSchema>;
 
@@ -55,7 +60,7 @@ async function* transformPlaylistJson({
   playlistJson: PlaylistJson;
   radioBroadcastService: RadioBroadcastServiceStub;
   ucsId: string;
-}): AsyncIterable<Thing> {
+}): AsyncIterable<Model> {
   const radioEpisodeBroadcastEvent = new BroadcastEvent({
     endDate: new Date(playlistJson.end_utc),
     $identifier: Iris.episodeBroadcastEvent({
@@ -114,116 +119,165 @@ async function* transformPlaylistJson({
       new Date(),
     );
 
-    const composers: (Organization | Person)[] = [];
-    const artists: (MusicGroup | Person)[] = [];
+    const artists: (MusicArtistStub | MusicArtistRoleStub)[] = [];
     const artistNames = new Set<string>();
+    const artistNamesByRole: [
+      (
+        | { identifier: MusicArtistRoleStub["roleName"]; label: string }
+        | undefined
+      ),
+      string | undefined,
+    ][] = [
+      [
+        {
+          identifier: DataFactory.namedNode(
+            "http://purl.org/sdapps/ontology#MusicConductorRoleName",
+          ),
+          label: "conductor",
+        },
+        playlistItemJson.conductor,
+      ],
+      [
+        {
+          identifier: DataFactory.namedNode(
+            "http://purl.org/sdapps/ontology#MusicEnsembleRoleName",
+          ),
+          label: "ensemble",
+        },
+        playlistItemJson.ensembles,
+      ],
+      [
+        {
+          identifier: DataFactory.namedNode(
+            "http://purl.org/sdapps/ontology#MusicSoloistRoleName",
+          ),
+          label: "soloist",
+        },
+        playlistItemJson.soloists,
+      ],
+      // Should be last in order to prefer names associated with more specific roles
+      [undefined, playlistItemJson.artistName],
+    ];
 
-    for (const [role, name] of Object.entries({
-      "": playlistItemJson.artistName,
-      composer: playlistItemJson.composerName,
-      conductor: playlistItemJson.conductor,
-      ensembles: playlistItemJson.ensembles,
-      soloists: playlistItemJson.soloists,
-    })) {
-      if (!name || artistNames.has(name)) {
+    for (const [roleName, artistName] of artistNamesByRole) {
+      if (!artistName || artistNames.has(artistName)) {
         continue;
       }
-      const qualifiedName = role.length > 0 ? `${name} (${role})` : name;
 
-      const wikidataEntities =
-        role === "composer"
-          ? (
-              await wikidataEntityRecognizer.recognize({ name, role })
-            ).orDefault([])
-          : [];
+      const artistsWithRole: (MusicGroup | Person)[] = [];
 
-      const wikidataArtists: (MusicGroup | Person)[] = [];
-      for (const wikidataEntity of wikidataEntities) {
-        (
-          await wikidataEntity.toThing({
-            alternateNames:
-              wikidataEntities.length === 1 &&
-              wikidataEntities[0].name.isJust() &&
-              wikidataEntities[0].name.unsafeCoerce() !== name
-                ? [name]
-                : undefined,
+      const qualifiedName = roleName
+        ? `${artistName} (${roleName.label})`
+        : artistName;
+
+      if (RECOGNIZE_ARTIST_WIKIDATA_ENTITIES && roleName) {
+        // Only do NER on artists with known roles.
+
+        const wikidataEntities = (
+          await wikidataEntityRecognizer.recognize({
+            name: artistName,
+            role: roleName?.label,
           })
-        )
-          .ifLeft((error) =>
-            logger.warn(
-              "error converting Wikidata entity %s to schema.org: %s",
-              wikidataEntity.id,
-              error.message,
-            ),
+        ).orDefault([]);
+
+        for (const wikidataEntity of wikidataEntities) {
+          (
+            await wikidataEntity.toThing({
+              alternateNames:
+                wikidataEntities.length === 1 &&
+                wikidataEntities[0].name.isJust() &&
+                wikidataEntities[0].name.unsafeCoerce() !== artistName
+                  ? [artistName]
+                  : undefined,
+            })
           )
-          .ifRight((thing) => {
-            switch (thing.$type) {
-              case "MusicGroup":
-              case "Person":
-                wikidataArtists.push(thing as MusicGroup | Person);
-                break;
-              default:
+            .ifLeft((error) =>
+              logger.warn(
+                "error converting Wikidata entity %s to schema.org: %s",
+                wikidataEntity.id,
+                error.message,
+              ),
+            )
+            .ifRight((thing) => {
+              if (thing instanceof MusicGroup || thing instanceof Person) {
+                artistsWithRole.push(thing as MusicGroup | Person);
+              } else {
                 logger.warn(
                   `Wikidata entity ${wikidataEntity.id} converted to a ${thing.$type}`,
                 );
-                break;
-            }
-          });
+              }
+            });
+        }
+
+        if (
+          artistsWithRole.length > 0 &&
+          artistsWithRole.length === wikidataEntities.length
+        ) {
+          const wikidataEntitiesString = wikidataEntities
+            .map(
+              (wikidataEntity, i) =>
+                `${wikidataEntity.id} (${artistsWithRole[i].name.extract()})`,
+            )
+            .join(", ");
+          logger.trace(
+            `recognized Wikidata entities in "${qualifiedName}": ${wikidataEntitiesString}`,
+          );
+        } else {
+          // logger.warn(
+          //   `unable to recognize Wikidata entities in "${qualifiedName}"`,
+          // );
+        }
       }
 
-      if (
-        wikidataArtists.length > 0 &&
-        wikidataArtists.length === wikidataEntities.length
-      ) {
-        const wikidataEntitiesString = wikidataEntities
-          .map(
-            (wikidataEntity, i) =>
-              `${wikidataEntity.id} (${wikidataArtists[i].name.extract()})`,
-          )
-          .join(", ");
-        logger.trace(
-          `recognized Wikidata entities in "${qualifiedName}": ${wikidataEntitiesString}`,
+      if (artistsWithRole.length === 0) {
+        logger.trace("synthesizing artist for %s", qualifiedName);
+        artistsWithRole.push(
+          new (roleName?.identifier.value ===
+          "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+            ? MusicGroup
+            : Person)({
+            $identifier: Iris.artist({
+              name: artistName,
+              roleName: roleName?.identifier,
+            }),
+            name: qualifiedName,
+          }),
         );
-        artists.push(...wikidataArtists);
-        yield* wikidataArtists;
-        if (role === "composer") {
-          composers.push(...wikidataArtists);
-        }
-      } else {
-        // logger.warn(
-        //   `unable to recognize Wikidata entities in "${qualifiedName}", synthesizing MusicGroup`,
-        // );
-        const syntheticMusicGroup = new MusicGroup({
-          $identifier: Iris.musicGroup({ name: qualifiedName }),
-          name: qualifiedName,
-        });
-        artists.push(syntheticMusicGroup);
-        yield syntheticMusicGroup;
-        if (role === "composer") {
-          composers.push(syntheticMusicGroup);
+      }
+
+      for (const artist of artistsWithRole) {
+        yield artist;
+
+        const artistStub =
+          artist instanceof MusicGroup ? stubify(artist) : stubify(artist);
+        if (roleName) {
+          artists.push(
+            new MusicArtistRoleStub({
+              byArtist: artistStub,
+              $identifier: Iris.artistRole({
+                name: artistName,
+                roleName: roleName.identifier,
+              }),
+              roleName: roleName.identifier,
+            }),
+          );
+        } else {
+          artists.push(artistStub);
         }
       }
     }
 
     if (artists.length === 0) {
       logger.debug(
-        `playlist item ${playlistItemJson.id} has no group names, skipping: ${JSON.stringify(playlistItemJson)}`,
+        `playlist item ${playlistItemJson.id} has no artists, skipping: ${JSON.stringify(playlistItemJson)}`,
       );
       continue;
     }
-    const artistStubs = artists.map((artist) => {
-      switch (artist.$type) {
-        case "MusicGroup":
-          return stubify(artist);
-        case "Person":
-          return stubify(artist);
-      }
-    });
 
     const musicAlbum = playlistItemJson.collectionName
       ? new MusicAlbum({
-          byArtists: artistStubs,
-          $identifier: Iris.musicAlbum(playlistItemJson),
+          byArtists: artists,
+          $identifier: Iris.album(playlistItemJson),
           name: playlistItemJson.collectionName,
         })
       : undefined;
@@ -231,18 +285,72 @@ async function* transformPlaylistJson({
       yield musicAlbum;
     }
 
-    const musicComposition =
-      composers.length > 0
-        ? new MusicComposition({
-            composers: composers.map((composer) =>
-              composer.$type === "Person"
-                ? stubify(composer)
-                : stubify(composer),
-            ),
-            $identifier: Iris.musicComposition(playlistItemJson),
-            name: playlistItemJson.trackName,
+    let musicComposition: MusicComposition | undefined;
+    if (playlistItemJson.composerName) {
+      const composers: (Organization | Person)[] = [];
+
+      if (RECOGNIZE_COMPOSER_WIKIDATA_ENTITIES) {
+        const wikidataEntities = (
+          await wikidataEntityRecognizer.recognize({
+            name: playlistItemJson.composerName,
+            role: "composer",
           })
-        : undefined;
+        ).orDefault([]);
+        for (const wikidataEntity of wikidataEntities) {
+          (
+            await wikidataEntity.toThing({
+              alternateNames:
+                wikidataEntities.length === 1 &&
+                wikidataEntities[0].name.isJust() &&
+                wikidataEntities[0].name.unsafeCoerce() !==
+                  playlistItemJson.composerName
+                  ? [playlistItemJson.composerName]
+                  : undefined,
+            })
+          )
+            .ifLeft((error) =>
+              logger.warn(
+                "error converting Wikidata entity %s to schema.org: %s",
+                wikidataEntity.id,
+                error.message,
+              ),
+            )
+            .ifRight((thing) => {
+              if (thing instanceof Organization || thing instanceof Person) {
+                composers.push(thing);
+              } else {
+                logger.warn(
+                  `Wikidata entity ${wikidataEntity.id} converted to a ${thing.$type}`,
+                );
+              }
+            });
+        }
+
+        if (composers.length === 0) {
+          // logger.warn(
+          //   `unable to recognize Wikidata entities in "${qualifiedName}", synthesizing composer Person`,
+          // );
+          composers.push(
+            new Person({
+              $identifier: Iris.composer({
+                name: playlistItemJson.composerName,
+              }),
+              name: playlistItemJson.composerName,
+            }),
+          );
+        }
+
+        yield* composers;
+
+        musicComposition = new MusicComposition({
+          composers: composers.map((composer) =>
+            composer instanceof Person ? stubify(composer) : stubify(composer),
+          ),
+          $identifier: Iris.composition(playlistItemJson),
+          name: playlistItemJson.trackName,
+        });
+      }
+    }
 
     const musicRecordingBroadcastEvent = new BroadcastEvent({
       endDate: new Date(startDate.getTime() + playlistItemJson._duration),
@@ -263,9 +371,9 @@ async function* transformPlaylistJson({
       duration: dates.formatISODuration(
         durationSecondsToDuration(playlistItemJson._duration / 1000),
       ),
-      byArtists: artistStubs,
+      byArtists: artists,
       inAlbum: musicAlbum ? stubify(musicAlbum) : undefined,
-      $identifier: Iris.musicRecording(playlistItemJson),
+      $identifier: Iris.recording(playlistItemJson),
       inPlaylists: [musicPlaylistStub],
       name: playlistItemJson.trackName,
       publication: [musicRecordingBroadcastEventStub],
