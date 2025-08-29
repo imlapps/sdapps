@@ -17,7 +17,10 @@ const compositionSchema = z.object({
 const dateTimeSchema = z.string().datetime({ offset: true });
 
 const itemSchema = z.object({
-  artistIdentifiers: z.array(identifierSchema),
+  artistIdentifiers: z.record(
+    z.enum(["", "conductor", "ensemble", "soloist"]),
+    z.array(identifierSchema),
+  ),
   endDate: dateTimeSchema,
   compositionIdentifier: identifierSchema.optional(),
   label: z.string(),

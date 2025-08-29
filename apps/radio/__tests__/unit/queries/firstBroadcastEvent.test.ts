@@ -20,7 +20,7 @@ describe("firstBroadcastEvent", () => {
       .unsafeCoerce()
       .unsafeCoerce();
     const startDate = broadcastEvent.startDate.unsafeCoerce();
-    expect(startDate.getUTCDate()).toStrictEqual(23);
+    expect(startDate.getUTCDate()).toStrictEqual(25);
     expect(startDate.getUTCMonth() + 1).toStrictEqual(8);
     expect(startDate.getUTCFullYear()).toStrictEqual(2025);
   });

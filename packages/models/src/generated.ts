@@ -2128,14 +2128,12 @@ export namespace ThingStatic {
     });
     triples.push(
       ...CreativeWorkStubStatic.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}SubjectOf`),
         variablePrefix: `${variablePrefix}SubjectOf`,
       }),
     );
     triples.push(
       ...EventStubStatic.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}SubjectOf`),
         variablePrefix: `${variablePrefix}SubjectOf`,
       }),
@@ -2356,7 +2354,6 @@ export namespace ThingStatic {
               {
                 patterns: [
                   ...CreativeWorkStubStatic.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}SubjectOf`,
                     ),
@@ -2368,7 +2365,6 @@ export namespace ThingStatic {
               {
                 patterns: [
                   ...EventStubStatic.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}SubjectOf`,
                     ),
@@ -23846,14 +23842,12 @@ export namespace Person {
     });
     triples.push(
       ...OccupationStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}HasOccupation`),
         variablePrefix: `${variablePrefix}HasOccupation`,
       }),
     );
     triples.push(
       ...RoleStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}HasOccupation`),
         variablePrefix: `${variablePrefix}HasOccupation`,
       }),
@@ -24041,7 +24035,6 @@ export namespace Person {
               {
                 patterns: [
                   ...OccupationStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}HasOccupation`,
                     ),
@@ -24053,7 +24046,6 @@ export namespace Person {
               {
                 patterns: [
                   ...RoleStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}HasOccupation`,
                     ),
@@ -27082,21 +27074,18 @@ export namespace MusicRecording {
     });
     triples.push(
       ...MusicGroupStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
     );
     triples.push(
       ...PersonStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
     );
     triples.push(
       ...MusicArtistRoleStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
@@ -27108,7 +27097,6 @@ export namespace MusicRecording {
     });
     triples.push(
       ...QuantitativeValueStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}Duration`),
         variablePrefix: `${variablePrefix}Duration`,
       }),
@@ -27229,7 +27217,6 @@ export namespace MusicRecording {
               {
                 patterns: [
                   ...MusicGroupStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}ByArtists`,
                     ),
@@ -27241,7 +27228,6 @@ export namespace MusicRecording {
               {
                 patterns: [
                   ...PersonStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}ByArtists`,
                     ),
@@ -27253,7 +27239,6 @@ export namespace MusicRecording {
               {
                 patterns: [
                   ...MusicArtistRoleStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}ByArtists`,
                     ),
@@ -27286,7 +27271,6 @@ export namespace MusicRecording {
               {
                 patterns: [
                   ...QuantitativeValueStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(`${variablePrefix}Duration`),
                     variablePrefix: `${variablePrefix}Duration`,
                   }),
@@ -28106,14 +28090,12 @@ export namespace MusicPlaylist {
     });
     triples.push(
       ...MusicRecordingStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}Tracks`),
         variablePrefix: `${variablePrefix}Tracks`,
       }),
     );
     triples.push(
       ...ItemListStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}Tracks`),
         variablePrefix: `${variablePrefix}Tracks`,
       }),
@@ -28198,7 +28180,6 @@ export namespace MusicPlaylist {
               {
                 patterns: [
                   ...MusicRecordingStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(`${variablePrefix}Tracks`),
                     variablePrefix: `${variablePrefix}Tracks`,
                   }),
@@ -28208,7 +28189,6 @@ export namespace MusicPlaylist {
               {
                 patterns: [
                   ...ItemListStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(`${variablePrefix}Tracks`),
                     variablePrefix: `${variablePrefix}Tracks`,
                   }),
@@ -31747,21 +31727,18 @@ export namespace MusicAlbum {
     });
     triples.push(
       ...MusicGroupStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
     );
     triples.push(
       ...PersonStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
     );
     triples.push(
       ...MusicArtistRoleStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ByArtists`),
         variablePrefix: `${variablePrefix}ByArtists`,
       }),
@@ -31845,7 +31822,6 @@ export namespace MusicAlbum {
               {
                 patterns: [
                   ...MusicGroupStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}ByArtists`,
                     ),
@@ -31857,7 +31833,6 @@ export namespace MusicAlbum {
               {
                 patterns: [
                   ...PersonStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}ByArtists`,
                     ),
@@ -31869,7 +31844,6 @@ export namespace MusicAlbum {
               {
                 patterns: [
                   ...MusicArtistRoleStub.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}ByArtists`,
                     ),

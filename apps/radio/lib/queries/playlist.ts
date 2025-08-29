@@ -294,15 +294,48 @@ export async function playlist(parameters: {
         ...eventDates(musicRecordingBroadcastEvent),
         // Populate the artist, composer, and composition lookups as side effects of map.
         // Inelegant but concise.
-        artistIdentifiers: musicRecording.byArtists.map((artist) => {
-          const artistIdentifier = Identifier.toString(artist.$identifier);
-          if (!playlist.artistsByIdentifier[artistIdentifier]) {
-            playlist.artistsByIdentifier[artistIdentifier] = {
-              label: displayLabel(artist),
-            };
-          }
-          return artistIdentifier;
-        }),
+        artistIdentifiers: musicRecording.byArtists.reduce(
+          (map, artist) => {
+            let artistIdentifier: string;
+            let artistLabel: string;
+            let artistRole: keyof Playlist["episodes"][0]["items"][0]["artistIdentifiers"];
+            if (artist.$type === "MusicArtistRoleStub") {
+              artistIdentifier = Identifier.toString(
+                artist.byArtist.$identifier,
+              );
+              artistLabel = displayLabel(artist.byArtist);
+              switch (artist.roleName.value) {
+                case "http://purl.org/sdapps/ontology#MusicConductorRoleName":
+                  artistRole = "conductor";
+                  break;
+                case "http://purl.org/sdapps/ontology#MusicEnsembleRoleName":
+                  artistRole = "ensemble";
+                  break;
+                case "http://purl.org/sdapps/ontology#MusicSoloistRoleName":
+                  artistRole = "soloist";
+                  break;
+              }
+            } else {
+              artistIdentifier = Identifier.toString(artist.$identifier);
+              artistLabel = displayLabel(artist);
+              artistRole = "";
+            }
+
+            if (!map[artistRole]) {
+              map[artistRole] = [];
+            }
+            map[artistRole].push(artistIdentifier);
+
+            if (!playlist.artistsByIdentifier[artistIdentifier]) {
+              playlist.artistsByIdentifier[artistIdentifier] = {
+                label: artistLabel,
+              };
+            }
+
+            return map;
+          },
+          {} as Record<string, string[]>,
+        ),
         compositionIdentifier: musicRecording.recordingOf
           .map((compositionStub) => {
             const compositionIdentifier = Identifier.toString(
