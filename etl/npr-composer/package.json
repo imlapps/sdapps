@@ -9,7 +9,7 @@
     "node-fetch-cache": "^5.0.2",
     "pino": "^9.1.0",
     "purify-ts": "^2.1.0",
-    "rdfjs-resource": "1.0.19",
+    "rdfjs-resource": "1.0.20",
     "ts-invariant": "^0.10.3",
     "tsx": "^4.19.3",
     "typescript": "5.8.2",
