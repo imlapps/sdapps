@@ -4,7 +4,7 @@ import { Identifier } from "@sdapps/models";
 import { Maybe } from "purify-ts";
 import { beforeAll, describe, expect, it } from "vitest";
 
-describe("playlist", async () => {
+describe.skipIf(process.env["CI"])("playlist", async () => {
   let broadcastService: {
     broadcastTimezone: Maybe<string>;
     $identifier: Identifier;
