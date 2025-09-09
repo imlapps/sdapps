@@ -1,7 +1,7 @@
 import { testObjectSet } from "@/__tests__/unit/testObjectSet";
 import * as queries from "@/lib/queries";
 import { Identifier } from "@sdapps/models";
-import { Either, Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { beforeAll, describe, expect, it } from "vitest";
 
 describe("playlist", async () => {
@@ -11,9 +11,9 @@ describe("playlist", async () => {
   };
 
   beforeAll(async () => {
-    const radioBroadcastServices = Either.rights(
-      await testObjectSet.radioBroadcastServiceStubs(),
-    );
+    const radioBroadcastServices = (
+      await testObjectSet.radioBroadcastServiceStubs()
+    ).orDefault([]);
     expect(radioBroadcastServices).toHaveLength(1);
     broadcastService = {
       broadcastTimezone: radioBroadcastServices[0].broadcastTimezone,

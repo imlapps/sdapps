@@ -20,14 +20,15 @@ import { toRdf } from "rdf-literal";
 import * as sparqljs from "sparqljs";
 
 function modelsByIdentifier<ModelT extends Model>(
-  models: readonly Either<Error, ModelT>[],
+  models: Either<Error, readonly ModelT[]>,
 ): TermMap<Identifier, ModelT> {
-  return models.reduce((map, model) => {
-    model.ifRight((model) => {
-      map.set(model.$identifier, model);
-    });
-    return map;
-  }, new TermMap<Identifier, ModelT>());
+  const result = new TermMap<Identifier, ModelT>();
+  models.ifRight((models) => {
+    for (const model of models) {
+      result.set(model.$identifier, model);
+    }
+  });
+  return result;
 }
 
 export async function playlist(parameters: {
@@ -43,7 +44,7 @@ export async function playlist(parameters: {
   const objectSet = parameters?.objectSet ?? defaultObjectSet;
 
   return EitherAsync(async () => {
-    const musicRecordingBroadcastEvents = Either.rights(
+    const musicRecordingBroadcastEvents = (
       await objectSet.broadcastEvents({
         order: (objectVariable) => [
           {
@@ -54,7 +55,7 @@ export async function playlist(parameters: {
           },
         ],
         where: {
-          patterns: (objectVariable) => {
+          sparqlPatterns: (objectVariable) => {
             const patterns: sparqljs.Pattern[] = [];
 
             const musicRecordingVariable = dataFactory.variable(
@@ -131,10 +132,10 @@ export async function playlist(parameters: {
 
             return patterns;
           },
-          type: "patterns",
+          type: "sparql-patterns",
         },
-      }),
-    );
+      })
+    ).orDefault([]);
 
     const radioEpisodeBroadcastEventsByIdentifier = modelsByIdentifier(
       await objectSet.broadcastEvents({

@@ -34,7 +34,7 @@ export async function firstOrLastBroadcastEvent(parameters: {
           },
         ],
         where: {
-          patterns: (broadcastEventVariable) => [
+          sparqlPatterns: (broadcastEventVariable) => [
             {
               triples: [
                 {
@@ -56,7 +56,7 @@ export async function firstOrLastBroadcastEvent(parameters: {
               type: "bgp",
             },
           ],
-          type: "patterns",
+          type: "sparql-patterns",
         },
       }),
     );
