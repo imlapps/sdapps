@@ -217,11 +217,11 @@ export class WikidataEntity {
       const thingParameters: ConstructorParameters<typeof Thing>[0] = {
         alternateNames: parameters?.alternateNames,
         description: this.description,
-        identifier: this.iri,
+        $identifier: this.iri,
         images: this.images.map(
           (url) =>
             new ImageObjectStub({
-              identifier: DataFactory.namedNode(url.toString()),
+              $identifier: DataFactory.namedNode(url.toString()),
               contentUrl: url.toString(),
             }),
         ),

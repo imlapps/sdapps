@@ -21,7 +21,7 @@
     "mime": "^4.0.4",
     "pino": "^9.1.0",
     "purify-ts": "^2.1.0",
-    "rdfjs-resource": "1.0.19",
+    "rdfjs-resource": "1.0.20",
     "rdf-utils-fs": "^3.0.1",
     "sanitize-filename": "^1.6.3",
     "tmp-promise": "^3.0.3",

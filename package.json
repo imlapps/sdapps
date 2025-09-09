@@ -3,9 +3,10 @@
     "@biomejs/biome": "1.9.4",
     "rimraf": "6.0.1",
     "syncpack": "^13.0.2",
-    "turbo": "^2.4.4",
+    "turbo": "^2.5.5",
     "typescript": "5.8.2",
-    "vitest": "^3.0.7"
+    "vitest": "^3.2.4",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "engines": {
     "node": ">=18"
@@ -16,10 +17,11 @@
   "scripts": {
     "build": "turbo run build",
     "build:packages": "turbo run --filter \"./packages/*\" build",
-    "biome:check": "biome check",
-    "biome:check:write": "biome check --write",
-    "biome:check:write:unsafe": "biome check --write --unsafe",
+    "check": "biome check",
+    "check:write": "biome check --write",
+    "check:write:unsafe": "biome check --write --unsafe",
     "check-types": "turbo run check-types",
+    "check-types:apps": "turbo run check-types --filter \"./apps/*\" --only",
     "dev": "turbo run dev",
     "dev:packages": "turbo run --filter \"./packages/*\" dev",
     "syncpack:fix-mismatches": "syncpack fix-mismatches",

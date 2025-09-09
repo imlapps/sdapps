@@ -5,6 +5,8 @@ import { z } from "zod";
 import { JsonFileCache } from "./JsonFileCache.js";
 import { WikipediaEntity } from "./WikipediaEntity.js";
 
+// pageprops query response examples
+// With wikibase_item:
 // {
 //   "batchcomplete": "",
 //   "query": {
@@ -29,23 +31,44 @@ import { WikipediaEntity } from "./WikipediaEntity.js";
 //     }
 //   }
 // }
+//
+// Without wikibase_item
+// {
+//   "batchcomplete": "",
+//   "query": {
+//     "normalized": [
+//       {
+//         "from": "Jan_Křtitel_Vaňhal",
+//         "to": "Jan Křtitel Vaňhal"
+//       }
+//     ],
+//     "pages": {
+//       "5320913": {
+//         "pageid": 5320913,
+//         "ns": 0,
+//         "title": "Jan Křtitel Vaňhal"
+//       }
+//     }
+//   }
+// }
+
 const pagepropsQueryResponseSchema = z.object({
   query: z.object({
     pages: z.record(
       z.string(),
       z.object({
-        pageprops: z.object({
-          wikibase_item: z.string().optional(),
-        }),
+        pageprops: z
+          .object({
+            wikibase_item: z.string().optional(),
+          })
+          .optional(),
       }),
     ),
   }),
 });
 
-type PagePropsQueryResponse = z.infer<typeof pagepropsQueryResponseSchema>;
-
 export class WikipediaEntityFetcher {
-  private readonly fileCache: JsonFileCache<PagePropsQueryResponse>;
+  private readonly jsonFileCache: JsonFileCache<string | null>;
   private readonly logger?: Logger;
   private readonly memoryCache: Record<string, Either<Error, WikipediaEntity>> =
     {};
@@ -58,11 +81,14 @@ export class WikipediaEntityFetcher {
     logger?: Logger;
   }) {
     this.logger = logger;
-    this.fileCache = new JsonFileCache({
-      directoryPath: path.join(cachesDirectoryPath, "wikipedia", "pageprops"),
+    this.jsonFileCache = new JsonFileCache({
+      filePath: path.join(
+        cachesDirectoryPath,
+        "wikipedia",
+        "wikidataEntityIds.json",
+      ),
       logger,
-      parseJson: async (json: unknown) =>
-        EitherAsync(() => pagepropsQueryResponseSchema.parseAsync(json)),
+      valueSchema: z.string().nullable(),
     });
   }
 
@@ -87,45 +113,74 @@ export class WikipediaEntityFetcher {
         }
         const urlTitle = url.pathname.substring(urlPathnamePrefix.length);
 
-        let pagepropsQueryResponse = (
-          await liftEither(await this.fileCache.get(urlString))
+        let wikidataEntityId = (
+          await liftEither(await this.jsonFileCache.get(urlString))
         ).extract();
 
-        if (!pagepropsQueryResponse) {
+        if (!wikidataEntityId) {
           const pagepropsQueryUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&titles=${urlTitle}&format=json`;
           this.logger?.trace(`fetching ${pagepropsQueryUrl}`);
-          pagepropsQueryResponse =
-            await pagepropsQueryResponseSchema.parseAsync(
-              await (await fetch(pagepropsQueryUrl)).json(),
+          const pagepropsQueryResponse = await fetch(pagepropsQueryUrl);
+          if (!pagepropsQueryResponse.ok) {
+            throw new Error(
+              `pageprops query response is ${pagepropsQueryResponse.status} ${pagepropsQueryResponse.statusText}`,
             );
+          }
+          const pagepropsQueryResponseJson =
+            await pagepropsQueryResponse.json();
+          if (typeof pagepropsQueryResponseJson === "undefined") {
+            throw new Error("pageprops query response JSON is undefined");
+          }
           this.logger?.trace(
-            `fetched ${pagepropsQueryUrl}:\n${JSON.stringify(pagepropsQueryResponse)}`,
+            `fetched ${pagepropsQueryUrl}:\n${JSON.stringify(pagepropsQueryResponseJson)}`,
           );
+          let pagepropsQueryResponseParsed:
+            | z.infer<typeof pagepropsQueryResponseSchema>
+            | undefined;
+          try {
+            pagepropsQueryResponseParsed =
+              await pagepropsQueryResponseSchema.parseAsync(
+                pagepropsQueryResponseJson,
+              );
+          } catch (e) {
+            throw new Error(
+              `error parsing pageprops query (${pagepropsQueryUrl}) response JSON:\nError:\n${(e as Error).message}\nJSON:\n${JSON.stringify(pagepropsQueryResponseJson)}`,
+            );
+          }
 
-          await this.fileCache.set(urlString, pagepropsQueryResponse);
+          const pages = Object.values(pagepropsQueryResponseParsed.query.pages);
+          if (pages.length !== 1) {
+            throw new Error(
+              `MediaWiki query for page ${urlTitle} returned more than one page`,
+            );
+          }
+          const page = pages[0];
+          if (page.pageprops?.wikibase_item) {
+            wikidataEntityId = page.pageprops.wikibase_item;
+          } else {
+            wikidataEntityId = null;
+          }
+
+          await this.jsonFileCache.set(urlString, wikidataEntityId);
         }
 
-        const pageEntries = Object.entries(pagepropsQueryResponse.query.pages);
-        if (pageEntries.length !== 1) {
+        if (wikidataEntityId === null) {
           throw new Error(
-            `MediaWiki query for page ${urlTitle} returned more than one page`,
+            `page ${urlTitle} does not exist or has no Wikidata entity id`,
           );
-        }
-        const [pageId, page] = pageEntries[0];
-        if (pageId === "-1") {
-          throw new Error(`page ${urlTitle} does not exist`);
-        }
-        if (!page.pageprops.wikibase_item) {
-          throw new Error(`page ${urlTitle} has no wikibase_item`);
         }
 
         return new WikipediaEntity({
           url,
           urlTitle,
-          wikidataEntityId: page.pageprops.wikibase_item,
+          wikidataEntityId,
         });
       },
     );
+
+    result.ifLeft((error) => {
+      this.logger?.error(error.message);
+    });
 
     this.memoryCache[urlString] = result;
     return result;

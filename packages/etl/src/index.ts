@@ -9,7 +9,7 @@ export * from "./isSafeFileName.js";
 export * from "./JsonFileCache.js";
 export * from "./readRdfInput.js";
 export * from "./RdfFileLoader.js";
-export * from "./TextFileCache.js";
+export * from "./TextFileDirectoryCache.js";
 export * from "./WikidataEntity.js";
 export * from "./WikidataEntityRecognizer.js";
 export * from "./WikipediaEntity.js";

@@ -9,12 +9,12 @@ const resourceSet = new MutableResourceSet({
   dataset,
 });
 
-import { $RdfjsDatasetObjectSet, Person } from "../src";
+import { Person } from "../src";
 
 const people = [...new Array(3).keys()].map(
   (_, index) =>
     new Person({
-      identifier: dataFactory.namedNode(`http://example.com/person/${index}`),
+      $identifier: dataFactory.namedNode(`http://example.com/person/${index}`),
       givenName: "Person",
       familyName: index.toString(),
       name: `Person ${index}`,
@@ -22,7 +22,7 @@ const people = [...new Array(3).keys()].map(
 );
 
 for (const person of people) {
-  person.toRdf({ mutateGraph, resourceSet });
+  person.$toRdf({ mutateGraph, resourceSet });
 }
 
 export const testData = {
@@ -30,5 +30,4 @@ export const testData = {
   models: {
     people,
   },
-  rdfjsDatasetObjectSet: new $RdfjsDatasetObjectSet({ dataset }),
 };

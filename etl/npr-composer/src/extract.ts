@@ -136,9 +136,9 @@ function extractUcsIdentifiers(
   const resourceSet = new ResourceSet({ dataset: inputDataset });
   const ucsIdentifiers: Record<string, RadioBroadcastService> = {};
   for (const resource of resourceSet.instancesOf(
-    RadioBroadcastService.fromRdfType,
+    RadioBroadcastService.$fromRdfType,
   )) {
-    RadioBroadcastService.fromRdf({ resource })
+    RadioBroadcastService.$fromRdf({ resource })
       .ifLeft((error) => {
         logger.warn(
           `error deserializing RadioBroadcastService instance ${Identifier.toString(resource.identifier)} from RDF: ${error.message}`,

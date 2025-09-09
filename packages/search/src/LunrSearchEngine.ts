@@ -10,7 +10,6 @@ import {
 } from "@sdapps/models";
 
 import lunr, { Index } from "lunr";
-import { Either } from "purify-ts";
 import { LunrIndexCompactor } from "./LunrIndexCompactor.js";
 import { SearchEngine } from "./SearchEngine.js";
 import { SearchResult } from "./SearchResult.js";
@@ -50,12 +49,12 @@ export class LunrSearchEngine implements SearchEngine {
         readonly (EventStub | OrganizationStub | PersonStub)[],
       ]
     > {
-      yield ["Event", Either.rights(await objectSet.eventStubs())];
+      yield ["Event", (await objectSet.eventStubs()).orDefault([])];
       yield [
         "Organization",
-        Either.rights(await objectSet.organizationStubs()),
+        (await objectSet.organizationStubs()).orDefault([]),
       ];
-      yield ["Person", Either.rights(await objectSet.personStubs())];
+      yield ["Person", (await objectSet.personStubs()).orDefault([])];
     }
 
     for await (const [indexDocumentType, models] of modelsGenerator()) {
@@ -76,7 +75,7 @@ export class LunrSearchEngine implements SearchEngine {
         }
 
         indexDocuments.push({
-          identifier: Identifier.toString(model.identifier),
+          identifier: Identifier.toString(model.$identifier),
           label,
           type: indexDocumentType,
         });

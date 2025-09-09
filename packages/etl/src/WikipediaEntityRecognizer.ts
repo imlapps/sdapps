@@ -33,7 +33,8 @@ const examples: Record<string, readonly string[]> = {
 };
 
 export class WikipediaEntityRecognizer {
-  private readonly cache: JsonFileCache<z.infer<typeof schema>>;
+  private readonly jsonFileCache: JsonFileCache<string[] | null>;
+  private readonly logger?: Logger;
   private readonly wikipediaEntityFetcher: WikipediaEntityFetcher;
 
   constructor({
@@ -43,12 +44,12 @@ export class WikipediaEntityRecognizer {
     cachesDirectoryPath: string;
     logger?: Logger;
   }) {
-    this.cache = new JsonFileCache({
-      directoryPath: path.join(cachesDirectoryPath, "wikipedia", "entity"),
+    this.jsonFileCache = new JsonFileCache({
+      filePath: path.join(cachesDirectoryPath, "wikipedia", "entities.json"),
       logger,
-      parseJson: async (json: unknown) =>
-        EitherAsync(() => schema.parseAsync(json)),
+      valueSchema: z.array(z.string()),
     });
+    this.logger = logger;
     this.wikipediaEntityFetcher = new WikipediaEntityFetcher({
       cachesDirectoryPath,
       logger,
@@ -64,10 +65,13 @@ export class WikipediaEntityRecognizer {
     return EitherAsync(async ({ liftEither }) => {
       const qualifiedName = role ? `${name} (${role})` : name;
 
-      let generatedObject = (
-        await liftEither(await this.cache.get(qualifiedName))
+      let wikipediaEntityUrls = (
+        await liftEither(await this.jsonFileCache.get(qualifiedName))
       ).extract();
-      if (!generatedObject) {
+      if (!wikipediaEntityUrls) {
+        this.logger?.info(
+          `querying model for Wikipedia entity URLs for: ${qualifiedName}`,
+        );
         const result = await generateObject({
           messages: [
             {
@@ -94,19 +98,25 @@ ${Object.entries(examples).map(
           model: openai("gpt-4o"),
           schema,
         });
-        generatedObject = result.object;
-        await this.cache.set(qualifiedName, generatedObject);
+        wikipediaEntityUrls = result.object.wikipedia;
+
+        await this.jsonFileCache.set(qualifiedName, wikipediaEntityUrls);
       }
 
       const wikipediaEntries: WikipediaEntity[] = [];
-      for (const wikipediaEntityUrl of generatedObject.wikipedia) {
-        wikipediaEntries.push(
-          await liftEither(
-            await this.wikipediaEntityFetcher.fetch(
-              new URL(wikipediaEntityUrl),
+      for (const wikipediaEntityUrl of wikipediaEntityUrls) {
+        try {
+          wikipediaEntries.push(
+            await liftEither(
+              await this.wikipediaEntityFetcher.fetch(
+                new URL(wikipediaEntityUrl),
+              ),
             ),
-          ),
-        );
+          );
+        } catch (e) {
+          await this.jsonFileCache.set(qualifiedName, []);
+          throw e;
+        }
       }
       return wikipediaEntries;
     });
