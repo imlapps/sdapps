@@ -1,10 +1,9 @@
-import { Either } from "purify-ts";
 import { it } from "vitest";
 import { $ObjectSet } from "../src/generated.js";
 
 export function behavesLikeTowndexObjectSet(objectSet: $ObjectSet): void {
   it("events", async ({ expect }) => {
-    const events = Either.rights(await objectSet.events());
+    const events = (await objectSet.events()).unsafeCoerce();
     expect(events).toHaveLength(34);
     expect(
       events.filter(
@@ -21,7 +20,9 @@ export function behavesLikeTowndexObjectSet(objectSet: $ObjectSet): void {
   });
 
   it("organization stubs", async ({ expect }) => {
-    expect(Either.rights(await objectSet.organizationStubs())).toHaveLength(2);
+    expect((await objectSet.organizationStubs()).unsafeCoerce()).toHaveLength(
+      2,
+    );
   });
 
   it("organization count", async ({ expect }) => {
@@ -29,7 +30,7 @@ export function behavesLikeTowndexObjectSet(objectSet: $ObjectSet): void {
   });
 
   it("person stubs", async ({ expect }) => {
-    expect(Either.rights(await objectSet.personStubs())).toHaveLength(37);
+    expect((await objectSet.personStubs()).unsafeCoerce()).toHaveLength(37);
   });
 
   it("person count", async ({ expect }) => {

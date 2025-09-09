@@ -173,6 +173,9 @@ export function $sparqlInstancesOfPattern({
   };
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */
 export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
@@ -444,7 +447,7 @@ export namespace ModelStatic {
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
+          dataFactory,
           identifier,
         }),
       );
@@ -553,10 +556,10 @@ export namespace ModelStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ $identifier });
   }
 
@@ -572,7 +575,7 @@ export namespace ModelStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -686,43 +689,36 @@ export namespace ModelStatic {
         "VoteAction",
         "VoteActionStub",
       ]),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
-    const $identifier: ModelStatic.$Identifier = _resource.identifier;
+  }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
+    const $identifier: ModelStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ModelStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Model> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Model> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      ThingStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Model
-      >
+      ThingStubStatic.$fromRdf(otherParameters) as purify.Either<Error, Model>
     ).altLazy(
       () =>
-        ThingStatic.$fromRdf(otherParameters) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          Model
-        >,
+        ThingStatic.$fromRdf(otherParameters) as purify.Either<Error, Model>,
     );
   }
 
@@ -781,7 +777,7 @@ export namespace ModelStatic {
   }
 }
 export class Thing extends Model {
-  protected _$identifier: ThingStatic.$Identifier | undefined;
+  protected _$identifier?: ThingStatic.$Identifier;
   override readonly $type:
     | "Thing"
     | "Action"
@@ -1226,37 +1222,37 @@ export class Thing extends Model {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.alternateNames) {
-      _hasher.update(_item0);
+    for (const item0 of this.alternateNames) {
+      _hasher.update(item0);
     }
 
-    this.description.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.description.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.disambiguatingDescription.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.disambiguatingDescription.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    for (const _item0 of this.identifiers) {
-      _hasher.update(_item0);
+    for (const item0 of this.identifiers) {
+      _hasher.update(item0);
     }
 
-    for (const _item0 of this.images) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.images) {
+      item0.$hash(_hasher);
     }
 
-    this.name.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.name.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.order.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
+    this.order.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
-    for (const _item0 of this.sameAs) {
-      _hasher.update(_item0.termType);
-      _hasher.update(_item0.value);
+    for (const item0 of this.sameAs) {
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
     }
 
-    for (const _item0 of this.subjectOf) {
-      switch (_item0.$type) {
+    for (const item0 of this.subjectOf) {
+      switch (item0.$type) {
         case "CreativeWorkStub":
         case "ArticleStub":
         case "CreativeWorkSeriesStub":
@@ -1272,24 +1268,24 @@ export class Thing extends Model {
         case "RadioSeriesStub":
         case "ReportStub":
         case "TextObjectStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "EventStub":
         case "BroadcastEventStub":
         case "PublicationEventStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         default:
-          _item0 satisfies never;
+          item0 satisfies never;
           throw new Error("unrecognized type");
       }
     }
 
-    this.url.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.url.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
     return _hasher;
   }
@@ -1298,24 +1294,24 @@ export class Thing extends Model {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        alternateNames: this.alternateNames.map((_item) => _item),
-        description: this.description.map((_item) => _item).extract(),
+        alternateNames: this.alternateNames.map((item) => item),
+        description: this.description.map((item) => item).extract(),
         disambiguatingDescription: this.disambiguatingDescription
-          .map((_item) => _item)
+          .map((item) => item)
           .extract(),
-        identifiers: this.identifiers.map((_item) => _item),
-        images: this.images.map((_item) => _item.$toJson()),
-        name: this.name.map((_item) => _item).extract(),
-        order: this.order.map((_item) => _item).extract(),
-        sameAs: this.sameAs.map((_item) => ({ "@id": _item.value })),
-        subjectOf: this.subjectOf.map((_item) =>
-          _item.$type === "EventStub" ||
-          _item.$type === "BroadcastEventStub" ||
-          _item.$type === "PublicationEventStub"
-            ? _item.$toJson()
-            : _item.$toJson(),
+        identifiers: this.identifiers.map((item) => item),
+        images: this.images.map((item) => item.$toJson()),
+        name: this.name.map((item) => item).extract(),
+        order: this.order.map((item) => item).extract(),
+        sameAs: this.sameAs.map((item) => ({ "@id": item.value })),
+        subjectOf: this.subjectOf.map((item) =>
+          item.$type === "EventStub" ||
+          item.$type === "BroadcastEventStub" ||
+          item.$type === "PublicationEventStub"
+            ? item.$toJson()
+            : item.$toJson(),
         ),
-        url: this.url.map((_item) => ({ "@id": _item.value })).extract(),
+        url: this.url.map((item) => ({ "@id": item.value })).extract(),
       } satisfies ThingStatic.$Json),
     );
   }
@@ -1343,7 +1339,7 @@ export class Thing extends Model {
 
     _resource.add(
       ThingStatic.$properties.alternateNames["identifier"],
-      this.alternateNames.map((_item) => _item),
+      this.alternateNames.map((item) => item),
     );
     _resource.add(
       ThingStatic.$properties.description["identifier"],
@@ -1355,31 +1351,28 @@ export class Thing extends Model {
     );
     _resource.add(
       ThingStatic.$properties.identifiers["identifier"],
-      this.identifiers.map((_item) => _item),
+      this.identifiers.map((item) => item),
     );
     _resource.add(
       ThingStatic.$properties.images["identifier"],
-      this.images.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.images.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(ThingStatic.$properties.name["identifier"], this.name);
     _resource.add(ThingStatic.$properties.order["identifier"], this.order);
     _resource.add(
       ThingStatic.$properties.sameAs["identifier"],
-      this.sameAs.map((_item) => _item),
+      this.sameAs.map((item) => item),
     );
     _resource.add(
       ThingStatic.$properties.subjectOf["identifier"],
-      this.subjectOf.map((_item) =>
-        _item.$type === "EventStub" ||
-        _item.$type === "BroadcastEventStub" ||
-        _item.$type === "PublicationEventStub"
-          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-          : _item.$toRdf({
-              mutateGraph: mutateGraph,
-              resourceSet: resourceSet,
-            }),
+      this.subjectOf.map((item) =>
+        item.$type === "EventStub" ||
+        item.$type === "BroadcastEventStub" ||
+        item.$type === "PublicationEventStub"
+          ? item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(ThingStatic.$properties.url["identifier"], this.url);
@@ -1398,19 +1391,19 @@ export namespace ThingStatic {
   export type $Identifier = ModelStatic.$Identifier;
   export const $Identifier = ModelStatic.$Identifier;
   export type $Json = {
-    readonly alternateNames: readonly string[];
-    readonly description: string | undefined;
-    readonly disambiguatingDescription: string | undefined;
-    readonly identifiers: readonly string[];
-    readonly images: readonly ImageObjectStub.$Json[];
-    readonly name: string | undefined;
-    readonly order: number | undefined;
-    readonly sameAs: readonly { readonly "@id": string }[];
-    readonly subjectOf: readonly (
+    readonly alternateNames?: readonly string[];
+    readonly description?: string;
+    readonly disambiguatingDescription?: string;
+    readonly identifiers?: readonly string[];
+    readonly images?: readonly ImageObjectStub.$Json[];
+    readonly name?: string;
+    readonly order?: number;
+    readonly sameAs?: readonly { readonly "@id": string }[];
+    readonly subjectOf?: readonly (
       | CreativeWorkStubStatic.$Json
       | EventStubStatic.$Json
     )[];
-    readonly url: { readonly "@id": string } | undefined;
+    readonly url?: { readonly "@id": string };
   } & ModelStatic.$Json;
 
   export function $propertiesFromJson(
@@ -1436,39 +1429,39 @@ export namespace ThingStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ModelStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ModelStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const alternateNames = _jsonObject["alternateNames"];
-    const description = purify.Maybe.fromNullable(_jsonObject["description"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const alternateNames = $jsonObject["alternateNames"];
+    const description = purify.Maybe.fromNullable($jsonObject["description"]);
     const disambiguatingDescription = purify.Maybe.fromNullable(
-      _jsonObject["disambiguatingDescription"],
+      $jsonObject["disambiguatingDescription"],
     );
-    const identifiers = _jsonObject["identifiers"];
-    const images = _jsonObject["images"].map((_item) =>
-      ImageObjectStub.$fromJson(_item).unsafeCoerce(),
+    const identifiers = $jsonObject["identifiers"];
+    const images = $jsonObject["images"].map((item) =>
+      ImageObjectStub.$fromJson(item).unsafeCoerce(),
     );
-    const name = purify.Maybe.fromNullable(_jsonObject["name"]);
-    const order = purify.Maybe.fromNullable(_jsonObject["order"]);
-    const sameAs = _jsonObject["sameAs"].map((_item) =>
-      dataFactory.namedNode(_item["@id"]),
+    const name = purify.Maybe.fromNullable($jsonObject["name"]);
+    const order = purify.Maybe.fromNullable($jsonObject["order"]);
+    const sameAs = $jsonObject["sameAs"].map((item) =>
+      dataFactory.namedNode(item["@id"]),
     );
-    const subjectOf = _jsonObject["subjectOf"].map((_item) =>
-      _item.$type === "EventStub" ||
-      _item.$type === "BroadcastEventStub" ||
-      _item.$type === "PublicationEventStub"
-        ? EventStubStatic.$fromJson(_item).unsafeCoerce()
-        : CreativeWorkStubStatic.$fromJson(_item).unsafeCoerce(),
+    const subjectOf = $jsonObject["subjectOf"].map((item) =>
+      item.$type === "EventStub" ||
+      item.$type === "BroadcastEventStub" ||
+      item.$type === "PublicationEventStub"
+        ? EventStubStatic.$fromJson(item).unsafeCoerce()
+        : CreativeWorkStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const url = purify.Maybe.fromNullable(_jsonObject["url"]).map((_item) =>
-      dataFactory.namedNode(_item["@id"]),
+    const url = purify.Maybe.fromNullable($jsonObject["url"]).map((item) =>
+      dataFactory.namedNode(item["@id"]),
     );
     return purify.Either.of({
       ...$super0,
@@ -1527,7 +1520,7 @@ export namespace ThingStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -1628,22 +1621,24 @@ export namespace ThingStatic {
           .default(() => []),
         url: zod.object({ "@id": zod.string().min(1) }).optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       alternateNames: readonly string[];
@@ -1659,242 +1654,224 @@ export namespace ThingStatic {
     } & $UnwrapR<ReturnType<typeof ModelStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ModelStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Thing)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Thing)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ThingStatic.$Identifier = _resource.identifier;
-    const _alternateNamesEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly string[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.alternateNames["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: ThingStatic.$Identifier = $resource.identifier;
+    const _alternateNamesEither: purify.Either<Error, readonly string[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.alternateNames["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toString()),
+          ),
+      );
     if (_alternateNamesEither.isLeft()) {
       return _alternateNamesEither;
     }
 
     const alternateNames = _alternateNamesEither.unsafeCoerce();
     const _descriptionEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.description["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.description["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_descriptionEither.isLeft()) {
       return _descriptionEither;
     }
 
     const description = _descriptionEither.unsafeCoerce();
     const _disambiguatingDescriptionEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.disambiguatingDescription["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.disambiguatingDescription["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_disambiguatingDescriptionEither.isLeft()) {
       return _disambiguatingDescriptionEither;
     }
 
     const disambiguatingDescription =
       _disambiguatingDescriptionEither.unsafeCoerce();
-    const _identifiersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly string[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.identifiers["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _identifiersEither: purify.Either<Error, readonly string[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.identifiers["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toString()),
+          ),
+      );
     if (_identifiersEither.isLeft()) {
       return _identifiersEither;
     }
 
     const identifiers = _identifiersEither.unsafeCoerce();
-    const _imagesEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly ImageObjectStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.images["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ImageObjectStub.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _imagesEither: purify.Either<Error, readonly ImageObjectStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.images["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                ImageObjectStub.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_imagesEither.isLeft()) {
       return _imagesEither;
     }
 
     const images = _imagesEither.unsafeCoerce();
-    const _nameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.name["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    const _nameEither: purify.Either<Error, purify.Maybe<string>> = $resource
+      .values($properties.name["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_nameEither.isLeft()) {
       return _nameEither;
     }
 
     const name = _nameEither.unsafeCoerce();
-    const _orderEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values($properties.order["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
+    const _orderEither: purify.Either<Error, purify.Maybe<number>> = $resource
+      .values($properties.order["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toNumber())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_orderEither.isLeft()) {
       return _orderEither;
     }
 
     const order = _orderEither.unsafeCoerce();
-    const _sameAsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly rdfjs.NamedNode[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.sameAs["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toIri())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _sameAsEither: purify.Either<Error, readonly rdfjs.NamedNode[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.sameAs["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toIri()),
+          ),
+      );
     if (_sameAsEither.isLeft()) {
       return _sameAsEither;
     }
 
     const sameAs = _sameAsEither.unsafeCoerce();
     const _subjectOfEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       readonly (CreativeWorkStub | EventStub)[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.subjectOf["identifier"], { unique: true })
-        .flatMap((_item) =>
+        .map((item) =>
           (
-            _item
+            item
               .toValues()
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
                 CreativeWorkStubStatic.$fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
+                  ...$context,
+                  languageIn: $languageIn,
                   resource: _resource,
                 }),
-              ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              CreativeWorkStub | EventStub
-            >
-          )
-            .altLazy(
-              () =>
-                _item
-                  .toValues()
-                  .head()
-                  .chain((value) => value.toResource())
-                  .chain((_resource) =>
-                    EventStubStatic.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
-                      resource: _resource,
-                    }),
-                  ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
-                  CreativeWorkStub | EventStub
-                >,
-            )
-            .toMaybe()
-            .toList(),
+              ) as purify.Either<Error, CreativeWorkStub | EventStub>
+          ).altLazy(
+            () =>
+              item
+                .toValues()
+                .head()
+                .chain((value) => value.toResource())
+                .chain((_resource) =>
+                  EventStubStatic.$fromRdf({
+                    ...$context,
+                    languageIn: $languageIn,
+                    resource: _resource,
+                  }),
+                ) as purify.Either<Error, CreativeWorkStub | EventStub>,
+          ),
         ),
-    ]);
+    );
     if (_subjectOfEither.isLeft()) {
       return _subjectOfEither;
     }
 
     const subjectOf = _subjectOfEither.unsafeCoerce();
     const _urlEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values($properties.url["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toIri())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.url["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toIri())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_urlEither.isLeft()) {
       return _urlEither;
     }
@@ -1918,55 +1895,41 @@ export namespace ThingStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof ThingStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Thing> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Thing> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      ActionStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Thing
-      >
+      ActionStatic.$fromRdf(otherParameters) as purify.Either<Error, Thing>
     )
       .altLazy(
         () =>
           CreativeWorkStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Thing
           >,
       )
       .altLazy(
         () =>
-          EventStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Thing
-          >,
+          EventStatic.$fromRdf(otherParameters) as purify.Either<Error, Thing>,
       )
       .altLazy(
         () =>
           IntangibleStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Thing
           >,
       )
       .altLazy(
         () =>
           OrganizationStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Thing
           >,
       )
       .altLazy(
-        () =>
-          Person.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Thing
-          >,
+        () => Person.$fromRdf(otherParameters) as purify.Either<Error, Thing>,
       )
       .altLazy(
-        () =>
-          Place.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Thing
-          >,
+        () => Place.$fromRdf(otherParameters) as purify.Either<Error, Thing>,
       )
       .altLazy(() =>
         ThingStatic.$propertiesFromRdf(parameters).map(
@@ -2488,16 +2451,16 @@ export namespace IntangibleStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -2548,7 +2511,7 @@ export namespace IntangibleStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStatic.$jsonUiSchema({ scopePrefix })],
@@ -2577,105 +2540,99 @@ export namespace IntangibleStatic {
           "StructuredValue",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
+            ),
           ),
         );
     }
 
-    const $identifier: IntangibleStatic.$Identifier = _resource.identifier;
+    const $identifier: IntangibleStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof IntangibleStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Intangible> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Intangible> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      Invoice.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Intangible
-      >
+      Invoice.$fromRdf(otherParameters) as purify.Either<Error, Intangible>
     )
       .altLazy(
         () =>
           ItemList.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Intangible
           >,
       )
       .altLazy(
         () =>
           ListItem.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Intangible
           >,
       )
       .altLazy(
         () =>
-          Order.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            Intangible
-          >,
+          Order.$fromRdf(otherParameters) as purify.Either<Error, Intangible>,
       )
       .altLazy(
         () =>
           ServiceStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Intangible
           >,
       )
       .altLazy(
         () =>
           StructuredValueStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Intangible
           >,
       )
       .altLazy(
         () =>
           EnumerationStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             Intangible
           >,
       )
@@ -2892,16 +2849,16 @@ export namespace EnumerationStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -2921,7 +2878,7 @@ export namespace EnumerationStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStatic.$jsonUiSchema({ scopePrefix })],
@@ -2936,65 +2893,62 @@ export namespace EnumerationStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["Enumeration", "GenderType"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Enumeration)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Enumeration)`,
+            ),
           ),
         );
     }
 
-    const $identifier: EnumerationStatic.$Identifier = _resource.identifier;
+    const $identifier: EnumerationStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof EnumerationStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Enumeration> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Enumeration> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      GenderType.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Enumeration
-      >
+      GenderType.$fromRdf(otherParameters) as purify.Either<Error, Enumeration>
     ).altLazy(() =>
       EnumerationStatic.$propertiesFromRdf(parameters).map(
         (properties) => new Enumeration(properties),
@@ -3206,7 +3160,7 @@ export namespace GenderType {
     > {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
+          dataFactory,
           identifier,
         }),
       )
@@ -3259,14 +3213,14 @@ export namespace GenderType {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = EnumerationStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = EnumerationStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -3282,7 +3236,7 @@ export namespace GenderType {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [EnumerationStatic.$jsonUiSchema({ scopePrefix })],
@@ -3297,22 +3251,24 @@ export namespace GenderType {
         "@id": zod.enum(["http://schema.org/Female", "http://schema.org/Male"]),
         $type: zod.literal("GenderType"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.NamedNode<
         "http://schema.org/Female" | "http://schema.org/Male"
@@ -3320,33 +3276,31 @@ export namespace GenderType {
     } & $UnwrapR<ReturnType<typeof EnumerationStatic.$propertiesFromRdf>>
   > {
     const $super0Either = EnumerationStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/GenderType)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/GenderType)`,
+            ),
           ),
         );
     }
 
     let $identifier: GenderType.$Identifier;
-    switch (_resource.identifier.value) {
+    switch ($resource.identifier.value) {
       case "http://schema.org/Female":
         $identifier = dataFactory.namedNode("http://schema.org/Female");
         break;
@@ -3356,10 +3310,10 @@ export namespace GenderType {
       default:
         return purify.Left(
           new rdfjsResource.Resource.MistypedValueError({
-            actualValue: _resource.identifier,
+            actualValue: $resource.identifier,
             expectedValueType:
               'rdfjs.NamedNode<"http://schema.org/Female" | "http://schema.org/Male">',
-            focusResource: _resource,
+            focusResource: $resource,
             predicate: $RdfVocabularies.rdf.subject,
           }),
         );
@@ -3370,7 +3324,7 @@ export namespace GenderType {
 
   export function $fromRdf(
     parameters: Parameters<typeof GenderType.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, GenderType> {
+  ): purify.Either<Error, GenderType> {
     return GenderType.$propertiesFromRdf(parameters).map(
       (properties) => new GenderType(properties),
     );
@@ -3649,19 +3603,19 @@ export class Action extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.agents) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.agents) {
+      item0.$hash(_hasher);
     }
 
-    this.endTime.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.endTime.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    for (const _item0 of this.participants) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.participants) {
+      item0.$hash(_hasher);
     }
 
-    this.startTime.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.startTime.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
     return _hasher;
   }
@@ -3670,10 +3624,10 @@ export class Action extends Thing {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        agents: this.agents.map((_item) => _item.$toJson()),
-        endTime: this.endTime.map((_item) => _item.toISOString()).extract(),
-        participants: this.participants.map((_item) => _item.$toJson()),
-        startTime: this.startTime.map((_item) => _item.toISOString()).extract(),
+        agents: this.agents.map((item) => item.$toJson()),
+        endTime: this.endTime.map((item) => item.toISOString()).extract(),
+        participants: this.participants.map((item) => item.$toJson()),
+        startTime: this.startTime.map((item) => item.toISOString()).extract(),
       } satisfies ActionStatic.$Json),
     );
   }
@@ -3701,14 +3655,14 @@ export class Action extends Thing {
 
     _resource.add(
       ActionStatic.$properties.agents["identifier"],
-      this.agents.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.agents.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       ActionStatic.$properties.endTime["identifier"],
-      this.endTime.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.endTime.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
@@ -3716,14 +3670,14 @@ export class Action extends Thing {
     );
     _resource.add(
       ActionStatic.$properties.participants["identifier"],
-      this.participants.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.participants.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       ActionStatic.$properties.startTime["identifier"],
-      this.startTime.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.startTime.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
@@ -3744,16 +3698,16 @@ export namespace ActionStatic {
   export type $Identifier = ThingStatic.$Identifier;
   export const $Identifier = ThingStatic.$Identifier;
   export type $Json = {
-    readonly agents: readonly (
+    readonly agents?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly endTime: string | undefined;
-    readonly participants: readonly (
+    readonly endTime?: string;
+    readonly participants?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly startTime: string | undefined;
+    readonly startTime?: string;
   } & ThingStatic.$Json;
 
   export function $propertiesFromJson(
@@ -3773,27 +3727,27 @@ export namespace ActionStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const agents = _jsonObject["agents"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const agents = $jsonObject["agents"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const endTime = purify.Maybe.fromNullable(_jsonObject["endTime"]).map(
-      (_item) => new Date(_item),
+    const endTime = purify.Maybe.fromNullable($jsonObject["endTime"]).map(
+      (item) => new Date(item),
     );
-    const participants = _jsonObject["participants"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const participants = $jsonObject["participants"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const startTime = purify.Maybe.fromNullable(_jsonObject["startTime"]).map(
-      (_item) => new Date(_item),
+    const startTime = purify.Maybe.fromNullable($jsonObject["startTime"]).map(
+      (item) => new Date(item),
     );
     return purify.Either.of({
       ...$super0,
@@ -3819,7 +3773,7 @@ export namespace ActionStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3853,22 +3807,24 @@ export namespace ActionStatic {
           .default(() => []),
         startTime: zod.string().datetime().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       agents: readonly AgentStub[];
@@ -3878,111 +3834,101 @@ export namespace ActionStatic {
     } & $UnwrapR<ReturnType<typeof ThingStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Action)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Action)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ActionStatic.$Identifier = _resource.identifier;
-    const _agentsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.agents["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: ActionStatic.$Identifier = $resource.identifier;
+    const _agentsEither: purify.Either<Error, readonly AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.agents["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_agentsEither.isLeft()) {
       return _agentsEither;
     }
 
     const agents = _agentsEither.unsafeCoerce();
-    const _endTimeEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.endTime["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const _endTimeEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.endTime["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_endTimeEither.isLeft()) {
       return _endTimeEither;
     }
 
     const endTime = _endTimeEither.unsafeCoerce();
-    const _participantsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.participants["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _participantsEither: purify.Either<Error, readonly AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.participants["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_participantsEither.isLeft()) {
       return _participantsEither;
     }
 
     const participants = _participantsEither.unsafeCoerce();
-    const _startTimeEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.startTime["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const _startTimeEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.startTime["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_startTimeEither.isLeft()) {
       return _startTimeEither;
     }
@@ -4000,11 +3946,11 @@ export namespace ActionStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof ActionStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Action> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Action> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       AssessActionStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         Action
       >
     ).altLazy(() =>
@@ -4341,16 +4287,16 @@ export namespace AssessActionStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ActionStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ActionStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -4373,7 +4319,7 @@ export namespace AssessActionStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ActionStatic.$jsonUiSchema({ scopePrefix })],
@@ -4388,63 +4334,63 @@ export namespace AssessActionStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["AssessAction", "ChooseAction", "VoteAction"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ActionStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ActionStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/AssessAction)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/AssessAction)`,
+            ),
           ),
         );
     }
 
-    const $identifier: AssessActionStatic.$Identifier = _resource.identifier;
+    const $identifier: AssessActionStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof AssessActionStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, AssessAction> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, AssessAction> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ChooseActionStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         AssessAction
       >
     ).altLazy(() =>
@@ -4662,16 +4608,16 @@ export namespace ChooseActionStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = AssessActionStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = AssessActionStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -4691,7 +4637,7 @@ export namespace ChooseActionStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [AssessActionStatic.$jsonUiSchema({ scopePrefix })],
@@ -4706,65 +4652,62 @@ export namespace ChooseActionStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["ChooseAction", "VoteAction"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof AssessActionStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = AssessActionStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ChooseAction)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ChooseAction)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ChooseActionStatic.$Identifier = _resource.identifier;
+    const $identifier: ChooseActionStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ChooseActionStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ChooseAction> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, ChooseAction> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      VoteAction.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        ChooseAction
-      >
+      VoteAction.$fromRdf(otherParameters) as purify.Either<Error, ChooseAction>
     ).altLazy(() =>
       ChooseActionStatic.$propertiesFromRdf(parameters).map(
         (properties) => new ChooseAction(properties),
@@ -4980,16 +4923,16 @@ export namespace VoteAction {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ChooseActionStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ChooseActionStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -5005,7 +4948,7 @@ export namespace VoteAction {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ChooseActionStatic.$jsonUiSchema({ scopePrefix })],
@@ -5020,59 +4963,59 @@ export namespace VoteAction {
         "@id": zod.string().min(1),
         $type: zod.literal("VoteAction"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ChooseActionStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ChooseActionStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/VoteAction)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/VoteAction)`,
+            ),
           ),
         );
     }
 
-    const $identifier: VoteAction.$Identifier = _resource.identifier;
+    const $identifier: VoteAction.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof VoteAction.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, VoteAction> {
+  ): purify.Either<Error, VoteAction> {
     return VoteAction.$propertiesFromRdf(parameters).map(
       (properties) => new VoteAction(properties),
     );
@@ -5213,7 +5156,7 @@ export namespace VoteAction {
   }
 }
 export class ThingStub extends Model {
-  protected _$identifier: ThingStubStatic.$Identifier | undefined;
+  protected _$identifier?: ThingStubStatic.$Identifier;
   override readonly $type:
     | "ThingStub"
     | "ActionStub"
@@ -5349,11 +5292,11 @@ export class ThingStub extends Model {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.name.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.name.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.order.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
+    this.order.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     return _hasher;
   }
@@ -5362,8 +5305,8 @@ export class ThingStub extends Model {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        name: this.name.map((_item) => _item).extract(),
-        order: this.order.map((_item) => _item).extract(),
+        name: this.name.map((item) => item).extract(),
+        order: this.order.map((item) => item).extract(),
       } satisfies ThingStubStatic.$Json),
     );
   }
@@ -5406,8 +5349,8 @@ export namespace ThingStubStatic {
   export type $Identifier = ModelStatic.$Identifier;
   export const $Identifier = ModelStatic.$Identifier;
   export type $Json = {
-    readonly name: string | undefined;
-    readonly order: number | undefined;
+    readonly name?: string;
+    readonly order?: number;
   } & ModelStatic.$Json;
 
   export function $propertiesFromJson(
@@ -5425,18 +5368,18 @@ export namespace ThingStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ModelStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ModelStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const name = purify.Maybe.fromNullable(_jsonObject["name"]);
-    const order = purify.Maybe.fromNullable(_jsonObject["order"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const name = purify.Maybe.fromNullable($jsonObject["name"]);
+    const order = purify.Maybe.fromNullable($jsonObject["order"]);
     return purify.Either.of({ ...$super0, $identifier, name, order });
   }
 
@@ -5493,7 +5436,7 @@ export namespace ThingStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5557,22 +5500,24 @@ export namespace ThingStubStatic {
         name: zod.string().optional(),
         order: zod.number().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       name: purify.Maybe<string>;
@@ -5580,57 +5525,55 @@ export namespace ThingStubStatic {
     } & $UnwrapR<ReturnType<typeof ModelStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ModelStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Thing)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Thing)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ThingStubStatic.$Identifier = _resource.identifier;
-    const _nameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.name["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    const $identifier: ThingStubStatic.$Identifier = $resource.identifier;
+    const _nameEither: purify.Either<Error, purify.Maybe<string>> = $resource
+      .values($properties.name["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_nameEither.isLeft()) {
       return _nameEither;
     }
 
     const name = _nameEither.unsafeCoerce();
-    const _orderEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values($properties.order["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
+    const _orderEither: purify.Either<Error, purify.Maybe<number>> = $resource
+      .values($properties.order["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toNumber())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_orderEither.isLeft()) {
       return _orderEither;
     }
@@ -5641,53 +5584,53 @@ export namespace ThingStubStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof ThingStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ThingStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, ThingStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ActionStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         ThingStub
       >
     )
       .altLazy(
         () =>
           OrganizationStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             ThingStub
           >,
       )
       .altLazy(
         () =>
           PersonStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             ThingStub
           >,
       )
       .altLazy(
         () =>
           CreativeWorkStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             ThingStub
           >,
       )
       .altLazy(
         () =>
           EventStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             ThingStub
           >,
       )
       .altLazy(
         () =>
           IntangibleStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             ThingStub
           >,
       )
       .altLazy(
         () =>
           PlaceStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             ThingStub
           >,
       )
@@ -5964,16 +5907,16 @@ export namespace ActionStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -5994,7 +5937,7 @@ export namespace ActionStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -6014,63 +5957,63 @@ export namespace ActionStubStatic {
           "VoteActionStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Action)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Action)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ActionStubStatic.$Identifier = _resource.identifier;
+    const $identifier: ActionStubStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ActionStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ActionStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, ActionStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       AssessActionStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         ActionStub
       >
     ).altLazy(() =>
@@ -6289,16 +6232,16 @@ export namespace AssessActionStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ActionStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ActionStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -6321,7 +6264,7 @@ export namespace AssessActionStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ActionStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -6340,64 +6283,64 @@ export namespace AssessActionStubStatic {
           "VoteActionStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ActionStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ActionStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/AssessAction)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/AssessAction)`,
+            ),
           ),
         );
     }
 
     const $identifier: AssessActionStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof AssessActionStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, AssessActionStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, AssessActionStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ChooseActionStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         AssessActionStub
       >
     ).altLazy(() =>
@@ -6616,17 +6559,17 @@ export namespace ChooseActionStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      AssessActionStubStatic.$propertiesFromJson(_jsonObject);
+      AssessActionStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -6649,7 +6592,7 @@ export namespace ChooseActionStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [AssessActionStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -6664,64 +6607,64 @@ export namespace ChooseActionStubStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["ChooseActionStub", "VoteActionStub"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof AssessActionStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = AssessActionStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ChooseAction)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ChooseAction)`,
+            ),
           ),
         );
     }
 
     const $identifier: ChooseActionStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ChooseActionStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ChooseActionStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, ChooseActionStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       VoteActionStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         ChooseActionStub
       >
     ).altLazy(() =>
@@ -6939,17 +6882,17 @@ export namespace VoteActionStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      ChooseActionStubStatic.$propertiesFromJson(_jsonObject);
+      ChooseActionStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -6965,7 +6908,7 @@ export namespace VoteActionStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ChooseActionStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -6980,59 +6923,59 @@ export namespace VoteActionStub {
         "@id": zod.string().min(1),
         $type: zod.literal("VoteActionStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ChooseActionStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ChooseActionStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/VoteAction)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/VoteAction)`,
+            ),
           ),
         );
     }
 
-    const $identifier: VoteActionStub.$Identifier = _resource.identifier;
+    const $identifier: VoteActionStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof VoteActionStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, VoteActionStub> {
+  ): purify.Either<Error, VoteActionStub> {
     return VoteActionStub.$propertiesFromRdf(parameters).map(
       (properties) => new VoteActionStub(properties),
     );
@@ -7392,32 +7335,32 @@ export class CreativeWork extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.about) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.about) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.authors) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.authors) {
+      item0.$hash(_hasher);
     }
 
-    this.datePublished.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.datePublished.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    for (const _item0 of this.hasParts) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.hasParts) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.isBasedOn) {
-      _hasher.update(_item0.termType);
-      _hasher.update(_item0.value);
+    for (const item0 of this.isBasedOn) {
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
     }
 
-    for (const _item0 of this.isPartOf) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.isPartOf) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.publication) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.publication) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -7427,15 +7370,15 @@ export class CreativeWork extends Thing {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        about: this.about.map((_item) => _item.$toJson()),
-        authors: this.authors.map((_item) => _item.$toJson()),
+        about: this.about.map((item) => item.$toJson()),
+        authors: this.authors.map((item) => item.$toJson()),
         datePublished: this.datePublished
-          .map((_item) => _item.toISOString())
+          .map((item) => item.toISOString())
           .extract(),
-        hasParts: this.hasParts.map((_item) => _item.$toJson()),
-        isBasedOn: this.isBasedOn.map((_item) => ({ "@id": _item.value })),
-        isPartOf: this.isPartOf.map((_item) => _item.$toJson()),
-        publication: this.publication.map((_item) => _item.$toJson()),
+        hasParts: this.hasParts.map((item) => item.$toJson()),
+        isBasedOn: this.isBasedOn.map((item) => ({ "@id": item.value })),
+        isPartOf: this.isPartOf.map((item) => item.$toJson()),
+        publication: this.publication.map((item) => item.$toJson()),
       } satisfies CreativeWorkStatic.$Json),
     );
   }
@@ -7463,20 +7406,20 @@ export class CreativeWork extends Thing {
 
     _resource.add(
       CreativeWorkStatic.$properties.about["identifier"],
-      this.about.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.about.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       CreativeWorkStatic.$properties.authors["identifier"],
-      this.authors.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.authors.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       CreativeWorkStatic.$properties.datePublished["identifier"],
-      this.datePublished.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.datePublished.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
@@ -7484,24 +7427,24 @@ export class CreativeWork extends Thing {
     );
     _resource.add(
       CreativeWorkStatic.$properties.hasParts["identifier"],
-      this.hasParts.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.hasParts.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       CreativeWorkStatic.$properties.isBasedOn["identifier"],
-      this.isBasedOn.map((_item) => _item),
+      this.isBasedOn.map((item) => item),
     );
     _resource.add(
       CreativeWorkStatic.$properties.isPartOf["identifier"],
-      this.isPartOf.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.isPartOf.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       CreativeWorkStatic.$properties.publication["identifier"],
-      this.publication.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.publication.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -7519,16 +7462,16 @@ export namespace CreativeWorkStatic {
   export type $Identifier = ThingStatic.$Identifier;
   export const $Identifier = ThingStatic.$Identifier;
   export type $Json = {
-    readonly about: readonly ThingStubStatic.$Json[];
-    readonly authors: readonly (
+    readonly about?: readonly ThingStubStatic.$Json[];
+    readonly authors?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly datePublished: string | undefined;
-    readonly hasParts: readonly CreativeWorkStubStatic.$Json[];
-    readonly isBasedOn: readonly { readonly "@id": string }[];
-    readonly isPartOf: readonly CreativeWorkStubStatic.$Json[];
-    readonly publication: readonly PublicationEventStubStatic.$Json[];
+    readonly datePublished?: string;
+    readonly hasParts?: readonly CreativeWorkStubStatic.$Json[];
+    readonly isBasedOn?: readonly { readonly "@id": string }[];
+    readonly isPartOf?: readonly CreativeWorkStubStatic.$Json[];
+    readonly publication?: readonly PublicationEventStubStatic.$Json[];
   } & ThingStatic.$Json;
 
   export function $propertiesFromJson(
@@ -7551,36 +7494,36 @@ export namespace CreativeWorkStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const about = _jsonObject["about"].map((_item) =>
-      ThingStubStatic.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const about = $jsonObject["about"].map((item) =>
+      ThingStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const authors = _jsonObject["authors"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const authors = $jsonObject["authors"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
     const datePublished = purify.Maybe.fromNullable(
-      _jsonObject["datePublished"],
-    ).map((_item) => new Date(_item));
-    const hasParts = _jsonObject["hasParts"].map((_item) =>
-      CreativeWorkStubStatic.$fromJson(_item).unsafeCoerce(),
+      $jsonObject["datePublished"],
+    ).map((item) => new Date(item));
+    const hasParts = $jsonObject["hasParts"].map((item) =>
+      CreativeWorkStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const isBasedOn = _jsonObject["isBasedOn"].map((_item) =>
-      dataFactory.namedNode(_item["@id"]),
+    const isBasedOn = $jsonObject["isBasedOn"].map((item) =>
+      dataFactory.namedNode(item["@id"]),
     );
-    const isPartOf = _jsonObject["isPartOf"].map((_item) =>
-      CreativeWorkStubStatic.$fromJson(_item).unsafeCoerce(),
+    const isPartOf = $jsonObject["isPartOf"].map((item) =>
+      CreativeWorkStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const publication = _jsonObject["publication"].map((_item) =>
-      PublicationEventStubStatic.$fromJson(_item).unsafeCoerce(),
+    const publication = $jsonObject["publication"].map((item) =>
+      PublicationEventStubStatic.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({
       ...$super0,
@@ -7665,7 +7608,7 @@ export namespace CreativeWorkStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -7733,22 +7676,24 @@ export namespace CreativeWorkStatic {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       about: readonly ThingStub[];
@@ -7761,201 +7706,180 @@ export namespace CreativeWorkStatic {
     } & $UnwrapR<ReturnType<typeof ThingStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
+            ),
           ),
         );
     }
 
-    const $identifier: CreativeWorkStatic.$Identifier = _resource.identifier;
-    const _aboutEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly ThingStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.about["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ThingStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: CreativeWorkStatic.$Identifier = $resource.identifier;
+    const _aboutEither: purify.Either<Error, readonly ThingStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.about["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                ThingStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_aboutEither.isLeft()) {
       return _aboutEither;
     }
 
     const about = _aboutEither.unsafeCoerce();
-    const _authorsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.authors["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _authorsEither: purify.Either<Error, readonly AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.authors["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_authorsEither.isLeft()) {
       return _authorsEither;
     }
 
     const authors = _authorsEither.unsafeCoerce();
     const _datePublishedEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.datePublished["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.datePublished["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_datePublishedEither.isLeft()) {
       return _datePublishedEither;
     }
 
     const datePublished = _datePublishedEither.unsafeCoerce();
-    const _hasPartsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      CreativeWorkStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.hasParts["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              CreativeWorkStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _hasPartsEither: purify.Either<Error, CreativeWorkStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.hasParts["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                CreativeWorkStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_hasPartsEither.isLeft()) {
       return _hasPartsEither;
     }
 
     const hasParts = _hasPartsEither.unsafeCoerce();
-    const _isBasedOnEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly rdfjs.NamedNode[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.isBasedOn["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toIri())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _isBasedOnEither: purify.Either<Error, readonly rdfjs.NamedNode[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.isBasedOn["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toIri()),
+          ),
+      );
     if (_isBasedOnEither.isLeft()) {
       return _isBasedOnEither;
     }
 
     const isBasedOn = _isBasedOnEither.unsafeCoerce();
-    const _isPartOfEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly CreativeWorkStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.isPartOf["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              CreativeWorkStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _isPartOfEither: purify.Either<Error, readonly CreativeWorkStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.isPartOf["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                CreativeWorkStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_isPartOfEither.isLeft()) {
       return _isPartOfEither;
     }
 
     const isPartOf = _isPartOfEither.unsafeCoerce();
     const _publicationEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       readonly PublicationEventStub[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.publication["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
+        .map((item) =>
+          item
             .toValues()
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
               PublicationEventStubStatic.$fromRdf({
-                ..._context,
+                ...$context,
                 ignoreRdfType: true,
-                languageIn: _languageIn,
+                languageIn: $languageIn,
                 resource: _resource,
               }),
-            )
-            .toMaybe()
-            .toList(),
+            ),
         ),
-    ]);
+    );
     if (_publicationEither.isLeft()) {
       return _publicationEither;
     }
@@ -7976,67 +7900,67 @@ export namespace CreativeWorkStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof CreativeWorkStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWork> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, CreativeWork> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ArticleStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         CreativeWork
       >
     )
       .altLazy(
         () =>
           CreativeWorkSeriesStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           EpisodeStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           MediaObjectStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           Message.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           MusicAlbum.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           MusicComposition.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           MusicPlaylist.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
       .altLazy(
         () =>
           MusicRecording.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWork
           >,
       )
@@ -8571,18 +8495,18 @@ export class MediaObject extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.contentUrl.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.contentUrl.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
-    this.encodingFormat.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.encodingFormat.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.height.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.height.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
-    this.width.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.width.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -8592,11 +8516,11 @@ export class MediaObject extends CreativeWork {
       JSON.stringify({
         ...super.$toJson(),
         contentUrl: this.contentUrl
-          .map((_item) => ({ "@id": _item.value }))
+          .map((item) => ({ "@id": item.value }))
           .extract(),
-        encodingFormat: this.encodingFormat.map((_item) => _item).extract(),
-        height: this.height.map((_item) => _item.$toJson()).extract(),
-        width: this.width.map((_item) => _item.$toJson()).extract(),
+        encodingFormat: this.encodingFormat.map((item) => item).extract(),
+        height: this.height.map((item) => item.$toJson()).extract(),
+        width: this.width.map((item) => item.$toJson()).extract(),
       } satisfies MediaObjectStatic.$Json),
     );
   }
@@ -8632,14 +8556,14 @@ export class MediaObject extends CreativeWork {
     );
     _resource.add(
       MediaObjectStatic.$properties.height["identifier"],
-      this.height.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.height.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       MediaObjectStatic.$properties.width["identifier"],
-      this.width.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.width.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -8657,10 +8581,10 @@ export namespace MediaObjectStatic {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly contentUrl: { readonly "@id": string } | undefined;
-    readonly encodingFormat: string | undefined;
-    readonly height: QuantitativeValueStub.$Json | undefined;
-    readonly width: QuantitativeValueStub.$Json | undefined;
+    readonly contentUrl?: { readonly "@id": string };
+    readonly encodingFormat?: string;
+    readonly height?: QuantitativeValueStub.$Json;
+    readonly width?: QuantitativeValueStub.$Json;
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -8680,27 +8604,27 @@ export namespace MediaObjectStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const contentUrl = purify.Maybe.fromNullable(_jsonObject["contentUrl"]).map(
-      (_item) => dataFactory.namedNode(_item["@id"]),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const contentUrl = purify.Maybe.fromNullable($jsonObject["contentUrl"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
     );
     const encodingFormat = purify.Maybe.fromNullable(
-      _jsonObject["encodingFormat"],
+      $jsonObject["encodingFormat"],
     );
-    const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => QuantitativeValueStub.$fromJson(_item).unsafeCoerce(),
+    const height = purify.Maybe.fromNullable($jsonObject["height"]).map(
+      (item) => QuantitativeValueStub.$fromJson(item).unsafeCoerce(),
     );
-    const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      QuantitativeValueStub.$fromJson(_item).unsafeCoerce(),
+    const width = purify.Maybe.fromNullable($jsonObject["width"]).map((item) =>
+      QuantitativeValueStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({
       ...$super0,
@@ -8736,7 +8660,7 @@ export namespace MediaObjectStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8765,22 +8689,24 @@ export namespace MediaObjectStatic {
         height: QuantitativeValueStub.$jsonZodSchema().optional(),
         width: QuantitativeValueStub.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
@@ -8790,103 +8716,113 @@ export namespace MediaObjectStatic {
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MediaObjectStatic.$Identifier = _resource.identifier;
+    const $identifier: MediaObjectStatic.$Identifier = $resource.identifier;
     const _contentUrlEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values($properties.contentUrl["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toIri())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.contentUrl["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toIri())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_contentUrlEither.isLeft()) {
       return _contentUrlEither;
     }
 
     const contentUrl = _contentUrlEither.unsafeCoerce();
     const _encodingFormatEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.encodingFormat["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.encodingFormat["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_encodingFormatEither.isLeft()) {
       return _encodingFormatEither;
     }
 
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<QuantitativeValueStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.height["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          QuantitativeValueStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.height["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        QuantitativeValueStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_heightEither.isLeft()) {
       return _heightEither;
     }
 
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<QuantitativeValueStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.width["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          QuantitativeValueStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.width["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        QuantitativeValueStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_widthEither.isLeft()) {
       return _widthEither;
     }
@@ -8904,18 +8840,15 @@ export namespace MediaObjectStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof MediaObjectStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MediaObject> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, MediaObject> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      ImageObject.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        MediaObject
-      >
+      ImageObject.$fromRdf(otherParameters) as purify.Either<Error, MediaObject>
     )
       .altLazy(
         () =>
           TextObject.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             MediaObject
           >,
       )
@@ -9252,8 +9185,8 @@ export class TextObject extends MediaObject {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.uriSpace.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.uriSpace.ifJust((value0) => {
+      _hasher.update(value0);
     });
     return _hasher;
   }
@@ -9262,7 +9195,7 @@ export class TextObject extends MediaObject {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        uriSpace: this.uriSpace.map((_item) => _item).extract(),
+        uriSpace: this.uriSpace.map((item) => item).extract(),
       } satisfies TextObject.$Json),
     );
   }
@@ -9303,9 +9236,7 @@ export namespace TextObject {
   );
   export type $Identifier = MediaObjectStatic.$Identifier;
   export const $Identifier = MediaObjectStatic.$Identifier;
-  export type $Json = {
-    readonly uriSpace: string | undefined;
-  } & MediaObjectStatic.$Json;
+  export type $Json = { readonly uriSpace?: string } & MediaObjectStatic.$Json;
 
   export function $propertiesFromJson(
     _json: unknown,
@@ -9321,17 +9252,17 @@ export namespace TextObject {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = MediaObjectStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = MediaObjectStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const uriSpace = purify.Maybe.fromNullable(_jsonObject["uriSpace"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const uriSpace = purify.Maybe.fromNullable($jsonObject["uriSpace"]);
     return purify.Either.of({ ...$super0, $identifier, uriSpace });
   }
 
@@ -9347,7 +9278,7 @@ export namespace TextObject {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9366,64 +9297,67 @@ export namespace TextObject {
         $type: zod.literal("TextObject"),
         uriSpace: zod.string().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       uriSpace: purify.Maybe<string>;
     } & $UnwrapR<ReturnType<typeof MediaObjectStatic.$propertiesFromRdf>>
   > {
     const $super0Either = MediaObjectStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/TextObject)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/TextObject)`,
+            ),
           ),
         );
     }
 
-    const $identifier: TextObject.$Identifier = _resource.identifier;
+    const $identifier: TextObject.$Identifier = $resource.identifier;
     const _uriSpaceEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.uriSpace["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.uriSpace["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_uriSpaceEither.isLeft()) {
       return _uriSpaceEither;
     }
@@ -9434,7 +9368,7 @@ export namespace TextObject {
 
   export function $fromRdf(
     parameters: Parameters<typeof TextObject.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, TextObject> {
+  ): purify.Either<Error, TextObject> {
     return TextObject.$propertiesFromRdf(parameters).map(
       (properties) => new TextObject(properties),
     );
@@ -9693,16 +9627,16 @@ export namespace CreativeWorkStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -9782,7 +9716,7 @@ export namespace CreativeWorkStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -9813,64 +9747,64 @@ export namespace CreativeWorkStubStatic {
           "TextObjectStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWork)`,
+            ),
           ),
         );
     }
 
     const $identifier: CreativeWorkStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof CreativeWorkStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, CreativeWorkStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ArticleStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         CreativeWorkStub
       >
     )
@@ -9878,57 +9812,54 @@ export namespace CreativeWorkStubStatic {
         () =>
           CreativeWorkSeriesStubStatic.$fromRdf(
             otherParameters,
-          ) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            CreativeWorkStub
-          >,
+          ) as purify.Either<Error, CreativeWorkStub>,
       )
       .altLazy(
         () =>
           EpisodeStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
           MediaObjectStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
           MessageStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
           MusicAlbumStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
           MusicCompositionStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
           MusicPlaylistStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
       .altLazy(
         () =>
           MusicRecordingStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             CreativeWorkStub
           >,
       )
@@ -10233,18 +10164,18 @@ export class MediaObjectStub extends CreativeWorkStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.contentUrl.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.contentUrl.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
-    this.encodingFormat.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.encodingFormat.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.height.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.height.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
-    this.width.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.width.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -10254,11 +10185,11 @@ export class MediaObjectStub extends CreativeWorkStub {
       JSON.stringify({
         ...super.$toJson(),
         contentUrl: this.contentUrl
-          .map((_item) => ({ "@id": _item.value }))
+          .map((item) => ({ "@id": item.value }))
           .extract(),
-        encodingFormat: this.encodingFormat.map((_item) => _item).extract(),
-        height: this.height.map((_item) => _item.$toJson()).extract(),
-        width: this.width.map((_item) => _item.$toJson()).extract(),
+        encodingFormat: this.encodingFormat.map((item) => item).extract(),
+        height: this.height.map((item) => item.$toJson()).extract(),
+        width: this.width.map((item) => item.$toJson()).extract(),
       } satisfies MediaObjectStubStatic.$Json),
     );
   }
@@ -10294,14 +10225,14 @@ export class MediaObjectStub extends CreativeWorkStub {
     );
     _resource.add(
       MediaObjectStatic.$properties.height["identifier"],
-      this.height.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.height.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       MediaObjectStatic.$properties.width["identifier"],
-      this.width.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.width.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -10319,10 +10250,10 @@ export namespace MediaObjectStubStatic {
   export type $Identifier = CreativeWorkStubStatic.$Identifier;
   export const $Identifier = CreativeWorkStubStatic.$Identifier;
   export type $Json = {
-    readonly contentUrl: { readonly "@id": string } | undefined;
-    readonly encodingFormat: string | undefined;
-    readonly height: QuantitativeValueStub.$Json | undefined;
-    readonly width: QuantitativeValueStub.$Json | undefined;
+    readonly contentUrl?: { readonly "@id": string };
+    readonly encodingFormat?: string;
+    readonly height?: QuantitativeValueStub.$Json;
+    readonly width?: QuantitativeValueStub.$Json;
   } & CreativeWorkStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -10342,28 +10273,28 @@ export namespace MediaObjectStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const contentUrl = purify.Maybe.fromNullable(_jsonObject["contentUrl"]).map(
-      (_item) => dataFactory.namedNode(_item["@id"]),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const contentUrl = purify.Maybe.fromNullable($jsonObject["contentUrl"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
     );
     const encodingFormat = purify.Maybe.fromNullable(
-      _jsonObject["encodingFormat"],
+      $jsonObject["encodingFormat"],
     );
-    const height = purify.Maybe.fromNullable(_jsonObject["height"]).map(
-      (_item) => QuantitativeValueStub.$fromJson(_item).unsafeCoerce(),
+    const height = purify.Maybe.fromNullable($jsonObject["height"]).map(
+      (item) => QuantitativeValueStub.$fromJson(item).unsafeCoerce(),
     );
-    const width = purify.Maybe.fromNullable(_jsonObject["width"]).map((_item) =>
-      QuantitativeValueStub.$fromJson(_item).unsafeCoerce(),
+    const width = purify.Maybe.fromNullable($jsonObject["width"]).map((item) =>
+      QuantitativeValueStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({
       ...$super0,
@@ -10402,7 +10333,7 @@ export namespace MediaObjectStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -10435,22 +10366,24 @@ export namespace MediaObjectStubStatic {
         height: QuantitativeValueStub.$jsonZodSchema().optional(),
         width: QuantitativeValueStub.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       contentUrl: purify.Maybe<rdfjs.NamedNode>;
@@ -10460,103 +10393,113 @@ export namespace MediaObjectStubStatic {
     } & $UnwrapR<ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MediaObject)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MediaObjectStubStatic.$Identifier = _resource.identifier;
+    const $identifier: MediaObjectStubStatic.$Identifier = $resource.identifier;
     const _contentUrlEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values($properties.contentUrl["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toIri())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.contentUrl["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toIri())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_contentUrlEither.isLeft()) {
       return _contentUrlEither;
     }
 
     const contentUrl = _contentUrlEither.unsafeCoerce();
     const _encodingFormatEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.encodingFormat["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.encodingFormat["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_encodingFormatEither.isLeft()) {
       return _encodingFormatEither;
     }
 
     const encodingFormat = _encodingFormatEither.unsafeCoerce();
     const _heightEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<QuantitativeValueStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.height["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          QuantitativeValueStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.height["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        QuantitativeValueStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_heightEither.isLeft()) {
       return _heightEither;
     }
 
     const height = _heightEither.unsafeCoerce();
     const _widthEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<QuantitativeValueStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.width["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          QuantitativeValueStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.width["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        QuantitativeValueStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_widthEither.isLeft()) {
       return _widthEither;
     }
@@ -10574,18 +10517,18 @@ export namespace MediaObjectStubStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof MediaObjectStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MediaObjectStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, MediaObjectStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ImageObjectStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         MediaObjectStub
       >
     )
       .altLazy(
         () =>
           TextObjectStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             MediaObjectStub
           >,
       )
@@ -10932,17 +10875,17 @@ export namespace TextObjectStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      MediaObjectStubStatic.$propertiesFromJson(_jsonObject);
+      MediaObjectStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -10958,7 +10901,7 @@ export namespace TextObjectStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [MediaObjectStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -10973,59 +10916,59 @@ export namespace TextObjectStub {
         "@id": zod.string().min(1),
         $type: zod.literal("TextObjectStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof MediaObjectStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = MediaObjectStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/TextObject)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/TextObject)`,
+            ),
           ),
         );
     }
 
-    const $identifier: TextObjectStub.$Identifier = _resource.identifier;
+    const $identifier: TextObjectStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof TextObjectStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, TextObjectStub> {
+  ): purify.Either<Error, TextObjectStub> {
     return TextObjectStub.$propertiesFromRdf(parameters).map(
       (properties) => new TextObjectStub(properties),
     );
@@ -11242,16 +11185,16 @@ export namespace StructuredValueStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -11282,7 +11225,7 @@ export namespace StructuredValueStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStatic.$jsonUiSchema({ scopePrefix })],
@@ -11301,70 +11244,70 @@ export namespace StructuredValueStatic {
           "QuantitativeValue",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/StructuredValue)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/StructuredValue)`,
+            ),
           ),
         );
     }
 
-    const $identifier: StructuredValueStatic.$Identifier = _resource.identifier;
+    const $identifier: StructuredValueStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof StructuredValueStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValue> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, StructuredValue> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       MonetaryAmount.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         StructuredValue
       >
     )
       .altLazy(
         () =>
           QuantitativeValue.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             StructuredValue
           >,
       )
@@ -11586,16 +11529,16 @@ export namespace ServiceStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -11616,7 +11559,7 @@ export namespace ServiceStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStatic.$jsonUiSchema({ scopePrefix })],
@@ -11635,63 +11578,63 @@ export namespace ServiceStatic {
           "RadioBroadcastService",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Service)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Service)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ServiceStatic.$Identifier = _resource.identifier;
+    const $identifier: ServiceStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ServiceStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Service> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Service> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       BroadcastServiceStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         Service
       >
     ).altLazy(() =>
@@ -11921,16 +11864,16 @@ export namespace IntangibleStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -12010,7 +11953,7 @@ export namespace IntangibleStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -12040,119 +11983,119 @@ export namespace IntangibleStubStatic {
           "StructuredValueStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Intangible)`,
+            ),
           ),
         );
     }
 
-    const $identifier: IntangibleStubStatic.$Identifier = _resource.identifier;
+    const $identifier: IntangibleStubStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof IntangibleStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, IntangibleStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, IntangibleStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       ServiceStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         IntangibleStub
       >
     )
       .altLazy(
         () =>
           InvoiceStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           ItemListStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           ListItemStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           StructuredValueStubStatic.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           MusicArtistRoleStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           OccupationStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           OrderStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
       .altLazy(
         () =>
           RoleStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             IntangibleStub
           >,
       )
@@ -12435,15 +12378,15 @@ export class RoleStub extends IntangibleStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.endDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.endDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    this.roleName.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.roleName.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
-    this.startDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.startDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
     return _hasher;
   }
@@ -12453,13 +12396,13 @@ export class RoleStub extends IntangibleStub {
       JSON.stringify({
         ...super.$toJson(),
         endDate: this.endDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .map((item) => item.toISOString().replace(/T.*$/, ""))
           .extract(),
         roleName: this.roleName
-          .map((_item) => ({ "@id": _item.value }))
+          .map((item) => ({ "@id": item.value }))
           .extract(),
         startDate: this.startDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .map((item) => item.toISOString().replace(/T.*$/, ""))
           .extract(),
       } satisfies RoleStub.$Json),
     );
@@ -12488,8 +12431,8 @@ export class RoleStub extends IntangibleStub {
 
     _resource.add(
       RoleStub.$properties.endDate["identifier"],
-      this.endDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.endDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.date,
         }),
@@ -12498,8 +12441,8 @@ export class RoleStub extends IntangibleStub {
     _resource.add(RoleStub.$properties.roleName["identifier"], this.roleName);
     _resource.add(
       RoleStub.$properties.startDate["identifier"],
-      this.startDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.startDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.date,
         }),
@@ -12520,9 +12463,9 @@ export namespace RoleStub {
   export type $Identifier = IntangibleStubStatic.$Identifier;
   export const $Identifier = IntangibleStubStatic.$Identifier;
   export type $Json = {
-    readonly endDate: string | undefined;
-    readonly roleName: { readonly "@id": string } | undefined;
-    readonly startDate: string | undefined;
+    readonly endDate?: string;
+    readonly roleName?: { readonly "@id": string };
+    readonly startDate?: string;
   } & IntangibleStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -12541,24 +12484,24 @@ export namespace RoleStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
-      (_item) => new Date(_item),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const endDate = purify.Maybe.fromNullable($jsonObject["endDate"]).map(
+      (item) => new Date(item),
     );
-    const roleName = purify.Maybe.fromNullable(_jsonObject["roleName"]).map(
-      (_item) => dataFactory.namedNode(_item["@id"]),
+    const roleName = purify.Maybe.fromNullable($jsonObject["roleName"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
     );
-    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
-      (_item) => new Date(_item),
+    const startDate = purify.Maybe.fromNullable($jsonObject["startDate"]).map(
+      (item) => new Date(item),
     );
     return purify.Either.of({
       ...$super0,
@@ -12581,7 +12524,7 @@ export namespace RoleStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12604,22 +12547,24 @@ export namespace RoleStub {
         roleName: zod.object({ "@id": zod.string().min(1) }).optional(),
         startDate: zod.string().date().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       endDate: purify.Maybe<Date>;
@@ -12628,72 +12573,73 @@ export namespace RoleStub {
     } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
+            ),
           ),
         );
     }
 
-    const $identifier: RoleStub.$Identifier = _resource.identifier;
-    const _endDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.endDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const $identifier: RoleStub.$Identifier = $resource.identifier;
+    const _endDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.endDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_endDateEither.isLeft()) {
       return _endDateEither;
     }
 
     const endDate = _endDateEither.unsafeCoerce();
     const _roleNameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values($properties.roleName["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toIri())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.roleName["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toIri())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_roleNameEither.isLeft()) {
       return _roleNameEither;
     }
 
     const roleName = _roleNameEither.unsafeCoerce();
-    const _startDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.startDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const _startDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.startDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_startDateEither.isLeft()) {
       return _startDateEither;
     }
@@ -12710,7 +12656,7 @@ export namespace RoleStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof RoleStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, RoleStub> {
+  ): purify.Either<Error, RoleStub> {
     return RoleStub.$propertiesFromRdf(parameters).map(
       (properties) => new RoleStub(properties),
     );
@@ -12998,16 +12944,16 @@ export namespace ArticleStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -13025,7 +12971,7 @@ export namespace ArticleStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStatic.$jsonUiSchema({ scopePrefix })],
@@ -13040,65 +12986,62 @@ export namespace ArticleStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["Article", "Report"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Article)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Article)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ArticleStatic.$Identifier = _resource.identifier;
+    const $identifier: ArticleStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ArticleStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Article> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Article> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      Report.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Article
-      >
+      Report.$fromRdf(otherParameters) as purify.Either<Error, Article>
     ).altLazy(() =>
       ArticleStatic.$propertiesFromRdf(parameters).map(
         (properties) => new Article(properties),
@@ -13312,16 +13255,16 @@ export namespace Report {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ArticleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ArticleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -13337,7 +13280,7 @@ export namespace Report {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ArticleStatic.$jsonUiSchema({ scopePrefix })],
@@ -13349,59 +13292,59 @@ export namespace Report {
   export function $jsonZodSchema() {
     return ArticleStatic.$jsonZodSchema().merge(
       zod.object({ "@id": zod.string().min(1), $type: zod.literal("Report") }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ArticleStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ArticleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Report)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Report)`,
+            ),
           ),
         );
     }
 
-    const $identifier: Report.$Identifier = _resource.identifier;
+    const $identifier: Report.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof Report.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Report> {
+  ): purify.Either<Error, Report> {
     return Report.$propertiesFromRdf(parameters).map(
       (properties) => new Report(properties),
     );
@@ -13610,17 +13553,17 @@ export namespace ArticleStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -13640,7 +13583,7 @@ export namespace ArticleStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -13655,65 +13598,62 @@ export namespace ArticleStubStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["ArticleStub", "ReportStub"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Article)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Article)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ArticleStubStatic.$Identifier = _resource.identifier;
+    const $identifier: ArticleStubStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ArticleStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ArticleStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, ArticleStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      ReportStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        ArticleStub
-      >
+      ReportStub.$fromRdf(otherParameters) as purify.Either<Error, ArticleStub>
     ).altLazy(() =>
       ArticleStubStatic.$propertiesFromRdf(parameters).map(
         (properties) => new ArticleStub(properties),
@@ -13927,16 +13867,16 @@ export namespace ReportStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ArticleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ArticleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -13952,7 +13892,7 @@ export namespace ReportStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ArticleStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -13967,59 +13907,59 @@ export namespace ReportStub {
         "@id": zod.string().min(1),
         $type: zod.literal("ReportStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ArticleStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ArticleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Report)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Report)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ReportStub.$Identifier = _resource.identifier;
+    const $identifier: ReportStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ReportStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ReportStub> {
+  ): purify.Either<Error, ReportStub> {
     return ReportStub.$propertiesFromRdf(parameters).map(
       (properties) => new ReportStub(properties),
     );
@@ -14229,16 +14169,16 @@ export namespace CreativeWorkSeriesStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -14261,7 +14201,7 @@ export namespace CreativeWorkSeriesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStatic.$jsonUiSchema({ scopePrefix })],
@@ -14276,54 +14216,54 @@ export namespace CreativeWorkSeriesStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["CreativeWorkSeries", "RadioSeries"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWorkSeries)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWorkSeries)`,
+            ),
           ),
         );
     }
 
     const $identifier: CreativeWorkSeriesStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -14331,11 +14271,11 @@ export namespace CreativeWorkSeriesStatic {
     parameters: Parameters<
       typeof CreativeWorkSeriesStatic.$propertiesFromRdf
     >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkSeries> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, CreativeWorkSeries> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       RadioSeries.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         CreativeWorkSeries
       >
     ).altLazy(() =>
@@ -14547,8 +14487,8 @@ export class RadioSeries extends CreativeWorkSeries {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.episodes) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.episodes) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -14558,7 +14498,7 @@ export class RadioSeries extends CreativeWorkSeries {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        episodes: this.episodes.map((_item) => _item.$toJson()),
+        episodes: this.episodes.map((item) => item.$toJson()),
       } satisfies RadioSeries.$Json),
     );
   }
@@ -14586,8 +14526,8 @@ export class RadioSeries extends CreativeWorkSeries {
 
     _resource.add(
       RadioSeries.$properties.episodes["identifier"],
-      this.episodes.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.episodes.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -14605,7 +14545,7 @@ export namespace RadioSeries {
   export type $Identifier = CreativeWorkSeriesStatic.$Identifier;
   export const $Identifier = CreativeWorkSeriesStatic.$Identifier;
   export type $Json = {
-    readonly episodes: readonly RadioEpisodeStub.$Json[];
+    readonly episodes?: readonly RadioEpisodeStub.$Json[];
   } & CreativeWorkSeriesStatic.$Json;
 
   export function $propertiesFromJson(
@@ -14624,19 +14564,19 @@ export namespace RadioSeries {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkSeriesStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkSeriesStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const episodes = _jsonObject["episodes"].map((_item) =>
-      RadioEpisodeStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const episodes = $jsonObject["episodes"].map((item) =>
+      RadioEpisodeStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, episodes });
   }
@@ -14653,7 +14593,7 @@ export namespace RadioSeries {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -14676,77 +14616,73 @@ export namespace RadioSeries {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       episodes: RadioEpisodeStub[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkSeriesStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkSeriesStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioSeries)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioSeries)`,
+            ),
           ),
         );
     }
 
-    const $identifier: RadioSeries.$Identifier = _resource.identifier;
-    const _episodesEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      RadioEpisodeStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.episodes["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              RadioEpisodeStub.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: RadioSeries.$Identifier = $resource.identifier;
+    const _episodesEither: purify.Either<Error, RadioEpisodeStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.episodes["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                RadioEpisodeStub.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_episodesEither.isLeft()) {
       return _episodesEither;
     }
@@ -14757,7 +14693,7 @@ export namespace RadioSeries {
 
   export function $fromRdf(
     parameters: Parameters<typeof RadioSeries.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, RadioSeries> {
+  ): purify.Either<Error, RadioSeries> {
     return RadioSeries.$propertiesFromRdf(parameters).map(
       (properties) => new RadioSeries(properties),
     );
@@ -15014,17 +14950,17 @@ export namespace CreativeWorkSeriesStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -15047,7 +14983,7 @@ export namespace CreativeWorkSeriesStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -15062,54 +14998,54 @@ export namespace CreativeWorkSeriesStubStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["CreativeWorkSeriesStub", "RadioSeriesStub"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWorkSeries)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/CreativeWorkSeries)`,
+            ),
           ),
         );
     }
 
     const $identifier: CreativeWorkSeriesStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -15117,11 +15053,11 @@ export namespace CreativeWorkSeriesStubStatic {
     parameters: Parameters<
       typeof CreativeWorkSeriesStubStatic.$propertiesFromRdf
     >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, CreativeWorkSeriesStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, CreativeWorkSeriesStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       RadioSeriesStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         CreativeWorkSeriesStub
       >
     ).altLazy(() =>
@@ -15346,17 +15282,17 @@ export namespace RadioSeriesStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkSeriesStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkSeriesStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -15372,7 +15308,7 @@ export namespace RadioSeriesStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkSeriesStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -15387,59 +15323,59 @@ export namespace RadioSeriesStub {
         "@id": zod.string().min(1),
         $type: zod.literal("RadioSeriesStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkSeriesStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkSeriesStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioSeries)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioSeries)`,
+            ),
           ),
         );
     }
 
-    const $identifier: RadioSeriesStub.$Identifier = _resource.identifier;
+    const $identifier: RadioSeriesStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof RadioSeriesStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, RadioSeriesStub> {
+  ): purify.Either<Error, RadioSeriesStub> {
     return RadioSeriesStub.$propertiesFromRdf(parameters).map(
       (properties) => new RadioSeriesStub(properties),
     );
@@ -15651,8 +15587,8 @@ export class Episode extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.partOfSeries.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.partOfSeries.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -15661,9 +15597,7 @@ export class Episode extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        partOfSeries: this.partOfSeries
-          .map((_item) => _item.$toJson())
-          .extract(),
+        partOfSeries: this.partOfSeries.map((item) => item.$toJson()).extract(),
       } satisfies EpisodeStatic.$Json),
     );
   }
@@ -15691,8 +15625,8 @@ export class Episode extends CreativeWork {
 
     _resource.add(
       EpisodeStatic.$properties.partOfSeries["identifier"],
-      this.partOfSeries.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.partOfSeries.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -15710,7 +15644,7 @@ export namespace EpisodeStatic {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly partOfSeries: CreativeWorkSeriesStubStatic.$Json | undefined;
+    readonly partOfSeries?: CreativeWorkSeriesStubStatic.$Json;
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -15727,20 +15661,20 @@ export namespace EpisodeStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const partOfSeries = purify.Maybe.fromNullable(
-      _jsonObject["partOfSeries"],
-    ).map((_item) =>
-      CreativeWorkSeriesStubStatic.$fromJson(_item).unsafeCoerce(),
+      $jsonObject["partOfSeries"],
+    ).map((item) =>
+      CreativeWorkSeriesStubStatic.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, partOfSeries });
   }
@@ -15759,7 +15693,7 @@ export namespace EpisodeStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -15780,72 +15714,75 @@ export namespace EpisodeStatic {
         $type: zod.enum(["Episode", "RadioEpisode"]),
         partOfSeries: CreativeWorkSeriesStubStatic.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       partOfSeries: purify.Maybe<CreativeWorkSeriesStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Episode)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Episode)`,
+            ),
           ),
         );
     }
 
-    const $identifier: EpisodeStatic.$Identifier = _resource.identifier;
+    const $identifier: EpisodeStatic.$Identifier = $resource.identifier;
     const _partOfSeriesEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<CreativeWorkSeriesStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.partOfSeries["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          CreativeWorkSeriesStubStatic.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.partOfSeries["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        CreativeWorkSeriesStubStatic.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_partOfSeriesEither.isLeft()) {
       return _partOfSeriesEither;
     }
@@ -15856,13 +15793,10 @@ export namespace EpisodeStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof EpisodeStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Episode> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Episode> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      RadioEpisode.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        Episode
-      >
+      RadioEpisode.$fromRdf(otherParameters) as purify.Either<Error, Episode>
     ).altLazy(() =>
       EpisodeStatic.$propertiesFromRdf(parameters).map(
         (properties) => new Episode(properties),
@@ -16123,16 +16057,16 @@ export namespace RadioEpisode {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = EpisodeStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = EpisodeStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -16148,7 +16082,7 @@ export namespace RadioEpisode {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [EpisodeStatic.$jsonUiSchema({ scopePrefix })],
@@ -16163,59 +16097,59 @@ export namespace RadioEpisode {
         "@id": zod.string().min(1),
         $type: zod.literal("RadioEpisode"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof EpisodeStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = EpisodeStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioEpisode)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioEpisode)`,
+            ),
           ),
         );
     }
 
-    const $identifier: RadioEpisode.$Identifier = _resource.identifier;
+    const $identifier: RadioEpisode.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof RadioEpisode.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, RadioEpisode> {
+  ): purify.Either<Error, RadioEpisode> {
     return RadioEpisode.$propertiesFromRdf(parameters).map(
       (properties) => new RadioEpisode(properties),
     );
@@ -16429,17 +16363,17 @@ export namespace EpisodeStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -16462,7 +16396,7 @@ export namespace EpisodeStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -16477,63 +16411,63 @@ export namespace EpisodeStubStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["EpisodeStub", "RadioEpisodeStub"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Episode)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Episode)`,
+            ),
           ),
         );
     }
 
-    const $identifier: EpisodeStubStatic.$Identifier = _resource.identifier;
+    const $identifier: EpisodeStubStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof EpisodeStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, EpisodeStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, EpisodeStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       RadioEpisodeStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         EpisodeStub
       >
     ).altLazy(() =>
@@ -16749,16 +16683,16 @@ export namespace RadioEpisodeStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = EpisodeStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = EpisodeStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -16774,7 +16708,7 @@ export namespace RadioEpisodeStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [EpisodeStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -16789,59 +16723,59 @@ export namespace RadioEpisodeStub {
         "@id": zod.string().min(1),
         $type: zod.literal("RadioEpisodeStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof EpisodeStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = EpisodeStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioEpisode)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioEpisode)`,
+            ),
           ),
         );
     }
 
-    const $identifier: RadioEpisodeStub.$Identifier = _resource.identifier;
+    const $identifier: RadioEpisodeStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof RadioEpisodeStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, RadioEpisodeStub> {
+  ): purify.Either<Error, RadioEpisodeStub> {
     return RadioEpisodeStub.$propertiesFromRdf(parameters).map(
       (properties) => new RadioEpisodeStub(properties),
     );
@@ -17072,11 +17006,11 @@ export class BroadcastService extends Service {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.broadcastTimezone.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.broadcastTimezone.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.callSign.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.callSign.ifJust((value0) => {
+      _hasher.update(value0);
     });
     return _hasher;
   }
@@ -17085,10 +17019,8 @@ export class BroadcastService extends Service {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        broadcastTimezone: this.broadcastTimezone
-          .map((_item) => _item)
-          .extract(),
-        callSign: this.callSign.map((_item) => _item).extract(),
+        broadcastTimezone: this.broadcastTimezone.map((item) => item).extract(),
+        callSign: this.callSign.map((item) => item).extract(),
       } satisfies BroadcastServiceStatic.$Json),
     );
   }
@@ -17137,8 +17069,8 @@ export namespace BroadcastServiceStatic {
   export type $Identifier = ServiceStatic.$Identifier;
   export const $Identifier = ServiceStatic.$Identifier;
   export type $Json = {
-    readonly broadcastTimezone: string | undefined;
-    readonly callSign: string | undefined;
+    readonly broadcastTimezone?: string;
+    readonly callSign?: string;
   } & ServiceStatic.$Json;
 
   export function $propertiesFromJson(
@@ -17156,20 +17088,20 @@ export namespace BroadcastServiceStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ServiceStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ServiceStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const broadcastTimezone = purify.Maybe.fromNullable(
-      _jsonObject["broadcastTimezone"],
+      $jsonObject["broadcastTimezone"],
     );
-    const callSign = purify.Maybe.fromNullable(_jsonObject["callSign"]);
+    const callSign = purify.Maybe.fromNullable($jsonObject["callSign"]);
     return purify.Either.of({
       ...$super0,
       $identifier,
@@ -17197,7 +17129,7 @@ export namespace BroadcastServiceStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17221,22 +17153,24 @@ export namespace BroadcastServiceStatic {
         broadcastTimezone: zod.string().optional(),
         callSign: zod.string().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       broadcastTimezone: purify.Maybe<string>;
@@ -17244,58 +17178,62 @@ export namespace BroadcastServiceStatic {
     } & $UnwrapR<ReturnType<typeof ServiceStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ServiceStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastService)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastService)`,
+            ),
           ),
         );
     }
 
     const $identifier: BroadcastServiceStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     const _broadcastTimezoneEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.broadcastTimezone["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.broadcastTimezone["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_broadcastTimezoneEither.isLeft()) {
       return _broadcastTimezoneEither;
     }
 
     const broadcastTimezone = _broadcastTimezoneEither.unsafeCoerce();
     const _callSignEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.callSign["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.callSign["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_callSignEither.isLeft()) {
       return _callSignEither;
     }
@@ -17311,11 +17249,11 @@ export namespace BroadcastServiceStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof BroadcastServiceStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastService> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, BroadcastService> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       RadioBroadcastService.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         BroadcastService
       >
     ).altLazy(() =>
@@ -17600,17 +17538,17 @@ export namespace RadioBroadcastService {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      BroadcastServiceStatic.$propertiesFromJson(_jsonObject);
+      BroadcastServiceStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -17626,7 +17564,7 @@ export namespace RadioBroadcastService {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [BroadcastServiceStatic.$jsonUiSchema({ scopePrefix })],
@@ -17641,59 +17579,59 @@ export namespace RadioBroadcastService {
         "@id": zod.string().min(1),
         $type: zod.literal("RadioBroadcastService"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof BroadcastServiceStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = BroadcastServiceStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioBroadcastService)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioBroadcastService)`,
+            ),
           ),
         );
     }
 
-    const $identifier: RadioBroadcastService.$Identifier = _resource.identifier;
+    const $identifier: RadioBroadcastService.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof RadioBroadcastService.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, RadioBroadcastService> {
+  ): purify.Either<Error, RadioBroadcastService> {
     return RadioBroadcastService.$propertiesFromRdf(parameters).map(
       (properties) => new RadioBroadcastService(properties),
     );
@@ -17914,16 +17852,16 @@ export namespace ServiceStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -17946,7 +17884,7 @@ export namespace ServiceStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -17965,63 +17903,63 @@ export namespace ServiceStubStatic {
           "RadioBroadcastServiceStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Service)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Service)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ServiceStubStatic.$Identifier = _resource.identifier;
+    const $identifier: ServiceStubStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ServiceStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ServiceStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, ServiceStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       BroadcastServiceStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         ServiceStub
       >
     ).altLazy(() =>
@@ -18255,11 +18193,11 @@ export class BroadcastServiceStub extends ServiceStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.broadcastTimezone.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.broadcastTimezone.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.callSign.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.callSign.ifJust((value0) => {
+      _hasher.update(value0);
     });
     return _hasher;
   }
@@ -18268,10 +18206,8 @@ export class BroadcastServiceStub extends ServiceStub {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        broadcastTimezone: this.broadcastTimezone
-          .map((_item) => _item)
-          .extract(),
-        callSign: this.callSign.map((_item) => _item).extract(),
+        broadcastTimezone: this.broadcastTimezone.map((item) => item).extract(),
+        callSign: this.callSign.map((item) => item).extract(),
       } satisfies BroadcastServiceStubStatic.$Json),
     );
   }
@@ -18320,8 +18256,8 @@ export namespace BroadcastServiceStubStatic {
   export type $Identifier = ServiceStubStatic.$Identifier;
   export const $Identifier = ServiceStubStatic.$Identifier;
   export type $Json = {
-    readonly broadcastTimezone: string | undefined;
-    readonly callSign: string | undefined;
+    readonly broadcastTimezone?: string;
+    readonly callSign?: string;
   } & ServiceStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -18339,20 +18275,20 @@ export namespace BroadcastServiceStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ServiceStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ServiceStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const broadcastTimezone = purify.Maybe.fromNullable(
-      _jsonObject["broadcastTimezone"],
+      $jsonObject["broadcastTimezone"],
     );
-    const callSign = purify.Maybe.fromNullable(_jsonObject["callSign"]);
+    const callSign = purify.Maybe.fromNullable($jsonObject["callSign"]);
     return purify.Either.of({
       ...$super0,
       $identifier,
@@ -18380,7 +18316,7 @@ export namespace BroadcastServiceStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18404,22 +18340,24 @@ export namespace BroadcastServiceStubStatic {
         broadcastTimezone: zod.string().optional(),
         callSign: zod.string().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       broadcastTimezone: purify.Maybe<string>;
@@ -18427,58 +18365,62 @@ export namespace BroadcastServiceStubStatic {
     } & $UnwrapR<ReturnType<typeof ServiceStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ServiceStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastService)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastService)`,
+            ),
           ),
         );
     }
 
     const $identifier: BroadcastServiceStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     const _broadcastTimezoneEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.broadcastTimezone["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.broadcastTimezone["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_broadcastTimezoneEither.isLeft()) {
       return _broadcastTimezoneEither;
     }
 
     const broadcastTimezone = _broadcastTimezoneEither.unsafeCoerce();
     const _callSignEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.callSign["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.callSign["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_callSignEither.isLeft()) {
       return _callSignEither;
     }
@@ -18496,11 +18438,11 @@ export namespace BroadcastServiceStubStatic {
     parameters: Parameters<
       typeof BroadcastServiceStubStatic.$propertiesFromRdf
     >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastServiceStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, BroadcastServiceStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       RadioBroadcastServiceStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         BroadcastServiceStub
       >
     ).altLazy(() =>
@@ -18792,17 +18734,17 @@ export namespace RadioBroadcastServiceStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      BroadcastServiceStubStatic.$propertiesFromJson(_jsonObject);
+      BroadcastServiceStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -18818,7 +18760,7 @@ export namespace RadioBroadcastServiceStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [BroadcastServiceStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -18833,54 +18775,54 @@ export namespace RadioBroadcastServiceStub {
         "@id": zod.string().min(1),
         $type: zod.literal("RadioBroadcastServiceStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof BroadcastServiceStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = BroadcastServiceStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioBroadcastService)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/RadioBroadcastService)`,
+            ),
           ),
         );
     }
 
     const $identifier: RadioBroadcastServiceStub.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -18888,10 +18830,7 @@ export namespace RadioBroadcastServiceStub {
     parameters: Parameters<
       typeof RadioBroadcastServiceStub.$propertiesFromRdf
     >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    RadioBroadcastServiceStub
-  > {
+  ): purify.Either<Error, RadioBroadcastServiceStub> {
     return RadioBroadcastServiceStub.$propertiesFromRdf(parameters).map(
       (properties) => new RadioBroadcastServiceStub(properties),
     );
@@ -19128,11 +19067,11 @@ export class QuantitativeValue extends StructuredValue {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.unitText.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.unitText.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.value.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
+    this.value.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     return _hasher;
   }
@@ -19141,8 +19080,8 @@ export class QuantitativeValue extends StructuredValue {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        unitText: this.unitText.map((_item) => _item).extract(),
-        value: this.value.map((_item) => _item).extract(),
+        unitText: this.unitText.map((item) => item).extract(),
+        value: this.value.map((item) => item).extract(),
       } satisfies QuantitativeValue.$Json),
     );
   }
@@ -19191,8 +19130,8 @@ export namespace QuantitativeValue {
   export type $Identifier = StructuredValueStatic.$Identifier;
   export const $Identifier = StructuredValueStatic.$Identifier;
   export type $Json = {
-    readonly unitText: string | undefined;
-    readonly value: number | undefined;
+    readonly unitText?: string;
+    readonly value?: number;
   } & StructuredValueStatic.$Json;
 
   export function $propertiesFromJson(
@@ -19210,19 +19149,19 @@ export namespace QuantitativeValue {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      StructuredValueStatic.$propertiesFromJson(_jsonObject);
+      StructuredValueStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const unitText = purify.Maybe.fromNullable(_jsonObject["unitText"]);
-    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const unitText = purify.Maybe.fromNullable($jsonObject["unitText"]);
+    const value = purify.Maybe.fromNullable($jsonObject["value"]);
     return purify.Either.of({ ...$super0, $identifier, unitText, value });
   }
 
@@ -19238,7 +19177,7 @@ export namespace QuantitativeValue {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -19259,22 +19198,24 @@ export namespace QuantitativeValue {
         unitText: zod.string().optional(),
         value: zod.number().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       unitText: purify.Maybe<string>;
@@ -19282,57 +19223,58 @@ export namespace QuantitativeValue {
     } & $UnwrapR<ReturnType<typeof StructuredValueStatic.$propertiesFromRdf>>
   > {
     const $super0Either = StructuredValueStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/QuantitativeValue)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/QuantitativeValue)`,
+            ),
           ),
         );
     }
 
-    const $identifier: QuantitativeValue.$Identifier = _resource.identifier;
+    const $identifier: QuantitativeValue.$Identifier = $resource.identifier;
     const _unitTextEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.unitText["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.unitText["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_unitTextEither.isLeft()) {
       return _unitTextEither;
     }
 
     const unitText = _unitTextEither.unsafeCoerce();
-    const _valueEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values($properties.value["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
+    const _valueEither: purify.Either<Error, purify.Maybe<number>> = $resource
+      .values($properties.value["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toNumber())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_valueEither.isLeft()) {
       return _valueEither;
     }
@@ -19343,7 +19285,7 @@ export namespace QuantitativeValue {
 
   export function $fromRdf(
     parameters: Parameters<typeof QuantitativeValue.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, QuantitativeValue> {
+  ): purify.Either<Error, QuantitativeValue> {
     return QuantitativeValue.$propertiesFromRdf(parameters).map(
       (properties) => new QuantitativeValue(properties),
     );
@@ -19616,16 +19558,16 @@ export namespace StructuredValueStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -19656,7 +19598,7 @@ export namespace StructuredValueStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -19675,54 +19617,54 @@ export namespace StructuredValueStubStatic {
           "QuantitativeValueStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/StructuredValue)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/StructuredValue)`,
+            ),
           ),
         );
     }
 
     const $identifier: StructuredValueStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -19730,18 +19672,18 @@ export namespace StructuredValueStubStatic {
     parameters: Parameters<
       typeof StructuredValueStubStatic.$propertiesFromRdf
     >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, StructuredValueStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, StructuredValueStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       MonetaryAmountStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         StructuredValueStub
       >
     )
       .altLazy(
         () =>
           QuantitativeValueStub.$fromRdf(otherParameters) as purify.Either<
-            rdfjsResource.Resource.ValueError,
+            Error,
             StructuredValueStub
           >,
       )
@@ -19979,11 +19921,11 @@ export class QuantitativeValueStub extends StructuredValueStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.unitText.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.unitText.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.value.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
+    this.value.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     return _hasher;
   }
@@ -19992,8 +19934,8 @@ export class QuantitativeValueStub extends StructuredValueStub {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        unitText: this.unitText.map((_item) => _item).extract(),
-        value: this.value.map((_item) => _item).extract(),
+        unitText: this.unitText.map((item) => item).extract(),
+        value: this.value.map((item) => item).extract(),
       } satisfies QuantitativeValueStub.$Json),
     );
   }
@@ -20042,8 +19984,8 @@ export namespace QuantitativeValueStub {
   export type $Identifier = StructuredValueStubStatic.$Identifier;
   export const $Identifier = StructuredValueStubStatic.$Identifier;
   export type $Json = {
-    readonly unitText: string | undefined;
-    readonly value: number | undefined;
+    readonly unitText?: string;
+    readonly value?: number;
   } & StructuredValueStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -20063,19 +20005,19 @@ export namespace QuantitativeValueStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      StructuredValueStubStatic.$propertiesFromJson(_jsonObject);
+      StructuredValueStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const unitText = purify.Maybe.fromNullable(_jsonObject["unitText"]);
-    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const unitText = purify.Maybe.fromNullable($jsonObject["unitText"]);
+    const value = purify.Maybe.fromNullable($jsonObject["value"]);
     return purify.Either.of({ ...$super0, $identifier, unitText, value });
   }
 
@@ -20091,7 +20033,7 @@ export namespace QuantitativeValueStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -20112,22 +20054,24 @@ export namespace QuantitativeValueStub {
         unitText: zod.string().optional(),
         value: zod.number().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       unitText: purify.Maybe<string>;
@@ -20137,57 +20081,58 @@ export namespace QuantitativeValueStub {
     >
   > {
     const $super0Either = StructuredValueStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/QuantitativeValue)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/QuantitativeValue)`,
+            ),
           ),
         );
     }
 
-    const $identifier: QuantitativeValueStub.$Identifier = _resource.identifier;
+    const $identifier: QuantitativeValueStub.$Identifier = $resource.identifier;
     const _unitTextEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.unitText["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.unitText["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_unitTextEither.isLeft()) {
       return _unitTextEither;
     }
 
     const unitText = _unitTextEither.unsafeCoerce();
-    const _valueEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values($properties.value["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
+    const _valueEither: purify.Either<Error, purify.Maybe<number>> = $resource
+      .values($properties.value["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toNumber())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_valueEither.isLeft()) {
       return _valueEither;
     }
@@ -20198,7 +20143,7 @@ export namespace QuantitativeValueStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof QuantitativeValueStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, QuantitativeValueStub> {
+  ): purify.Either<Error, QuantitativeValueStub> {
     return QuantitativeValueStub.$propertiesFromRdf(parameters).map(
       (properties) => new QuantitativeValueStub(properties),
     );
@@ -20664,36 +20609,36 @@ export class Event extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.about) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.about) {
+      item0.$hash(_hasher);
     }
 
-    this.endDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.endDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    this.location.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.location.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
-    for (const _item0 of this.organizers) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.organizers) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.performers) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.performers) {
+      item0.$hash(_hasher);
     }
 
-    this.startDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.startDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    for (const _item0 of this.subEvents) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.subEvents) {
+      item0.$hash(_hasher);
     }
 
-    this.superEvent.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.superEvent.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
-    for (const _item0 of this.worksPerformed) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.worksPerformed) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -20703,15 +20648,15 @@ export class Event extends Thing {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        about: this.about.map((_item) => _item.$toJson()),
-        endDate: this.endDate.map((_item) => _item.toISOString()).extract(),
-        location: this.location.map((_item) => _item.$toJson()).extract(),
-        organizers: this.organizers.map((_item) => _item.$toJson()),
-        performers: this.performers.map((_item) => _item.$toJson()),
-        startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
-        subEvents: this.subEvents.map((_item) => _item.$toJson()),
-        superEvent: this.superEvent.map((_item) => _item.$toJson()).extract(),
-        worksPerformed: this.worksPerformed.map((_item) => _item.$toJson()),
+        about: this.about.map((item) => item.$toJson()),
+        endDate: this.endDate.map((item) => item.toISOString()).extract(),
+        location: this.location.map((item) => item.$toJson()).extract(),
+        organizers: this.organizers.map((item) => item.$toJson()),
+        performers: this.performers.map((item) => item.$toJson()),
+        startDate: this.startDate.map((item) => item.toISOString()).extract(),
+        subEvents: this.subEvents.map((item) => item.$toJson()),
+        superEvent: this.superEvent.map((item) => item.$toJson()).extract(),
+        worksPerformed: this.worksPerformed.map((item) => item.$toJson()),
       } satisfies EventStatic.$Json),
     );
   }
@@ -20739,14 +20684,14 @@ export class Event extends Thing {
 
     _resource.add(
       EventStatic.$properties.about["identifier"],
-      this.about.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.about.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       EventStatic.$properties.endDate["identifier"],
-      this.endDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.endDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
@@ -20754,26 +20699,26 @@ export class Event extends Thing {
     );
     _resource.add(
       EventStatic.$properties.location["identifier"],
-      this.location.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.location.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       EventStatic.$properties.organizers["identifier"],
-      this.organizers.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.organizers.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       EventStatic.$properties.performers["identifier"],
-      this.performers.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.performers.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       EventStubStatic.$properties.startDate["identifier"],
-      this.startDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.startDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
@@ -20781,20 +20726,20 @@ export class Event extends Thing {
     );
     _resource.add(
       EventStatic.$properties.subEvents["identifier"],
-      this.subEvents.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.subEvents.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       EventStatic.$properties.superEvent["identifier"],
-      this.superEvent.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.superEvent.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       EventStatic.$properties.worksPerformed["identifier"],
-      this.worksPerformed.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.worksPerformed.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -20812,21 +20757,21 @@ export namespace EventStatic {
   export type $Identifier = ThingStatic.$Identifier;
   export const $Identifier = ThingStatic.$Identifier;
   export type $Json = {
-    readonly about: readonly ThingStubStatic.$Json[];
-    readonly endDate: string | undefined;
-    readonly location: PlaceStub.$Json | undefined;
-    readonly organizers: readonly (
+    readonly about?: readonly ThingStubStatic.$Json[];
+    readonly endDate?: string;
+    readonly location?: PlaceStub.$Json;
+    readonly organizers?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly performers: readonly (
+    readonly performers?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly startDate: string | undefined;
-    readonly subEvents: readonly EventStubStatic.$Json[];
-    readonly superEvent: EventStubStatic.$Json | undefined;
-    readonly worksPerformed: readonly CreativeWorkStubStatic.$Json[];
+    readonly startDate?: string;
+    readonly subEvents?: readonly EventStubStatic.$Json[];
+    readonly superEvent?: EventStubStatic.$Json;
+    readonly worksPerformed?: readonly CreativeWorkStubStatic.$Json[];
   } & ThingStatic.$Json;
 
   export function $propertiesFromJson(
@@ -20851,42 +20796,42 @@ export namespace EventStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const about = _jsonObject["about"].map((_item) =>
-      ThingStubStatic.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const about = $jsonObject["about"].map((item) =>
+      ThingStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const endDate = purify.Maybe.fromNullable(_jsonObject["endDate"]).map(
-      (_item) => new Date(_item),
+    const endDate = purify.Maybe.fromNullable($jsonObject["endDate"]).map(
+      (item) => new Date(item),
     );
-    const location = purify.Maybe.fromNullable(_jsonObject["location"]).map(
-      (_item) => PlaceStub.$fromJson(_item).unsafeCoerce(),
+    const location = purify.Maybe.fromNullable($jsonObject["location"]).map(
+      (item) => PlaceStub.$fromJson(item).unsafeCoerce(),
     );
-    const organizers = _jsonObject["organizers"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const organizers = $jsonObject["organizers"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const performers = _jsonObject["performers"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const performers = $jsonObject["performers"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
-      (_item) => new Date(_item),
+    const startDate = purify.Maybe.fromNullable($jsonObject["startDate"]).map(
+      (item) => new Date(item),
     );
-    const subEvents = _jsonObject["subEvents"].map((_item) =>
-      EventStubStatic.$fromJson(_item).unsafeCoerce(),
+    const subEvents = $jsonObject["subEvents"].map((item) =>
+      EventStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
-      (_item) => EventStubStatic.$fromJson(_item).unsafeCoerce(),
+    const superEvent = purify.Maybe.fromNullable($jsonObject["superEvent"]).map(
+      (item) => EventStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const worksPerformed = _jsonObject["worksPerformed"].map((_item) =>
-      CreativeWorkStubStatic.$fromJson(_item).unsafeCoerce(),
+    const worksPerformed = $jsonObject["worksPerformed"].map((item) =>
+      CreativeWorkStubStatic.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({
       ...$super0,
@@ -20918,7 +20863,7 @@ export namespace EventStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -20973,22 +20918,24 @@ export namespace EventStatic {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       about: readonly ThingStub[];
@@ -21003,241 +20950,225 @@ export namespace EventStatic {
     } & $UnwrapR<ReturnType<typeof ThingStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
+            ),
           ),
         );
     }
 
-    const $identifier: EventStatic.$Identifier = _resource.identifier;
-    const _aboutEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly ThingStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.about["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ThingStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: EventStatic.$Identifier = $resource.identifier;
+    const _aboutEither: purify.Either<Error, readonly ThingStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.about["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                ThingStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_aboutEither.isLeft()) {
       return _aboutEither;
     }
 
     const about = _aboutEither.unsafeCoerce();
-    const _endDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.endDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const _endDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.endDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_endDateEither.isLeft()) {
       return _endDateEither;
     }
 
     const endDate = _endDateEither.unsafeCoerce();
     const _locationEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<PlaceStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.location["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          PlaceStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.location["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        PlaceStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_locationEither.isLeft()) {
       return _locationEither;
     }
 
     const location = _locationEither.unsafeCoerce();
-    const _organizersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.organizers["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _organizersEither: purify.Either<Error, readonly AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.organizers["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_organizersEither.isLeft()) {
       return _organizersEither;
     }
 
     const organizers = _organizersEither.unsafeCoerce();
-    const _performersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.performers["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _performersEither: purify.Either<Error, readonly AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.performers["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_performersEither.isLeft()) {
       return _performersEither;
     }
 
     const performers = _performersEither.unsafeCoerce();
-    const _startDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.startDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const _startDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.startDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_startDateEither.isLeft()) {
       return _startDateEither;
     }
 
     const startDate = _startDateEither.unsafeCoerce();
-    const _subEventsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      EventStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.subEvents["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              EventStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _subEventsEither: purify.Either<Error, EventStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.subEvents["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                EventStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_subEventsEither.isLeft()) {
       return _subEventsEither;
     }
 
     const subEvents = _subEventsEither.unsafeCoerce();
     const _superEventEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<EventStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.superEvent["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          EventStubStatic.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.superEvent["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        EventStubStatic.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_superEventEither.isLeft()) {
       return _superEventEither;
     }
 
     const superEvent = _superEventEither.unsafeCoerce();
-    const _worksPerformedEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      CreativeWorkStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.worksPerformed["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              CreativeWorkStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _worksPerformedEither: purify.Either<Error, CreativeWorkStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.worksPerformed["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                CreativeWorkStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_worksPerformedEither.isLeft()) {
       return _worksPerformedEither;
     }
@@ -21260,11 +21191,11 @@ export namespace EventStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof EventStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Event> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Event> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       PublicationEventStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         Event
       >
     ).altLazy(() =>
@@ -21773,8 +21704,8 @@ export class PublicationEvent extends Event {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.publishedOn.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.publishedOn.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -21783,7 +21714,7 @@ export class PublicationEvent extends Event {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        publishedOn: this.publishedOn.map((_item) => _item.$toJson()).extract(),
+        publishedOn: this.publishedOn.map((item) => item.$toJson()).extract(),
       } satisfies PublicationEventStatic.$Json),
     );
   }
@@ -21811,8 +21742,8 @@ export class PublicationEvent extends Event {
 
     _resource.add(
       PublicationEventStatic.$properties.publishedOn["identifier"],
-      this.publishedOn.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.publishedOn.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -21830,7 +21761,7 @@ export namespace PublicationEventStatic {
   export type $Identifier = EventStatic.$Identifier;
   export const $Identifier = EventStatic.$Identifier;
   export type $Json = {
-    readonly publishedOn: BroadcastServiceStubStatic.$Json | undefined;
+    readonly publishedOn?: BroadcastServiceStubStatic.$Json;
   } & EventStatic.$Json;
 
   export function $propertiesFromJson(
@@ -21847,21 +21778,19 @@ export namespace PublicationEventStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = EventStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = EventStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const publishedOn = purify.Maybe.fromNullable(
-      _jsonObject["publishedOn"],
-    ).map((_item) =>
-      BroadcastServiceStubStatic.$fromJson(_item).unsafeCoerce(),
-    );
+      $jsonObject["publishedOn"],
+    ).map((item) => BroadcastServiceStubStatic.$fromJson(item).unsafeCoerce());
     return purify.Either.of({ ...$super0, $identifier, publishedOn });
   }
 
@@ -21884,7 +21813,7 @@ export namespace PublicationEventStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -21905,73 +21834,76 @@ export namespace PublicationEventStatic {
         $type: zod.enum(["PublicationEvent", "BroadcastEvent"]),
         publishedOn: BroadcastServiceStubStatic.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       publishedOn: purify.Maybe<BroadcastServiceStub>;
     } & $UnwrapR<ReturnType<typeof EventStatic.$propertiesFromRdf>>
   > {
     const $super0Either = EventStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
+            ),
           ),
         );
     }
 
     const $identifier: PublicationEventStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     const _publishedOnEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<BroadcastServiceStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.publishedOn["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          BroadcastServiceStubStatic.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.publishedOn["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        BroadcastServiceStubStatic.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_publishedOnEither.isLeft()) {
       return _publishedOnEither;
     }
@@ -21982,11 +21914,11 @@ export namespace PublicationEventStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof PublicationEventStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEvent> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, PublicationEvent> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       BroadcastEvent.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         PublicationEvent
       >
     ).altLazy(() =>
@@ -22252,16 +22184,16 @@ export namespace Place {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -22273,7 +22205,7 @@ export namespace Place {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStatic.$jsonUiSchema({ scopePrefix })],
@@ -22285,59 +22217,59 @@ export namespace Place {
   export function $jsonZodSchema() {
     return ThingStatic.$jsonZodSchema().merge(
       zod.object({ "@id": zod.string().min(1), $type: zod.literal("Place") }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Place)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Place)`,
+            ),
           ),
         );
     }
 
-    const $identifier: Place.$Identifier = _resource.identifier;
+    const $identifier: Place.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof Place.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Place> {
+  ): purify.Either<Error, Place> {
     return Place.$propertiesFromRdf(parameters).map(
       (properties) => new Place(properties),
     );
@@ -22546,16 +22478,16 @@ export namespace PlaceStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -22571,7 +22503,7 @@ export namespace PlaceStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -22586,59 +22518,59 @@ export namespace PlaceStub {
         "@id": zod.string().min(1),
         $type: zod.literal("PlaceStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Place)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Place)`,
+            ),
           ),
         );
     }
 
-    const $identifier: PlaceStub.$Identifier = _resource.identifier;
+    const $identifier: PlaceStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof PlaceStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PlaceStub> {
+  ): purify.Either<Error, PlaceStub> {
     return PlaceStub.$propertiesFromRdf(parameters).map(
       (properties) => new PlaceStub(properties),
     );
@@ -23087,47 +23019,47 @@ export class Person extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.birthDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.birthDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    this.deathDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.deathDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    this.familyName.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.familyName.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.gender.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.gender.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
-    this.givenName.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.givenName.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    for (const _item0 of this.hasOccupation) {
-      switch (_item0.$type) {
+    for (const item0 of this.hasOccupation) {
+      switch (item0.$type) {
         case "OccupationStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "RoleStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         default:
-          _item0 satisfies never;
+          item0 satisfies never;
           throw new Error("unrecognized type");
       }
     }
 
-    this.jobTitle.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.jobTitle.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    for (const _item0 of this.memberOf) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.memberOf) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.performerIn) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.performerIn) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -23138,38 +23070,38 @@ export class Person extends Thing {
       JSON.stringify({
         ...super.$toJson(),
         birthDate: this.birthDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .map((item) => item.toISOString().replace(/T.*$/, ""))
           .extract(),
         deathDate: this.deathDate
-          .map((_item) => _item.toISOString().replace(/T.*$/, ""))
+          .map((item) => item.toISOString().replace(/T.*$/, ""))
           .extract(),
-        familyName: this.familyName.map((_item) => _item).extract(),
+        familyName: this.familyName.map((item) => item).extract(),
         gender: this.gender
-          .map((_item) =>
-            _item.termType === "Literal"
+          .map((item) =>
+            item.termType === "Literal"
               ? {
                   "@language":
-                    _item.language.length > 0 ? _item.language : undefined,
+                    item.language.length > 0 ? item.language : undefined,
                   "@type":
-                    _item.datatype.value !==
+                    item.datatype.value !==
                     "http://www.w3.org/2001/XMLSchema#string"
-                      ? _item.datatype.value
+                      ? item.datatype.value
                       : undefined,
-                  "@value": _item.value,
+                  "@value": item.value,
                   termType: "Literal" as const,
                 }
-              : _item.termType === "NamedNode"
-                ? { "@id": _item.value, termType: "NamedNode" as const }
-                : { "@id": `_:${_item.value}`, termType: "BlankNode" as const },
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
-        givenName: this.givenName.map((_item) => _item).extract(),
-        hasOccupation: this.hasOccupation.map((_item) =>
-          _item.$type === "RoleStub" ? _item.$toJson() : _item.$toJson(),
+        givenName: this.givenName.map((item) => item).extract(),
+        hasOccupation: this.hasOccupation.map((item) =>
+          item.$type === "RoleStub" ? item.$toJson() : item.$toJson(),
         ),
-        jobTitle: this.jobTitle.map((_item) => _item).extract(),
-        memberOf: this.memberOf.map((_item) => _item.$toJson()),
-        performerIn: this.performerIn.map((_item) => _item.$toJson()),
+        jobTitle: this.jobTitle.map((item) => item).extract(),
+        memberOf: this.memberOf.map((item) => item.$toJson()),
+        performerIn: this.performerIn.map((item) => item.$toJson()),
       } satisfies Person.$Json),
     );
   }
@@ -23197,8 +23129,8 @@ export class Person extends Thing {
 
     _resource.add(
       Person.$properties.birthDate["identifier"],
-      this.birthDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.birthDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.date,
         }),
@@ -23206,8 +23138,8 @@ export class Person extends Thing {
     );
     _resource.add(
       Person.$properties.deathDate["identifier"],
-      this.deathDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.deathDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.date,
         }),
@@ -23218,26 +23150,23 @@ export class Person extends Thing {
     _resource.add(Person.$properties.givenName["identifier"], this.givenName);
     _resource.add(
       Person.$properties.hasOccupation["identifier"],
-      this.hasOccupation.map((_item) =>
-        _item.$type === "RoleStub"
-          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-          : _item.$toRdf({
-              mutateGraph: mutateGraph,
-              resourceSet: resourceSet,
-            }),
+      this.hasOccupation.map((item) =>
+        item.$type === "RoleStub"
+          ? item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(PersonStub.$properties.jobTitle["identifier"], this.jobTitle);
     _resource.add(
       Person.$properties.memberOf["identifier"],
-      this.memberOf.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.memberOf.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       Person.$properties.performerIn["identifier"],
-      this.performerIn.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.performerIn.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -23255,28 +23184,22 @@ export namespace Person {
   export type $Identifier = ThingStatic.$Identifier;
   export const $Identifier = ThingStatic.$Identifier;
   export type $Json = {
-    readonly birthDate: string | undefined;
-    readonly deathDate: string | undefined;
-    readonly familyName: string | undefined;
-    readonly gender:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
-    readonly givenName: string | undefined;
-    readonly hasOccupation: readonly (OccupationStub.$Json | RoleStub.$Json)[];
-    readonly jobTitle: string | undefined;
-    readonly memberOf: readonly OrganizationStubStatic.$Json[];
-    readonly performerIn: readonly EventStubStatic.$Json[];
+    readonly birthDate?: string;
+    readonly deathDate?: string;
+    readonly familyName?: string;
+    readonly gender?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly givenName?: string;
+    readonly hasOccupation?: readonly (OccupationStub.$Json | RoleStub.$Json)[];
+    readonly jobTitle?: string;
+    readonly memberOf?: readonly OrganizationStubStatic.$Json[];
+    readonly performerIn?: readonly EventStubStatic.$Json[];
   } & ThingStatic.$Json;
 
   export function $propertiesFromJson(
@@ -23301,50 +23224,50 @@ export namespace Person {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const birthDate = purify.Maybe.fromNullable(_jsonObject["birthDate"]).map(
-      (_item) => new Date(_item),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const birthDate = purify.Maybe.fromNullable($jsonObject["birthDate"]).map(
+      (item) => new Date(item),
     );
-    const deathDate = purify.Maybe.fromNullable(_jsonObject["deathDate"]).map(
-      (_item) => new Date(_item),
+    const deathDate = purify.Maybe.fromNullable($jsonObject["deathDate"]).map(
+      (item) => new Date(item),
     );
-    const familyName = purify.Maybe.fromNullable(_jsonObject["familyName"]);
-    const gender = purify.Maybe.fromNullable(_jsonObject["gender"]).map(
-      (_item) =>
-        _item.termType === "Literal"
+    const familyName = purify.Maybe.fromNullable($jsonObject["familyName"]);
+    const gender = purify.Maybe.fromNullable($jsonObject["gender"]).map(
+      (item) =>
+        item.termType === "Literal"
           ? dataFactory.literal(
-              _item["@value"],
-              typeof _item["@language"] !== "undefined"
-                ? _item["@language"]
-                : typeof _item["@type"] !== "undefined"
-                  ? dataFactory.namedNode(_item["@type"])
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
-          : _item.termType === "NamedNode"
-            ? dataFactory.namedNode(_item["@id"])
-            : dataFactory.blankNode(_item["@id"].substring(2)),
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
     );
-    const givenName = purify.Maybe.fromNullable(_jsonObject["givenName"]);
-    const hasOccupation = _jsonObject["hasOccupation"].map((_item) =>
-      _item.$type === "RoleStub"
-        ? RoleStub.$fromJson(_item).unsafeCoerce()
-        : OccupationStub.$fromJson(_item).unsafeCoerce(),
+    const givenName = purify.Maybe.fromNullable($jsonObject["givenName"]);
+    const hasOccupation = $jsonObject["hasOccupation"].map((item) =>
+      item.$type === "RoleStub"
+        ? RoleStub.$fromJson(item).unsafeCoerce()
+        : OccupationStub.$fromJson(item).unsafeCoerce(),
     );
-    const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
-    const memberOf = _jsonObject["memberOf"].map((_item) =>
-      OrganizationStubStatic.$fromJson(_item).unsafeCoerce(),
+    const jobTitle = purify.Maybe.fromNullable($jsonObject["jobTitle"]);
+    const memberOf = $jsonObject["memberOf"].map((item) =>
+      OrganizationStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const performerIn = _jsonObject["performerIn"].map((_item) =>
-      EventStubStatic.$fromJson(_item).unsafeCoerce(),
+    const performerIn = $jsonObject["performerIn"].map((item) =>
+      EventStubStatic.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({
       ...$super0,
@@ -23373,7 +23296,7 @@ export namespace Person {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -23439,22 +23362,24 @@ export namespace Person {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       birthDate: purify.Maybe<Date>;
@@ -23469,222 +23394,220 @@ export namespace Person {
     } & $UnwrapR<ReturnType<typeof ThingStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Person)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Person)`,
+            ),
           ),
         );
     }
 
-    const $identifier: Person.$Identifier = _resource.identifier;
-    const _birthDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.birthDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const $identifier: Person.$Identifier = $resource.identifier;
+    const _birthDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.birthDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_birthDateEither.isLeft()) {
       return _birthDateEither;
     }
 
     const birthDate = _birthDateEither.unsafeCoerce();
-    const _deathDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.deathDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const _deathDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.deathDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_deathDateEither.isLeft()) {
       return _deathDateEither;
     }
 
     const deathDate = _deathDateEither.unsafeCoerce();
     const _familyNameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.familyName["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.familyName["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_familyNameEither.isLeft()) {
       return _familyNameEither;
     }
 
     const familyName = _familyNameEither.unsafeCoerce();
     const _genderEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
-    > = purify.Either.of(
-      _resource
-        .values($properties.gender["identifier"], { unique: true })
-        .head()
-        .chain((_value) => purify.Either.of(_value.toTerm()))
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.gender["identifier"], { unique: true })
+      .head()
+      .chain((value) =>
+        purify.Either.of<
+          Error,
+          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+        >(value.toTerm()),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_genderEither.isLeft()) {
       return _genderEither;
     }
 
     const gender = _genderEither.unsafeCoerce();
     const _givenNameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.givenName["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.givenName["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_givenNameEither.isLeft()) {
       return _givenNameEither;
     }
 
     const givenName = _givenNameEither.unsafeCoerce();
     const _hasOccupationEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       readonly (OccupationStub | RoleStub)[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.hasOccupation["identifier"], { unique: true })
-        .flatMap((_item) =>
+        .map((item) =>
           (
-            _item
+            item
               .toValues()
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
                 OccupationStub.$fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
+                  ...$context,
+                  languageIn: $languageIn,
                   resource: _resource,
                 }),
-              ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              OccupationStub | RoleStub
-            >
-          )
-            .altLazy(
-              () =>
-                _item
-                  .toValues()
-                  .head()
-                  .chain((value) => value.toResource())
-                  .chain((_resource) =>
-                    RoleStub.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
-                      resource: _resource,
-                    }),
-                  ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
-                  OccupationStub | RoleStub
-                >,
-            )
-            .toMaybe()
-            .toList(),
+              ) as purify.Either<Error, OccupationStub | RoleStub>
+          ).altLazy(
+            () =>
+              item
+                .toValues()
+                .head()
+                .chain((value) => value.toResource())
+                .chain((_resource) =>
+                  RoleStub.$fromRdf({
+                    ...$context,
+                    languageIn: $languageIn,
+                    resource: _resource,
+                  }),
+                ) as purify.Either<Error, OccupationStub | RoleStub>,
+          ),
         ),
-    ]);
+    );
     if (_hasOccupationEither.isLeft()) {
       return _hasOccupationEither;
     }
 
     const hasOccupation = _hasOccupationEither.unsafeCoerce();
     const _jobTitleEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.jobTitle["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.jobTitle["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_jobTitleEither.isLeft()) {
       return _jobTitleEither;
     }
 
     const jobTitle = _jobTitleEither.unsafeCoerce();
-    const _memberOfEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      OrganizationStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.memberOf["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              OrganizationStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _memberOfEither: purify.Either<Error, OrganizationStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.memberOf["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                OrganizationStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_memberOfEither.isLeft()) {
       return _memberOfEither;
     }
 
     const memberOf = _memberOfEither.unsafeCoerce();
-    const _performerInEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      EventStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.performerIn["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              EventStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _performerInEither: purify.Either<Error, EventStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.performerIn["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                EventStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_performerInEither.isLeft()) {
       return _performerInEither;
     }
@@ -23707,7 +23630,7 @@ export namespace Person {
 
   export function $fromRdf(
     parameters: Parameters<typeof Person.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Person> {
+  ): purify.Either<Error, Person> {
     return Person.$propertiesFromRdf(parameters).map(
       (properties) => new Person(properties),
     );
@@ -24233,16 +24156,16 @@ export class Organization extends Thing {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.members) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.members) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.parentOrganizations) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.parentOrganizations) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.subOrganizations) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.subOrganizations) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -24252,11 +24175,11 @@ export class Organization extends Thing {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        members: this.members.map((_item) => _item.$toJson()),
-        parentOrganizations: this.parentOrganizations.map((_item) =>
-          _item.$toJson(),
+        members: this.members.map((item) => item.$toJson()),
+        parentOrganizations: this.parentOrganizations.map((item) =>
+          item.$toJson(),
         ),
-        subOrganizations: this.subOrganizations.map((_item) => _item.$toJson()),
+        subOrganizations: this.subOrganizations.map((item) => item.$toJson()),
       } satisfies OrganizationStatic.$Json),
     );
   }
@@ -24284,20 +24207,20 @@ export class Organization extends Thing {
 
     _resource.add(
       OrganizationStatic.$properties.members["identifier"],
-      this.members.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.members.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       OrganizationStatic.$properties.parentOrganizations["identifier"],
-      this.parentOrganizations.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.parentOrganizations.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       OrganizationStatic.$properties.subOrganizations["identifier"],
-      this.subOrganizations.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.subOrganizations.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -24315,12 +24238,12 @@ export namespace OrganizationStatic {
   export type $Identifier = ThingStatic.$Identifier;
   export const $Identifier = ThingStatic.$Identifier;
   export type $Json = {
-    readonly members: readonly (
+    readonly members?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly parentOrganizations: readonly OrganizationStubStatic.$Json[];
-    readonly subOrganizations: readonly OrganizationStubStatic.$Json[];
+    readonly parentOrganizations?: readonly OrganizationStubStatic.$Json[];
+    readonly subOrganizations?: readonly OrganizationStubStatic.$Json[];
   } & ThingStatic.$Json;
 
   export function $propertiesFromJson(
@@ -24339,24 +24262,24 @@ export namespace OrganizationStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const members = _jsonObject["members"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const members = $jsonObject["members"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const parentOrganizations = _jsonObject["parentOrganizations"].map(
-      (_item) => OrganizationStubStatic.$fromJson(_item).unsafeCoerce(),
+    const parentOrganizations = $jsonObject["parentOrganizations"].map((item) =>
+      OrganizationStubStatic.$fromJson(item).unsafeCoerce(),
     );
-    const subOrganizations = _jsonObject["subOrganizations"].map((_item) =>
-      OrganizationStubStatic.$fromJson(_item).unsafeCoerce(),
+    const subOrganizations = $jsonObject["subOrganizations"].map((item) =>
+      OrganizationStubStatic.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({
       ...$super0,
@@ -24386,7 +24309,7 @@ export namespace OrganizationStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -24419,22 +24342,24 @@ export namespace OrganizationStatic {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       members: AgentStub[];
@@ -24443,110 +24368,98 @@ export namespace OrganizationStatic {
     } & $UnwrapR<ReturnType<typeof ThingStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Organization)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Organization)`,
+            ),
           ),
         );
     }
 
-    const $identifier: OrganizationStatic.$Identifier = _resource.identifier;
-    const _membersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.members["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: OrganizationStatic.$Identifier = $resource.identifier;
+    const _membersEither: purify.Either<Error, AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.members["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_membersEither.isLeft()) {
       return _membersEither;
     }
 
     const members = _membersEither.unsafeCoerce();
-    const _parentOrganizationsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      OrganizationStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.parentOrganizations["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              OrganizationStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _parentOrganizationsEither: purify.Either<Error, OrganizationStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.parentOrganizations["identifier"], {
+            unique: true,
+          })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                OrganizationStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_parentOrganizationsEither.isLeft()) {
       return _parentOrganizationsEither;
     }
 
     const parentOrganizations = _parentOrganizationsEither.unsafeCoerce();
-    const _subOrganizationsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      OrganizationStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.subOrganizations["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              OrganizationStubStatic.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _subOrganizationsEither: purify.Either<Error, OrganizationStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.subOrganizations["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                OrganizationStubStatic.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_subOrganizationsEither.isLeft()) {
       return _subOrganizationsEither;
     }
@@ -24563,11 +24476,11 @@ export namespace OrganizationStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof OrganizationStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Organization> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, Organization> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       PerformingGroupStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         Organization
       >
     ).altLazy(() =>
@@ -24909,16 +24822,16 @@ export namespace PerformingGroupStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = OrganizationStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = OrganizationStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -24938,7 +24851,7 @@ export namespace PerformingGroupStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [OrganizationStatic.$jsonUiSchema({ scopePrefix })],
@@ -24953,63 +24866,63 @@ export namespace PerformingGroupStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["PerformingGroup", "MusicGroup"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof OrganizationStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = OrganizationStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PerformingGroup)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PerformingGroup)`,
+            ),
           ),
         );
     }
 
-    const $identifier: PerformingGroupStatic.$Identifier = _resource.identifier;
+    const $identifier: PerformingGroupStatic.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof PerformingGroupStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PerformingGroup> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, PerformingGroup> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       MusicGroup.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         PerformingGroup
       >
     ).altLazy(() =>
@@ -25223,8 +25136,8 @@ export class Order extends Intangible {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.partOfInvoice.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.partOfInvoice.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -25234,7 +25147,7 @@ export class Order extends Intangible {
       JSON.stringify({
         ...super.$toJson(),
         partOfInvoice: this.partOfInvoice
-          .map((_item) => _item.$toJson())
+          .map((item) => item.$toJson())
           .extract(),
       } satisfies Order.$Json),
     );
@@ -25263,8 +25176,8 @@ export class Order extends Intangible {
 
     _resource.add(
       Order.$properties.partOfInvoice["identifier"],
-      this.partOfInvoice.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.partOfInvoice.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -25282,7 +25195,7 @@ export namespace Order {
   export type $Identifier = IntangibleStatic.$Identifier;
   export const $Identifier = IntangibleStatic.$Identifier;
   export type $Json = {
-    readonly partOfInvoice: InvoiceStub.$Json | undefined;
+    readonly partOfInvoice?: InvoiceStub.$Json;
   } & IntangibleStatic.$Json;
 
   export function $propertiesFromJson(
@@ -25299,19 +25212,19 @@ export namespace Order {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const partOfInvoice = purify.Maybe.fromNullable(
-      _jsonObject["partOfInvoice"],
-    ).map((_item) => InvoiceStub.$fromJson(_item).unsafeCoerce());
+      $jsonObject["partOfInvoice"],
+    ).map((item) => InvoiceStub.$fromJson(item).unsafeCoerce());
     return purify.Either.of({ ...$super0, $identifier, partOfInvoice });
   }
 
@@ -25323,7 +25236,7 @@ export namespace Order {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -25344,72 +25257,75 @@ export namespace Order {
         $type: zod.literal("Order"),
         partOfInvoice: InvoiceStub.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       partOfInvoice: purify.Maybe<InvoiceStub>;
     } & $UnwrapR<ReturnType<typeof IntangibleStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Order)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Order)`,
+            ),
           ),
         );
     }
 
-    const $identifier: Order.$Identifier = _resource.identifier;
+    const $identifier: Order.$Identifier = $resource.identifier;
     const _partOfInvoiceEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<InvoiceStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.partOfInvoice["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          InvoiceStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.partOfInvoice["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        InvoiceStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_partOfInvoiceEither.isLeft()) {
       return _partOfInvoiceEither;
     }
@@ -25420,7 +25336,7 @@ export namespace Order {
 
   export function $fromRdf(
     parameters: Parameters<typeof Order.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Order> {
+  ): purify.Either<Error, Order> {
     return Order.$propertiesFromRdf(parameters).map(
       (properties) => new Order(properties),
     );
@@ -25676,16 +25592,16 @@ export namespace OrderStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -25701,7 +25617,7 @@ export namespace OrderStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -25716,59 +25632,59 @@ export namespace OrderStub {
         "@id": zod.string().min(1),
         $type: zod.literal("OrderStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Order)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Order)`,
+            ),
           ),
         );
     }
 
-    const $identifier: OrderStub.$Identifier = _resource.identifier;
+    const $identifier: OrderStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof OrderStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, OrderStub> {
+  ): purify.Either<Error, OrderStub> {
     return OrderStub.$propertiesFromRdf(parameters).map(
       (properties) => new OrderStub(properties),
     );
@@ -25977,16 +25893,16 @@ export namespace OccupationStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -26002,7 +25918,7 @@ export namespace OccupationStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -26017,59 +25933,59 @@ export namespace OccupationStub {
         "@id": zod.string().min(1),
         $type: zod.literal("OccupationStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Occupation)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Occupation)`,
+            ),
           ),
         );
     }
 
-    const $identifier: OccupationStub.$Identifier = _resource.identifier;
+    const $identifier: OccupationStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof OccupationStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, OccupationStub> {
+  ): purify.Either<Error, OccupationStub> {
     return OccupationStub.$propertiesFromRdf(parameters).map(
       (properties) => new OccupationStub(properties),
     );
@@ -26452,50 +26368,50 @@ export class MusicRecording extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.byArtists) {
-      switch (_item0.$type) {
+    for (const item0 of this.byArtists) {
+      switch (item0.$type) {
         case "MusicGroupStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "PersonStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "MusicArtistRoleStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         default:
-          _item0 satisfies never;
+          item0 satisfies never;
           throw new Error("unrecognized type");
       }
     }
 
-    this.duration.ifJust((_value0) => {
-      switch (typeof _value0) {
+    this.duration.ifJust((value0) => {
+      switch (typeof value0) {
         case "string": {
-          _hasher.update(_value0);
+          _hasher.update(value0);
           break;
         }
         case "object": {
-          _value0.$hash(_hasher);
+          value0.$hash(_hasher);
           break;
         }
         default:
-          _value0 satisfies never;
+          value0 satisfies never;
           throw new Error("unrecognized type");
       }
     });
-    this.inAlbum.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.inAlbum.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
-    for (const _item0 of this.inPlaylists) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.inPlaylists) {
+      item0.$hash(_hasher);
     }
 
-    this.recordingOf.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.recordingOf.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -26504,19 +26420,19 @@ export class MusicRecording extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        byArtists: this.byArtists.map((_item) =>
-          _item.$type === "MusicArtistRoleStub"
-            ? _item.$toJson()
-            : _item.$type === "PersonStub"
-              ? _item.$toJson()
-              : _item.$toJson(),
+        byArtists: this.byArtists.map((item) =>
+          item.$type === "MusicArtistRoleStub"
+            ? item.$toJson()
+            : item.$type === "PersonStub"
+              ? item.$toJson()
+              : item.$toJson(),
         ),
         duration: this.duration
-          .map((_item) => (typeof _item === "object" ? _item.$toJson() : _item))
+          .map((item) => (typeof item === "object" ? item.$toJson() : item))
           .extract(),
-        inAlbum: this.inAlbum.map((_item) => _item.$toJson()).extract(),
-        inPlaylists: this.inPlaylists.map((_item) => _item.$toJson()),
-        recordingOf: this.recordingOf.map((_item) => _item.$toJson()).extract(),
+        inAlbum: this.inAlbum.map((item) => item.$toJson()).extract(),
+        inPlaylists: this.inPlaylists.map((item) => item.$toJson()),
+        recordingOf: this.recordingOf.map((item) => item.$toJson()).extract(),
       } satisfies MusicRecording.$Json),
     );
   }
@@ -26544,15 +26460,15 @@ export class MusicRecording extends CreativeWork {
 
     _resource.add(
       MusicRecording.$properties.byArtists["identifier"],
-      this.byArtists.map((_item) =>
-        _item.$type === "MusicArtistRoleStub"
-          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-          : _item.$type === "PersonStub"
-            ? _item.$toRdf({
+      this.byArtists.map((item) =>
+        item.$type === "MusicArtistRoleStub"
+          ? item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : item.$type === "PersonStub"
+            ? item.$toRdf({
                 mutateGraph: mutateGraph,
                 resourceSet: resourceSet,
               })
-            : _item.$toRdf({
+            : item.$toRdf({
                 mutateGraph: mutateGraph,
                 resourceSet: resourceSet,
               }),
@@ -26560,31 +26476,28 @@ export class MusicRecording extends CreativeWork {
     );
     _resource.add(
       MusicRecording.$properties.duration["identifier"],
-      this.duration.map((_value) =>
-        typeof _value === "object"
-          ? _value.$toRdf({
-              mutateGraph: mutateGraph,
-              resourceSet: resourceSet,
-            })
-          : _value,
+      this.duration.map((value) =>
+        typeof value === "object"
+          ? value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : value,
       ),
     );
     _resource.add(
       MusicRecording.$properties.inAlbum["identifier"],
-      this.inAlbum.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.inAlbum.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       MusicRecording.$properties.inPlaylists["identifier"],
-      this.inPlaylists.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.inPlaylists.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       MusicRecording.$properties.recordingOf["identifier"],
-      this.recordingOf.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.recordingOf.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -26602,15 +26515,15 @@ export namespace MusicRecording {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly byArtists: readonly (
+    readonly byArtists?: readonly (
       | MusicGroupStub.$Json
       | PersonStub.$Json
       | MusicArtistRoleStub.$Json
     )[];
-    readonly duration: (string | QuantitativeValueStub.$Json) | undefined;
-    readonly inAlbum: MusicAlbumStub.$Json | undefined;
-    readonly inPlaylists: readonly MusicPlaylistStub.$Json[];
-    readonly recordingOf: MusicCompositionStub.$Json | undefined;
+    readonly duration?: string | QuantitativeValueStub.$Json;
+    readonly inAlbum?: MusicAlbumStub.$Json;
+    readonly inPlaylists?: readonly MusicPlaylistStub.$Json[];
+    readonly recordingOf?: MusicCompositionStub.$Json;
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -26631,38 +26544,38 @@ export namespace MusicRecording {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const byArtists = _jsonObject["byArtists"].map((_item) =>
-      _item.$type === "MusicArtistRoleStub"
-        ? MusicArtistRoleStub.$fromJson(_item).unsafeCoerce()
-        : _item.$type === "PersonStub"
-          ? PersonStub.$fromJson(_item).unsafeCoerce()
-          : MusicGroupStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const byArtists = $jsonObject["byArtists"].map((item) =>
+      item.$type === "MusicArtistRoleStub"
+        ? MusicArtistRoleStub.$fromJson(item).unsafeCoerce()
+        : item.$type === "PersonStub"
+          ? PersonStub.$fromJson(item).unsafeCoerce()
+          : MusicGroupStub.$fromJson(item).unsafeCoerce(),
     );
-    const duration = purify.Maybe.fromNullable(_jsonObject["duration"]).map(
-      (_item) =>
-        typeof _item === "object"
-          ? QuantitativeValueStub.$fromJson(_item).unsafeCoerce()
-          : _item,
+    const duration = purify.Maybe.fromNullable($jsonObject["duration"]).map(
+      (item) =>
+        typeof item === "object"
+          ? QuantitativeValueStub.$fromJson(item).unsafeCoerce()
+          : item,
     );
-    const inAlbum = purify.Maybe.fromNullable(_jsonObject["inAlbum"]).map(
-      (_item) => MusicAlbumStub.$fromJson(_item).unsafeCoerce(),
+    const inAlbum = purify.Maybe.fromNullable($jsonObject["inAlbum"]).map(
+      (item) => MusicAlbumStub.$fromJson(item).unsafeCoerce(),
     );
-    const inPlaylists = _jsonObject["inPlaylists"].map((_item) =>
-      MusicPlaylistStub.$fromJson(_item).unsafeCoerce(),
+    const inPlaylists = $jsonObject["inPlaylists"].map((item) =>
+      MusicPlaylistStub.$fromJson(item).unsafeCoerce(),
     );
     const recordingOf = purify.Maybe.fromNullable(
-      _jsonObject["recordingOf"],
-    ).map((_item) => MusicCompositionStub.$fromJson(_item).unsafeCoerce());
+      $jsonObject["recordingOf"],
+    ).map((item) => MusicCompositionStub.$fromJson(item).unsafeCoerce());
     return purify.Either.of({
       ...$super0,
       $identifier,
@@ -26686,7 +26599,7 @@ export namespace MusicRecording {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -26730,22 +26643,24 @@ export namespace MusicRecording {
           .default(() => []),
         recordingOf: MusicCompositionStub.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       byArtists: readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[];
@@ -26756,204 +26671,204 @@ export namespace MusicRecording {
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicRecording)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicRecording)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicRecording.$Identifier = _resource.identifier;
+    const $identifier: MusicRecording.$Identifier = $resource.identifier;
     const _byArtistsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.byArtists["identifier"], { unique: true })
-        .flatMap((_item) =>
+        .map((item) =>
           (
-            _item
+            item
               .toValues()
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
                 MusicGroupStub.$fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
+                  ...$context,
+                  languageIn: $languageIn,
                   resource: _resource,
                 }),
               ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
+              Error,
               MusicGroupStub | PersonStub | MusicArtistRoleStub
             >
           )
             .altLazy(
               () =>
-                _item
+                item
                   .toValues()
                   .head()
                   .chain((value) => value.toResource())
                   .chain((_resource) =>
                     PersonStub.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
+                      ...$context,
+                      languageIn: $languageIn,
                       resource: _resource,
                     }),
                   ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
+                  Error,
                   MusicGroupStub | PersonStub | MusicArtistRoleStub
                 >,
             )
             .altLazy(
               () =>
-                _item
+                item
                   .toValues()
                   .head()
                   .chain((value) => value.toResource())
                   .chain((_resource) =>
                     MusicArtistRoleStub.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
+                      ...$context,
+                      languageIn: $languageIn,
                       resource: _resource,
                     }),
                   ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
+                  Error,
                   MusicGroupStub | PersonStub | MusicArtistRoleStub
                 >,
-            )
-            .toMaybe()
-            .toList(),
+            ),
         ),
-    ]);
+    );
     if (_byArtistsEither.isLeft()) {
       return _byArtistsEither;
     }
 
     const byArtists = _byArtistsEither.unsafeCoerce();
     const _durationEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string | QuantitativeValueStub>
-    > = purify.Either.of(
-      (
-        _resource
-          .values($properties.duration["identifier"], { unique: true })
-          .head()
-          .chain((_value) => _value.toString()) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          string | QuantitativeValueStub
-        >
+    > = (
+      $resource
+        .values($properties.duration["identifier"], { unique: true })
+        .head()
+        .chain((value) => value.toString()) as purify.Either<
+        Error,
+        string | QuantitativeValueStub
+      >
+    )
+      .altLazy(
+        () =>
+          $resource
+            .values($properties.duration["identifier"], { unique: true })
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              QuantitativeValueStub.$fromRdf({
+                ...$context,
+                languageIn: $languageIn,
+                resource: _resource,
+              }),
+            ) as purify.Either<Error, string | QuantitativeValueStub>,
       )
-        .altLazy(
-          () =>
-            _resource
-              .values($properties.duration["identifier"], { unique: true })
-              .head()
-              .chain((value) => value.toResource())
-              .chain((_resource) =>
-                QuantitativeValueStub.$fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
-                  resource: _resource,
-                }),
-              ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              string | QuantitativeValueStub
-            >,
-        )
-        .toMaybe(),
-    );
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_durationEither.isLeft()) {
       return _durationEither;
     }
 
     const duration = _durationEither.unsafeCoerce();
     const _inAlbumEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<MusicAlbumStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.inAlbum["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          MusicAlbumStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.inAlbum["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        MusicAlbumStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_inAlbumEither.isLeft()) {
       return _inAlbumEither;
     }
 
     const inAlbum = _inAlbumEither.unsafeCoerce();
     const _inPlaylistsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       readonly MusicPlaylistStub[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.inPlaylists["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
+        .map((item) =>
+          item
             .toValues()
             .head()
             .chain((value) => value.toResource())
             .chain((_resource) =>
               MusicPlaylistStub.$fromRdf({
-                ..._context,
+                ...$context,
                 ignoreRdfType: true,
-                languageIn: _languageIn,
+                languageIn: $languageIn,
                 resource: _resource,
               }),
-            )
-            .toMaybe()
-            .toList(),
+            ),
         ),
-    ]);
+    );
     if (_inPlaylistsEither.isLeft()) {
       return _inPlaylistsEither;
     }
 
     const inPlaylists = _inPlaylistsEither.unsafeCoerce();
     const _recordingOfEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<MusicCompositionStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.recordingOf["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          MusicCompositionStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.recordingOf["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        MusicCompositionStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_recordingOfEither.isLeft()) {
       return _recordingOfEither;
     }
@@ -26972,7 +26887,7 @@ export namespace MusicRecording {
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicRecording.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicRecording> {
+  ): purify.Either<Error, MusicRecording> {
     return MusicRecording.$propertiesFromRdf(parameters).map(
       (properties) => new MusicRecording(properties),
     );
@@ -27424,17 +27339,17 @@ export namespace MusicRecordingStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -27450,7 +27365,7 @@ export namespace MusicRecordingStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -27465,59 +27380,59 @@ export namespace MusicRecordingStub {
         "@id": zod.string().min(1),
         $type: zod.literal("MusicRecordingStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicRecording)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicRecording)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicRecordingStub.$Identifier = _resource.identifier;
+    const $identifier: MusicRecordingStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicRecordingStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicRecordingStub> {
+  ): purify.Either<Error, MusicRecordingStub> {
     return MusicRecordingStub.$propertiesFromRdf(parameters).map(
       (properties) => new MusicRecordingStub(properties),
     );
@@ -27749,18 +27664,18 @@ export class MusicPlaylist extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.tracks) {
-      switch (_item0.$type) {
+    for (const item0 of this.tracks) {
+      switch (item0.$type) {
         case "MusicRecordingStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "ItemListStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         default:
-          _item0 satisfies never;
+          item0 satisfies never;
           throw new Error("unrecognized type");
       }
     }
@@ -27772,8 +27687,8 @@ export class MusicPlaylist extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        tracks: this.tracks.map((_item) =>
-          _item.$type === "ItemListStub" ? _item.$toJson() : _item.$toJson(),
+        tracks: this.tracks.map((item) =>
+          item.$type === "ItemListStub" ? item.$toJson() : item.$toJson(),
         ),
       } satisfies MusicPlaylist.$Json),
     );
@@ -27802,13 +27717,10 @@ export class MusicPlaylist extends CreativeWork {
 
     _resource.add(
       MusicPlaylist.$properties.tracks["identifier"],
-      this.tracks.map((_item) =>
-        _item.$type === "ItemListStub"
-          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-          : _item.$toRdf({
-              mutateGraph: mutateGraph,
-              resourceSet: resourceSet,
-            }),
+      this.tracks.map((item) =>
+        item.$type === "ItemListStub"
+          ? item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -27826,7 +27738,10 @@ export namespace MusicPlaylist {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly tracks: readonly (MusicRecordingStub.$Json | ItemListStub.$Json)[];
+    readonly tracks?: readonly (
+      | MusicRecordingStub.$Json
+      | ItemListStub.$Json
+    )[];
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -27843,20 +27758,20 @@ export namespace MusicPlaylist {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const tracks = _jsonObject["tracks"].map((_item) =>
-      _item.$type === "ItemListStub"
-        ? ItemListStub.$fromJson(_item).unsafeCoerce()
-        : MusicRecordingStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const tracks = $jsonObject["tracks"].map((item) =>
+      item.$type === "ItemListStub"
+        ? ItemListStub.$fromJson(item).unsafeCoerce()
+        : MusicRecordingStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, tracks });
   }
@@ -27873,7 +27788,7 @@ export namespace MusicPlaylist {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -27898,98 +27813,89 @@ export namespace MusicPlaylist {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       tracks: (MusicRecordingStub | ItemListStub)[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicPlaylist)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicPlaylist)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicPlaylist.$Identifier = _resource.identifier;
+    const $identifier: MusicPlaylist.$Identifier = $resource.identifier;
     const _tracksEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       (MusicRecordingStub | ItemListStub)[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.tracks["identifier"], { unique: true })
-        .flatMap((_item) =>
+        .map((item) =>
           (
-            _item
+            item
               .toValues()
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
                 MusicRecordingStub.$fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
+                  ...$context,
+                  languageIn: $languageIn,
                   resource: _resource,
                 }),
-              ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              MusicRecordingStub | ItemListStub
-            >
-          )
-            .altLazy(
-              () =>
-                _item
-                  .toValues()
-                  .head()
-                  .chain((value) => value.toResource())
-                  .chain((_resource) =>
-                    ItemListStub.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
-                      resource: _resource,
-                    }),
-                  ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
-                  MusicRecordingStub | ItemListStub
-                >,
-            )
-            .toMaybe()
-            .toList(),
+              ) as purify.Either<Error, MusicRecordingStub | ItemListStub>
+          ).altLazy(
+            () =>
+              item
+                .toValues()
+                .head()
+                .chain((value) => value.toResource())
+                .chain((_resource) =>
+                  ItemListStub.$fromRdf({
+                    ...$context,
+                    languageIn: $languageIn,
+                    resource: _resource,
+                  }),
+                ) as purify.Either<Error, MusicRecordingStub | ItemListStub>,
+          ),
         ),
-    ]);
+    );
     if (_tracksEither.isLeft()) {
       return _tracksEither;
     }
@@ -28000,7 +27906,7 @@ export namespace MusicPlaylist {
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicPlaylist.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicPlaylist> {
+  ): purify.Either<Error, MusicPlaylist> {
     return MusicPlaylist.$propertiesFromRdf(parameters).map(
       (properties) => new MusicPlaylist(properties),
     );
@@ -28282,17 +28188,17 @@ export namespace MusicPlaylistStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -28308,7 +28214,7 @@ export namespace MusicPlaylistStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -28323,59 +28229,59 @@ export namespace MusicPlaylistStub {
         "@id": zod.string().min(1),
         $type: zod.literal("MusicPlaylistStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicPlaylist)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicPlaylist)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicPlaylistStub.$Identifier = _resource.identifier;
+    const $identifier: MusicPlaylistStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicPlaylistStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicPlaylistStub> {
+  ): purify.Either<Error, MusicPlaylistStub> {
     return MusicPlaylistStub.$propertiesFromRdf(parameters).map(
       (properties) => new MusicPlaylistStub(properties),
     );
@@ -28592,16 +28498,16 @@ export namespace OrganizationStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -28624,7 +28530,7 @@ export namespace OrganizationStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [ThingStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -28643,64 +28549,64 @@ export namespace OrganizationStubStatic {
           "PerformingGroupStub",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof ThingStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Organization)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Organization)`,
+            ),
           ),
         );
     }
 
     const $identifier: OrganizationStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof OrganizationStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, OrganizationStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, OrganizationStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       PerformingGroupStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         OrganizationStub
       >
     ).altLazy(() =>
@@ -28919,17 +28825,17 @@ export namespace PerformingGroupStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      OrganizationStubStatic.$propertiesFromJson(_jsonObject);
+      OrganizationStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -28952,7 +28858,7 @@ export namespace PerformingGroupStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [OrganizationStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -28967,54 +28873,54 @@ export namespace PerformingGroupStubStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["PerformingGroupStub", "MusicGroupStub"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof OrganizationStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = OrganizationStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PerformingGroup)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PerformingGroup)`,
+            ),
           ),
         );
     }
 
     const $identifier: PerformingGroupStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -29022,11 +28928,11 @@ export namespace PerformingGroupStubStatic {
     parameters: Parameters<
       typeof PerformingGroupStubStatic.$propertiesFromRdf
     >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PerformingGroupStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, PerformingGroupStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       MusicGroupStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         PerformingGroupStub
       >
     ).altLazy(() =>
@@ -29247,17 +29153,17 @@ export namespace MusicGroup {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      PerformingGroupStatic.$propertiesFromJson(_jsonObject);
+      PerformingGroupStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -29273,7 +29179,7 @@ export namespace MusicGroup {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [PerformingGroupStatic.$jsonUiSchema({ scopePrefix })],
@@ -29288,59 +29194,59 @@ export namespace MusicGroup {
         "@id": zod.string().min(1),
         $type: zod.literal("MusicGroup"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof PerformingGroupStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = PerformingGroupStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicGroup)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicGroup)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicGroup.$Identifier = _resource.identifier;
+    const $identifier: MusicGroup.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicGroup.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicGroup> {
+  ): purify.Either<Error, MusicGroup> {
     return MusicGroup.$propertiesFromRdf(parameters).map(
       (properties) => new MusicGroup(properties),
     );
@@ -29562,12 +29468,12 @@ export class MusicComposition extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.composers) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.composers) {
+      item0.$hash(_hasher);
     }
 
-    for (const _item0 of this.recordedAs) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.recordedAs) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -29577,8 +29483,8 @@ export class MusicComposition extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        composers: this.composers.map((_item) => _item.$toJson()),
-        recordedAs: this.recordedAs.map((_item) => _item.$toJson()),
+        composers: this.composers.map((item) => item.$toJson()),
+        recordedAs: this.recordedAs.map((item) => item.$toJson()),
       } satisfies MusicComposition.$Json),
     );
   }
@@ -29606,14 +29512,14 @@ export class MusicComposition extends CreativeWork {
 
     _resource.add(
       MusicComposition.$properties.composers["identifier"],
-      this.composers.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.composers.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       MusicComposition.$properties.recordedAs["identifier"],
-      this.recordedAs.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.recordedAs.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -29631,11 +29537,11 @@ export namespace MusicComposition {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly composers: readonly (
+    readonly composers?: readonly (
       | OrganizationStubStatic.$Json
       | PersonStub.$Json
     )[];
-    readonly recordedAs: readonly MusicRecordingStub.$Json[];
+    readonly recordedAs?: readonly MusicRecordingStub.$Json[];
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -29653,21 +29559,21 @@ export namespace MusicComposition {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const composers = _jsonObject["composers"].map((_item) =>
-      AgentStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const composers = $jsonObject["composers"].map((item) =>
+      AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const recordedAs = _jsonObject["recordedAs"].map((_item) =>
-      MusicRecordingStub.$fromJson(_item).unsafeCoerce(),
+    const recordedAs = $jsonObject["recordedAs"].map((item) =>
+      MusicRecordingStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, composers, recordedAs });
   }
@@ -29684,7 +29590,7 @@ export namespace MusicComposition {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -29711,22 +29617,24 @@ export namespace MusicComposition {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       composers: readonly AgentStub[];
@@ -29734,82 +29642,72 @@ export namespace MusicComposition {
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicComposition)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicComposition)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicComposition.$Identifier = _resource.identifier;
-    const _composersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly AgentStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.composers["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              AgentStub.$fromRdf({
-                ..._context,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: MusicComposition.$Identifier = $resource.identifier;
+    const _composersEither: purify.Either<Error, readonly AgentStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.composers["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                AgentStub.$fromRdf({
+                  ...$context,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_composersEither.isLeft()) {
       return _composersEither;
     }
 
     const composers = _composersEither.unsafeCoerce();
-    const _recordedAsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      MusicRecordingStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.recordedAs["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              MusicRecordingStub.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _recordedAsEither: purify.Either<Error, MusicRecordingStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.recordedAs["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                MusicRecordingStub.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_recordedAsEither.isLeft()) {
       return _recordedAsEither;
     }
@@ -29820,7 +29718,7 @@ export namespace MusicComposition {
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicComposition.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicComposition> {
+  ): purify.Either<Error, MusicComposition> {
     return MusicComposition.$propertiesFromRdf(parameters).map(
       (properties) => new MusicComposition(properties),
     );
@@ -30115,17 +30013,17 @@ export namespace MusicCompositionStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -30141,7 +30039,7 @@ export namespace MusicCompositionStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -30156,59 +30054,59 @@ export namespace MusicCompositionStub {
         "@id": zod.string().min(1),
         $type: zod.literal("MusicCompositionStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicComposition)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicComposition)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicCompositionStub.$Identifier = _resource.identifier;
+    const $identifier: MusicCompositionStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicCompositionStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicCompositionStub> {
+  ): purify.Either<Error, MusicCompositionStub> {
     return MusicCompositionStub.$propertiesFromRdf(parameters).map(
       (properties) => new MusicCompositionStub(properties),
     );
@@ -30426,17 +30324,17 @@ export namespace MusicGroupStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      PerformingGroupStubStatic.$propertiesFromJson(_jsonObject);
+      PerformingGroupStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -30452,7 +30350,7 @@ export namespace MusicGroupStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [PerformingGroupStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -30467,59 +30365,59 @@ export namespace MusicGroupStub {
         "@id": zod.string().min(1),
         $type: zod.literal("MusicGroupStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof PerformingGroupStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = PerformingGroupStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicGroup)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicGroup)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicGroupStub.$Identifier = _resource.identifier;
+    const $identifier: MusicGroupStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicGroupStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicGroupStub> {
+  ): purify.Either<Error, MusicGroupStub> {
     return MusicGroupStub.$propertiesFromRdf(parameters).map(
       (properties) => new MusicGroupStub(properties),
     );
@@ -30850,20 +30748,20 @@ export namespace MusicArtistRoleStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const byArtist = MusicArtistStub.$fromJson(
-      _jsonObject["byArtist"],
+      $jsonObject["byArtist"],
     ).unsafeCoerce();
-    const roleName = dataFactory.namedNode(_jsonObject["roleName"]["@id"]);
+    const roleName = dataFactory.namedNode($jsonObject["roleName"]["@id"]);
     return purify.Either.of({ ...$super0, $identifier, byArtist, roleName });
   }
 
@@ -30879,7 +30777,7 @@ export namespace MusicArtistRoleStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -30906,22 +30804,24 @@ export namespace MusicArtistRoleStub {
           ]),
         }),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       byArtist: MusicArtistStub;
@@ -30933,43 +30833,38 @@ export namespace MusicArtistRoleStub {
     } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Role)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicArtistRoleStub.$Identifier = _resource.identifier;
-    const _byArtistEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      MusicArtistStub
-    > = _resource
+    const $identifier: MusicArtistRoleStub.$Identifier = $resource.identifier;
+    const _byArtistEither: purify.Either<Error, MusicArtistStub> = $resource
       .values($properties.byArtist["identifier"], { unique: true })
       .head()
       .chain((value) => value.toResource())
       .chain((_resource) =>
         MusicArtistStub.$fromRdf({
-          ..._context,
-          languageIn: _languageIn,
+          ...$context,
+          languageIn: $languageIn,
           resource: _resource,
         }),
       );
@@ -30979,21 +30874,21 @@ export namespace MusicArtistRoleStub {
 
     const byArtist = _byArtistEither.unsafeCoerce();
     const _roleNameEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       rdfjs.NamedNode<
         | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
         | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
         | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
       >
-    > = _resource
+    > = $resource
       .values($properties.roleName["identifier"], { unique: true })
       .head()
-      .chain((_value) =>
-        _value.toIri().chain((iri) => {
+      .chain((value) =>
+        value.toIri().chain((iri) => {
           switch (iri.value) {
             case "http://purl.org/sdapps/ontology#MusicConductorRoleName":
               return purify.Either.of<
-                rdfjsResource.Resource.ValueError,
+                Error,
                 rdfjs.NamedNode<
                   | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
                   | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
@@ -31004,7 +30899,7 @@ export namespace MusicArtistRoleStub {
               );
             case "http://purl.org/sdapps/ontology#MusicEnsembleRoleName":
               return purify.Either.of<
-                rdfjsResource.Resource.ValueError,
+                Error,
                 rdfjs.NamedNode<
                   | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
                   | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
@@ -31015,7 +30910,7 @@ export namespace MusicArtistRoleStub {
               );
             case "http://purl.org/sdapps/ontology#MusicSoloistRoleName":
               return purify.Either.of<
-                rdfjsResource.Resource.ValueError,
+                Error,
                 rdfjs.NamedNode<
                   | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
                   | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
@@ -31025,12 +30920,19 @@ export namespace MusicArtistRoleStub {
                 iri as rdfjs.NamedNode<"http://purl.org/sdapps/ontology#MusicSoloistRoleName">,
               );
             default:
-              return purify.Left(
+              return purify.Left<
+                Error,
+                rdfjs.NamedNode<
+                  | "http://purl.org/sdapps/ontology#MusicConductorRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName"
+                  | "http://purl.org/sdapps/ontology#MusicSoloistRoleName"
+                >
+              >(
                 new rdfjsResource.Resource.MistypedValueError({
                   actualValue: iri,
                   expectedValueType:
                     'rdfjs.NamedNode<"http://purl.org/sdapps/ontology#MusicConductorRoleName" | "http://purl.org/sdapps/ontology#MusicEnsembleRoleName" | "http://purl.org/sdapps/ontology#MusicSoloistRoleName">',
-                  focusResource: _resource,
+                  focusResource: $resource,
                   predicate:
                     MusicArtistRoleStub.$properties.roleName["identifier"],
                 }),
@@ -31048,7 +30950,7 @@ export namespace MusicArtistRoleStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicArtistRoleStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicArtistRoleStub> {
+  ): purify.Either<Error, MusicArtistRoleStub> {
     return MusicArtistRoleStub.$propertiesFromRdf(parameters).map(
       (properties) => new MusicArtistRoleStub(properties),
     );
@@ -31351,22 +31253,22 @@ export class MusicAlbum extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.byArtists) {
-      switch (_item0.$type) {
+    for (const item0 of this.byArtists) {
+      switch (item0.$type) {
         case "MusicGroupStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "PersonStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         case "MusicArtistRoleStub": {
-          _item0.$hash(_hasher);
+          item0.$hash(_hasher);
           break;
         }
         default:
-          _item0 satisfies never;
+          item0 satisfies never;
           throw new Error("unrecognized type");
       }
     }
@@ -31378,12 +31280,12 @@ export class MusicAlbum extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        byArtists: this.byArtists.map((_item) =>
-          _item.$type === "MusicArtistRoleStub"
-            ? _item.$toJson()
-            : _item.$type === "PersonStub"
-              ? _item.$toJson()
-              : _item.$toJson(),
+        byArtists: this.byArtists.map((item) =>
+          item.$type === "MusicArtistRoleStub"
+            ? item.$toJson()
+            : item.$type === "PersonStub"
+              ? item.$toJson()
+              : item.$toJson(),
         ),
       } satisfies MusicAlbum.$Json),
     );
@@ -31412,15 +31314,15 @@ export class MusicAlbum extends CreativeWork {
 
     _resource.add(
       MusicAlbum.$properties.byArtists["identifier"],
-      this.byArtists.map((_item) =>
-        _item.$type === "MusicArtistRoleStub"
-          ? _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-          : _item.$type === "PersonStub"
-            ? _item.$toRdf({
+      this.byArtists.map((item) =>
+        item.$type === "MusicArtistRoleStub"
+          ? item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : item.$type === "PersonStub"
+            ? item.$toRdf({
                 mutateGraph: mutateGraph,
                 resourceSet: resourceSet,
               })
-            : _item.$toRdf({
+            : item.$toRdf({
                 mutateGraph: mutateGraph,
                 resourceSet: resourceSet,
               }),
@@ -31441,7 +31343,7 @@ export namespace MusicAlbum {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly byArtists: readonly (
+    readonly byArtists?: readonly (
       | MusicGroupStub.$Json
       | PersonStub.$Json
       | MusicArtistRoleStub.$Json
@@ -31462,22 +31364,22 @@ export namespace MusicAlbum {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const byArtists = _jsonObject["byArtists"].map((_item) =>
-      _item.$type === "MusicArtistRoleStub"
-        ? MusicArtistRoleStub.$fromJson(_item).unsafeCoerce()
-        : _item.$type === "PersonStub"
-          ? PersonStub.$fromJson(_item).unsafeCoerce()
-          : MusicGroupStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const byArtists = $jsonObject["byArtists"].map((item) =>
+      item.$type === "MusicArtistRoleStub"
+        ? MusicArtistRoleStub.$fromJson(item).unsafeCoerce()
+        : item.$type === "PersonStub"
+          ? PersonStub.$fromJson(item).unsafeCoerce()
+          : MusicGroupStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, byArtists });
   }
@@ -31494,7 +31396,7 @@ export namespace MusicAlbum {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -31520,115 +31422,113 @@ export namespace MusicAlbum {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       byArtists: readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[];
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicAlbum)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicAlbum)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicAlbum.$Identifier = _resource.identifier;
+    const $identifier: MusicAlbum.$Identifier = $resource.identifier;
     const _byArtistsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       readonly (MusicGroupStub | PersonStub | MusicArtistRoleStub)[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      $resource
         .values($properties.byArtists["identifier"], { unique: true })
-        .flatMap((_item) =>
+        .map((item) =>
           (
-            _item
+            item
               .toValues()
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
                 MusicGroupStub.$fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
+                  ...$context,
+                  languageIn: $languageIn,
                   resource: _resource,
                 }),
               ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
+              Error,
               MusicGroupStub | PersonStub | MusicArtistRoleStub
             >
           )
             .altLazy(
               () =>
-                _item
+                item
                   .toValues()
                   .head()
                   .chain((value) => value.toResource())
                   .chain((_resource) =>
                     PersonStub.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
+                      ...$context,
+                      languageIn: $languageIn,
                       resource: _resource,
                     }),
                   ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
+                  Error,
                   MusicGroupStub | PersonStub | MusicArtistRoleStub
                 >,
             )
             .altLazy(
               () =>
-                _item
+                item
                   .toValues()
                   .head()
                   .chain((value) => value.toResource())
                   .chain((_resource) =>
                     MusicArtistRoleStub.$fromRdf({
-                      ..._context,
-                      languageIn: _languageIn,
+                      ...$context,
+                      languageIn: $languageIn,
                       resource: _resource,
                     }),
                   ) as purify.Either<
-                  rdfjsResource.Resource.ValueError,
+                  Error,
                   MusicGroupStub | PersonStub | MusicArtistRoleStub
                 >,
-            )
-            .toMaybe()
-            .toList(),
+            ),
         ),
-    ]);
+    );
     if (_byArtistsEither.isLeft()) {
       return _byArtistsEither;
     }
@@ -31639,7 +31539,7 @@ export namespace MusicAlbum {
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicAlbum.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicAlbum> {
+  ): purify.Either<Error, MusicAlbum> {
     return MusicAlbum.$propertiesFromRdf(parameters).map(
       (properties) => new MusicAlbum(properties),
     );
@@ -31939,17 +31839,17 @@ export namespace MusicAlbumStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -31965,7 +31865,7 @@ export namespace MusicAlbumStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -31980,59 +31880,59 @@ export namespace MusicAlbumStub {
         "@id": zod.string().min(1),
         $type: zod.literal("MusicAlbumStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicAlbum)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MusicAlbum)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MusicAlbumStub.$Identifier = _resource.identifier;
+    const $identifier: MusicAlbumStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MusicAlbumStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MusicAlbumStub> {
+  ): purify.Either<Error, MusicAlbumStub> {
     return MusicAlbumStub.$propertiesFromRdf(parameters).map(
       (properties) => new MusicAlbumStub(properties),
     );
@@ -32262,11 +32162,11 @@ export class MonetaryAmount extends StructuredValue {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.currency.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.currency.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.value.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
+    this.value.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     return _hasher;
   }
@@ -32275,8 +32175,8 @@ export class MonetaryAmount extends StructuredValue {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        currency: this.currency.map((_item) => _item).extract(),
-        value: this.value.map((_item) => _item).extract(),
+        currency: this.currency.map((item) => item).extract(),
+        value: this.value.map((item) => item).extract(),
       } satisfies MonetaryAmount.$Json),
     );
   }
@@ -32322,8 +32222,8 @@ export namespace MonetaryAmount {
   export type $Identifier = StructuredValueStatic.$Identifier;
   export const $Identifier = StructuredValueStatic.$Identifier;
   export type $Json = {
-    readonly currency: string | undefined;
-    readonly value: number | undefined;
+    readonly currency?: string;
+    readonly value?: number;
   } & StructuredValueStatic.$Json;
 
   export function $propertiesFromJson(
@@ -32341,19 +32241,19 @@ export namespace MonetaryAmount {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      StructuredValueStatic.$propertiesFromJson(_jsonObject);
+      StructuredValueStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const currency = purify.Maybe.fromNullable(_jsonObject["currency"]);
-    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const currency = purify.Maybe.fromNullable($jsonObject["currency"]);
+    const value = purify.Maybe.fromNullable($jsonObject["value"]);
     return purify.Either.of({ ...$super0, $identifier, currency, value });
   }
 
@@ -32369,7 +32269,7 @@ export namespace MonetaryAmount {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -32390,22 +32290,24 @@ export namespace MonetaryAmount {
         currency: zod.string().optional(),
         value: zod.number().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       currency: purify.Maybe<string>;
@@ -32413,57 +32315,58 @@ export namespace MonetaryAmount {
     } & $UnwrapR<ReturnType<typeof StructuredValueStatic.$propertiesFromRdf>>
   > {
     const $super0Either = StructuredValueStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MonetaryAmount)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MonetaryAmount)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MonetaryAmount.$Identifier = _resource.identifier;
+    const $identifier: MonetaryAmount.$Identifier = $resource.identifier;
     const _currencyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.currency["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.currency["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_currencyEither.isLeft()) {
       return _currencyEither;
     }
 
     const currency = _currencyEither.unsafeCoerce();
-    const _valueEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values($properties.value["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
+    const _valueEither: purify.Either<Error, purify.Maybe<number>> = $resource
+      .values($properties.value["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toNumber())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_valueEither.isLeft()) {
       return _valueEither;
     }
@@ -32474,7 +32377,7 @@ export namespace MonetaryAmount {
 
   export function $fromRdf(
     parameters: Parameters<typeof MonetaryAmount.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MonetaryAmount> {
+  ): purify.Either<Error, MonetaryAmount> {
     return MonetaryAmount.$propertiesFromRdf(parameters).map(
       (properties) => new MonetaryAmount(properties),
     );
@@ -32760,11 +32663,11 @@ export class MonetaryAmountStub extends StructuredValueStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.currency.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.currency.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.value.ifJust((_value0) => {
-      _hasher.update(_value0.toString());
+    this.value.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     return _hasher;
   }
@@ -32773,8 +32676,8 @@ export class MonetaryAmountStub extends StructuredValueStub {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        currency: this.currency.map((_item) => _item).extract(),
-        value: this.value.map((_item) => _item).extract(),
+        currency: this.currency.map((item) => item).extract(),
+        value: this.value.map((item) => item).extract(),
       } satisfies MonetaryAmountStub.$Json),
     );
   }
@@ -32820,8 +32723,8 @@ export namespace MonetaryAmountStub {
   export type $Identifier = StructuredValueStubStatic.$Identifier;
   export const $Identifier = StructuredValueStubStatic.$Identifier;
   export type $Json = {
-    readonly currency: string | undefined;
-    readonly value: number | undefined;
+    readonly currency?: string;
+    readonly value?: number;
   } & StructuredValueStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -32841,19 +32744,19 @@ export namespace MonetaryAmountStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      StructuredValueStubStatic.$propertiesFromJson(_jsonObject);
+      StructuredValueStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const currency = purify.Maybe.fromNullable(_jsonObject["currency"]);
-    const value = purify.Maybe.fromNullable(_jsonObject["value"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const currency = purify.Maybe.fromNullable($jsonObject["currency"]);
+    const value = purify.Maybe.fromNullable($jsonObject["value"]);
     return purify.Either.of({ ...$super0, $identifier, currency, value });
   }
 
@@ -32869,7 +32772,7 @@ export namespace MonetaryAmountStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -32890,22 +32793,24 @@ export namespace MonetaryAmountStub {
         currency: zod.string().optional(),
         value: zod.number().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       currency: purify.Maybe<string>;
@@ -32915,57 +32820,58 @@ export namespace MonetaryAmountStub {
     >
   > {
     const $super0Either = StructuredValueStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MonetaryAmount)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/MonetaryAmount)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MonetaryAmountStub.$Identifier = _resource.identifier;
+    const $identifier: MonetaryAmountStub.$Identifier = $resource.identifier;
     const _currencyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.currency["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.currency["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_currencyEither.isLeft()) {
       return _currencyEither;
     }
 
     const currency = _currencyEither.unsafeCoerce();
-    const _valueEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number>
-    > = purify.Either.of(
-      _resource
-        .values($properties.value["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toNumber())
-        .toMaybe(),
-    );
+    const _valueEither: purify.Either<Error, purify.Maybe<number>> = $resource
+      .values($properties.value["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toNumber())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_valueEither.isLeft()) {
       return _valueEither;
     }
@@ -32976,7 +32882,7 @@ export namespace MonetaryAmountStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof MonetaryAmountStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MonetaryAmountStub> {
+  ): purify.Either<Error, MonetaryAmountStub> {
     return MonetaryAmountStub.$propertiesFromRdf(parameters).map(
       (properties) => new MonetaryAmountStub(properties),
     );
@@ -33238,8 +33144,8 @@ export class Message extends CreativeWork {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.sender.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.sender.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -33248,7 +33154,7 @@ export class Message extends CreativeWork {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        sender: this.sender.map((_item) => _item.$toJson()).extract(),
+        sender: this.sender.map((item) => item.$toJson()).extract(),
       } satisfies Message.$Json),
     );
   }
@@ -33276,8 +33182,8 @@ export class Message extends CreativeWork {
 
     _resource.add(
       Message.$properties.sender["identifier"],
-      this.sender.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.sender.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -33295,9 +33201,7 @@ export namespace Message {
   export type $Identifier = CreativeWorkStatic.$Identifier;
   export const $Identifier = CreativeWorkStatic.$Identifier;
   export type $Json = {
-    readonly sender:
-      | (OrganizationStubStatic.$Json | PersonStub.$Json)
-      | undefined;
+    readonly sender?: OrganizationStubStatic.$Json | PersonStub.$Json;
   } & CreativeWorkStatic.$Json;
 
   export function $propertiesFromJson(
@@ -33314,18 +33218,18 @@ export namespace Message {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = CreativeWorkStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = CreativeWorkStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const sender = purify.Maybe.fromNullable(_jsonObject["sender"]).map(
-      (_item) => AgentStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const sender = purify.Maybe.fromNullable($jsonObject["sender"]).map(
+      (item) => AgentStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, sender });
   }
@@ -33342,7 +33246,7 @@ export namespace Message {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -33361,71 +33265,74 @@ export namespace Message {
         $type: zod.literal("Message"),
         sender: AgentStub.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       sender: purify.Maybe<AgentStub>;
     } & $UnwrapR<ReturnType<typeof CreativeWorkStatic.$propertiesFromRdf>>
   > {
     const $super0Either = CreativeWorkStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Message)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Message)`,
+            ),
           ),
         );
     }
 
-    const $identifier: Message.$Identifier = _resource.identifier;
+    const $identifier: Message.$Identifier = $resource.identifier;
     const _senderEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<AgentStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.sender["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          AgentStub.$fromRdf({
-            ..._context,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.sender["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        AgentStub.$fromRdf({
+          ...$context,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_senderEither.isLeft()) {
       return _senderEither;
     }
@@ -33436,7 +33343,7 @@ export namespace Message {
 
   export function $fromRdf(
     parameters: Parameters<typeof Message.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Message> {
+  ): purify.Either<Error, Message> {
     return Message.$propertiesFromRdf(parameters).map(
       (properties) => new Message(properties),
     );
@@ -33688,17 +33595,17 @@ export namespace MessageStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      CreativeWorkStubStatic.$propertiesFromJson(_jsonObject);
+      CreativeWorkStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -33714,7 +33621,7 @@ export namespace MessageStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [CreativeWorkStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -33729,59 +33636,59 @@ export namespace MessageStub {
         "@id": zod.string().min(1),
         $type: zod.literal("MessageStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof CreativeWorkStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = CreativeWorkStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Message)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Message)`,
+            ),
           ),
         );
     }
 
-    const $identifier: MessageStub.$Identifier = _resource.identifier;
+    const $identifier: MessageStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof MessageStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, MessageStub> {
+  ): purify.Either<Error, MessageStub> {
     return MessageStub.$propertiesFromRdf(parameters).map(
       (properties) => new MessageStub(properties),
     );
@@ -34022,18 +33929,18 @@ export class ListItem extends Intangible {
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
     this.item.$hash(_hasher);
-    this.position.ifJust((_value0) => {
-      switch (typeof _value0) {
+    this.position.ifJust((value0) => {
+      switch (typeof value0) {
         case "number": {
-          _hasher.update(_value0.toString());
+          _hasher.update(value0.toString());
           break;
         }
         case "string": {
-          _hasher.update(_value0);
+          _hasher.update(value0);
           break;
         }
         default:
-          _value0 satisfies never;
+          value0 satisfies never;
           throw new Error("unrecognized type");
       }
     });
@@ -34046,7 +33953,7 @@ export class ListItem extends Intangible {
         ...super.$toJson(),
         item: this.item.$toJson(),
         position: this.position
-          .map((_item) => (typeof _item === "string" ? _item : _item))
+          .map((item) => (typeof item === "string" ? item : item))
           .extract(),
       } satisfies ListItem.$Json),
     );
@@ -34079,9 +33986,7 @@ export class ListItem extends Intangible {
     );
     _resource.add(
       ListItem.$properties.position["identifier"],
-      this.position.map((_value) =>
-        typeof _value === "string" ? _value : _value,
-      ),
+      this.position.map((value) => (typeof value === "string" ? value : value)),
     );
     return _resource;
   }
@@ -34099,7 +34004,7 @@ export namespace ListItem {
   export const $Identifier = IntangibleStatic.$Identifier;
   export type $Json = {
     readonly item: ThingStubStatic.$Json;
-    readonly position: (number | string) | undefined;
+    readonly position?: number | string;
   } & IntangibleStatic.$Json;
 
   export function $propertiesFromJson(
@@ -34117,19 +34022,19 @@ export namespace ListItem {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const item = ThingStubStatic.$fromJson(_jsonObject["item"]).unsafeCoerce();
-    const position = purify.Maybe.fromNullable(_jsonObject["position"]).map(
-      (_item) => (typeof _item === "string" ? _item : _item),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const item = ThingStubStatic.$fromJson($jsonObject["item"]).unsafeCoerce();
+    const position = purify.Maybe.fromNullable($jsonObject["position"]).map(
+      (item) => (typeof item === "string" ? item : item),
     );
     return purify.Either.of({ ...$super0, $identifier, item, position });
   }
@@ -34146,7 +34051,7 @@ export namespace ListItem {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -34169,22 +34074,24 @@ export namespace ListItem {
         item: ThingStubStatic.$jsonZodSchema(),
         position: zod.union([zod.number(), zod.string()]).optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       item: ThingStub;
@@ -34192,44 +34099,39 @@ export namespace ListItem {
     } & $UnwrapR<ReturnType<typeof IntangibleStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ListItem)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ListItem)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ListItem.$Identifier = _resource.identifier;
-    const _itemEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      ThingStub
-    > = _resource
+    const $identifier: ListItem.$Identifier = $resource.identifier;
+    const _itemEither: purify.Either<Error, ThingStub> = $resource
       .values($properties.item["identifier"], { unique: true })
       .head()
       .chain((value) => value.toResource())
       .chain((_resource) =>
         ThingStubStatic.$fromRdf({
-          ..._context,
+          ...$context,
           ignoreRdfType: true,
-          languageIn: _languageIn,
+          languageIn: $languageIn,
           resource: _resource,
         }),
       );
@@ -34239,30 +34141,33 @@ export namespace ListItem {
 
     const item = _itemEither.unsafeCoerce();
     const _positionEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<number | string>
-    > = purify.Either.of(
-      (
-        _resource
-          .values($properties.position["identifier"], { unique: true })
-          .head()
-          .chain((_value) => _value.toNumber()) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          number | string
-        >
+    > = (
+      $resource
+        .values($properties.position["identifier"], { unique: true })
+        .head()
+        .chain((value) => value.toNumber()) as purify.Either<
+        Error,
+        number | string
+      >
+    )
+      .altLazy(
+        () =>
+          $resource
+            .values($properties.position["identifier"], { unique: true })
+            .head()
+            .chain((value) => value.toString()) as purify.Either<
+            Error,
+            number | string
+          >,
       )
-        .altLazy(
-          () =>
-            _resource
-              .values($properties.position["identifier"], { unique: true })
-              .head()
-              .chain((_value) => _value.toString()) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              number | string
-            >,
-        )
-        .toMaybe(),
-    );
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_positionEither.isLeft()) {
       return _positionEither;
     }
@@ -34273,7 +34178,7 @@ export namespace ListItem {
 
   export function $fromRdf(
     parameters: Parameters<typeof ListItem.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ListItem> {
+  ): purify.Either<Error, ListItem> {
     return ListItem.$propertiesFromRdf(parameters).map(
       (properties) => new ListItem(properties),
     );
@@ -34578,18 +34483,18 @@ export class ListItemStub extends IntangibleStub {
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
     this.item.$hash(_hasher);
-    this.position.ifJust((_value0) => {
-      switch (typeof _value0) {
+    this.position.ifJust((value0) => {
+      switch (typeof value0) {
         case "number": {
-          _hasher.update(_value0.toString());
+          _hasher.update(value0.toString());
           break;
         }
         case "string": {
-          _hasher.update(_value0);
+          _hasher.update(value0);
           break;
         }
         default:
-          _value0 satisfies never;
+          value0 satisfies never;
           throw new Error("unrecognized type");
       }
     });
@@ -34602,7 +34507,7 @@ export class ListItemStub extends IntangibleStub {
         ...super.$toJson(),
         item: this.item.$toJson(),
         position: this.position
-          .map((_item) => (typeof _item === "string" ? _item : _item))
+          .map((item) => (typeof item === "string" ? item : item))
           .extract(),
       } satisfies ListItemStub.$Json),
     );
@@ -34635,9 +34540,7 @@ export class ListItemStub extends IntangibleStub {
     );
     _resource.add(
       ListItem.$properties.position["identifier"],
-      this.position.map((_value) =>
-        typeof _value === "string" ? _value : _value,
-      ),
+      this.position.map((value) => (typeof value === "string" ? value : value)),
     );
     return _resource;
   }
@@ -34655,7 +34558,7 @@ export namespace ListItemStub {
   export const $Identifier = IntangibleStubStatic.$Identifier;
   export type $Json = {
     readonly item: ThingStubStatic.$Json;
-    readonly position: (number | string) | undefined;
+    readonly position?: number | string;
   } & IntangibleStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -34673,19 +34576,19 @@ export namespace ListItemStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const item = ThingStubStatic.$fromJson(_jsonObject["item"]).unsafeCoerce();
-    const position = purify.Maybe.fromNullable(_jsonObject["position"]).map(
-      (_item) => (typeof _item === "string" ? _item : _item),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const item = ThingStubStatic.$fromJson($jsonObject["item"]).unsafeCoerce();
+    const position = purify.Maybe.fromNullable($jsonObject["position"]).map(
+      (item) => (typeof item === "string" ? item : item),
     );
     return purify.Either.of({ ...$super0, $identifier, item, position });
   }
@@ -34702,7 +34605,7 @@ export namespace ListItemStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -34725,22 +34628,24 @@ export namespace ListItemStub {
         item: ThingStubStatic.$jsonZodSchema(),
         position: zod.union([zod.number(), zod.string()]).optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       item: ThingStub;
@@ -34748,44 +34653,39 @@ export namespace ListItemStub {
     } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ListItem)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ListItem)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ListItemStub.$Identifier = _resource.identifier;
-    const _itemEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      ThingStub
-    > = _resource
+    const $identifier: ListItemStub.$Identifier = $resource.identifier;
+    const _itemEither: purify.Either<Error, ThingStub> = $resource
       .values($properties.item["identifier"], { unique: true })
       .head()
       .chain((value) => value.toResource())
       .chain((_resource) =>
         ThingStubStatic.$fromRdf({
-          ..._context,
+          ...$context,
           ignoreRdfType: true,
-          languageIn: _languageIn,
+          languageIn: $languageIn,
           resource: _resource,
         }),
       );
@@ -34795,30 +34695,33 @@ export namespace ListItemStub {
 
     const item = _itemEither.unsafeCoerce();
     const _positionEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<number | string>
-    > = purify.Either.of(
-      (
-        _resource
-          .values($properties.position["identifier"], { unique: true })
-          .head()
-          .chain((_value) => _value.toNumber()) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          number | string
-        >
+    > = (
+      $resource
+        .values($properties.position["identifier"], { unique: true })
+        .head()
+        .chain((value) => value.toNumber()) as purify.Either<
+        Error,
+        number | string
+      >
+    )
+      .altLazy(
+        () =>
+          $resource
+            .values($properties.position["identifier"], { unique: true })
+            .head()
+            .chain((value) => value.toString()) as purify.Either<
+            Error,
+            number | string
+          >,
       )
-        .altLazy(
-          () =>
-            _resource
-              .values($properties.position["identifier"], { unique: true })
-              .head()
-              .chain((_value) => _value.toString()) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              number | string
-            >,
-        )
-        .toMaybe(),
-    );
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_positionEither.isLeft()) {
       return _positionEither;
     }
@@ -34829,7 +34732,7 @@ export namespace ListItemStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof ListItemStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ListItemStub> {
+  ): purify.Either<Error, ListItemStub> {
     return ListItemStub.$propertiesFromRdf(parameters).map(
       (properties) => new ListItemStub(properties),
     );
@@ -35098,8 +35001,8 @@ export class ItemList extends Intangible {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.itemListElements) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.itemListElements) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -35109,7 +35012,7 @@ export class ItemList extends Intangible {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        itemListElements: this.itemListElements.map((_item) => _item.$toJson()),
+        itemListElements: this.itemListElements.map((item) => item.$toJson()),
       } satisfies ItemList.$Json),
     );
   }
@@ -35137,8 +35040,8 @@ export class ItemList extends Intangible {
 
     _resource.add(
       ItemListStub.$properties.itemListElements["identifier"],
-      this.itemListElements.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.itemListElements.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -35156,7 +35059,7 @@ export namespace ItemList {
   export type $Identifier = IntangibleStatic.$Identifier;
   export const $Identifier = IntangibleStatic.$Identifier;
   export type $Json = {
-    readonly itemListElements: readonly ListItemStub.$Json[];
+    readonly itemListElements?: readonly ListItemStub.$Json[];
   } & IntangibleStatic.$Json;
 
   export function $propertiesFromJson(
@@ -35173,18 +35076,18 @@ export namespace ItemList {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const itemListElements = _jsonObject["itemListElements"].map((_item) =>
-      ListItemStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const itemListElements = $jsonObject["itemListElements"].map((item) =>
+      ListItemStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, itemListElements });
   }
@@ -35201,7 +35104,7 @@ export namespace ItemList {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -35224,77 +35127,73 @@ export namespace ItemList {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       itemListElements: ListItemStub[];
     } & $UnwrapR<ReturnType<typeof IntangibleStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ItemList)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ItemList)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ItemList.$Identifier = _resource.identifier;
-    const _itemListElementsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      ListItemStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.itemListElements["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ListItemStub.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: ItemList.$Identifier = $resource.identifier;
+    const _itemListElementsEither: purify.Either<Error, ListItemStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.itemListElements["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                ListItemStub.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_itemListElementsEither.isLeft()) {
       return _itemListElementsEither;
     }
@@ -35305,7 +35204,7 @@ export namespace ItemList {
 
   export function $fromRdf(
     parameters: Parameters<typeof ItemList.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ItemList> {
+  ): purify.Either<Error, ItemList> {
     return ItemList.$propertiesFromRdf(parameters).map(
       (properties) => new ItemList(properties),
     );
@@ -35555,8 +35454,8 @@ export class ItemListStub extends IntangibleStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    for (const _item0 of this.itemListElements) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.itemListElements) {
+      item0.$hash(_hasher);
     }
 
     return _hasher;
@@ -35566,7 +35465,7 @@ export class ItemListStub extends IntangibleStub {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        itemListElements: this.itemListElements.map((_item) => _item.$toJson()),
+        itemListElements: this.itemListElements.map((item) => item.$toJson()),
       } satisfies ItemListStub.$Json),
     );
   }
@@ -35594,8 +35493,8 @@ export class ItemListStub extends IntangibleStub {
 
     _resource.add(
       ItemListStub.$properties.itemListElements["identifier"],
-      this.itemListElements.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.itemListElements.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -35613,7 +35512,7 @@ export namespace ItemListStub {
   export type $Identifier = IntangibleStubStatic.$Identifier;
   export const $Identifier = IntangibleStubStatic.$Identifier;
   export type $Json = {
-    readonly itemListElements: readonly ListItemStub.$Json[];
+    readonly itemListElements?: readonly ListItemStub.$Json[];
   } & IntangibleStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -35630,18 +35529,18 @@ export namespace ItemListStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const itemListElements = _jsonObject["itemListElements"].map((_item) =>
-      ListItemStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const itemListElements = $jsonObject["itemListElements"].map((item) =>
+      ListItemStub.$fromJson(item).unsafeCoerce(),
     );
     return purify.Either.of({ ...$super0, $identifier, itemListElements });
   }
@@ -35658,7 +35557,7 @@ export namespace ItemListStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -35681,77 +35580,73 @@ export namespace ItemListStub {
           .array()
           .default(() => []),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       itemListElements: ListItemStub[];
     } & $UnwrapR<ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ItemList)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ItemList)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ItemListStub.$Identifier = _resource.identifier;
-    const _itemListElementsEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      ListItemStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.itemListElements["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              ListItemStub.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const $identifier: ItemListStub.$Identifier = $resource.identifier;
+    const _itemListElementsEither: purify.Either<Error, ListItemStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.itemListElements["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                ListItemStub.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_itemListElementsEither.isLeft()) {
       return _itemListElementsEither;
     }
@@ -35762,7 +35657,7 @@ export namespace ItemListStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof ItemListStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ItemListStub> {
+  ): purify.Either<Error, ItemListStub> {
     return ItemListStub.$propertiesFromRdf(parameters).map(
       (properties) => new ItemListStub(properties),
     );
@@ -36095,18 +35990,18 @@ export class Invoice extends Intangible {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.category.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.category.ifJust((value0) => {
+      _hasher.update(value0);
     });
-    this.provider.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.provider.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
-    for (const _item0 of this.referencesOrders) {
-      _item0.$hash(_hasher);
+    for (const item0 of this.referencesOrders) {
+      item0.$hash(_hasher);
     }
 
-    this.totalPaymentDue.ifJust((_value0) => {
-      _value0.$hash(_hasher);
+    this.totalPaymentDue.ifJust((value0) => {
+      value0.$hash(_hasher);
     });
     return _hasher;
   }
@@ -36115,11 +36010,11 @@ export class Invoice extends Intangible {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        category: this.category.map((_item) => _item).extract(),
-        provider: this.provider.map((_item) => _item.$toJson()).extract(),
-        referencesOrders: this.referencesOrders.map((_item) => _item.$toJson()),
+        category: this.category.map((item) => item).extract(),
+        provider: this.provider.map((item) => item.$toJson()).extract(),
+        referencesOrders: this.referencesOrders.map((item) => item.$toJson()),
         totalPaymentDue: this.totalPaymentDue
-          .map((_item) => _item.$toJson())
+          .map((item) => item.$toJson())
           .extract(),
       } satisfies Invoice.$Json),
     );
@@ -36149,20 +36044,20 @@ export class Invoice extends Intangible {
     _resource.add(Invoice.$properties.category["identifier"], this.category);
     _resource.add(
       Invoice.$properties.provider["identifier"],
-      this.provider.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.provider.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       Invoice.$properties.referencesOrders["identifier"],
-      this.referencesOrders.map((_item) =>
-        _item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.referencesOrders.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       Invoice.$properties.totalPaymentDue["identifier"],
-      this.totalPaymentDue.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.totalPaymentDue.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     return _resource;
@@ -36180,12 +36075,10 @@ export namespace Invoice {
   export type $Identifier = IntangibleStatic.$Identifier;
   export const $Identifier = IntangibleStatic.$Identifier;
   export type $Json = {
-    readonly category: string | undefined;
-    readonly provider:
-      | (OrganizationStubStatic.$Json | PersonStub.$Json)
-      | undefined;
-    readonly referencesOrders: readonly OrderStub.$Json[];
-    readonly totalPaymentDue: MonetaryAmountStub.$Json | undefined;
+    readonly category?: string;
+    readonly provider?: OrganizationStubStatic.$Json | PersonStub.$Json;
+    readonly referencesOrders?: readonly OrderStub.$Json[];
+    readonly totalPaymentDue?: MonetaryAmountStub.$Json;
   } & IntangibleStatic.$Json;
 
   export function $propertiesFromJson(
@@ -36205,26 +36098,26 @@ export namespace Invoice {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const category = purify.Maybe.fromNullable(_jsonObject["category"]);
-    const provider = purify.Maybe.fromNullable(_jsonObject["provider"]).map(
-      (_item) => AgentStub.$fromJson(_item).unsafeCoerce(),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const category = purify.Maybe.fromNullable($jsonObject["category"]);
+    const provider = purify.Maybe.fromNullable($jsonObject["provider"]).map(
+      (item) => AgentStub.$fromJson(item).unsafeCoerce(),
     );
-    const referencesOrders = _jsonObject["referencesOrders"].map((_item) =>
-      OrderStub.$fromJson(_item).unsafeCoerce(),
+    const referencesOrders = $jsonObject["referencesOrders"].map((item) =>
+      OrderStub.$fromJson(item).unsafeCoerce(),
     );
     const totalPaymentDue = purify.Maybe.fromNullable(
-      _jsonObject["totalPaymentDue"],
-    ).map((_item) => MonetaryAmountStub.$fromJson(_item).unsafeCoerce());
+      $jsonObject["totalPaymentDue"],
+    ).map((item) => MonetaryAmountStub.$fromJson(item).unsafeCoerce());
     return purify.Either.of({
       ...$super0,
       $identifier,
@@ -36247,7 +36140,7 @@ export namespace Invoice {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -36278,22 +36171,24 @@ export namespace Invoice {
           .default(() => []),
         totalPaymentDue: MonetaryAmountStub.$jsonZodSchema().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       category: purify.Maybe<string>;
@@ -36303,115 +36198,118 @@ export namespace Invoice {
     } & $UnwrapR<ReturnType<typeof IntangibleStatic.$propertiesFromRdf>>
   > {
     const $super0Either = IntangibleStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Invoice)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Invoice)`,
+            ),
           ),
         );
     }
 
-    const $identifier: Invoice.$Identifier = _resource.identifier;
+    const $identifier: Invoice.$Identifier = $resource.identifier;
     const _categoryEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.category["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.category["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_categoryEither.isLeft()) {
       return _categoryEither;
     }
 
     const category = _categoryEither.unsafeCoerce();
     const _providerEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<AgentStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.provider["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          AgentStub.$fromRdf({
-            ..._context,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.provider["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        AgentStub.$fromRdf({
+          ...$context,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_providerEither.isLeft()) {
       return _providerEither;
     }
 
     const provider = _providerEither.unsafeCoerce();
-    const _referencesOrdersEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly OrderStub[]
-    > = purify.Either.of([
-      ..._resource
-        .values($properties.referencesOrders["identifier"], { unique: true })
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              OrderStub.$fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
+    const _referencesOrdersEither: purify.Either<Error, readonly OrderStub[]> =
+      purify.Either.sequence(
+        $resource
+          .values($properties.referencesOrders["identifier"], { unique: true })
+          .map((item) =>
+            item
+              .toValues()
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                OrderStub.$fromRdf({
+                  ...$context,
+                  ignoreRdfType: true,
+                  languageIn: $languageIn,
+                  resource: _resource,
+                }),
+              ),
+          ),
+      );
     if (_referencesOrdersEither.isLeft()) {
       return _referencesOrdersEither;
     }
 
     const referencesOrders = _referencesOrdersEither.unsafeCoerce();
     const _totalPaymentDueEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<MonetaryAmountStub>
-    > = purify.Either.of(
-      _resource
-        .values($properties.totalPaymentDue["identifier"], { unique: true })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((_resource) =>
-          MonetaryAmountStub.$fromRdf({
-            ..._context,
-            ignoreRdfType: true,
-            languageIn: _languageIn,
-            resource: _resource,
-          }),
-        )
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.totalPaymentDue["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        MonetaryAmountStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_totalPaymentDueEither.isLeft()) {
       return _totalPaymentDueEither;
     }
@@ -36429,7 +36327,7 @@ export namespace Invoice {
 
   export function $fromRdf(
     parameters: Parameters<typeof Invoice.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Invoice> {
+  ): purify.Either<Error, Invoice> {
     return Invoice.$propertiesFromRdf(parameters).map(
       (properties) => new Invoice(properties),
     );
@@ -36780,16 +36678,16 @@ export namespace InvoiceStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = IntangibleStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = IntangibleStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -36805,7 +36703,7 @@ export namespace InvoiceStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [IntangibleStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -36820,59 +36718,59 @@ export namespace InvoiceStub {
         "@id": zod.string().min(1),
         $type: zod.literal("InvoiceStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof IntangibleStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = IntangibleStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Invoice)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Invoice)`,
+            ),
           ),
         );
     }
 
-    const $identifier: InvoiceStub.$Identifier = _resource.identifier;
+    const $identifier: InvoiceStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof InvoiceStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, InvoiceStub> {
+  ): purify.Either<Error, InvoiceStub> {
     return InvoiceStub.$propertiesFromRdf(parameters).map(
       (properties) => new InvoiceStub(properties),
     );
@@ -37081,16 +36979,16 @@ export namespace ImageObject {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = MediaObjectStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = MediaObjectStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -37106,7 +37004,7 @@ export namespace ImageObject {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [MediaObjectStatic.$jsonUiSchema({ scopePrefix })],
@@ -37121,59 +37019,59 @@ export namespace ImageObject {
         "@id": zod.string().min(1),
         $type: zod.literal("ImageObject"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof MediaObjectStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = MediaObjectStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ImageObject.$Identifier = _resource.identifier;
+    const $identifier: ImageObject.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ImageObject.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ImageObject> {
+  ): purify.Either<Error, ImageObject> {
     return ImageObject.$propertiesFromRdf(parameters).map(
       (properties) => new ImageObject(properties),
     );
@@ -37382,17 +37280,17 @@ export namespace ImageObjectStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      MediaObjectStubStatic.$propertiesFromJson(_jsonObject);
+      MediaObjectStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -37408,7 +37306,7 @@ export namespace ImageObjectStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [MediaObjectStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -37423,59 +37321,59 @@ export namespace ImageObjectStub {
         "@id": zod.string().min(1),
         $type: zod.literal("ImageObjectStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof MediaObjectStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = MediaObjectStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/ImageObject)`,
+            ),
           ),
         );
     }
 
-    const $identifier: ImageObjectStub.$Identifier = _resource.identifier;
+    const $identifier: ImageObjectStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof ImageObjectStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ImageObjectStub> {
+  ): purify.Either<Error, ImageObjectStub> {
     return ImageObjectStub.$propertiesFromRdf(parameters).map(
       (properties) => new ImageObjectStub(properties),
     );
@@ -37718,12 +37616,12 @@ export class EventStub extends ThingStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.startDate.ifJust((_value0) => {
-      _hasher.update(_value0.toISOString());
+    this.startDate.ifJust((value0) => {
+      _hasher.update(value0.toISOString());
     });
-    this.superEvent.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.superEvent.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
     return _hasher;
   }
@@ -37732,12 +37630,12 @@ export class EventStub extends ThingStub {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        startDate: this.startDate.map((_item) => _item.toISOString()).extract(),
+        startDate: this.startDate.map((item) => item.toISOString()).extract(),
         superEvent: this.superEvent
-          .map((_item) =>
-            _item.termType === "BlankNode"
-              ? { "@id": `_:${_item.value}` }
-              : { "@id": _item.value },
+          .map((item) =>
+            item.termType === "BlankNode"
+              ? { "@id": `_:${item.value}` }
+              : { "@id": item.value },
           )
           .extract(),
       } satisfies EventStubStatic.$Json),
@@ -37767,8 +37665,8 @@ export class EventStub extends ThingStub {
 
     _resource.add(
       EventStubStatic.$properties.startDate["identifier"],
-      this.startDate.map((_value) =>
-        rdfLiteral.toRdf(_value, {
+      this.startDate.map((value) =>
+        rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
@@ -37793,8 +37691,8 @@ export namespace EventStubStatic {
   export type $Identifier = ThingStubStatic.$Identifier;
   export const $Identifier = ThingStubStatic.$Identifier;
   export type $Json = {
-    readonly startDate: string | undefined;
-    readonly superEvent: { readonly "@id": string } | undefined;
+    readonly startDate?: string;
+    readonly superEvent?: { readonly "@id": string };
   } & ThingStubStatic.$Json;
 
   export function $propertiesFromJson(
@@ -37812,24 +37710,24 @@ export namespace EventStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const startDate = purify.Maybe.fromNullable(_jsonObject["startDate"]).map(
-      (_item) => new Date(_item),
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const startDate = purify.Maybe.fromNullable($jsonObject["startDate"]).map(
+      (item) => new Date(item),
     );
-    const superEvent = purify.Maybe.fromNullable(_jsonObject["superEvent"]).map(
-      (_item) =>
-        _item["@id"].startsWith("_:")
-          ? dataFactory.blankNode(_item["@id"].substring(2))
-          : dataFactory.namedNode(_item["@id"]),
+    const superEvent = purify.Maybe.fromNullable($jsonObject["superEvent"]).map(
+      (item) =>
+        item["@id"].startsWith("_:")
+          ? dataFactory.blankNode(item["@id"].substring(2))
+          : dataFactory.namedNode(item["@id"]),
     );
     return purify.Either.of({ ...$super0, $identifier, startDate, superEvent });
   }
@@ -37851,7 +37749,7 @@ export namespace EventStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -37876,22 +37774,24 @@ export namespace EventStubStatic {
         startDate: zod.string().datetime().optional(),
         superEvent: zod.object({ "@id": zod.string().min(1) }).optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       startDate: purify.Maybe<Date>;
@@ -37899,57 +37799,58 @@ export namespace EventStubStatic {
     } & $UnwrapR<ReturnType<typeof ThingStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Event)`,
+            ),
           ),
         );
     }
 
-    const $identifier: EventStubStatic.$Identifier = _resource.identifier;
-    const _startDateEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<Date>
-    > = purify.Either.of(
-      _resource
-        .values($properties.startDate["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toDate())
-        .toMaybe(),
-    );
+    const $identifier: EventStubStatic.$Identifier = $resource.identifier;
+    const _startDateEither: purify.Either<Error, purify.Maybe<Date>> = $resource
+      .values($properties.startDate["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toDate())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_startDateEither.isLeft()) {
       return _startDateEither;
     }
 
     const startDate = _startDateEither.unsafeCoerce();
     const _superEventEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
-    > = purify.Either.of(
-      _resource
-        .values($properties.superEvent["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toIdentifier())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.superEvent["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toIdentifier())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_superEventEither.isLeft()) {
       return _superEventEither;
     }
@@ -37960,11 +37861,11 @@ export namespace EventStubStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof EventStubStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, EventStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, EventStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       PublicationEventStubStatic.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         EventStub
       >
     ).altLazy(() =>
@@ -38239,16 +38140,16 @@ export namespace PublicationEventStubStatic {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = EventStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = EventStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -38271,7 +38172,7 @@ export namespace PublicationEventStubStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [EventStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -38286,54 +38187,54 @@ export namespace PublicationEventStubStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["PublicationEventStub", "BroadcastEventStub"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof EventStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = EventStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/PublicationEvent)`,
+            ),
           ),
         );
     }
 
     const $identifier: PublicationEventStubStatic.$Identifier =
-      _resource.identifier;
+      $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -38341,11 +38242,11 @@ export namespace PublicationEventStubStatic {
     parameters: Parameters<
       typeof PublicationEventStubStatic.$propertiesFromRdf
     >[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PublicationEventStub> {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+  ): purify.Either<Error, PublicationEventStub> {
+    const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
       BroadcastEventStub.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         PublicationEventStub
       >
     ).altLazy(() =>
@@ -38570,17 +38471,17 @@ export namespace BroadcastEvent {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      PublicationEventStatic.$propertiesFromJson(_jsonObject);
+      PublicationEventStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -38596,7 +38497,7 @@ export namespace BroadcastEvent {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [PublicationEventStatic.$jsonUiSchema({ scopePrefix })],
@@ -38611,59 +38512,59 @@ export namespace BroadcastEvent {
         "@id": zod.string().min(1),
         $type: zod.literal("BroadcastEvent"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof PublicationEventStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = PublicationEventStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
+            ),
           ),
         );
     }
 
-    const $identifier: BroadcastEvent.$Identifier = _resource.identifier;
+    const $identifier: BroadcastEvent.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof BroadcastEvent.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastEvent> {
+  ): purify.Either<Error, BroadcastEvent> {
     return BroadcastEvent.$propertiesFromRdf(parameters).map(
       (properties) => new BroadcastEvent(properties),
     );
@@ -38877,17 +38778,17 @@ export namespace BroadcastEventStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
+    const $jsonObject = $jsonSafeParseResult.data;
     const $super0Either =
-      PublicationEventStubStatic.$propertiesFromJson(_jsonObject);
+      PublicationEventStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -38903,7 +38804,7 @@ export namespace BroadcastEventStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [PublicationEventStubStatic.$jsonUiSchema({ scopePrefix })],
@@ -38918,59 +38819,59 @@ export namespace BroadcastEventStub {
         "@id": zod.string().min(1),
         $type: zod.literal("BroadcastEventStub"),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<typeof PublicationEventStubStatic.$propertiesFromRdf>
     >
   > {
     const $super0Either = PublicationEventStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/BroadcastEvent)`,
+            ),
           ),
         );
     }
 
-    const $identifier: BroadcastEventStub.$Identifier = _resource.identifier;
+    const $identifier: BroadcastEventStub.$Identifier = $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
   export function $fromRdf(
     parameters: Parameters<typeof BroadcastEventStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, BroadcastEventStub> {
+  ): purify.Either<Error, BroadcastEventStub> {
     return BroadcastEventStub.$propertiesFromRdf(parameters).map(
       (properties) => new BroadcastEventStub(properties),
     );
@@ -39176,8 +39077,8 @@ export class PersonStub extends ThingStub {
     },
   >(_hasher: HasherT): HasherT {
     super.$hashShaclProperties(_hasher);
-    this.jobTitle.ifJust((_value0) => {
-      _hasher.update(_value0);
+    this.jobTitle.ifJust((value0) => {
+      _hasher.update(value0);
     });
     return _hasher;
   }
@@ -39186,7 +39087,7 @@ export class PersonStub extends ThingStub {
     return JSON.parse(
       JSON.stringify({
         ...super.$toJson(),
-        jobTitle: this.jobTitle.map((_item) => _item).extract(),
+        jobTitle: this.jobTitle.map((item) => item).extract(),
       } satisfies PersonStub.$Json),
     );
   }
@@ -39227,9 +39128,7 @@ export namespace PersonStub {
   );
   export type $Identifier = ThingStubStatic.$Identifier;
   export const $Identifier = ThingStubStatic.$Identifier;
-  export type $Json = {
-    readonly jobTitle: string | undefined;
-  } & ThingStubStatic.$Json;
+  export type $Json = { readonly jobTitle?: string } & ThingStubStatic.$Json;
 
   export function $propertiesFromJson(
     _json: unknown,
@@ -39245,17 +39144,17 @@ export namespace PersonStub {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $super0Either = ThingStubStatic.$propertiesFromJson(_jsonObject);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either = ThingStubStatic.$propertiesFromJson($jsonObject);
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const jobTitle = purify.Maybe.fromNullable(_jsonObject["jobTitle"]);
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const jobTitle = purify.Maybe.fromNullable($jsonObject["jobTitle"]);
     return purify.Either.of({ ...$super0, $identifier, jobTitle });
   }
 
@@ -39271,7 +39170,7 @@ export namespace PersonStub {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -39290,64 +39189,67 @@ export namespace PersonStub {
         $type: zod.literal("PersonStub"),
         jobTitle: zod.string().optional(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       jobTitle: purify.Maybe<string>;
     } & $UnwrapR<ReturnType<typeof ThingStubStatic.$propertiesFromRdf>>
   > {
     const $super0Either = ThingStubStatic.$propertiesFromRdf({
-      ..._context,
+      ...$context,
       ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
+      languageIn: $languageIn,
+      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
-      return _resource
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Person)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://schema.org/Person)`,
+            ),
           ),
         );
     }
 
-    const $identifier: PersonStub.$Identifier = _resource.identifier;
+    const $identifier: PersonStub.$Identifier = $resource.identifier;
     const _jobTitleEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values($properties.jobTitle["identifier"], { unique: true })
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
+    > = $resource
+      .values($properties.jobTitle["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
     if (_jobTitleEither.isLeft()) {
       return _jobTitleEither;
     }
@@ -39358,7 +39260,7 @@ export namespace PersonStub {
 
   export function $fromRdf(
     parameters: Parameters<typeof PersonStub.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, PersonStub> {
+  ): purify.Either<Error, PersonStub> {
     return PersonStub.$propertiesFromRdf(parameters).map(
       (properties) => new PersonStub(properties),
     );
@@ -39574,16 +39476,16 @@ export namespace AgentStub {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     resource: rdfjsResource.Resource;
-  }): purify.Either<rdfjsResource.Resource.ValueError, AgentStub> {
+  }): purify.Either<Error, AgentStub> {
     return (
       OrganizationStubStatic.$fromRdf({
         ...context,
         resource,
-      }) as purify.Either<rdfjsResource.Resource.ValueError, AgentStub>
+      }) as purify.Either<Error, AgentStub>
     ).altLazy(
       () =>
         PersonStub.$fromRdf({ ...context, resource }) as purify.Either<
-          rdfjsResource.Resource.ValueError,
+          Error,
           AgentStub
         >,
     );
@@ -39624,7 +39526,7 @@ export namespace AgentStub {
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
+          dataFactory,
           identifier,
         }),
       );
@@ -39811,16 +39713,16 @@ export namespace MusicArtistStub {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     resource: rdfjsResource.Resource;
-  }): purify.Either<rdfjsResource.Resource.ValueError, MusicArtistStub> {
+  }): purify.Either<Error, MusicArtistStub> {
     return (
       MusicGroupStub.$fromRdf({ ...context, resource }) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         MusicArtistStub
       >
     ).altLazy(
       () =>
         PersonStub.$fromRdf({ ...context, resource }) as purify.Either<
-          rdfjsResource.Resource.ValueError,
+          Error,
           MusicArtistStub
         >,
     );
@@ -39859,7 +39761,7 @@ export namespace MusicArtistStub {
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
+          dataFactory,
           identifier,
         }),
       );
@@ -40010,7 +39912,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ActionStatic.$Identifier[]>>;
   actions(
     query?: $ObjectSet.Query<ActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Action>[]>;
+  ): Promise<purify.Either<Error, readonly Action[]>>;
   actionsCount(
     query?: Pick<$ObjectSet.Query<ActionStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40022,7 +39924,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ActionStubStatic.$Identifier[]>>;
   actionStubs(
     query?: $ObjectSet.Query<ActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ActionStub>[]>;
+  ): Promise<purify.Either<Error, readonly ActionStub[]>>;
   actionStubsCount(
     query?: Pick<$ObjectSet.Query<ActionStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40034,7 +39936,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ArticleStatic.$Identifier[]>>;
   articles(
     query?: $ObjectSet.Query<ArticleStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Article>[]>;
+  ): Promise<purify.Either<Error, readonly Article[]>>;
   articlesCount(
     query?: Pick<$ObjectSet.Query<ArticleStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40046,7 +39948,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ArticleStubStatic.$Identifier[]>>;
   articleStubs(
     query?: $ObjectSet.Query<ArticleStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ArticleStub>[]>;
+  ): Promise<purify.Either<Error, readonly ArticleStub[]>>;
   articleStubsCount(
     query?: Pick<$ObjectSet.Query<ArticleStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40058,7 +39960,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly AssessActionStatic.$Identifier[]>>;
   assessActions(
     query?: $ObjectSet.Query<AssessActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AssessAction>[]>;
+  ): Promise<purify.Either<Error, readonly AssessAction[]>>;
   assessActionsCount(
     query?: Pick<$ObjectSet.Query<AssessActionStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40072,7 +39974,7 @@ export interface $ObjectSet {
   >;
   assessActionStubs(
     query?: $ObjectSet.Query<AssessActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AssessActionStub>[]>;
+  ): Promise<purify.Either<Error, readonly AssessActionStub[]>>;
   assessActionStubsCount(
     query?: Pick<$ObjectSet.Query<AssessActionStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40084,7 +39986,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly BroadcastEvent.$Identifier[]>>;
   broadcastEvents(
     query?: $ObjectSet.Query<BroadcastEvent.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastEvent>[]>;
+  ): Promise<purify.Either<Error, readonly BroadcastEvent[]>>;
   broadcastEventsCount(
     query?: Pick<$ObjectSet.Query<BroadcastEvent.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40096,7 +39998,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly BroadcastEventStub.$Identifier[]>>;
   broadcastEventStubs(
     query?: $ObjectSet.Query<BroadcastEventStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastEventStub>[]>;
+  ): Promise<purify.Either<Error, readonly BroadcastEventStub[]>>;
   broadcastEventStubsCount(
     query?: Pick<$ObjectSet.Query<BroadcastEventStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40110,7 +40012,7 @@ export interface $ObjectSet {
   >;
   broadcastServices(
     query?: $ObjectSet.Query<BroadcastServiceStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastService>[]>;
+  ): Promise<purify.Either<Error, readonly BroadcastService[]>>;
   broadcastServicesCount(
     query?: Pick<$ObjectSet.Query<BroadcastServiceStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40124,7 +40026,7 @@ export interface $ObjectSet {
   >;
   broadcastServiceStubs(
     query?: $ObjectSet.Query<BroadcastServiceStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]>;
+  ): Promise<purify.Either<Error, readonly BroadcastServiceStub[]>>;
   broadcastServiceStubsCount(
     query?: Pick<
       $ObjectSet.Query<BroadcastServiceStubStatic.$Identifier>,
@@ -40139,7 +40041,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ChooseActionStatic.$Identifier[]>>;
   chooseActions(
     query?: $ObjectSet.Query<ChooseActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ChooseAction>[]>;
+  ): Promise<purify.Either<Error, readonly ChooseAction[]>>;
   chooseActionsCount(
     query?: Pick<$ObjectSet.Query<ChooseActionStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40153,7 +40055,7 @@ export interface $ObjectSet {
   >;
   chooseActionStubs(
     query?: $ObjectSet.Query<ChooseActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ChooseActionStub>[]>;
+  ): Promise<purify.Either<Error, readonly ChooseActionStub[]>>;
   chooseActionStubsCount(
     query?: Pick<$ObjectSet.Query<ChooseActionStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40165,7 +40067,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly CreativeWorkStatic.$Identifier[]>>;
   creativeWorks(
     query?: $ObjectSet.Query<CreativeWorkStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWork>[]>;
+  ): Promise<purify.Either<Error, readonly CreativeWork[]>>;
   creativeWorksCount(
     query?: Pick<$ObjectSet.Query<CreativeWorkStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40179,7 +40081,7 @@ export interface $ObjectSet {
   >;
   creativeWorkSeriess(
     query?: $ObjectSet.Query<CreativeWorkSeriesStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]>;
+  ): Promise<purify.Either<Error, readonly CreativeWorkSeries[]>>;
   creativeWorkSeriessCount(
     query?: Pick<
       $ObjectSet.Query<CreativeWorkSeriesStatic.$Identifier>,
@@ -40196,7 +40098,7 @@ export interface $ObjectSet {
   >;
   creativeWorkSeriesStubs(
     query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]>;
+  ): Promise<purify.Either<Error, readonly CreativeWorkSeriesStub[]>>;
   creativeWorkSeriesStubsCount(
     query?: Pick<
       $ObjectSet.Query<CreativeWorkSeriesStubStatic.$Identifier>,
@@ -40213,7 +40115,7 @@ export interface $ObjectSet {
   >;
   creativeWorkStubs(
     query?: $ObjectSet.Query<CreativeWorkStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]>;
+  ): Promise<purify.Either<Error, readonly CreativeWorkStub[]>>;
   creativeWorkStubsCount(
     query?: Pick<$ObjectSet.Query<CreativeWorkStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40225,7 +40127,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly EnumerationStatic.$Identifier[]>>;
   enumerations(
     query?: $ObjectSet.Query<EnumerationStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Enumeration>[]>;
+  ): Promise<purify.Either<Error, readonly Enumeration[]>>;
   enumerationsCount(
     query?: Pick<$ObjectSet.Query<EnumerationStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40237,7 +40139,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly EpisodeStatic.$Identifier[]>>;
   episodes(
     query?: $ObjectSet.Query<EpisodeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Episode>[]>;
+  ): Promise<purify.Either<Error, readonly Episode[]>>;
   episodesCount(
     query?: Pick<$ObjectSet.Query<EpisodeStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40249,7 +40151,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly EpisodeStubStatic.$Identifier[]>>;
   episodeStubs(
     query?: $ObjectSet.Query<EpisodeStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, EpisodeStub>[]>;
+  ): Promise<purify.Either<Error, readonly EpisodeStub[]>>;
   episodeStubsCount(
     query?: Pick<$ObjectSet.Query<EpisodeStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40261,7 +40163,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly EventStatic.$Identifier[]>>;
   events(
     query?: $ObjectSet.Query<EventStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Event>[]>;
+  ): Promise<purify.Either<Error, readonly Event[]>>;
   eventsCount(
     query?: Pick<$ObjectSet.Query<EventStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40273,7 +40175,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly EventStubStatic.$Identifier[]>>;
   eventStubs(
     query?: $ObjectSet.Query<EventStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, EventStub>[]>;
+  ): Promise<purify.Either<Error, readonly EventStub[]>>;
   eventStubsCount(
     query?: Pick<$ObjectSet.Query<EventStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40285,7 +40187,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly GenderType.$Identifier[]>>;
   genderTypes(
     query?: $ObjectSet.Query<GenderType.$Identifier>,
-  ): Promise<readonly purify.Either<Error, GenderType>[]>;
+  ): Promise<purify.Either<Error, readonly GenderType[]>>;
   genderTypesCount(
     query?: Pick<$ObjectSet.Query<GenderType.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40297,7 +40199,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ImageObject.$Identifier[]>>;
   imageObjects(
     query?: $ObjectSet.Query<ImageObject.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ImageObject>[]>;
+  ): Promise<purify.Either<Error, readonly ImageObject[]>>;
   imageObjectsCount(
     query?: Pick<$ObjectSet.Query<ImageObject.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40309,7 +40211,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ImageObjectStub.$Identifier[]>>;
   imageObjectStubs(
     query?: $ObjectSet.Query<ImageObjectStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ImageObjectStub>[]>;
+  ): Promise<purify.Either<Error, readonly ImageObjectStub[]>>;
   imageObjectStubsCount(
     query?: Pick<$ObjectSet.Query<ImageObjectStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40321,7 +40223,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly IntangibleStatic.$Identifier[]>>;
   intangibles(
     query?: $ObjectSet.Query<IntangibleStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Intangible>[]>;
+  ): Promise<purify.Either<Error, readonly Intangible[]>>;
   intangiblesCount(
     query?: Pick<$ObjectSet.Query<IntangibleStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40333,7 +40235,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly IntangibleStubStatic.$Identifier[]>>;
   intangibleStubs(
     query?: $ObjectSet.Query<IntangibleStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, IntangibleStub>[]>;
+  ): Promise<purify.Either<Error, readonly IntangibleStub[]>>;
   intangibleStubsCount(
     query?: Pick<$ObjectSet.Query<IntangibleStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40345,7 +40247,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Invoice.$Identifier[]>>;
   invoices(
     query?: $ObjectSet.Query<Invoice.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Invoice>[]>;
+  ): Promise<purify.Either<Error, readonly Invoice[]>>;
   invoicesCount(
     query?: Pick<$ObjectSet.Query<Invoice.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40357,7 +40259,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly InvoiceStub.$Identifier[]>>;
   invoiceStubs(
     query?: $ObjectSet.Query<InvoiceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, InvoiceStub>[]>;
+  ): Promise<purify.Either<Error, readonly InvoiceStub[]>>;
   invoiceStubsCount(
     query?: Pick<$ObjectSet.Query<InvoiceStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40369,7 +40271,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ItemList.$Identifier[]>>;
   itemLists(
     query?: $ObjectSet.Query<ItemList.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ItemList>[]>;
+  ): Promise<purify.Either<Error, readonly ItemList[]>>;
   itemListsCount(
     query?: Pick<$ObjectSet.Query<ItemList.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40381,7 +40283,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ItemListStub.$Identifier[]>>;
   itemListStubs(
     query?: $ObjectSet.Query<ItemListStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ItemListStub>[]>;
+  ): Promise<purify.Either<Error, readonly ItemListStub[]>>;
   itemListStubsCount(
     query?: Pick<$ObjectSet.Query<ItemListStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40393,7 +40295,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ListItem.$Identifier[]>>;
   listItems(
     query?: $ObjectSet.Query<ListItem.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ListItem>[]>;
+  ): Promise<purify.Either<Error, readonly ListItem[]>>;
   listItemsCount(
     query?: Pick<$ObjectSet.Query<ListItem.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40405,7 +40307,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ListItemStub.$Identifier[]>>;
   listItemStubs(
     query?: $ObjectSet.Query<ListItemStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ListItemStub>[]>;
+  ): Promise<purify.Either<Error, readonly ListItemStub[]>>;
   listItemStubsCount(
     query?: Pick<$ObjectSet.Query<ListItemStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40417,7 +40319,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MediaObjectStatic.$Identifier[]>>;
   mediaObjects(
     query?: $ObjectSet.Query<MediaObjectStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MediaObject>[]>;
+  ): Promise<purify.Either<Error, readonly MediaObject[]>>;
   mediaObjectsCount(
     query?: Pick<$ObjectSet.Query<MediaObjectStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40431,7 +40333,7 @@ export interface $ObjectSet {
   >;
   mediaObjectStubs(
     query?: $ObjectSet.Query<MediaObjectStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MediaObjectStub>[]>;
+  ): Promise<purify.Either<Error, readonly MediaObjectStub[]>>;
   mediaObjectStubsCount(
     query?: Pick<$ObjectSet.Query<MediaObjectStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40443,7 +40345,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Message.$Identifier[]>>;
   messages(
     query?: $ObjectSet.Query<Message.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Message>[]>;
+  ): Promise<purify.Either<Error, readonly Message[]>>;
   messagesCount(
     query?: Pick<$ObjectSet.Query<Message.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40455,7 +40357,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MessageStub.$Identifier[]>>;
   messageStubs(
     query?: $ObjectSet.Query<MessageStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MessageStub>[]>;
+  ): Promise<purify.Either<Error, readonly MessageStub[]>>;
   messageStubsCount(
     query?: Pick<$ObjectSet.Query<MessageStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40467,7 +40369,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MonetaryAmount.$Identifier[]>>;
   monetaryAmounts(
     query?: $ObjectSet.Query<MonetaryAmount.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MonetaryAmount>[]>;
+  ): Promise<purify.Either<Error, readonly MonetaryAmount[]>>;
   monetaryAmountsCount(
     query?: Pick<$ObjectSet.Query<MonetaryAmount.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40479,7 +40381,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MonetaryAmountStub.$Identifier[]>>;
   monetaryAmountStubs(
     query?: $ObjectSet.Query<MonetaryAmountStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]>;
+  ): Promise<purify.Either<Error, readonly MonetaryAmountStub[]>>;
   monetaryAmountStubsCount(
     query?: Pick<$ObjectSet.Query<MonetaryAmountStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40491,7 +40393,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicAlbum.$Identifier[]>>;
   musicAlbums(
     query?: $ObjectSet.Query<MusicAlbum.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicAlbum>[]>;
+  ): Promise<purify.Either<Error, readonly MusicAlbum[]>>;
   musicAlbumsCount(
     query?: Pick<$ObjectSet.Query<MusicAlbum.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40503,7 +40405,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicAlbumStub.$Identifier[]>>;
   musicAlbumStubs(
     query?: $ObjectSet.Query<MusicAlbumStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicAlbumStub[]>>;
   musicAlbumStubsCount(
     query?: Pick<$ObjectSet.Query<MusicAlbumStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40515,7 +40417,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicArtistRoleStub.$Identifier[]>>;
   musicArtistRoleStubs(
     query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicArtistRoleStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicArtistRoleStub[]>>;
   musicArtistRoleStubsCount(
     query?: Pick<$ObjectSet.Query<MusicArtistRoleStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40527,7 +40429,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicComposition.$Identifier[]>>;
   musicCompositions(
     query?: $ObjectSet.Query<MusicComposition.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicComposition>[]>;
+  ): Promise<purify.Either<Error, readonly MusicComposition[]>>;
   musicCompositionsCount(
     query?: Pick<$ObjectSet.Query<MusicComposition.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40539,7 +40441,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicCompositionStub.$Identifier[]>>;
   musicCompositionStubs(
     query?: $ObjectSet.Query<MusicCompositionStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicCompositionStub[]>>;
   musicCompositionStubsCount(
     query?: Pick<$ObjectSet.Query<MusicCompositionStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40551,7 +40453,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicGroup.$Identifier[]>>;
   musicGroups(
     query?: $ObjectSet.Query<MusicGroup.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicGroup>[]>;
+  ): Promise<purify.Either<Error, readonly MusicGroup[]>>;
   musicGroupsCount(
     query?: Pick<$ObjectSet.Query<MusicGroup.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40563,7 +40465,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicGroupStub.$Identifier[]>>;
   musicGroupStubs(
     query?: $ObjectSet.Query<MusicGroupStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicGroupStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicGroupStub[]>>;
   musicGroupStubsCount(
     query?: Pick<$ObjectSet.Query<MusicGroupStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40575,7 +40477,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicPlaylist.$Identifier[]>>;
   musicPlaylists(
     query?: $ObjectSet.Query<MusicPlaylist.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicPlaylist>[]>;
+  ): Promise<purify.Either<Error, readonly MusicPlaylist[]>>;
   musicPlaylistsCount(
     query?: Pick<$ObjectSet.Query<MusicPlaylist.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40587,7 +40489,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicPlaylistStub.$Identifier[]>>;
   musicPlaylistStubs(
     query?: $ObjectSet.Query<MusicPlaylistStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicPlaylistStub[]>>;
   musicPlaylistStubsCount(
     query?: Pick<$ObjectSet.Query<MusicPlaylistStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40599,7 +40501,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicRecording.$Identifier[]>>;
   musicRecordings(
     query?: $ObjectSet.Query<MusicRecording.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicRecording>[]>;
+  ): Promise<purify.Either<Error, readonly MusicRecording[]>>;
   musicRecordingsCount(
     query?: Pick<$ObjectSet.Query<MusicRecording.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40611,7 +40513,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicRecordingStub.$Identifier[]>>;
   musicRecordingStubs(
     query?: $ObjectSet.Query<MusicRecordingStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicRecordingStub[]>>;
   musicRecordingStubsCount(
     query?: Pick<$ObjectSet.Query<MusicRecordingStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40623,7 +40525,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly OccupationStub.$Identifier[]>>;
   occupationStubs(
     query?: $ObjectSet.Query<OccupationStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OccupationStub>[]>;
+  ): Promise<purify.Either<Error, readonly OccupationStub[]>>;
   occupationStubsCount(
     query?: Pick<$ObjectSet.Query<OccupationStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40633,7 +40535,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Order.$Identifier[]>>;
   orders(
     query?: $ObjectSet.Query<Order.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Order>[]>;
+  ): Promise<purify.Either<Error, readonly Order[]>>;
   ordersCount(
     query?: Pick<$ObjectSet.Query<Order.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40645,7 +40547,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly OrderStub.$Identifier[]>>;
   orderStubs(
     query?: $ObjectSet.Query<OrderStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OrderStub>[]>;
+  ): Promise<purify.Either<Error, readonly OrderStub[]>>;
   orderStubsCount(
     query?: Pick<$ObjectSet.Query<OrderStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40657,7 +40559,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly OrganizationStatic.$Identifier[]>>;
   organizations(
     query?: $ObjectSet.Query<OrganizationStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Organization>[]>;
+  ): Promise<purify.Either<Error, readonly Organization[]>>;
   organizationsCount(
     query?: Pick<$ObjectSet.Query<OrganizationStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40671,7 +40573,7 @@ export interface $ObjectSet {
   >;
   organizationStubs(
     query?: $ObjectSet.Query<OrganizationStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OrganizationStub>[]>;
+  ): Promise<purify.Either<Error, readonly OrganizationStub[]>>;
   organizationStubsCount(
     query?: Pick<$ObjectSet.Query<OrganizationStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40685,7 +40587,7 @@ export interface $ObjectSet {
   >;
   performingGroups(
     query?: $ObjectSet.Query<PerformingGroupStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PerformingGroup>[]>;
+  ): Promise<purify.Either<Error, readonly PerformingGroup[]>>;
   performingGroupsCount(
     query?: Pick<$ObjectSet.Query<PerformingGroupStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40699,7 +40601,7 @@ export interface $ObjectSet {
   >;
   performingGroupStubs(
     query?: $ObjectSet.Query<PerformingGroupStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]>;
+  ): Promise<purify.Either<Error, readonly PerformingGroupStub[]>>;
   performingGroupStubsCount(
     query?: Pick<
       $ObjectSet.Query<PerformingGroupStubStatic.$Identifier>,
@@ -40712,7 +40614,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Person.$Identifier[]>>;
   people(
     query?: $ObjectSet.Query<Person.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Person>[]>;
+  ): Promise<purify.Either<Error, readonly Person[]>>;
   peopleCount(
     query?: Pick<$ObjectSet.Query<Person.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40724,7 +40626,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly PersonStub.$Identifier[]>>;
   personStubs(
     query?: $ObjectSet.Query<PersonStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PersonStub>[]>;
+  ): Promise<purify.Either<Error, readonly PersonStub[]>>;
   personStubsCount(
     query?: Pick<$ObjectSet.Query<PersonStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40734,7 +40636,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Place.$Identifier[]>>;
   places(
     query?: $ObjectSet.Query<Place.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Place>[]>;
+  ): Promise<purify.Either<Error, readonly Place[]>>;
   placesCount(
     query?: Pick<$ObjectSet.Query<Place.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40746,7 +40648,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly PlaceStub.$Identifier[]>>;
   placeStubs(
     query?: $ObjectSet.Query<PlaceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PlaceStub>[]>;
+  ): Promise<purify.Either<Error, readonly PlaceStub[]>>;
   placeStubsCount(
     query?: Pick<$ObjectSet.Query<PlaceStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40760,7 +40662,7 @@ export interface $ObjectSet {
   >;
   publicationEvents(
     query?: $ObjectSet.Query<PublicationEventStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PublicationEvent>[]>;
+  ): Promise<purify.Either<Error, readonly PublicationEvent[]>>;
   publicationEventsCount(
     query?: Pick<$ObjectSet.Query<PublicationEventStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40774,7 +40676,7 @@ export interface $ObjectSet {
   >;
   publicationEventStubs(
     query?: $ObjectSet.Query<PublicationEventStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PublicationEventStub>[]>;
+  ): Promise<purify.Either<Error, readonly PublicationEventStub[]>>;
   publicationEventStubsCount(
     query?: Pick<
       $ObjectSet.Query<PublicationEventStubStatic.$Identifier>,
@@ -40789,7 +40691,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly QuantitativeValue.$Identifier[]>>;
   quantitativeValues(
     query?: $ObjectSet.Query<QuantitativeValue.$Identifier>,
-  ): Promise<readonly purify.Either<Error, QuantitativeValue>[]>;
+  ): Promise<purify.Either<Error, readonly QuantitativeValue[]>>;
   quantitativeValuesCount(
     query?: Pick<$ObjectSet.Query<QuantitativeValue.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40803,7 +40705,7 @@ export interface $ObjectSet {
   >;
   quantitativeValueStubs(
     query?: $ObjectSet.Query<QuantitativeValueStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]>;
+  ): Promise<purify.Either<Error, readonly QuantitativeValueStub[]>>;
   quantitativeValueStubsCount(
     query?: Pick<$ObjectSet.Query<QuantitativeValueStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40817,7 +40719,7 @@ export interface $ObjectSet {
   >;
   radioBroadcastServices(
     query?: $ObjectSet.Query<RadioBroadcastService.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]>;
+  ): Promise<purify.Either<Error, readonly RadioBroadcastService[]>>;
   radioBroadcastServicesCount(
     query?: Pick<$ObjectSet.Query<RadioBroadcastService.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40831,7 +40733,7 @@ export interface $ObjectSet {
   >;
   radioBroadcastServiceStubs(
     query?: $ObjectSet.Query<RadioBroadcastServiceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]>;
+  ): Promise<purify.Either<Error, readonly RadioBroadcastServiceStub[]>>;
   radioBroadcastServiceStubsCount(
     query?: Pick<
       $ObjectSet.Query<RadioBroadcastServiceStub.$Identifier>,
@@ -40846,7 +40748,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RadioEpisode.$Identifier[]>>;
   radioEpisodes(
     query?: $ObjectSet.Query<RadioEpisode.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioEpisode>[]>;
+  ): Promise<purify.Either<Error, readonly RadioEpisode[]>>;
   radioEpisodesCount(
     query?: Pick<$ObjectSet.Query<RadioEpisode.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40858,7 +40760,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RadioEpisodeStub.$Identifier[]>>;
   radioEpisodeStubs(
     query?: $ObjectSet.Query<RadioEpisodeStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]>;
+  ): Promise<purify.Either<Error, readonly RadioEpisodeStub[]>>;
   radioEpisodeStubsCount(
     query?: Pick<$ObjectSet.Query<RadioEpisodeStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40870,7 +40772,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RadioSeries.$Identifier[]>>;
   radioSeriess(
     query?: $ObjectSet.Query<RadioSeries.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioSeries>[]>;
+  ): Promise<purify.Either<Error, readonly RadioSeries[]>>;
   radioSeriessCount(
     query?: Pick<$ObjectSet.Query<RadioSeries.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40882,7 +40784,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RadioSeriesStub.$Identifier[]>>;
   radioSeriesStubs(
     query?: $ObjectSet.Query<RadioSeriesStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]>;
+  ): Promise<purify.Either<Error, readonly RadioSeriesStub[]>>;
   radioSeriesStubsCount(
     query?: Pick<$ObjectSet.Query<RadioSeriesStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40892,7 +40794,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Report.$Identifier[]>>;
   reports(
     query?: $ObjectSet.Query<Report.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Report>[]>;
+  ): Promise<purify.Either<Error, readonly Report[]>>;
   reportsCount(
     query?: Pick<$ObjectSet.Query<Report.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40904,7 +40806,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ReportStub.$Identifier[]>>;
   reportStubs(
     query?: $ObjectSet.Query<ReportStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ReportStub>[]>;
+  ): Promise<purify.Either<Error, readonly ReportStub[]>>;
   reportStubsCount(
     query?: Pick<$ObjectSet.Query<ReportStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40916,7 +40818,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RoleStub.$Identifier[]>>;
   roleStubs(
     query?: $ObjectSet.Query<RoleStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RoleStub>[]>;
+  ): Promise<purify.Either<Error, readonly RoleStub[]>>;
   roleStubsCount(
     query?: Pick<$ObjectSet.Query<RoleStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40928,7 +40830,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ServiceStatic.$Identifier[]>>;
   services(
     query?: $ObjectSet.Query<ServiceStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Service>[]>;
+  ): Promise<purify.Either<Error, readonly Service[]>>;
   servicesCount(
     query?: Pick<$ObjectSet.Query<ServiceStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40940,7 +40842,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ServiceStubStatic.$Identifier[]>>;
   serviceStubs(
     query?: $ObjectSet.Query<ServiceStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ServiceStub>[]>;
+  ): Promise<purify.Either<Error, readonly ServiceStub[]>>;
   serviceStubsCount(
     query?: Pick<$ObjectSet.Query<ServiceStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40954,7 +40856,7 @@ export interface $ObjectSet {
   >;
   structuredValues(
     query?: $ObjectSet.Query<StructuredValueStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, StructuredValue>[]>;
+  ): Promise<purify.Either<Error, readonly StructuredValue[]>>;
   structuredValuesCount(
     query?: Pick<$ObjectSet.Query<StructuredValueStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40968,7 +40870,7 @@ export interface $ObjectSet {
   >;
   structuredValueStubs(
     query?: $ObjectSet.Query<StructuredValueStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, StructuredValueStub>[]>;
+  ): Promise<purify.Either<Error, readonly StructuredValueStub[]>>;
   structuredValueStubsCount(
     query?: Pick<
       $ObjectSet.Query<StructuredValueStubStatic.$Identifier>,
@@ -40983,7 +40885,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly TextObject.$Identifier[]>>;
   textObjects(
     query?: $ObjectSet.Query<TextObject.$Identifier>,
-  ): Promise<readonly purify.Either<Error, TextObject>[]>;
+  ): Promise<purify.Either<Error, readonly TextObject[]>>;
   textObjectsCount(
     query?: Pick<$ObjectSet.Query<TextObject.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -40995,7 +40897,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly TextObjectStub.$Identifier[]>>;
   textObjectStubs(
     query?: $ObjectSet.Query<TextObjectStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, TextObjectStub>[]>;
+  ): Promise<purify.Either<Error, readonly TextObjectStub[]>>;
   textObjectStubsCount(
     query?: Pick<$ObjectSet.Query<TextObjectStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41007,7 +40909,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ThingStatic.$Identifier[]>>;
   things(
     query?: $ObjectSet.Query<ThingStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Thing>[]>;
+  ): Promise<purify.Either<Error, readonly Thing[]>>;
   thingsCount(
     query?: Pick<$ObjectSet.Query<ThingStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41019,7 +40921,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ThingStubStatic.$Identifier[]>>;
   thingStubs(
     query?: $ObjectSet.Query<ThingStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ThingStub>[]>;
+  ): Promise<purify.Either<Error, readonly ThingStub[]>>;
   thingStubsCount(
     query?: Pick<$ObjectSet.Query<ThingStubStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41031,7 +40933,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly VoteAction.$Identifier[]>>;
   voteActions(
     query?: $ObjectSet.Query<VoteAction.$Identifier>,
-  ): Promise<readonly purify.Either<Error, VoteAction>[]>;
+  ): Promise<purify.Either<Error, readonly VoteAction[]>>;
   voteActionsCount(
     query?: Pick<$ObjectSet.Query<VoteAction.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41043,7 +40945,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly VoteActionStub.$Identifier[]>>;
   voteActionStubs(
     query?: $ObjectSet.Query<VoteActionStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, VoteActionStub>[]>;
+  ): Promise<purify.Either<Error, readonly VoteActionStub[]>>;
   voteActionStubsCount(
     query?: Pick<$ObjectSet.Query<VoteActionStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41055,7 +40957,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly AgentStub.$Identifier[]>>;
   agentStubs(
     query?: $ObjectSet.Query<AgentStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AgentStub>[]>;
+  ): Promise<purify.Either<Error, readonly AgentStub[]>>;
   agentStubsCount(
     query?: Pick<$ObjectSet.Query<AgentStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41067,7 +40969,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly MusicArtistStub.$Identifier[]>>;
   musicArtistStubs(
     query?: $ObjectSet.Query<MusicArtistStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicArtistStub>[]>;
+  ): Promise<purify.Either<Error, readonly MusicArtistStub[]>>;
   musicArtistStubsCount(
     query?: Pick<$ObjectSet.Query<MusicArtistStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -41083,10 +40985,16 @@ export namespace $ObjectSet {
   };
   export type Where<
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  > = {
-    readonly identifiers: readonly ObjectIdentifierT[];
-    readonly type: "identifiers";
-  };
+  > =
+    | {
+        readonly identifiers: readonly ObjectIdentifierT[];
+        readonly type: "identifiers";
+      }
+    | {
+        readonly predicate: rdfjs.NamedNode;
+        readonly subject: rdfjs.BlankNode | rdfjs.NamedNode;
+        readonly type: "triple-objects";
+      };
 }
 
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
@@ -41107,7 +41015,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Action> {
     return this.actionsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async actionIdentifiers(
@@ -41119,29 +41027,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   actionIdentifiersSync(
     query?: $ObjectSet.Query<ActionStatic.$Identifier>,
   ): purify.Either<Error, readonly ActionStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Action, ActionStatic.$Identifier>(
-        ActionStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Action, ActionStatic.$Identifier>(
+      ActionStatic,
+      query,
+    );
   }
 
   async actions(
     query?: $ObjectSet.Query<ActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Action>[]> {
+  ): Promise<purify.Either<Error, readonly Action[]>> {
     return this.actionsSync(query);
   }
 
   actionsSync(
     query?: $ObjectSet.Query<ActionStatic.$Identifier>,
-  ): readonly purify.Either<Error, Action>[] {
-    return [
-      ...this.$objectsSync<Action, ActionStatic.$Identifier>(
-        ActionStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Action[]> {
+    return this.$objectsSync<Action, ActionStatic.$Identifier>(
+      ActionStatic,
+      query,
+    );
   }
 
   async actionsCount(
@@ -41170,7 +41074,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ActionStub> {
     return this.actionStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async actionStubIdentifiers(
@@ -41182,29 +41086,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   actionStubIdentifiersSync(
     query?: $ObjectSet.Query<ActionStubStatic.$Identifier>,
   ): purify.Either<Error, readonly ActionStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ActionStub, ActionStubStatic.$Identifier>(
-        ActionStubStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<
+      ActionStub,
+      ActionStubStatic.$Identifier
+    >(ActionStubStatic, query);
   }
 
   async actionStubs(
     query?: $ObjectSet.Query<ActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly ActionStub[]>> {
     return this.actionStubsSync(query);
   }
 
   actionStubsSync(
     query?: $ObjectSet.Query<ActionStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, ActionStub>[] {
-    return [
-      ...this.$objectsSync<ActionStub, ActionStubStatic.$Identifier>(
-        ActionStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ActionStub[]> {
+    return this.$objectsSync<ActionStub, ActionStubStatic.$Identifier>(
+      ActionStubStatic,
+      query,
+    );
   }
 
   async actionStubsCount(
@@ -41233,7 +41133,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Article> {
     return this.articlesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async articleIdentifiers(
@@ -41245,29 +41145,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   articleIdentifiersSync(
     query?: $ObjectSet.Query<ArticleStatic.$Identifier>,
   ): purify.Either<Error, readonly ArticleStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Article, ArticleStatic.$Identifier>(
-        ArticleStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Article, ArticleStatic.$Identifier>(
+      ArticleStatic,
+      query,
+    );
   }
 
   async articles(
     query?: $ObjectSet.Query<ArticleStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Article>[]> {
+  ): Promise<purify.Either<Error, readonly Article[]>> {
     return this.articlesSync(query);
   }
 
   articlesSync(
     query?: $ObjectSet.Query<ArticleStatic.$Identifier>,
-  ): readonly purify.Either<Error, Article>[] {
-    return [
-      ...this.$objectsSync<Article, ArticleStatic.$Identifier>(
-        ArticleStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Article[]> {
+    return this.$objectsSync<Article, ArticleStatic.$Identifier>(
+      ArticleStatic,
+      query,
+    );
   }
 
   async articlesCount(
@@ -41296,7 +41192,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ArticleStub> {
     return this.articleStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async articleStubIdentifiers(
@@ -41308,29 +41204,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   articleStubIdentifiersSync(
     query?: $ObjectSet.Query<ArticleStubStatic.$Identifier>,
   ): purify.Either<Error, readonly ArticleStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ArticleStub,
-        ArticleStubStatic.$Identifier
-      >(ArticleStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ArticleStub,
+      ArticleStubStatic.$Identifier
+    >(ArticleStubStatic, query);
   }
 
   async articleStubs(
     query?: $ObjectSet.Query<ArticleStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ArticleStub>[]> {
+  ): Promise<purify.Either<Error, readonly ArticleStub[]>> {
     return this.articleStubsSync(query);
   }
 
   articleStubsSync(
     query?: $ObjectSet.Query<ArticleStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, ArticleStub>[] {
-    return [
-      ...this.$objectsSync<ArticleStub, ArticleStubStatic.$Identifier>(
-        ArticleStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ArticleStub[]> {
+    return this.$objectsSync<ArticleStub, ArticleStubStatic.$Identifier>(
+      ArticleStubStatic,
+      query,
+    );
   }
 
   async articleStubsCount(
@@ -41359,7 +41251,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, AssessAction> {
     return this.assessActionsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async assessActionIdentifiers(
@@ -41371,29 +41263,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   assessActionIdentifiersSync(
     query?: $ObjectSet.Query<AssessActionStatic.$Identifier>,
   ): purify.Either<Error, readonly AssessActionStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        AssessAction,
-        AssessActionStatic.$Identifier
-      >(AssessActionStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      AssessAction,
+      AssessActionStatic.$Identifier
+    >(AssessActionStatic, query);
   }
 
   async assessActions(
     query?: $ObjectSet.Query<AssessActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AssessAction>[]> {
+  ): Promise<purify.Either<Error, readonly AssessAction[]>> {
     return this.assessActionsSync(query);
   }
 
   assessActionsSync(
     query?: $ObjectSet.Query<AssessActionStatic.$Identifier>,
-  ): readonly purify.Either<Error, AssessAction>[] {
-    return [
-      ...this.$objectsSync<AssessAction, AssessActionStatic.$Identifier>(
-        AssessActionStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly AssessAction[]> {
+    return this.$objectsSync<AssessAction, AssessActionStatic.$Identifier>(
+      AssessActionStatic,
+      query,
+    );
   }
 
   async assessActionsCount(
@@ -41422,7 +41310,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, AssessActionStub> {
     return this.assessActionStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async assessActionStubIdentifiers(
@@ -41436,29 +41324,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   assessActionStubIdentifiersSync(
     query?: $ObjectSet.Query<AssessActionStubStatic.$Identifier>,
   ): purify.Either<Error, readonly AssessActionStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        AssessActionStub,
-        AssessActionStubStatic.$Identifier
-      >(AssessActionStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      AssessActionStub,
+      AssessActionStubStatic.$Identifier
+    >(AssessActionStubStatic, query);
   }
 
   async assessActionStubs(
     query?: $ObjectSet.Query<AssessActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AssessActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly AssessActionStub[]>> {
     return this.assessActionStubsSync(query);
   }
 
   assessActionStubsSync(
     query?: $ObjectSet.Query<AssessActionStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, AssessActionStub>[] {
-    return [
-      ...this.$objectsSync<
-        AssessActionStub,
-        AssessActionStubStatic.$Identifier
-      >(AssessActionStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly AssessActionStub[]> {
+    return this.$objectsSync<
+      AssessActionStub,
+      AssessActionStubStatic.$Identifier
+    >(AssessActionStubStatic, query);
   }
 
   async assessActionStubsCount(
@@ -41487,7 +41371,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, BroadcastEvent> {
     return this.broadcastEventsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async broadcastEventIdentifiers(
@@ -41499,29 +41383,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   broadcastEventIdentifiersSync(
     query?: $ObjectSet.Query<BroadcastEvent.$Identifier>,
   ): purify.Either<Error, readonly BroadcastEvent.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        BroadcastEvent,
-        BroadcastEvent.$Identifier
-      >(BroadcastEvent, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      BroadcastEvent,
+      BroadcastEvent.$Identifier
+    >(BroadcastEvent, query);
   }
 
   async broadcastEvents(
     query?: $ObjectSet.Query<BroadcastEvent.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastEvent>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastEvent[]>> {
     return this.broadcastEventsSync(query);
   }
 
   broadcastEventsSync(
     query?: $ObjectSet.Query<BroadcastEvent.$Identifier>,
-  ): readonly purify.Either<Error, BroadcastEvent>[] {
-    return [
-      ...this.$objectsSync<BroadcastEvent, BroadcastEvent.$Identifier>(
-        BroadcastEvent,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly BroadcastEvent[]> {
+    return this.$objectsSync<BroadcastEvent, BroadcastEvent.$Identifier>(
+      BroadcastEvent,
+      query,
+    );
   }
 
   async broadcastEventsCount(
@@ -41550,7 +41430,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, BroadcastEventStub> {
     return this.broadcastEventStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async broadcastEventStubIdentifiers(
@@ -41562,29 +41442,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   broadcastEventStubIdentifiersSync(
     query?: $ObjectSet.Query<BroadcastEventStub.$Identifier>,
   ): purify.Either<Error, readonly BroadcastEventStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        BroadcastEventStub,
-        BroadcastEventStub.$Identifier
-      >(BroadcastEventStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      BroadcastEventStub,
+      BroadcastEventStub.$Identifier
+    >(BroadcastEventStub, query);
   }
 
   async broadcastEventStubs(
     query?: $ObjectSet.Query<BroadcastEventStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastEventStub>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastEventStub[]>> {
     return this.broadcastEventStubsSync(query);
   }
 
   broadcastEventStubsSync(
     query?: $ObjectSet.Query<BroadcastEventStub.$Identifier>,
-  ): readonly purify.Either<Error, BroadcastEventStub>[] {
-    return [
-      ...this.$objectsSync<BroadcastEventStub, BroadcastEventStub.$Identifier>(
-        BroadcastEventStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly BroadcastEventStub[]> {
+    return this.$objectsSync<
+      BroadcastEventStub,
+      BroadcastEventStub.$Identifier
+    >(BroadcastEventStub, query);
   }
 
   async broadcastEventStubsCount(
@@ -41613,7 +41489,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, BroadcastService> {
     return this.broadcastServicesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async broadcastServiceIdentifiers(
@@ -41627,29 +41503,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   broadcastServiceIdentifiersSync(
     query?: $ObjectSet.Query<BroadcastServiceStatic.$Identifier>,
   ): purify.Either<Error, readonly BroadcastServiceStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        BroadcastService,
-        BroadcastServiceStatic.$Identifier
-      >(BroadcastServiceStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      BroadcastService,
+      BroadcastServiceStatic.$Identifier
+    >(BroadcastServiceStatic, query);
   }
 
   async broadcastServices(
     query?: $ObjectSet.Query<BroadcastServiceStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastService>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastService[]>> {
     return this.broadcastServicesSync(query);
   }
 
   broadcastServicesSync(
     query?: $ObjectSet.Query<BroadcastServiceStatic.$Identifier>,
-  ): readonly purify.Either<Error, BroadcastService>[] {
-    return [
-      ...this.$objectsSync<
-        BroadcastService,
-        BroadcastServiceStatic.$Identifier
-      >(BroadcastServiceStatic, query),
-    ];
+  ): purify.Either<Error, readonly BroadcastService[]> {
+    return this.$objectsSync<
+      BroadcastService,
+      BroadcastServiceStatic.$Identifier
+    >(BroadcastServiceStatic, query);
   }
 
   async broadcastServicesCount(
@@ -41678,7 +41550,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, BroadcastServiceStub> {
     return this.broadcastServiceStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async broadcastServiceStubIdentifiers(
@@ -41692,29 +41564,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   broadcastServiceStubIdentifiersSync(
     query?: $ObjectSet.Query<BroadcastServiceStubStatic.$Identifier>,
   ): purify.Either<Error, readonly BroadcastServiceStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        BroadcastServiceStub,
-        BroadcastServiceStubStatic.$Identifier
-      >(BroadcastServiceStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      BroadcastServiceStub,
+      BroadcastServiceStubStatic.$Identifier
+    >(BroadcastServiceStubStatic, query);
   }
 
   async broadcastServiceStubs(
     query?: $ObjectSet.Query<BroadcastServiceStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastServiceStub[]>> {
     return this.broadcastServiceStubsSync(query);
   }
 
   broadcastServiceStubsSync(
     query?: $ObjectSet.Query<BroadcastServiceStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, BroadcastServiceStub>[] {
-    return [
-      ...this.$objectsSync<
-        BroadcastServiceStub,
-        BroadcastServiceStubStatic.$Identifier
-      >(BroadcastServiceStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly BroadcastServiceStub[]> {
+    return this.$objectsSync<
+      BroadcastServiceStub,
+      BroadcastServiceStubStatic.$Identifier
+    >(BroadcastServiceStubStatic, query);
   }
 
   async broadcastServiceStubsCount(
@@ -41749,7 +41617,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ChooseAction> {
     return this.chooseActionsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async chooseActionIdentifiers(
@@ -41761,29 +41629,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   chooseActionIdentifiersSync(
     query?: $ObjectSet.Query<ChooseActionStatic.$Identifier>,
   ): purify.Either<Error, readonly ChooseActionStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ChooseAction,
-        ChooseActionStatic.$Identifier
-      >(ChooseActionStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ChooseAction,
+      ChooseActionStatic.$Identifier
+    >(ChooseActionStatic, query);
   }
 
   async chooseActions(
     query?: $ObjectSet.Query<ChooseActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ChooseAction>[]> {
+  ): Promise<purify.Either<Error, readonly ChooseAction[]>> {
     return this.chooseActionsSync(query);
   }
 
   chooseActionsSync(
     query?: $ObjectSet.Query<ChooseActionStatic.$Identifier>,
-  ): readonly purify.Either<Error, ChooseAction>[] {
-    return [
-      ...this.$objectsSync<ChooseAction, ChooseActionStatic.$Identifier>(
-        ChooseActionStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ChooseAction[]> {
+    return this.$objectsSync<ChooseAction, ChooseActionStatic.$Identifier>(
+      ChooseActionStatic,
+      query,
+    );
   }
 
   async chooseActionsCount(
@@ -41812,7 +41676,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ChooseActionStub> {
     return this.chooseActionStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async chooseActionStubIdentifiers(
@@ -41826,29 +41690,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   chooseActionStubIdentifiersSync(
     query?: $ObjectSet.Query<ChooseActionStubStatic.$Identifier>,
   ): purify.Either<Error, readonly ChooseActionStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ChooseActionStub,
-        ChooseActionStubStatic.$Identifier
-      >(ChooseActionStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ChooseActionStub,
+      ChooseActionStubStatic.$Identifier
+    >(ChooseActionStubStatic, query);
   }
 
   async chooseActionStubs(
     query?: $ObjectSet.Query<ChooseActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ChooseActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly ChooseActionStub[]>> {
     return this.chooseActionStubsSync(query);
   }
 
   chooseActionStubsSync(
     query?: $ObjectSet.Query<ChooseActionStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, ChooseActionStub>[] {
-    return [
-      ...this.$objectsSync<
-        ChooseActionStub,
-        ChooseActionStubStatic.$Identifier
-      >(ChooseActionStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly ChooseActionStub[]> {
+    return this.$objectsSync<
+      ChooseActionStub,
+      ChooseActionStubStatic.$Identifier
+    >(ChooseActionStubStatic, query);
   }
 
   async chooseActionStubsCount(
@@ -41877,7 +41737,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, CreativeWork> {
     return this.creativeWorksSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async creativeWorkIdentifiers(
@@ -41889,29 +41749,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   creativeWorkIdentifiersSync(
     query?: $ObjectSet.Query<CreativeWorkStatic.$Identifier>,
   ): purify.Either<Error, readonly CreativeWorkStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWork,
-        CreativeWorkStatic.$Identifier
-      >(CreativeWorkStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      CreativeWork,
+      CreativeWorkStatic.$Identifier
+    >(CreativeWorkStatic, query);
   }
 
   async creativeWorks(
     query?: $ObjectSet.Query<CreativeWorkStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWork>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWork[]>> {
     return this.creativeWorksSync(query);
   }
 
   creativeWorksSync(
     query?: $ObjectSet.Query<CreativeWorkStatic.$Identifier>,
-  ): readonly purify.Either<Error, CreativeWork>[] {
-    return [
-      ...this.$objectsSync<CreativeWork, CreativeWorkStatic.$Identifier>(
-        CreativeWorkStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly CreativeWork[]> {
+    return this.$objectsSync<CreativeWork, CreativeWorkStatic.$Identifier>(
+      CreativeWorkStatic,
+      query,
+    );
   }
 
   async creativeWorksCount(
@@ -41940,7 +41796,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, CreativeWorkSeries> {
     return this.creativeWorkSeriessSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async creativeWorkSeriesIdentifiers(
@@ -41954,29 +41810,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   creativeWorkSeriesIdentifiersSync(
     query?: $ObjectSet.Query<CreativeWorkSeriesStatic.$Identifier>,
   ): purify.Either<Error, readonly CreativeWorkSeriesStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWorkSeries,
-        CreativeWorkSeriesStatic.$Identifier
-      >(CreativeWorkSeriesStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      CreativeWorkSeries,
+      CreativeWorkSeriesStatic.$Identifier
+    >(CreativeWorkSeriesStatic, query);
   }
 
   async creativeWorkSeriess(
     query?: $ObjectSet.Query<CreativeWorkSeriesStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWorkSeries[]>> {
     return this.creativeWorkSeriessSync(query);
   }
 
   creativeWorkSeriessSync(
     query?: $ObjectSet.Query<CreativeWorkSeriesStatic.$Identifier>,
-  ): readonly purify.Either<Error, CreativeWorkSeries>[] {
-    return [
-      ...this.$objectsSync<
-        CreativeWorkSeries,
-        CreativeWorkSeriesStatic.$Identifier
-      >(CreativeWorkSeriesStatic, query),
-    ];
+  ): purify.Either<Error, readonly CreativeWorkSeries[]> {
+    return this.$objectsSync<
+      CreativeWorkSeries,
+      CreativeWorkSeriesStatic.$Identifier
+    >(CreativeWorkSeriesStatic, query);
   }
 
   async creativeWorkSeriessCount(
@@ -42011,7 +41863,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, CreativeWorkSeriesStub> {
     return this.creativeWorkSeriesStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async creativeWorkSeriesStubIdentifiers(
@@ -42025,29 +41877,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   creativeWorkSeriesStubIdentifiersSync(
     query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.$Identifier>,
   ): purify.Either<Error, readonly CreativeWorkSeriesStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWorkSeriesStub,
-        CreativeWorkSeriesStubStatic.$Identifier
-      >(CreativeWorkSeriesStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      CreativeWorkSeriesStub,
+      CreativeWorkSeriesStubStatic.$Identifier
+    >(CreativeWorkSeriesStubStatic, query);
   }
 
   async creativeWorkSeriesStubs(
     query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWorkSeriesStub[]>> {
     return this.creativeWorkSeriesStubsSync(query);
   }
 
   creativeWorkSeriesStubsSync(
     query?: $ObjectSet.Query<CreativeWorkSeriesStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, CreativeWorkSeriesStub>[] {
-    return [
-      ...this.$objectsSync<
-        CreativeWorkSeriesStub,
-        CreativeWorkSeriesStubStatic.$Identifier
-      >(CreativeWorkSeriesStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly CreativeWorkSeriesStub[]> {
+    return this.$objectsSync<
+      CreativeWorkSeriesStub,
+      CreativeWorkSeriesStubStatic.$Identifier
+    >(CreativeWorkSeriesStubStatic, query);
   }
 
   async creativeWorkSeriesStubsCount(
@@ -42082,7 +41930,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, CreativeWorkStub> {
     return this.creativeWorkStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async creativeWorkStubIdentifiers(
@@ -42096,29 +41944,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   creativeWorkStubIdentifiersSync(
     query?: $ObjectSet.Query<CreativeWorkStubStatic.$Identifier>,
   ): purify.Either<Error, readonly CreativeWorkStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        CreativeWorkStub,
-        CreativeWorkStubStatic.$Identifier
-      >(CreativeWorkStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      CreativeWorkStub,
+      CreativeWorkStubStatic.$Identifier
+    >(CreativeWorkStubStatic, query);
   }
 
   async creativeWorkStubs(
     query?: $ObjectSet.Query<CreativeWorkStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWorkStub[]>> {
     return this.creativeWorkStubsSync(query);
   }
 
   creativeWorkStubsSync(
     query?: $ObjectSet.Query<CreativeWorkStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, CreativeWorkStub>[] {
-    return [
-      ...this.$objectsSync<
-        CreativeWorkStub,
-        CreativeWorkStubStatic.$Identifier
-      >(CreativeWorkStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly CreativeWorkStub[]> {
+    return this.$objectsSync<
+      CreativeWorkStub,
+      CreativeWorkStubStatic.$Identifier
+    >(CreativeWorkStubStatic, query);
   }
 
   async creativeWorkStubsCount(
@@ -42147,7 +41991,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Enumeration> {
     return this.enumerationsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async enumerationIdentifiers(
@@ -42159,29 +42003,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   enumerationIdentifiersSync(
     query?: $ObjectSet.Query<EnumerationStatic.$Identifier>,
   ): purify.Either<Error, readonly EnumerationStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        Enumeration,
-        EnumerationStatic.$Identifier
-      >(EnumerationStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      Enumeration,
+      EnumerationStatic.$Identifier
+    >(EnumerationStatic, query);
   }
 
   async enumerations(
     query?: $ObjectSet.Query<EnumerationStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Enumeration>[]> {
+  ): Promise<purify.Either<Error, readonly Enumeration[]>> {
     return this.enumerationsSync(query);
   }
 
   enumerationsSync(
     query?: $ObjectSet.Query<EnumerationStatic.$Identifier>,
-  ): readonly purify.Either<Error, Enumeration>[] {
-    return [
-      ...this.$objectsSync<Enumeration, EnumerationStatic.$Identifier>(
-        EnumerationStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Enumeration[]> {
+    return this.$objectsSync<Enumeration, EnumerationStatic.$Identifier>(
+      EnumerationStatic,
+      query,
+    );
   }
 
   async enumerationsCount(
@@ -42210,7 +42050,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Episode> {
     return this.episodesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async episodeIdentifiers(
@@ -42222,29 +42062,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   episodeIdentifiersSync(
     query?: $ObjectSet.Query<EpisodeStatic.$Identifier>,
   ): purify.Either<Error, readonly EpisodeStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Episode, EpisodeStatic.$Identifier>(
-        EpisodeStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Episode, EpisodeStatic.$Identifier>(
+      EpisodeStatic,
+      query,
+    );
   }
 
   async episodes(
     query?: $ObjectSet.Query<EpisodeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Episode>[]> {
+  ): Promise<purify.Either<Error, readonly Episode[]>> {
     return this.episodesSync(query);
   }
 
   episodesSync(
     query?: $ObjectSet.Query<EpisodeStatic.$Identifier>,
-  ): readonly purify.Either<Error, Episode>[] {
-    return [
-      ...this.$objectsSync<Episode, EpisodeStatic.$Identifier>(
-        EpisodeStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Episode[]> {
+    return this.$objectsSync<Episode, EpisodeStatic.$Identifier>(
+      EpisodeStatic,
+      query,
+    );
   }
 
   async episodesCount(
@@ -42273,7 +42109,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, EpisodeStub> {
     return this.episodeStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async episodeStubIdentifiers(
@@ -42285,29 +42121,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   episodeStubIdentifiersSync(
     query?: $ObjectSet.Query<EpisodeStubStatic.$Identifier>,
   ): purify.Either<Error, readonly EpisodeStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        EpisodeStub,
-        EpisodeStubStatic.$Identifier
-      >(EpisodeStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      EpisodeStub,
+      EpisodeStubStatic.$Identifier
+    >(EpisodeStubStatic, query);
   }
 
   async episodeStubs(
     query?: $ObjectSet.Query<EpisodeStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, EpisodeStub>[]> {
+  ): Promise<purify.Either<Error, readonly EpisodeStub[]>> {
     return this.episodeStubsSync(query);
   }
 
   episodeStubsSync(
     query?: $ObjectSet.Query<EpisodeStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, EpisodeStub>[] {
-    return [
-      ...this.$objectsSync<EpisodeStub, EpisodeStubStatic.$Identifier>(
-        EpisodeStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly EpisodeStub[]> {
+    return this.$objectsSync<EpisodeStub, EpisodeStubStatic.$Identifier>(
+      EpisodeStubStatic,
+      query,
+    );
   }
 
   async episodeStubsCount(
@@ -42334,7 +42166,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   eventSync(identifier: EventStatic.$Identifier): purify.Either<Error, Event> {
     return this.eventsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async eventIdentifiers(
@@ -42346,26 +42178,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   eventIdentifiersSync(
     query?: $ObjectSet.Query<EventStatic.$Identifier>,
   ): purify.Either<Error, readonly EventStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Event, EventStatic.$Identifier>(
-        EventStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Event, EventStatic.$Identifier>(
+      EventStatic,
+      query,
+    );
   }
 
   async events(
     query?: $ObjectSet.Query<EventStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Event>[]> {
+  ): Promise<purify.Either<Error, readonly Event[]>> {
     return this.eventsSync(query);
   }
 
   eventsSync(
     query?: $ObjectSet.Query<EventStatic.$Identifier>,
-  ): readonly purify.Either<Error, Event>[] {
-    return [
-      ...this.$objectsSync<Event, EventStatic.$Identifier>(EventStatic, query),
-    ];
+  ): purify.Either<Error, readonly Event[]> {
+    return this.$objectsSync<Event, EventStatic.$Identifier>(
+      EventStatic,
+      query,
+    );
   }
 
   async eventsCount(
@@ -42394,7 +42225,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, EventStub> {
     return this.eventStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async eventStubIdentifiers(
@@ -42406,29 +42237,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   eventStubIdentifiersSync(
     query?: $ObjectSet.Query<EventStubStatic.$Identifier>,
   ): purify.Either<Error, readonly EventStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<EventStub, EventStubStatic.$Identifier>(
-        EventStubStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<EventStub, EventStubStatic.$Identifier>(
+      EventStubStatic,
+      query,
+    );
   }
 
   async eventStubs(
     query?: $ObjectSet.Query<EventStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, EventStub>[]> {
+  ): Promise<purify.Either<Error, readonly EventStub[]>> {
     return this.eventStubsSync(query);
   }
 
   eventStubsSync(
     query?: $ObjectSet.Query<EventStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, EventStub>[] {
-    return [
-      ...this.$objectsSync<EventStub, EventStubStatic.$Identifier>(
-        EventStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly EventStub[]> {
+    return this.$objectsSync<EventStub, EventStubStatic.$Identifier>(
+      EventStubStatic,
+      query,
+    );
   }
 
   async eventStubsCount(
@@ -42457,7 +42284,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, GenderType> {
     return this.genderTypesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async genderTypeIdentifiers(
@@ -42469,29 +42296,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   genderTypeIdentifiersSync(
     query?: $ObjectSet.Query<GenderType.$Identifier>,
   ): purify.Either<Error, readonly GenderType.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<GenderType, GenderType.$Identifier>(
-        GenderType,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<GenderType, GenderType.$Identifier>(
+      GenderType,
+      query,
+    );
   }
 
   async genderTypes(
     query?: $ObjectSet.Query<GenderType.$Identifier>,
-  ): Promise<readonly purify.Either<Error, GenderType>[]> {
+  ): Promise<purify.Either<Error, readonly GenderType[]>> {
     return this.genderTypesSync(query);
   }
 
   genderTypesSync(
     query?: $ObjectSet.Query<GenderType.$Identifier>,
-  ): readonly purify.Either<Error, GenderType>[] {
-    return [
-      ...this.$objectsSync<GenderType, GenderType.$Identifier>(
-        GenderType,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly GenderType[]> {
+    return this.$objectsSync<GenderType, GenderType.$Identifier>(
+      GenderType,
+      query,
+    );
   }
 
   async genderTypesCount(
@@ -42520,7 +42343,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ImageObject> {
     return this.imageObjectsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async imageObjectIdentifiers(
@@ -42532,29 +42355,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   imageObjectIdentifiersSync(
     query?: $ObjectSet.Query<ImageObject.$Identifier>,
   ): purify.Either<Error, readonly ImageObject.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ImageObject, ImageObject.$Identifier>(
-        ImageObject,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ImageObject, ImageObject.$Identifier>(
+      ImageObject,
+      query,
+    );
   }
 
   async imageObjects(
     query?: $ObjectSet.Query<ImageObject.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ImageObject>[]> {
+  ): Promise<purify.Either<Error, readonly ImageObject[]>> {
     return this.imageObjectsSync(query);
   }
 
   imageObjectsSync(
     query?: $ObjectSet.Query<ImageObject.$Identifier>,
-  ): readonly purify.Either<Error, ImageObject>[] {
-    return [
-      ...this.$objectsSync<ImageObject, ImageObject.$Identifier>(
-        ImageObject,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ImageObject[]> {
+    return this.$objectsSync<ImageObject, ImageObject.$Identifier>(
+      ImageObject,
+      query,
+    );
   }
 
   async imageObjectsCount(
@@ -42583,7 +42402,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ImageObjectStub> {
     return this.imageObjectStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async imageObjectStubIdentifiers(
@@ -42595,29 +42414,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   imageObjectStubIdentifiersSync(
     query?: $ObjectSet.Query<ImageObjectStub.$Identifier>,
   ): purify.Either<Error, readonly ImageObjectStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ImageObjectStub,
-        ImageObjectStub.$Identifier
-      >(ImageObjectStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ImageObjectStub,
+      ImageObjectStub.$Identifier
+    >(ImageObjectStub, query);
   }
 
   async imageObjectStubs(
     query?: $ObjectSet.Query<ImageObjectStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ImageObjectStub>[]> {
+  ): Promise<purify.Either<Error, readonly ImageObjectStub[]>> {
     return this.imageObjectStubsSync(query);
   }
 
   imageObjectStubsSync(
     query?: $ObjectSet.Query<ImageObjectStub.$Identifier>,
-  ): readonly purify.Either<Error, ImageObjectStub>[] {
-    return [
-      ...this.$objectsSync<ImageObjectStub, ImageObjectStub.$Identifier>(
-        ImageObjectStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ImageObjectStub[]> {
+    return this.$objectsSync<ImageObjectStub, ImageObjectStub.$Identifier>(
+      ImageObjectStub,
+      query,
+    );
   }
 
   async imageObjectStubsCount(
@@ -42646,7 +42461,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Intangible> {
     return this.intangiblesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async intangibleIdentifiers(
@@ -42658,29 +42473,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   intangibleIdentifiersSync(
     query?: $ObjectSet.Query<IntangibleStatic.$Identifier>,
   ): purify.Either<Error, readonly IntangibleStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Intangible, IntangibleStatic.$Identifier>(
-        IntangibleStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<
+      Intangible,
+      IntangibleStatic.$Identifier
+    >(IntangibleStatic, query);
   }
 
   async intangibles(
     query?: $ObjectSet.Query<IntangibleStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Intangible>[]> {
+  ): Promise<purify.Either<Error, readonly Intangible[]>> {
     return this.intangiblesSync(query);
   }
 
   intangiblesSync(
     query?: $ObjectSet.Query<IntangibleStatic.$Identifier>,
-  ): readonly purify.Either<Error, Intangible>[] {
-    return [
-      ...this.$objectsSync<Intangible, IntangibleStatic.$Identifier>(
-        IntangibleStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Intangible[]> {
+    return this.$objectsSync<Intangible, IntangibleStatic.$Identifier>(
+      IntangibleStatic,
+      query,
+    );
   }
 
   async intangiblesCount(
@@ -42709,7 +42520,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, IntangibleStub> {
     return this.intangibleStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async intangibleStubIdentifiers(
@@ -42723,29 +42534,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   intangibleStubIdentifiersSync(
     query?: $ObjectSet.Query<IntangibleStubStatic.$Identifier>,
   ): purify.Either<Error, readonly IntangibleStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        IntangibleStub,
-        IntangibleStubStatic.$Identifier
-      >(IntangibleStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      IntangibleStub,
+      IntangibleStubStatic.$Identifier
+    >(IntangibleStubStatic, query);
   }
 
   async intangibleStubs(
     query?: $ObjectSet.Query<IntangibleStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, IntangibleStub>[]> {
+  ): Promise<purify.Either<Error, readonly IntangibleStub[]>> {
     return this.intangibleStubsSync(query);
   }
 
   intangibleStubsSync(
     query?: $ObjectSet.Query<IntangibleStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, IntangibleStub>[] {
-    return [
-      ...this.$objectsSync<IntangibleStub, IntangibleStubStatic.$Identifier>(
-        IntangibleStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly IntangibleStub[]> {
+    return this.$objectsSync<IntangibleStub, IntangibleStubStatic.$Identifier>(
+      IntangibleStubStatic,
+      query,
+    );
   }
 
   async intangibleStubsCount(
@@ -42772,7 +42579,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   invoiceSync(identifier: Invoice.$Identifier): purify.Either<Error, Invoice> {
     return this.invoicesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async invoiceIdentifiers(
@@ -42784,24 +42591,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   invoiceIdentifiersSync(
     query?: $ObjectSet.Query<Invoice.$Identifier>,
   ): purify.Either<Error, readonly Invoice.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Invoice, Invoice.$Identifier>(
-        Invoice,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Invoice, Invoice.$Identifier>(
+      Invoice,
+      query,
+    );
   }
 
   async invoices(
     query?: $ObjectSet.Query<Invoice.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Invoice>[]> {
+  ): Promise<purify.Either<Error, readonly Invoice[]>> {
     return this.invoicesSync(query);
   }
 
   invoicesSync(
     query?: $ObjectSet.Query<Invoice.$Identifier>,
-  ): readonly purify.Either<Error, Invoice>[] {
-    return [...this.$objectsSync<Invoice, Invoice.$Identifier>(Invoice, query)];
+  ): purify.Either<Error, readonly Invoice[]> {
+    return this.$objectsSync<Invoice, Invoice.$Identifier>(Invoice, query);
   }
 
   async invoicesCount(
@@ -42827,7 +42632,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, InvoiceStub> {
     return this.invoiceStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async invoiceStubIdentifiers(
@@ -42839,29 +42644,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   invoiceStubIdentifiersSync(
     query?: $ObjectSet.Query<InvoiceStub.$Identifier>,
   ): purify.Either<Error, readonly InvoiceStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<InvoiceStub, InvoiceStub.$Identifier>(
-        InvoiceStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<InvoiceStub, InvoiceStub.$Identifier>(
+      InvoiceStub,
+      query,
+    );
   }
 
   async invoiceStubs(
     query?: $ObjectSet.Query<InvoiceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, InvoiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly InvoiceStub[]>> {
     return this.invoiceStubsSync(query);
   }
 
   invoiceStubsSync(
     query?: $ObjectSet.Query<InvoiceStub.$Identifier>,
-  ): readonly purify.Either<Error, InvoiceStub>[] {
-    return [
-      ...this.$objectsSync<InvoiceStub, InvoiceStub.$Identifier>(
-        InvoiceStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly InvoiceStub[]> {
+    return this.$objectsSync<InvoiceStub, InvoiceStub.$Identifier>(
+      InvoiceStub,
+      query,
+    );
   }
 
   async invoiceStubsCount(
@@ -42890,7 +42691,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ItemList> {
     return this.itemListsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async itemListIdentifiers(
@@ -42902,26 +42703,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   itemListIdentifiersSync(
     query?: $ObjectSet.Query<ItemList.$Identifier>,
   ): purify.Either<Error, readonly ItemList.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ItemList, ItemList.$Identifier>(
-        ItemList,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ItemList, ItemList.$Identifier>(
+      ItemList,
+      query,
+    );
   }
 
   async itemLists(
     query?: $ObjectSet.Query<ItemList.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ItemList>[]> {
+  ): Promise<purify.Either<Error, readonly ItemList[]>> {
     return this.itemListsSync(query);
   }
 
   itemListsSync(
     query?: $ObjectSet.Query<ItemList.$Identifier>,
-  ): readonly purify.Either<Error, ItemList>[] {
-    return [
-      ...this.$objectsSync<ItemList, ItemList.$Identifier>(ItemList, query),
-    ];
+  ): purify.Either<Error, readonly ItemList[]> {
+    return this.$objectsSync<ItemList, ItemList.$Identifier>(ItemList, query);
   }
 
   async itemListsCount(
@@ -42950,7 +42747,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ItemListStub> {
     return this.itemListStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async itemListStubIdentifiers(
@@ -42962,29 +42759,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   itemListStubIdentifiersSync(
     query?: $ObjectSet.Query<ItemListStub.$Identifier>,
   ): purify.Either<Error, readonly ItemListStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ItemListStub, ItemListStub.$Identifier>(
-        ItemListStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ItemListStub, ItemListStub.$Identifier>(
+      ItemListStub,
+      query,
+    );
   }
 
   async itemListStubs(
     query?: $ObjectSet.Query<ItemListStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ItemListStub>[]> {
+  ): Promise<purify.Either<Error, readonly ItemListStub[]>> {
     return this.itemListStubsSync(query);
   }
 
   itemListStubsSync(
     query?: $ObjectSet.Query<ItemListStub.$Identifier>,
-  ): readonly purify.Either<Error, ItemListStub>[] {
-    return [
-      ...this.$objectsSync<ItemListStub, ItemListStub.$Identifier>(
-        ItemListStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ItemListStub[]> {
+    return this.$objectsSync<ItemListStub, ItemListStub.$Identifier>(
+      ItemListStub,
+      query,
+    );
   }
 
   async itemListStubsCount(
@@ -43013,7 +42806,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ListItem> {
     return this.listItemsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async listItemIdentifiers(
@@ -43025,26 +42818,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   listItemIdentifiersSync(
     query?: $ObjectSet.Query<ListItem.$Identifier>,
   ): purify.Either<Error, readonly ListItem.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ListItem, ListItem.$Identifier>(
-        ListItem,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ListItem, ListItem.$Identifier>(
+      ListItem,
+      query,
+    );
   }
 
   async listItems(
     query?: $ObjectSet.Query<ListItem.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ListItem>[]> {
+  ): Promise<purify.Either<Error, readonly ListItem[]>> {
     return this.listItemsSync(query);
   }
 
   listItemsSync(
     query?: $ObjectSet.Query<ListItem.$Identifier>,
-  ): readonly purify.Either<Error, ListItem>[] {
-    return [
-      ...this.$objectsSync<ListItem, ListItem.$Identifier>(ListItem, query),
-    ];
+  ): purify.Either<Error, readonly ListItem[]> {
+    return this.$objectsSync<ListItem, ListItem.$Identifier>(ListItem, query);
   }
 
   async listItemsCount(
@@ -43073,7 +42862,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ListItemStub> {
     return this.listItemStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async listItemStubIdentifiers(
@@ -43085,29 +42874,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   listItemStubIdentifiersSync(
     query?: $ObjectSet.Query<ListItemStub.$Identifier>,
   ): purify.Either<Error, readonly ListItemStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ListItemStub, ListItemStub.$Identifier>(
-        ListItemStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ListItemStub, ListItemStub.$Identifier>(
+      ListItemStub,
+      query,
+    );
   }
 
   async listItemStubs(
     query?: $ObjectSet.Query<ListItemStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ListItemStub>[]> {
+  ): Promise<purify.Either<Error, readonly ListItemStub[]>> {
     return this.listItemStubsSync(query);
   }
 
   listItemStubsSync(
     query?: $ObjectSet.Query<ListItemStub.$Identifier>,
-  ): readonly purify.Either<Error, ListItemStub>[] {
-    return [
-      ...this.$objectsSync<ListItemStub, ListItemStub.$Identifier>(
-        ListItemStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ListItemStub[]> {
+    return this.$objectsSync<ListItemStub, ListItemStub.$Identifier>(
+      ListItemStub,
+      query,
+    );
   }
 
   async listItemStubsCount(
@@ -43136,7 +42921,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MediaObject> {
     return this.mediaObjectsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async mediaObjectIdentifiers(
@@ -43148,29 +42933,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   mediaObjectIdentifiersSync(
     query?: $ObjectSet.Query<MediaObjectStatic.$Identifier>,
   ): purify.Either<Error, readonly MediaObjectStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MediaObject,
-        MediaObjectStatic.$Identifier
-      >(MediaObjectStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MediaObject,
+      MediaObjectStatic.$Identifier
+    >(MediaObjectStatic, query);
   }
 
   async mediaObjects(
     query?: $ObjectSet.Query<MediaObjectStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MediaObject>[]> {
+  ): Promise<purify.Either<Error, readonly MediaObject[]>> {
     return this.mediaObjectsSync(query);
   }
 
   mediaObjectsSync(
     query?: $ObjectSet.Query<MediaObjectStatic.$Identifier>,
-  ): readonly purify.Either<Error, MediaObject>[] {
-    return [
-      ...this.$objectsSync<MediaObject, MediaObjectStatic.$Identifier>(
-        MediaObjectStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MediaObject[]> {
+    return this.$objectsSync<MediaObject, MediaObjectStatic.$Identifier>(
+      MediaObjectStatic,
+      query,
+    );
   }
 
   async mediaObjectsCount(
@@ -43199,7 +42980,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MediaObjectStub> {
     return this.mediaObjectStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async mediaObjectStubIdentifiers(
@@ -43213,29 +42994,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   mediaObjectStubIdentifiersSync(
     query?: $ObjectSet.Query<MediaObjectStubStatic.$Identifier>,
   ): purify.Either<Error, readonly MediaObjectStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MediaObjectStub,
-        MediaObjectStubStatic.$Identifier
-      >(MediaObjectStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MediaObjectStub,
+      MediaObjectStubStatic.$Identifier
+    >(MediaObjectStubStatic, query);
   }
 
   async mediaObjectStubs(
     query?: $ObjectSet.Query<MediaObjectStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MediaObjectStub>[]> {
+  ): Promise<purify.Either<Error, readonly MediaObjectStub[]>> {
     return this.mediaObjectStubsSync(query);
   }
 
   mediaObjectStubsSync(
     query?: $ObjectSet.Query<MediaObjectStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, MediaObjectStub>[] {
-    return [
-      ...this.$objectsSync<MediaObjectStub, MediaObjectStubStatic.$Identifier>(
-        MediaObjectStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MediaObjectStub[]> {
+    return this.$objectsSync<
+      MediaObjectStub,
+      MediaObjectStubStatic.$Identifier
+    >(MediaObjectStubStatic, query);
   }
 
   async mediaObjectStubsCount(
@@ -43262,7 +43039,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   messageSync(identifier: Message.$Identifier): purify.Either<Error, Message> {
     return this.messagesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async messageIdentifiers(
@@ -43274,24 +43051,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   messageIdentifiersSync(
     query?: $ObjectSet.Query<Message.$Identifier>,
   ): purify.Either<Error, readonly Message.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Message, Message.$Identifier>(
-        Message,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Message, Message.$Identifier>(
+      Message,
+      query,
+    );
   }
 
   async messages(
     query?: $ObjectSet.Query<Message.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Message>[]> {
+  ): Promise<purify.Either<Error, readonly Message[]>> {
     return this.messagesSync(query);
   }
 
   messagesSync(
     query?: $ObjectSet.Query<Message.$Identifier>,
-  ): readonly purify.Either<Error, Message>[] {
-    return [...this.$objectsSync<Message, Message.$Identifier>(Message, query)];
+  ): purify.Either<Error, readonly Message[]> {
+    return this.$objectsSync<Message, Message.$Identifier>(Message, query);
   }
 
   async messagesCount(
@@ -43317,7 +43092,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MessageStub> {
     return this.messageStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async messageStubIdentifiers(
@@ -43329,29 +43104,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   messageStubIdentifiersSync(
     query?: $ObjectSet.Query<MessageStub.$Identifier>,
   ): purify.Either<Error, readonly MessageStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<MessageStub, MessageStub.$Identifier>(
-        MessageStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<MessageStub, MessageStub.$Identifier>(
+      MessageStub,
+      query,
+    );
   }
 
   async messageStubs(
     query?: $ObjectSet.Query<MessageStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MessageStub>[]> {
+  ): Promise<purify.Either<Error, readonly MessageStub[]>> {
     return this.messageStubsSync(query);
   }
 
   messageStubsSync(
     query?: $ObjectSet.Query<MessageStub.$Identifier>,
-  ): readonly purify.Either<Error, MessageStub>[] {
-    return [
-      ...this.$objectsSync<MessageStub, MessageStub.$Identifier>(
-        MessageStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MessageStub[]> {
+    return this.$objectsSync<MessageStub, MessageStub.$Identifier>(
+      MessageStub,
+      query,
+    );
   }
 
   async messageStubsCount(
@@ -43380,7 +43151,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MonetaryAmount> {
     return this.monetaryAmountsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async monetaryAmountIdentifiers(
@@ -43392,29 +43163,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   monetaryAmountIdentifiersSync(
     query?: $ObjectSet.Query<MonetaryAmount.$Identifier>,
   ): purify.Either<Error, readonly MonetaryAmount.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MonetaryAmount,
-        MonetaryAmount.$Identifier
-      >(MonetaryAmount, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MonetaryAmount,
+      MonetaryAmount.$Identifier
+    >(MonetaryAmount, query);
   }
 
   async monetaryAmounts(
     query?: $ObjectSet.Query<MonetaryAmount.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MonetaryAmount>[]> {
+  ): Promise<purify.Either<Error, readonly MonetaryAmount[]>> {
     return this.monetaryAmountsSync(query);
   }
 
   monetaryAmountsSync(
     query?: $ObjectSet.Query<MonetaryAmount.$Identifier>,
-  ): readonly purify.Either<Error, MonetaryAmount>[] {
-    return [
-      ...this.$objectsSync<MonetaryAmount, MonetaryAmount.$Identifier>(
-        MonetaryAmount,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MonetaryAmount[]> {
+    return this.$objectsSync<MonetaryAmount, MonetaryAmount.$Identifier>(
+      MonetaryAmount,
+      query,
+    );
   }
 
   async monetaryAmountsCount(
@@ -43443,7 +43210,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MonetaryAmountStub> {
     return this.monetaryAmountStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async monetaryAmountStubIdentifiers(
@@ -43455,29 +43222,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   monetaryAmountStubIdentifiersSync(
     query?: $ObjectSet.Query<MonetaryAmountStub.$Identifier>,
   ): purify.Either<Error, readonly MonetaryAmountStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MonetaryAmountStub,
-        MonetaryAmountStub.$Identifier
-      >(MonetaryAmountStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MonetaryAmountStub,
+      MonetaryAmountStub.$Identifier
+    >(MonetaryAmountStub, query);
   }
 
   async monetaryAmountStubs(
     query?: $ObjectSet.Query<MonetaryAmountStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]> {
+  ): Promise<purify.Either<Error, readonly MonetaryAmountStub[]>> {
     return this.monetaryAmountStubsSync(query);
   }
 
   monetaryAmountStubsSync(
     query?: $ObjectSet.Query<MonetaryAmountStub.$Identifier>,
-  ): readonly purify.Either<Error, MonetaryAmountStub>[] {
-    return [
-      ...this.$objectsSync<MonetaryAmountStub, MonetaryAmountStub.$Identifier>(
-        MonetaryAmountStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MonetaryAmountStub[]> {
+    return this.$objectsSync<
+      MonetaryAmountStub,
+      MonetaryAmountStub.$Identifier
+    >(MonetaryAmountStub, query);
   }
 
   async monetaryAmountStubsCount(
@@ -43506,7 +43269,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicAlbum> {
     return this.musicAlbumsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicAlbumIdentifiers(
@@ -43518,29 +43281,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicAlbumIdentifiersSync(
     query?: $ObjectSet.Query<MusicAlbum.$Identifier>,
   ): purify.Either<Error, readonly MusicAlbum.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicAlbum, MusicAlbum.$Identifier>(
-        MusicAlbum,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<MusicAlbum, MusicAlbum.$Identifier>(
+      MusicAlbum,
+      query,
+    );
   }
 
   async musicAlbums(
     query?: $ObjectSet.Query<MusicAlbum.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicAlbum>[]> {
+  ): Promise<purify.Either<Error, readonly MusicAlbum[]>> {
     return this.musicAlbumsSync(query);
   }
 
   musicAlbumsSync(
     query?: $ObjectSet.Query<MusicAlbum.$Identifier>,
-  ): readonly purify.Either<Error, MusicAlbum>[] {
-    return [
-      ...this.$objectsSync<MusicAlbum, MusicAlbum.$Identifier>(
-        MusicAlbum,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicAlbum[]> {
+    return this.$objectsSync<MusicAlbum, MusicAlbum.$Identifier>(
+      MusicAlbum,
+      query,
+    );
   }
 
   async musicAlbumsCount(
@@ -43569,7 +43328,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicAlbumStub> {
     return this.musicAlbumStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicAlbumStubIdentifiers(
@@ -43581,29 +43340,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicAlbumStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicAlbumStub.$Identifier>,
   ): purify.Either<Error, readonly MusicAlbumStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicAlbumStub,
-        MusicAlbumStub.$Identifier
-      >(MusicAlbumStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicAlbumStub,
+      MusicAlbumStub.$Identifier
+    >(MusicAlbumStub, query);
   }
 
   async musicAlbumStubs(
     query?: $ObjectSet.Query<MusicAlbumStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicAlbumStub[]>> {
     return this.musicAlbumStubsSync(query);
   }
 
   musicAlbumStubsSync(
     query?: $ObjectSet.Query<MusicAlbumStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicAlbumStub>[] {
-    return [
-      ...this.$objectsSync<MusicAlbumStub, MusicAlbumStub.$Identifier>(
-        MusicAlbumStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicAlbumStub[]> {
+    return this.$objectsSync<MusicAlbumStub, MusicAlbumStub.$Identifier>(
+      MusicAlbumStub,
+      query,
+    );
   }
 
   async musicAlbumStubsCount(
@@ -43632,7 +43387,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicArtistRoleStub> {
     return this.musicArtistRoleStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicArtistRoleStubIdentifiers(
@@ -43644,29 +43399,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicArtistRoleStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
   ): purify.Either<Error, readonly MusicArtistRoleStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicArtistRoleStub,
-        MusicArtistRoleStub.$Identifier
-      >(MusicArtistRoleStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicArtistRoleStub,
+      MusicArtistRoleStub.$Identifier
+    >(MusicArtistRoleStub, query);
   }
 
   async musicArtistRoleStubs(
     query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicArtistRoleStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicArtistRoleStub[]>> {
     return this.musicArtistRoleStubsSync(query);
   }
 
   musicArtistRoleStubsSync(
     query?: $ObjectSet.Query<MusicArtistRoleStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicArtistRoleStub>[] {
-    return [
-      ...this.$objectsSync<
-        MusicArtistRoleStub,
-        MusicArtistRoleStub.$Identifier
-      >(MusicArtistRoleStub, query),
-    ];
+  ): purify.Either<Error, readonly MusicArtistRoleStub[]> {
+    return this.$objectsSync<
+      MusicArtistRoleStub,
+      MusicArtistRoleStub.$Identifier
+    >(MusicArtistRoleStub, query);
   }
 
   async musicArtistRoleStubsCount(
@@ -43695,7 +43446,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicComposition> {
     return this.musicCompositionsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicCompositionIdentifiers(
@@ -43707,29 +43458,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicCompositionIdentifiersSync(
     query?: $ObjectSet.Query<MusicComposition.$Identifier>,
   ): purify.Either<Error, readonly MusicComposition.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicComposition,
-        MusicComposition.$Identifier
-      >(MusicComposition, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicComposition,
+      MusicComposition.$Identifier
+    >(MusicComposition, query);
   }
 
   async musicCompositions(
     query?: $ObjectSet.Query<MusicComposition.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicComposition>[]> {
+  ): Promise<purify.Either<Error, readonly MusicComposition[]>> {
     return this.musicCompositionsSync(query);
   }
 
   musicCompositionsSync(
     query?: $ObjectSet.Query<MusicComposition.$Identifier>,
-  ): readonly purify.Either<Error, MusicComposition>[] {
-    return [
-      ...this.$objectsSync<MusicComposition, MusicComposition.$Identifier>(
-        MusicComposition,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicComposition[]> {
+    return this.$objectsSync<MusicComposition, MusicComposition.$Identifier>(
+      MusicComposition,
+      query,
+    );
   }
 
   async musicCompositionsCount(
@@ -43758,7 +43505,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicCompositionStub> {
     return this.musicCompositionStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicCompositionStubIdentifiers(
@@ -43772,29 +43519,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicCompositionStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicCompositionStub.$Identifier>,
   ): purify.Either<Error, readonly MusicCompositionStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicCompositionStub,
-        MusicCompositionStub.$Identifier
-      >(MusicCompositionStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicCompositionStub,
+      MusicCompositionStub.$Identifier
+    >(MusicCompositionStub, query);
   }
 
   async musicCompositionStubs(
     query?: $ObjectSet.Query<MusicCompositionStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicCompositionStub[]>> {
     return this.musicCompositionStubsSync(query);
   }
 
   musicCompositionStubsSync(
     query?: $ObjectSet.Query<MusicCompositionStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicCompositionStub>[] {
-    return [
-      ...this.$objectsSync<
-        MusicCompositionStub,
-        MusicCompositionStub.$Identifier
-      >(MusicCompositionStub, query),
-    ];
+  ): purify.Either<Error, readonly MusicCompositionStub[]> {
+    return this.$objectsSync<
+      MusicCompositionStub,
+      MusicCompositionStub.$Identifier
+    >(MusicCompositionStub, query);
   }
 
   async musicCompositionStubsCount(
@@ -43823,7 +43566,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicGroup> {
     return this.musicGroupsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicGroupIdentifiers(
@@ -43835,29 +43578,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicGroupIdentifiersSync(
     query?: $ObjectSet.Query<MusicGroup.$Identifier>,
   ): purify.Either<Error, readonly MusicGroup.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicGroup, MusicGroup.$Identifier>(
-        MusicGroup,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<MusicGroup, MusicGroup.$Identifier>(
+      MusicGroup,
+      query,
+    );
   }
 
   async musicGroups(
     query?: $ObjectSet.Query<MusicGroup.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicGroup>[]> {
+  ): Promise<purify.Either<Error, readonly MusicGroup[]>> {
     return this.musicGroupsSync(query);
   }
 
   musicGroupsSync(
     query?: $ObjectSet.Query<MusicGroup.$Identifier>,
-  ): readonly purify.Either<Error, MusicGroup>[] {
-    return [
-      ...this.$objectsSync<MusicGroup, MusicGroup.$Identifier>(
-        MusicGroup,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicGroup[]> {
+    return this.$objectsSync<MusicGroup, MusicGroup.$Identifier>(
+      MusicGroup,
+      query,
+    );
   }
 
   async musicGroupsCount(
@@ -43886,7 +43625,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicGroupStub> {
     return this.musicGroupStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicGroupStubIdentifiers(
@@ -43898,29 +43637,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicGroupStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicGroupStub.$Identifier>,
   ): purify.Either<Error, readonly MusicGroupStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicGroupStub,
-        MusicGroupStub.$Identifier
-      >(MusicGroupStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicGroupStub,
+      MusicGroupStub.$Identifier
+    >(MusicGroupStub, query);
   }
 
   async musicGroupStubs(
     query?: $ObjectSet.Query<MusicGroupStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicGroupStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicGroupStub[]>> {
     return this.musicGroupStubsSync(query);
   }
 
   musicGroupStubsSync(
     query?: $ObjectSet.Query<MusicGroupStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicGroupStub>[] {
-    return [
-      ...this.$objectsSync<MusicGroupStub, MusicGroupStub.$Identifier>(
-        MusicGroupStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicGroupStub[]> {
+    return this.$objectsSync<MusicGroupStub, MusicGroupStub.$Identifier>(
+      MusicGroupStub,
+      query,
+    );
   }
 
   async musicGroupStubsCount(
@@ -43949,7 +43684,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicPlaylist> {
     return this.musicPlaylistsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicPlaylistIdentifiers(
@@ -43961,29 +43696,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicPlaylistIdentifiersSync(
     query?: $ObjectSet.Query<MusicPlaylist.$Identifier>,
   ): purify.Either<Error, readonly MusicPlaylist.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<MusicPlaylist, MusicPlaylist.$Identifier>(
-        MusicPlaylist,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicPlaylist,
+      MusicPlaylist.$Identifier
+    >(MusicPlaylist, query);
   }
 
   async musicPlaylists(
     query?: $ObjectSet.Query<MusicPlaylist.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicPlaylist>[]> {
+  ): Promise<purify.Either<Error, readonly MusicPlaylist[]>> {
     return this.musicPlaylistsSync(query);
   }
 
   musicPlaylistsSync(
     query?: $ObjectSet.Query<MusicPlaylist.$Identifier>,
-  ): readonly purify.Either<Error, MusicPlaylist>[] {
-    return [
-      ...this.$objectsSync<MusicPlaylist, MusicPlaylist.$Identifier>(
-        MusicPlaylist,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicPlaylist[]> {
+    return this.$objectsSync<MusicPlaylist, MusicPlaylist.$Identifier>(
+      MusicPlaylist,
+      query,
+    );
   }
 
   async musicPlaylistsCount(
@@ -44012,7 +43743,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicPlaylistStub> {
     return this.musicPlaylistStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicPlaylistStubIdentifiers(
@@ -44024,29 +43755,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicPlaylistStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicPlaylistStub.$Identifier>,
   ): purify.Either<Error, readonly MusicPlaylistStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicPlaylistStub,
-        MusicPlaylistStub.$Identifier
-      >(MusicPlaylistStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicPlaylistStub,
+      MusicPlaylistStub.$Identifier
+    >(MusicPlaylistStub, query);
   }
 
   async musicPlaylistStubs(
     query?: $ObjectSet.Query<MusicPlaylistStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicPlaylistStub[]>> {
     return this.musicPlaylistStubsSync(query);
   }
 
   musicPlaylistStubsSync(
     query?: $ObjectSet.Query<MusicPlaylistStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicPlaylistStub>[] {
-    return [
-      ...this.$objectsSync<MusicPlaylistStub, MusicPlaylistStub.$Identifier>(
-        MusicPlaylistStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicPlaylistStub[]> {
+    return this.$objectsSync<MusicPlaylistStub, MusicPlaylistStub.$Identifier>(
+      MusicPlaylistStub,
+      query,
+    );
   }
 
   async musicPlaylistStubsCount(
@@ -44075,7 +43802,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicRecording> {
     return this.musicRecordingsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicRecordingIdentifiers(
@@ -44087,29 +43814,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicRecordingIdentifiersSync(
     query?: $ObjectSet.Query<MusicRecording.$Identifier>,
   ): purify.Either<Error, readonly MusicRecording.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicRecording,
-        MusicRecording.$Identifier
-      >(MusicRecording, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicRecording,
+      MusicRecording.$Identifier
+    >(MusicRecording, query);
   }
 
   async musicRecordings(
     query?: $ObjectSet.Query<MusicRecording.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicRecording>[]> {
+  ): Promise<purify.Either<Error, readonly MusicRecording[]>> {
     return this.musicRecordingsSync(query);
   }
 
   musicRecordingsSync(
     query?: $ObjectSet.Query<MusicRecording.$Identifier>,
-  ): readonly purify.Either<Error, MusicRecording>[] {
-    return [
-      ...this.$objectsSync<MusicRecording, MusicRecording.$Identifier>(
-        MusicRecording,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicRecording[]> {
+    return this.$objectsSync<MusicRecording, MusicRecording.$Identifier>(
+      MusicRecording,
+      query,
+    );
   }
 
   async musicRecordingsCount(
@@ -44138,7 +43861,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicRecordingStub> {
     return this.musicRecordingStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicRecordingStubIdentifiers(
@@ -44150,29 +43873,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicRecordingStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicRecordingStub.$Identifier>,
   ): purify.Either<Error, readonly MusicRecordingStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        MusicRecordingStub,
-        MusicRecordingStub.$Identifier
-      >(MusicRecordingStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      MusicRecordingStub,
+      MusicRecordingStub.$Identifier
+    >(MusicRecordingStub, query);
   }
 
   async musicRecordingStubs(
     query?: $ObjectSet.Query<MusicRecordingStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicRecordingStub[]>> {
     return this.musicRecordingStubsSync(query);
   }
 
   musicRecordingStubsSync(
     query?: $ObjectSet.Query<MusicRecordingStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicRecordingStub>[] {
-    return [
-      ...this.$objectsSync<MusicRecordingStub, MusicRecordingStub.$Identifier>(
-        MusicRecordingStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicRecordingStub[]> {
+    return this.$objectsSync<
+      MusicRecordingStub,
+      MusicRecordingStub.$Identifier
+    >(MusicRecordingStub, query);
   }
 
   async musicRecordingStubsCount(
@@ -44201,7 +43920,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, OccupationStub> {
     return this.occupationStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async occupationStubIdentifiers(
@@ -44213,29 +43932,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   occupationStubIdentifiersSync(
     query?: $ObjectSet.Query<OccupationStub.$Identifier>,
   ): purify.Either<Error, readonly OccupationStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        OccupationStub,
-        OccupationStub.$Identifier
-      >(OccupationStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      OccupationStub,
+      OccupationStub.$Identifier
+    >(OccupationStub, query);
   }
 
   async occupationStubs(
     query?: $ObjectSet.Query<OccupationStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OccupationStub>[]> {
+  ): Promise<purify.Either<Error, readonly OccupationStub[]>> {
     return this.occupationStubsSync(query);
   }
 
   occupationStubsSync(
     query?: $ObjectSet.Query<OccupationStub.$Identifier>,
-  ): readonly purify.Either<Error, OccupationStub>[] {
-    return [
-      ...this.$objectsSync<OccupationStub, OccupationStub.$Identifier>(
-        OccupationStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly OccupationStub[]> {
+    return this.$objectsSync<OccupationStub, OccupationStub.$Identifier>(
+      OccupationStub,
+      query,
+    );
   }
 
   async occupationStubsCount(
@@ -44262,7 +43977,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   orderSync(identifier: Order.$Identifier): purify.Either<Error, Order> {
     return this.ordersSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async orderIdentifiers(
@@ -44274,21 +43989,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   orderIdentifiersSync(
     query?: $ObjectSet.Query<Order.$Identifier>,
   ): purify.Either<Error, readonly Order.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Order, Order.$Identifier>(Order, query),
-    ]);
+    return this.$objectIdentifiersSync<Order, Order.$Identifier>(Order, query);
   }
 
   async orders(
     query?: $ObjectSet.Query<Order.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Order>[]> {
+  ): Promise<purify.Either<Error, readonly Order[]>> {
     return this.ordersSync(query);
   }
 
   ordersSync(
     query?: $ObjectSet.Query<Order.$Identifier>,
-  ): readonly purify.Either<Error, Order>[] {
-    return [...this.$objectsSync<Order, Order.$Identifier>(Order, query)];
+  ): purify.Either<Error, readonly Order[]> {
+    return this.$objectsSync<Order, Order.$Identifier>(Order, query);
   }
 
   async ordersCount(
@@ -44314,7 +44027,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, OrderStub> {
     return this.orderStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async orderStubIdentifiers(
@@ -44326,26 +44039,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   orderStubIdentifiersSync(
     query?: $ObjectSet.Query<OrderStub.$Identifier>,
   ): purify.Either<Error, readonly OrderStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<OrderStub, OrderStub.$Identifier>(
-        OrderStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<OrderStub, OrderStub.$Identifier>(
+      OrderStub,
+      query,
+    );
   }
 
   async orderStubs(
     query?: $ObjectSet.Query<OrderStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OrderStub>[]> {
+  ): Promise<purify.Either<Error, readonly OrderStub[]>> {
     return this.orderStubsSync(query);
   }
 
   orderStubsSync(
     query?: $ObjectSet.Query<OrderStub.$Identifier>,
-  ): readonly purify.Either<Error, OrderStub>[] {
-    return [
-      ...this.$objectsSync<OrderStub, OrderStub.$Identifier>(OrderStub, query),
-    ];
+  ): purify.Either<Error, readonly OrderStub[]> {
+    return this.$objectsSync<OrderStub, OrderStub.$Identifier>(
+      OrderStub,
+      query,
+    );
   }
 
   async orderStubsCount(
@@ -44374,7 +44086,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Organization> {
     return this.organizationsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async organizationIdentifiers(
@@ -44386,29 +44098,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   organizationIdentifiersSync(
     query?: $ObjectSet.Query<OrganizationStatic.$Identifier>,
   ): purify.Either<Error, readonly OrganizationStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        Organization,
-        OrganizationStatic.$Identifier
-      >(OrganizationStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      Organization,
+      OrganizationStatic.$Identifier
+    >(OrganizationStatic, query);
   }
 
   async organizations(
     query?: $ObjectSet.Query<OrganizationStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Organization>[]> {
+  ): Promise<purify.Either<Error, readonly Organization[]>> {
     return this.organizationsSync(query);
   }
 
   organizationsSync(
     query?: $ObjectSet.Query<OrganizationStatic.$Identifier>,
-  ): readonly purify.Either<Error, Organization>[] {
-    return [
-      ...this.$objectsSync<Organization, OrganizationStatic.$Identifier>(
-        OrganizationStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Organization[]> {
+    return this.$objectsSync<Organization, OrganizationStatic.$Identifier>(
+      OrganizationStatic,
+      query,
+    );
   }
 
   async organizationsCount(
@@ -44437,7 +44145,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, OrganizationStub> {
     return this.organizationStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async organizationStubIdentifiers(
@@ -44451,29 +44159,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   organizationStubIdentifiersSync(
     query?: $ObjectSet.Query<OrganizationStubStatic.$Identifier>,
   ): purify.Either<Error, readonly OrganizationStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        OrganizationStub,
-        OrganizationStubStatic.$Identifier
-      >(OrganizationStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      OrganizationStub,
+      OrganizationStubStatic.$Identifier
+    >(OrganizationStubStatic, query);
   }
 
   async organizationStubs(
     query?: $ObjectSet.Query<OrganizationStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OrganizationStub>[]> {
+  ): Promise<purify.Either<Error, readonly OrganizationStub[]>> {
     return this.organizationStubsSync(query);
   }
 
   organizationStubsSync(
     query?: $ObjectSet.Query<OrganizationStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, OrganizationStub>[] {
-    return [
-      ...this.$objectsSync<
-        OrganizationStub,
-        OrganizationStubStatic.$Identifier
-      >(OrganizationStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly OrganizationStub[]> {
+    return this.$objectsSync<
+      OrganizationStub,
+      OrganizationStubStatic.$Identifier
+    >(OrganizationStubStatic, query);
   }
 
   async organizationStubsCount(
@@ -44502,7 +44206,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, PerformingGroup> {
     return this.performingGroupsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async performingGroupIdentifiers(
@@ -44516,29 +44220,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   performingGroupIdentifiersSync(
     query?: $ObjectSet.Query<PerformingGroupStatic.$Identifier>,
   ): purify.Either<Error, readonly PerformingGroupStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PerformingGroup,
-        PerformingGroupStatic.$Identifier
-      >(PerformingGroupStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      PerformingGroup,
+      PerformingGroupStatic.$Identifier
+    >(PerformingGroupStatic, query);
   }
 
   async performingGroups(
     query?: $ObjectSet.Query<PerformingGroupStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PerformingGroup>[]> {
+  ): Promise<purify.Either<Error, readonly PerformingGroup[]>> {
     return this.performingGroupsSync(query);
   }
 
   performingGroupsSync(
     query?: $ObjectSet.Query<PerformingGroupStatic.$Identifier>,
-  ): readonly purify.Either<Error, PerformingGroup>[] {
-    return [
-      ...this.$objectsSync<PerformingGroup, PerformingGroupStatic.$Identifier>(
-        PerformingGroupStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly PerformingGroup[]> {
+    return this.$objectsSync<
+      PerformingGroup,
+      PerformingGroupStatic.$Identifier
+    >(PerformingGroupStatic, query);
   }
 
   async performingGroupsCount(
@@ -44567,7 +44267,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, PerformingGroupStub> {
     return this.performingGroupStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async performingGroupStubIdentifiers(
@@ -44581,29 +44281,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   performingGroupStubIdentifiersSync(
     query?: $ObjectSet.Query<PerformingGroupStubStatic.$Identifier>,
   ): purify.Either<Error, readonly PerformingGroupStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PerformingGroupStub,
-        PerformingGroupStubStatic.$Identifier
-      >(PerformingGroupStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      PerformingGroupStub,
+      PerformingGroupStubStatic.$Identifier
+    >(PerformingGroupStubStatic, query);
   }
 
   async performingGroupStubs(
     query?: $ObjectSet.Query<PerformingGroupStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]> {
+  ): Promise<purify.Either<Error, readonly PerformingGroupStub[]>> {
     return this.performingGroupStubsSync(query);
   }
 
   performingGroupStubsSync(
     query?: $ObjectSet.Query<PerformingGroupStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, PerformingGroupStub>[] {
-    return [
-      ...this.$objectsSync<
-        PerformingGroupStub,
-        PerformingGroupStubStatic.$Identifier
-      >(PerformingGroupStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly PerformingGroupStub[]> {
+    return this.$objectsSync<
+      PerformingGroupStub,
+      PerformingGroupStubStatic.$Identifier
+    >(PerformingGroupStubStatic, query);
   }
 
   async performingGroupStubsCount(
@@ -44636,7 +44332,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   personSync(identifier: Person.$Identifier): purify.Either<Error, Person> {
     return this.peopleSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async personIdentifiers(
@@ -44648,21 +44344,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   personIdentifiersSync(
     query?: $ObjectSet.Query<Person.$Identifier>,
   ): purify.Either<Error, readonly Person.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Person, Person.$Identifier>(Person, query),
-    ]);
+    return this.$objectIdentifiersSync<Person, Person.$Identifier>(
+      Person,
+      query,
+    );
   }
 
   async people(
     query?: $ObjectSet.Query<Person.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Person>[]> {
+  ): Promise<purify.Either<Error, readonly Person[]>> {
     return this.peopleSync(query);
   }
 
   peopleSync(
     query?: $ObjectSet.Query<Person.$Identifier>,
-  ): readonly purify.Either<Error, Person>[] {
-    return [...this.$objectsSync<Person, Person.$Identifier>(Person, query)];
+  ): purify.Either<Error, readonly Person[]> {
+    return this.$objectsSync<Person, Person.$Identifier>(Person, query);
   }
 
   async peopleCount(
@@ -44688,7 +44385,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, PersonStub> {
     return this.personStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async personStubIdentifiers(
@@ -44700,29 +44397,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   personStubIdentifiersSync(
     query?: $ObjectSet.Query<PersonStub.$Identifier>,
   ): purify.Either<Error, readonly PersonStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<PersonStub, PersonStub.$Identifier>(
-        PersonStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<PersonStub, PersonStub.$Identifier>(
+      PersonStub,
+      query,
+    );
   }
 
   async personStubs(
     query?: $ObjectSet.Query<PersonStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PersonStub>[]> {
+  ): Promise<purify.Either<Error, readonly PersonStub[]>> {
     return this.personStubsSync(query);
   }
 
   personStubsSync(
     query?: $ObjectSet.Query<PersonStub.$Identifier>,
-  ): readonly purify.Either<Error, PersonStub>[] {
-    return [
-      ...this.$objectsSync<PersonStub, PersonStub.$Identifier>(
-        PersonStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly PersonStub[]> {
+    return this.$objectsSync<PersonStub, PersonStub.$Identifier>(
+      PersonStub,
+      query,
+    );
   }
 
   async personStubsCount(
@@ -44749,7 +44442,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   placeSync(identifier: Place.$Identifier): purify.Either<Error, Place> {
     return this.placesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async placeIdentifiers(
@@ -44761,21 +44454,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   placeIdentifiersSync(
     query?: $ObjectSet.Query<Place.$Identifier>,
   ): purify.Either<Error, readonly Place.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Place, Place.$Identifier>(Place, query),
-    ]);
+    return this.$objectIdentifiersSync<Place, Place.$Identifier>(Place, query);
   }
 
   async places(
     query?: $ObjectSet.Query<Place.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Place>[]> {
+  ): Promise<purify.Either<Error, readonly Place[]>> {
     return this.placesSync(query);
   }
 
   placesSync(
     query?: $ObjectSet.Query<Place.$Identifier>,
-  ): readonly purify.Either<Error, Place>[] {
-    return [...this.$objectsSync<Place, Place.$Identifier>(Place, query)];
+  ): purify.Either<Error, readonly Place[]> {
+    return this.$objectsSync<Place, Place.$Identifier>(Place, query);
   }
 
   async placesCount(
@@ -44801,7 +44492,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, PlaceStub> {
     return this.placeStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async placeStubIdentifiers(
@@ -44813,26 +44504,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   placeStubIdentifiersSync(
     query?: $ObjectSet.Query<PlaceStub.$Identifier>,
   ): purify.Either<Error, readonly PlaceStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<PlaceStub, PlaceStub.$Identifier>(
-        PlaceStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<PlaceStub, PlaceStub.$Identifier>(
+      PlaceStub,
+      query,
+    );
   }
 
   async placeStubs(
     query?: $ObjectSet.Query<PlaceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PlaceStub>[]> {
+  ): Promise<purify.Either<Error, readonly PlaceStub[]>> {
     return this.placeStubsSync(query);
   }
 
   placeStubsSync(
     query?: $ObjectSet.Query<PlaceStub.$Identifier>,
-  ): readonly purify.Either<Error, PlaceStub>[] {
-    return [
-      ...this.$objectsSync<PlaceStub, PlaceStub.$Identifier>(PlaceStub, query),
-    ];
+  ): purify.Either<Error, readonly PlaceStub[]> {
+    return this.$objectsSync<PlaceStub, PlaceStub.$Identifier>(
+      PlaceStub,
+      query,
+    );
   }
 
   async placeStubsCount(
@@ -44861,7 +44551,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, PublicationEvent> {
     return this.publicationEventsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async publicationEventIdentifiers(
@@ -44875,29 +44565,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   publicationEventIdentifiersSync(
     query?: $ObjectSet.Query<PublicationEventStatic.$Identifier>,
   ): purify.Either<Error, readonly PublicationEventStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PublicationEvent,
-        PublicationEventStatic.$Identifier
-      >(PublicationEventStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      PublicationEvent,
+      PublicationEventStatic.$Identifier
+    >(PublicationEventStatic, query);
   }
 
   async publicationEvents(
     query?: $ObjectSet.Query<PublicationEventStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PublicationEvent>[]> {
+  ): Promise<purify.Either<Error, readonly PublicationEvent[]>> {
     return this.publicationEventsSync(query);
   }
 
   publicationEventsSync(
     query?: $ObjectSet.Query<PublicationEventStatic.$Identifier>,
-  ): readonly purify.Either<Error, PublicationEvent>[] {
-    return [
-      ...this.$objectsSync<
-        PublicationEvent,
-        PublicationEventStatic.$Identifier
-      >(PublicationEventStatic, query),
-    ];
+  ): purify.Either<Error, readonly PublicationEvent[]> {
+    return this.$objectsSync<
+      PublicationEvent,
+      PublicationEventStatic.$Identifier
+    >(PublicationEventStatic, query);
   }
 
   async publicationEventsCount(
@@ -44926,7 +44612,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, PublicationEventStub> {
     return this.publicationEventStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async publicationEventStubIdentifiers(
@@ -44940,29 +44626,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   publicationEventStubIdentifiersSync(
     query?: $ObjectSet.Query<PublicationEventStubStatic.$Identifier>,
   ): purify.Either<Error, readonly PublicationEventStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        PublicationEventStub,
-        PublicationEventStubStatic.$Identifier
-      >(PublicationEventStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      PublicationEventStub,
+      PublicationEventStubStatic.$Identifier
+    >(PublicationEventStubStatic, query);
   }
 
   async publicationEventStubs(
     query?: $ObjectSet.Query<PublicationEventStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
+  ): Promise<purify.Either<Error, readonly PublicationEventStub[]>> {
     return this.publicationEventStubsSync(query);
   }
 
   publicationEventStubsSync(
     query?: $ObjectSet.Query<PublicationEventStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, PublicationEventStub>[] {
-    return [
-      ...this.$objectsSync<
-        PublicationEventStub,
-        PublicationEventStubStatic.$Identifier
-      >(PublicationEventStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly PublicationEventStub[]> {
+    return this.$objectsSync<
+      PublicationEventStub,
+      PublicationEventStubStatic.$Identifier
+    >(PublicationEventStubStatic, query);
   }
 
   async publicationEventStubsCount(
@@ -44997,7 +44679,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, QuantitativeValue> {
     return this.quantitativeValuesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async quantitativeValueIdentifiers(
@@ -45009,29 +44691,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   quantitativeValueIdentifiersSync(
     query?: $ObjectSet.Query<QuantitativeValue.$Identifier>,
   ): purify.Either<Error, readonly QuantitativeValue.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        QuantitativeValue,
-        QuantitativeValue.$Identifier
-      >(QuantitativeValue, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      QuantitativeValue,
+      QuantitativeValue.$Identifier
+    >(QuantitativeValue, query);
   }
 
   async quantitativeValues(
     query?: $ObjectSet.Query<QuantitativeValue.$Identifier>,
-  ): Promise<readonly purify.Either<Error, QuantitativeValue>[]> {
+  ): Promise<purify.Either<Error, readonly QuantitativeValue[]>> {
     return this.quantitativeValuesSync(query);
   }
 
   quantitativeValuesSync(
     query?: $ObjectSet.Query<QuantitativeValue.$Identifier>,
-  ): readonly purify.Either<Error, QuantitativeValue>[] {
-    return [
-      ...this.$objectsSync<QuantitativeValue, QuantitativeValue.$Identifier>(
-        QuantitativeValue,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly QuantitativeValue[]> {
+    return this.$objectsSync<QuantitativeValue, QuantitativeValue.$Identifier>(
+      QuantitativeValue,
+      query,
+    );
   }
 
   async quantitativeValuesCount(
@@ -45060,7 +44738,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, QuantitativeValueStub> {
     return this.quantitativeValueStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async quantitativeValueStubIdentifiers(
@@ -45074,29 +44752,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   quantitativeValueStubIdentifiersSync(
     query?: $ObjectSet.Query<QuantitativeValueStub.$Identifier>,
   ): purify.Either<Error, readonly QuantitativeValueStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        QuantitativeValueStub,
-        QuantitativeValueStub.$Identifier
-      >(QuantitativeValueStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      QuantitativeValueStub,
+      QuantitativeValueStub.$Identifier
+    >(QuantitativeValueStub, query);
   }
 
   async quantitativeValueStubs(
     query?: $ObjectSet.Query<QuantitativeValueStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]> {
+  ): Promise<purify.Either<Error, readonly QuantitativeValueStub[]>> {
     return this.quantitativeValueStubsSync(query);
   }
 
   quantitativeValueStubsSync(
     query?: $ObjectSet.Query<QuantitativeValueStub.$Identifier>,
-  ): readonly purify.Either<Error, QuantitativeValueStub>[] {
-    return [
-      ...this.$objectsSync<
-        QuantitativeValueStub,
-        QuantitativeValueStub.$Identifier
-      >(QuantitativeValueStub, query),
-    ];
+  ): purify.Either<Error, readonly QuantitativeValueStub[]> {
+    return this.$objectsSync<
+      QuantitativeValueStub,
+      QuantitativeValueStub.$Identifier
+    >(QuantitativeValueStub, query);
   }
 
   async quantitativeValueStubsCount(
@@ -45125,7 +44799,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RadioBroadcastService> {
     return this.radioBroadcastServicesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async radioBroadcastServiceIdentifiers(
@@ -45139,29 +44813,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioBroadcastServiceIdentifiersSync(
     query?: $ObjectSet.Query<RadioBroadcastService.$Identifier>,
   ): purify.Either<Error, readonly RadioBroadcastService.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        RadioBroadcastService,
-        RadioBroadcastService.$Identifier
-      >(RadioBroadcastService, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      RadioBroadcastService,
+      RadioBroadcastService.$Identifier
+    >(RadioBroadcastService, query);
   }
 
   async radioBroadcastServices(
     query?: $ObjectSet.Query<RadioBroadcastService.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]> {
+  ): Promise<purify.Either<Error, readonly RadioBroadcastService[]>> {
     return this.radioBroadcastServicesSync(query);
   }
 
   radioBroadcastServicesSync(
     query?: $ObjectSet.Query<RadioBroadcastService.$Identifier>,
-  ): readonly purify.Either<Error, RadioBroadcastService>[] {
-    return [
-      ...this.$objectsSync<
-        RadioBroadcastService,
-        RadioBroadcastService.$Identifier
-      >(RadioBroadcastService, query),
-    ];
+  ): purify.Either<Error, readonly RadioBroadcastService[]> {
+    return this.$objectsSync<
+      RadioBroadcastService,
+      RadioBroadcastService.$Identifier
+    >(RadioBroadcastService, query);
   }
 
   async radioBroadcastServicesCount(
@@ -45190,7 +44860,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RadioBroadcastServiceStub> {
     return this.radioBroadcastServiceStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async radioBroadcastServiceStubIdentifiers(
@@ -45204,29 +44874,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioBroadcastServiceStubIdentifiersSync(
     query?: $ObjectSet.Query<RadioBroadcastServiceStub.$Identifier>,
   ): purify.Either<Error, readonly RadioBroadcastServiceStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        RadioBroadcastServiceStub,
-        RadioBroadcastServiceStub.$Identifier
-      >(RadioBroadcastServiceStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      RadioBroadcastServiceStub,
+      RadioBroadcastServiceStub.$Identifier
+    >(RadioBroadcastServiceStub, query);
   }
 
   async radioBroadcastServiceStubs(
     query?: $ObjectSet.Query<RadioBroadcastServiceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly RadioBroadcastServiceStub[]>> {
     return this.radioBroadcastServiceStubsSync(query);
   }
 
   radioBroadcastServiceStubsSync(
     query?: $ObjectSet.Query<RadioBroadcastServiceStub.$Identifier>,
-  ): readonly purify.Either<Error, RadioBroadcastServiceStub>[] {
-    return [
-      ...this.$objectsSync<
-        RadioBroadcastServiceStub,
-        RadioBroadcastServiceStub.$Identifier
-      >(RadioBroadcastServiceStub, query),
-    ];
+  ): purify.Either<Error, readonly RadioBroadcastServiceStub[]> {
+    return this.$objectsSync<
+      RadioBroadcastServiceStub,
+      RadioBroadcastServiceStub.$Identifier
+    >(RadioBroadcastServiceStub, query);
   }
 
   async radioBroadcastServiceStubsCount(
@@ -45261,7 +44927,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RadioEpisode> {
     return this.radioEpisodesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async radioEpisodeIdentifiers(
@@ -45273,29 +44939,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioEpisodeIdentifiersSync(
     query?: $ObjectSet.Query<RadioEpisode.$Identifier>,
   ): purify.Either<Error, readonly RadioEpisode.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<RadioEpisode, RadioEpisode.$Identifier>(
-        RadioEpisode,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<RadioEpisode, RadioEpisode.$Identifier>(
+      RadioEpisode,
+      query,
+    );
   }
 
   async radioEpisodes(
     query?: $ObjectSet.Query<RadioEpisode.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioEpisode>[]> {
+  ): Promise<purify.Either<Error, readonly RadioEpisode[]>> {
     return this.radioEpisodesSync(query);
   }
 
   radioEpisodesSync(
     query?: $ObjectSet.Query<RadioEpisode.$Identifier>,
-  ): readonly purify.Either<Error, RadioEpisode>[] {
-    return [
-      ...this.$objectsSync<RadioEpisode, RadioEpisode.$Identifier>(
-        RadioEpisode,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly RadioEpisode[]> {
+    return this.$objectsSync<RadioEpisode, RadioEpisode.$Identifier>(
+      RadioEpisode,
+      query,
+    );
   }
 
   async radioEpisodesCount(
@@ -45324,7 +44986,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RadioEpisodeStub> {
     return this.radioEpisodeStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async radioEpisodeStubIdentifiers(
@@ -45336,29 +44998,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioEpisodeStubIdentifiersSync(
     query?: $ObjectSet.Query<RadioEpisodeStub.$Identifier>,
   ): purify.Either<Error, readonly RadioEpisodeStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        RadioEpisodeStub,
-        RadioEpisodeStub.$Identifier
-      >(RadioEpisodeStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      RadioEpisodeStub,
+      RadioEpisodeStub.$Identifier
+    >(RadioEpisodeStub, query);
   }
 
   async radioEpisodeStubs(
     query?: $ObjectSet.Query<RadioEpisodeStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]> {
+  ): Promise<purify.Either<Error, readonly RadioEpisodeStub[]>> {
     return this.radioEpisodeStubsSync(query);
   }
 
   radioEpisodeStubsSync(
     query?: $ObjectSet.Query<RadioEpisodeStub.$Identifier>,
-  ): readonly purify.Either<Error, RadioEpisodeStub>[] {
-    return [
-      ...this.$objectsSync<RadioEpisodeStub, RadioEpisodeStub.$Identifier>(
-        RadioEpisodeStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly RadioEpisodeStub[]> {
+    return this.$objectsSync<RadioEpisodeStub, RadioEpisodeStub.$Identifier>(
+      RadioEpisodeStub,
+      query,
+    );
   }
 
   async radioEpisodeStubsCount(
@@ -45387,7 +45045,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RadioSeries> {
     return this.radioSeriessSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async radioSeriesIdentifiers(
@@ -45399,29 +45057,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioSeriesIdentifiersSync(
     query?: $ObjectSet.Query<RadioSeries.$Identifier>,
   ): purify.Either<Error, readonly RadioSeries.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<RadioSeries, RadioSeries.$Identifier>(
-        RadioSeries,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<RadioSeries, RadioSeries.$Identifier>(
+      RadioSeries,
+      query,
+    );
   }
 
   async radioSeriess(
     query?: $ObjectSet.Query<RadioSeries.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioSeries>[]> {
+  ): Promise<purify.Either<Error, readonly RadioSeries[]>> {
     return this.radioSeriessSync(query);
   }
 
   radioSeriessSync(
     query?: $ObjectSet.Query<RadioSeries.$Identifier>,
-  ): readonly purify.Either<Error, RadioSeries>[] {
-    return [
-      ...this.$objectsSync<RadioSeries, RadioSeries.$Identifier>(
-        RadioSeries,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly RadioSeries[]> {
+    return this.$objectsSync<RadioSeries, RadioSeries.$Identifier>(
+      RadioSeries,
+      query,
+    );
   }
 
   async radioSeriessCount(
@@ -45450,7 +45104,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RadioSeriesStub> {
     return this.radioSeriesStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async radioSeriesStubIdentifiers(
@@ -45462,29 +45116,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   radioSeriesStubIdentifiersSync(
     query?: $ObjectSet.Query<RadioSeriesStub.$Identifier>,
   ): purify.Either<Error, readonly RadioSeriesStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        RadioSeriesStub,
-        RadioSeriesStub.$Identifier
-      >(RadioSeriesStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      RadioSeriesStub,
+      RadioSeriesStub.$Identifier
+    >(RadioSeriesStub, query);
   }
 
   async radioSeriesStubs(
     query?: $ObjectSet.Query<RadioSeriesStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]> {
+  ): Promise<purify.Either<Error, readonly RadioSeriesStub[]>> {
     return this.radioSeriesStubsSync(query);
   }
 
   radioSeriesStubsSync(
     query?: $ObjectSet.Query<RadioSeriesStub.$Identifier>,
-  ): readonly purify.Either<Error, RadioSeriesStub>[] {
-    return [
-      ...this.$objectsSync<RadioSeriesStub, RadioSeriesStub.$Identifier>(
-        RadioSeriesStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly RadioSeriesStub[]> {
+    return this.$objectsSync<RadioSeriesStub, RadioSeriesStub.$Identifier>(
+      RadioSeriesStub,
+      query,
+    );
   }
 
   async radioSeriesStubsCount(
@@ -45511,7 +45161,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   reportSync(identifier: Report.$Identifier): purify.Either<Error, Report> {
     return this.reportsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async reportIdentifiers(
@@ -45523,21 +45173,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   reportIdentifiersSync(
     query?: $ObjectSet.Query<Report.$Identifier>,
   ): purify.Either<Error, readonly Report.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Report, Report.$Identifier>(Report, query),
-    ]);
+    return this.$objectIdentifiersSync<Report, Report.$Identifier>(
+      Report,
+      query,
+    );
   }
 
   async reports(
     query?: $ObjectSet.Query<Report.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Report>[]> {
+  ): Promise<purify.Either<Error, readonly Report[]>> {
     return this.reportsSync(query);
   }
 
   reportsSync(
     query?: $ObjectSet.Query<Report.$Identifier>,
-  ): readonly purify.Either<Error, Report>[] {
-    return [...this.$objectsSync<Report, Report.$Identifier>(Report, query)];
+  ): purify.Either<Error, readonly Report[]> {
+    return this.$objectsSync<Report, Report.$Identifier>(Report, query);
   }
 
   async reportsCount(
@@ -45563,7 +45214,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ReportStub> {
     return this.reportStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async reportStubIdentifiers(
@@ -45575,29 +45226,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   reportStubIdentifiersSync(
     query?: $ObjectSet.Query<ReportStub.$Identifier>,
   ): purify.Either<Error, readonly ReportStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ReportStub, ReportStub.$Identifier>(
-        ReportStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ReportStub, ReportStub.$Identifier>(
+      ReportStub,
+      query,
+    );
   }
 
   async reportStubs(
     query?: $ObjectSet.Query<ReportStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ReportStub>[]> {
+  ): Promise<purify.Either<Error, readonly ReportStub[]>> {
     return this.reportStubsSync(query);
   }
 
   reportStubsSync(
     query?: $ObjectSet.Query<ReportStub.$Identifier>,
-  ): readonly purify.Either<Error, ReportStub>[] {
-    return [
-      ...this.$objectsSync<ReportStub, ReportStub.$Identifier>(
-        ReportStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ReportStub[]> {
+    return this.$objectsSync<ReportStub, ReportStub.$Identifier>(
+      ReportStub,
+      query,
+    );
   }
 
   async reportStubsCount(
@@ -45626,7 +45273,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, RoleStub> {
     return this.roleStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async roleStubIdentifiers(
@@ -45638,26 +45285,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   roleStubIdentifiersSync(
     query?: $ObjectSet.Query<RoleStub.$Identifier>,
   ): purify.Either<Error, readonly RoleStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<RoleStub, RoleStub.$Identifier>(
-        RoleStub,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<RoleStub, RoleStub.$Identifier>(
+      RoleStub,
+      query,
+    );
   }
 
   async roleStubs(
     query?: $ObjectSet.Query<RoleStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RoleStub>[]> {
+  ): Promise<purify.Either<Error, readonly RoleStub[]>> {
     return this.roleStubsSync(query);
   }
 
   roleStubsSync(
     query?: $ObjectSet.Query<RoleStub.$Identifier>,
-  ): readonly purify.Either<Error, RoleStub>[] {
-    return [
-      ...this.$objectsSync<RoleStub, RoleStub.$Identifier>(RoleStub, query),
-    ];
+  ): purify.Either<Error, readonly RoleStub[]> {
+    return this.$objectsSync<RoleStub, RoleStub.$Identifier>(RoleStub, query);
   }
 
   async roleStubsCount(
@@ -45686,7 +45329,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, Service> {
     return this.servicesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async serviceIdentifiers(
@@ -45698,29 +45341,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   serviceIdentifiersSync(
     query?: $ObjectSet.Query<ServiceStatic.$Identifier>,
   ): purify.Either<Error, readonly ServiceStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Service, ServiceStatic.$Identifier>(
-        ServiceStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Service, ServiceStatic.$Identifier>(
+      ServiceStatic,
+      query,
+    );
   }
 
   async services(
     query?: $ObjectSet.Query<ServiceStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Service>[]> {
+  ): Promise<purify.Either<Error, readonly Service[]>> {
     return this.servicesSync(query);
   }
 
   servicesSync(
     query?: $ObjectSet.Query<ServiceStatic.$Identifier>,
-  ): readonly purify.Either<Error, Service>[] {
-    return [
-      ...this.$objectsSync<Service, ServiceStatic.$Identifier>(
-        ServiceStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly Service[]> {
+    return this.$objectsSync<Service, ServiceStatic.$Identifier>(
+      ServiceStatic,
+      query,
+    );
   }
 
   async servicesCount(
@@ -45749,7 +45388,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ServiceStub> {
     return this.serviceStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async serviceStubIdentifiers(
@@ -45761,29 +45400,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   serviceStubIdentifiersSync(
     query?: $ObjectSet.Query<ServiceStubStatic.$Identifier>,
   ): purify.Either<Error, readonly ServiceStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ServiceStub,
-        ServiceStubStatic.$Identifier
-      >(ServiceStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ServiceStub,
+      ServiceStubStatic.$Identifier
+    >(ServiceStubStatic, query);
   }
 
   async serviceStubs(
     query?: $ObjectSet.Query<ServiceStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ServiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly ServiceStub[]>> {
     return this.serviceStubsSync(query);
   }
 
   serviceStubsSync(
     query?: $ObjectSet.Query<ServiceStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, ServiceStub>[] {
-    return [
-      ...this.$objectsSync<ServiceStub, ServiceStubStatic.$Identifier>(
-        ServiceStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ServiceStub[]> {
+    return this.$objectsSync<ServiceStub, ServiceStubStatic.$Identifier>(
+      ServiceStubStatic,
+      query,
+    );
   }
 
   async serviceStubsCount(
@@ -45812,7 +45447,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, StructuredValue> {
     return this.structuredValuesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async structuredValueIdentifiers(
@@ -45826,29 +45461,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   structuredValueIdentifiersSync(
     query?: $ObjectSet.Query<StructuredValueStatic.$Identifier>,
   ): purify.Either<Error, readonly StructuredValueStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        StructuredValue,
-        StructuredValueStatic.$Identifier
-      >(StructuredValueStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      StructuredValue,
+      StructuredValueStatic.$Identifier
+    >(StructuredValueStatic, query);
   }
 
   async structuredValues(
     query?: $ObjectSet.Query<StructuredValueStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, StructuredValue>[]> {
+  ): Promise<purify.Either<Error, readonly StructuredValue[]>> {
     return this.structuredValuesSync(query);
   }
 
   structuredValuesSync(
     query?: $ObjectSet.Query<StructuredValueStatic.$Identifier>,
-  ): readonly purify.Either<Error, StructuredValue>[] {
-    return [
-      ...this.$objectsSync<StructuredValue, StructuredValueStatic.$Identifier>(
-        StructuredValueStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly StructuredValue[]> {
+    return this.$objectsSync<
+      StructuredValue,
+      StructuredValueStatic.$Identifier
+    >(StructuredValueStatic, query);
   }
 
   async structuredValuesCount(
@@ -45877,7 +45508,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, StructuredValueStub> {
     return this.structuredValueStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async structuredValueStubIdentifiers(
@@ -45891,29 +45522,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   structuredValueStubIdentifiersSync(
     query?: $ObjectSet.Query<StructuredValueStubStatic.$Identifier>,
   ): purify.Either<Error, readonly StructuredValueStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        StructuredValueStub,
-        StructuredValueStubStatic.$Identifier
-      >(StructuredValueStubStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      StructuredValueStub,
+      StructuredValueStubStatic.$Identifier
+    >(StructuredValueStubStatic, query);
   }
 
   async structuredValueStubs(
     query?: $ObjectSet.Query<StructuredValueStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, StructuredValueStub>[]> {
+  ): Promise<purify.Either<Error, readonly StructuredValueStub[]>> {
     return this.structuredValueStubsSync(query);
   }
 
   structuredValueStubsSync(
     query?: $ObjectSet.Query<StructuredValueStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, StructuredValueStub>[] {
-    return [
-      ...this.$objectsSync<
-        StructuredValueStub,
-        StructuredValueStubStatic.$Identifier
-      >(StructuredValueStubStatic, query),
-    ];
+  ): purify.Either<Error, readonly StructuredValueStub[]> {
+    return this.$objectsSync<
+      StructuredValueStub,
+      StructuredValueStubStatic.$Identifier
+    >(StructuredValueStubStatic, query);
   }
 
   async structuredValueStubsCount(
@@ -45948,7 +45575,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, TextObject> {
     return this.textObjectsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async textObjectIdentifiers(
@@ -45960,29 +45587,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   textObjectIdentifiersSync(
     query?: $ObjectSet.Query<TextObject.$Identifier>,
   ): purify.Either<Error, readonly TextObject.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<TextObject, TextObject.$Identifier>(
-        TextObject,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<TextObject, TextObject.$Identifier>(
+      TextObject,
+      query,
+    );
   }
 
   async textObjects(
     query?: $ObjectSet.Query<TextObject.$Identifier>,
-  ): Promise<readonly purify.Either<Error, TextObject>[]> {
+  ): Promise<purify.Either<Error, readonly TextObject[]>> {
     return this.textObjectsSync(query);
   }
 
   textObjectsSync(
     query?: $ObjectSet.Query<TextObject.$Identifier>,
-  ): readonly purify.Either<Error, TextObject>[] {
-    return [
-      ...this.$objectsSync<TextObject, TextObject.$Identifier>(
-        TextObject,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly TextObject[]> {
+    return this.$objectsSync<TextObject, TextObject.$Identifier>(
+      TextObject,
+      query,
+    );
   }
 
   async textObjectsCount(
@@ -46011,7 +45634,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, TextObjectStub> {
     return this.textObjectStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async textObjectStubIdentifiers(
@@ -46023,29 +45646,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   textObjectStubIdentifiersSync(
     query?: $ObjectSet.Query<TextObjectStub.$Identifier>,
   ): purify.Either<Error, readonly TextObjectStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        TextObjectStub,
-        TextObjectStub.$Identifier
-      >(TextObjectStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      TextObjectStub,
+      TextObjectStub.$Identifier
+    >(TextObjectStub, query);
   }
 
   async textObjectStubs(
     query?: $ObjectSet.Query<TextObjectStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, TextObjectStub>[]> {
+  ): Promise<purify.Either<Error, readonly TextObjectStub[]>> {
     return this.textObjectStubsSync(query);
   }
 
   textObjectStubsSync(
     query?: $ObjectSet.Query<TextObjectStub.$Identifier>,
-  ): readonly purify.Either<Error, TextObjectStub>[] {
-    return [
-      ...this.$objectsSync<TextObjectStub, TextObjectStub.$Identifier>(
-        TextObjectStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly TextObjectStub[]> {
+    return this.$objectsSync<TextObjectStub, TextObjectStub.$Identifier>(
+      TextObjectStub,
+      query,
+    );
   }
 
   async textObjectStubsCount(
@@ -46072,7 +45691,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   thingSync(identifier: ThingStatic.$Identifier): purify.Either<Error, Thing> {
     return this.thingsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async thingIdentifiers(
@@ -46084,26 +45703,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   thingIdentifiersSync(
     query?: $ObjectSet.Query<ThingStatic.$Identifier>,
   ): purify.Either<Error, readonly ThingStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<Thing, ThingStatic.$Identifier>(
-        ThingStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<Thing, ThingStatic.$Identifier>(
+      ThingStatic,
+      query,
+    );
   }
 
   async things(
     query?: $ObjectSet.Query<ThingStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Thing>[]> {
+  ): Promise<purify.Either<Error, readonly Thing[]>> {
     return this.thingsSync(query);
   }
 
   thingsSync(
     query?: $ObjectSet.Query<ThingStatic.$Identifier>,
-  ): readonly purify.Either<Error, Thing>[] {
-    return [
-      ...this.$objectsSync<Thing, ThingStatic.$Identifier>(ThingStatic, query),
-    ];
+  ): purify.Either<Error, readonly Thing[]> {
+    return this.$objectsSync<Thing, ThingStatic.$Identifier>(
+      ThingStatic,
+      query,
+    );
   }
 
   async thingsCount(
@@ -46132,7 +45750,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ThingStub> {
     return this.thingStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async thingStubIdentifiers(
@@ -46144,29 +45762,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   thingStubIdentifiersSync(
     query?: $ObjectSet.Query<ThingStubStatic.$Identifier>,
   ): purify.Either<Error, readonly ThingStubStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ThingStub, ThingStubStatic.$Identifier>(
-        ThingStubStatic,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<ThingStub, ThingStubStatic.$Identifier>(
+      ThingStubStatic,
+      query,
+    );
   }
 
   async thingStubs(
     query?: $ObjectSet.Query<ThingStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ThingStub>[]> {
+  ): Promise<purify.Either<Error, readonly ThingStub[]>> {
     return this.thingStubsSync(query);
   }
 
   thingStubsSync(
     query?: $ObjectSet.Query<ThingStubStatic.$Identifier>,
-  ): readonly purify.Either<Error, ThingStub>[] {
-    return [
-      ...this.$objectsSync<ThingStub, ThingStubStatic.$Identifier>(
-        ThingStubStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ThingStub[]> {
+    return this.$objectsSync<ThingStub, ThingStubStatic.$Identifier>(
+      ThingStubStatic,
+      query,
+    );
   }
 
   async thingStubsCount(
@@ -46195,7 +45809,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, VoteAction> {
     return this.voteActionsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async voteActionIdentifiers(
@@ -46207,29 +45821,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   voteActionIdentifiersSync(
     query?: $ObjectSet.Query<VoteAction.$Identifier>,
   ): purify.Either<Error, readonly VoteAction.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<VoteAction, VoteAction.$Identifier>(
-        VoteAction,
-        query,
-      ),
-    ]);
+    return this.$objectIdentifiersSync<VoteAction, VoteAction.$Identifier>(
+      VoteAction,
+      query,
+    );
   }
 
   async voteActions(
     query?: $ObjectSet.Query<VoteAction.$Identifier>,
-  ): Promise<readonly purify.Either<Error, VoteAction>[]> {
+  ): Promise<purify.Either<Error, readonly VoteAction[]>> {
     return this.voteActionsSync(query);
   }
 
   voteActionsSync(
     query?: $ObjectSet.Query<VoteAction.$Identifier>,
-  ): readonly purify.Either<Error, VoteAction>[] {
-    return [
-      ...this.$objectsSync<VoteAction, VoteAction.$Identifier>(
-        VoteAction,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly VoteAction[]> {
+    return this.$objectsSync<VoteAction, VoteAction.$Identifier>(
+      VoteAction,
+      query,
+    );
   }
 
   async voteActionsCount(
@@ -46258,7 +45868,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, VoteActionStub> {
     return this.voteActionStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async voteActionStubIdentifiers(
@@ -46270,29 +45880,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   voteActionStubIdentifiersSync(
     query?: $ObjectSet.Query<VoteActionStub.$Identifier>,
   ): purify.Either<Error, readonly VoteActionStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        VoteActionStub,
-        VoteActionStub.$Identifier
-      >(VoteActionStub, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      VoteActionStub,
+      VoteActionStub.$Identifier
+    >(VoteActionStub, query);
   }
 
   async voteActionStubs(
     query?: $ObjectSet.Query<VoteActionStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, VoteActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly VoteActionStub[]>> {
     return this.voteActionStubsSync(query);
   }
 
   voteActionStubsSync(
     query?: $ObjectSet.Query<VoteActionStub.$Identifier>,
-  ): readonly purify.Either<Error, VoteActionStub>[] {
-    return [
-      ...this.$objectsSync<VoteActionStub, VoteActionStub.$Identifier>(
-        VoteActionStub,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly VoteActionStub[]> {
+    return this.$objectsSync<VoteActionStub, VoteActionStub.$Identifier>(
+      VoteActionStub,
+      query,
+    );
   }
 
   async voteActionStubsCount(
@@ -46321,7 +45927,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, AgentStub> {
     return this.agentStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async agentStubIdentifiers(
@@ -46333,29 +45939,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   agentStubIdentifiersSync(
     query?: $ObjectSet.Query<AgentStub.$Identifier>,
   ): purify.Either<Error, readonly AgentStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectUnionIdentifiersSync<AgentStub, AgentStub.$Identifier>(
-        [OrganizationStubStatic, PersonStub],
-        query,
-      ),
-    ]);
+    return this.$objectUnionIdentifiersSync<AgentStub, AgentStub.$Identifier>(
+      [OrganizationStubStatic, PersonStub],
+      query,
+    );
   }
 
   async agentStubs(
     query?: $ObjectSet.Query<AgentStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AgentStub>[]> {
+  ): Promise<purify.Either<Error, readonly AgentStub[]>> {
     return this.agentStubsSync(query);
   }
 
   agentStubsSync(
     query?: $ObjectSet.Query<AgentStub.$Identifier>,
-  ): readonly purify.Either<Error, AgentStub>[] {
-    return [
-      ...this.$objectUnionsSync<AgentStub, AgentStub.$Identifier>(
-        [OrganizationStubStatic, PersonStub],
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly AgentStub[]> {
+    return this.$objectUnionsSync<AgentStub, AgentStub.$Identifier>(
+      [OrganizationStubStatic, PersonStub],
+      query,
+    );
   }
 
   async agentStubsCount(
@@ -46384,7 +45986,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, MusicArtistStub> {
     return this.musicArtistStubsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async musicArtistStubIdentifiers(
@@ -46396,29 +45998,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   musicArtistStubIdentifiersSync(
     query?: $ObjectSet.Query<MusicArtistStub.$Identifier>,
   ): purify.Either<Error, readonly MusicArtistStub.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectUnionIdentifiersSync<
-        MusicArtistStub,
-        MusicArtistStub.$Identifier
-      >([MusicGroupStub, PersonStub], query),
-    ]);
+    return this.$objectUnionIdentifiersSync<
+      MusicArtistStub,
+      MusicArtistStub.$Identifier
+    >([MusicGroupStub, PersonStub], query);
   }
 
   async musicArtistStubs(
     query?: $ObjectSet.Query<MusicArtistStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicArtistStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicArtistStub[]>> {
     return this.musicArtistStubsSync(query);
   }
 
   musicArtistStubsSync(
     query?: $ObjectSet.Query<MusicArtistStub.$Identifier>,
-  ): readonly purify.Either<Error, MusicArtistStub>[] {
-    return [
-      ...this.$objectUnionsSync<MusicArtistStub, MusicArtistStub.$Identifier>(
-        [MusicGroupStub, PersonStub],
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly MusicArtistStub[]> {
+    return this.$objectUnionsSync<MusicArtistStub, MusicArtistStub.$Identifier>(
+      [MusicGroupStub, PersonStub],
+      query,
+    );
   }
 
   async musicArtistStubsCount(
@@ -46436,43 +46034,38 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >([MusicGroupStub, PersonStub], query);
   }
 
-  protected *$objectIdentifiersSync<
+  protected $objectIdentifiersSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<ObjectIdentifierT> {
-    for (const object of this.$objectsSync<ObjectT, ObjectIdentifierT>(
-      objectType,
-      query,
-    )) {
-      if (object.isRight()) {
-        yield object.unsafeCoerce().$identifier;
-      }
-    }
+  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
+      (objects) => objects.map((object) => object.$identifier),
+    );
   }
 
-  protected *$objectsSync<
+  protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<purify.Either<Error, ObjectT>> {
+  ): purify.Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return;
+      return purify.Either.of([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -46481,19 +46074,58 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
-      for (const identifier of query.where.identifiers.slice(
-        offset,
-        offset + limit,
-      )) {
-        yield objectType.$fromRdf({
+      // Assign identifiers in each case block so the compiler will catch missing cases.
+      let identifiers: rdfjsResource.Resource.Identifier[];
+      switch (query.where.type) {
+        case "identifiers": {
+          identifiers = query.where.identifiers.slice(offset, offset + limit);
+          break;
+        }
+        case "triple-objects": {
+          let identifierI = 0;
+          identifiers = [];
+          for (const quad of this.resourceSet.dataset.match(
+            query.where.subject,
+            query.where.predicate,
+            null,
+          )) {
+            if (
+              quad.object.termType === "BlankNode" ||
+              quad.object.termType === "NamedNode"
+            ) {
+              if (++identifierI >= offset) {
+                identifiers.push(quad.object);
+                if (identifiers.length === limit) {
+                  break;
+                }
+              }
+            } else {
+              return purify.Left(
+                new Error(
+                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                ),
+              );
+            }
+          }
+          break;
+        }
+      }
+
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        const either = objectType.$fromRdf({
           resource: this.resourceSet.resource(identifier),
         });
+        if (either.isLeft()) {
+          return either;
+        }
+        objects.push(either.unsafeCoerce());
       }
-      return;
+      return purify.Either.of(objects);
     }
 
     if (!objectType.$fromRdfType) {
-      return;
+      return purify.Either.of([]);
     }
 
     const resources = [
@@ -46504,20 +46136,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       left.identifier.value.localeCompare(right.identifier.value),
     );
 
-    let objectCount = 0;
+    const objects: ObjectT[] = [];
     let objectI = 0;
     for (const resource of resources) {
-      const object = objectType.$fromRdf({ resource });
-      if (object.isLeft()) {
-        continue;
+      const either = objectType.$fromRdf({ resource });
+      if (either.isLeft()) {
+        return either;
       }
       if (objectI++ >= offset) {
-        yield object;
-        if (++objectCount === limit) {
-          return;
+        objects.push(either.unsafeCoerce());
+        if (objects.length === limit) {
+          return purify.Either.of(objects);
         }
       }
     }
+    return purify.Either.of(objects);
   }
 
   protected $objectsCountSync<
@@ -46527,59 +46160,49 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
-    let count = 0;
-    for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(
-      objectType,
-      query,
-    )) {
-      count++;
-    }
-
-    return purify.Either.of(count);
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
+      (objects) => objects.length,
+    );
   }
 
-  protected *$objectUnionIdentifiersSync<
+  protected $objectUnionIdentifiersSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<ObjectIdentifierT> {
-    for (const object of this.$objectUnionsSync<ObjectT, ObjectIdentifierT>(
+  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
+    return this.$objectUnionsSync<ObjectT, ObjectIdentifierT>(
       objectTypes,
       query,
-    )) {
-      if (object.isRight()) {
-        yield object.unsafeCoerce().$identifier;
-      }
-    }
+    ).map((objects) => objects.map((object) => object.$identifier));
   }
 
-  protected *$objectUnionsSync<
+  protected $objectUnionsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<purify.Either<Error, ObjectT>> {
+  ): purify.Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return;
+      return purify.Either.of([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -46588,38 +46211,71 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
-      // Figure out which object type the identifiers belong to
-      for (const identifier of query.where.identifiers.slice(
-        offset,
-        offset + limit,
-      )) {
-        const resource = this.resourceSet.resource(identifier);
-        const lefts: purify.Either<Error, ObjectT>[] = [];
-        for (const objectType of objectTypes) {
-          const object = objectType.$fromRdf({ resource });
-          if (object.isRight()) {
-            yield object;
-            break;
-          }
-          lefts.push(object);
+      // Assign identifiers in each case block so the compiler will catch missing cases.
+      let identifiers: rdfjsResource.Resource.Identifier[];
+      switch (query.where.type) {
+        case "identifiers": {
+          identifiers = query.where.identifiers.slice(offset, offset + limit);
+          break;
         }
-        // Doesn't appear to belong to any of the known object types, just assume the first
-        if (lefts.length === objectTypes.length) {
-          yield lefts[0];
+        case "triple-objects": {
+          let identifierI = 0;
+          identifiers = [];
+          for (const quad of this.resourceSet.dataset.match(
+            query.where.subject,
+            query.where.predicate,
+            null,
+          )) {
+            if (
+              quad.object.termType === "BlankNode" ||
+              quad.object.termType === "NamedNode"
+            ) {
+              if (++identifierI >= offset) {
+                identifiers.push(quad.object);
+                if (identifiers.length === limit) {
+                  break;
+                }
+              }
+            } else {
+              return purify.Left(
+                new Error(
+                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                ),
+              );
+            }
+          }
+          break;
         }
       }
 
-      return;
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        const resource = this.resourceSet.resource(identifier);
+        const lefts: purify.Either<Error, ObjectT>[] = [];
+        for (const objectType of objectTypes) {
+          const either = objectType.$fromRdf({ resource });
+          if (either.isRight()) {
+            objects.push(either.unsafeCoerce());
+            break;
+          }
+          lefts.push(either);
+        }
+        // Doesn't appear to belong to any of the known object types, just assume the first
+        if (lefts.length === objectTypes.length) {
+          return lefts[0] as unknown as purify.Either<
+            Error,
+            readonly ObjectT[]
+          >;
+        }
+      }
+      return purify.Either.of(objects);
     }
-
-    let objectCount = 0;
-    let objectI = 0;
 
     const resources: {
       objectType: {
         $fromRdf: (parameters: {
           resource: rdfjsResource.Resource;
-        }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+        }) => purify.Either<Error, ObjectT>;
         $fromRdfType?: rdfjs.NamedNode;
       };
       resource: rdfjsResource.Resource;
@@ -46643,18 +46299,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ),
     );
 
+    let objectI = 0;
+    const objects: ObjectT[] = [];
     for (const { objectType, resource } of resources) {
-      const object = objectType.$fromRdf({ resource });
-      if (object.isLeft()) {
-        continue;
+      const either = objectType.$fromRdf({ resource });
+      if (either.isLeft()) {
+        return either;
       }
       if (objectI++ >= offset) {
-        yield object;
-        if (++objectCount === limit) {
-          return;
+        objects.push(either.unsafeCoerce());
+        if (objects.length === limit) {
+          return purify.Either.of(objects);
         }
       }
     }
+    return purify.Either.of(objects);
   }
 
   protected $objectUnionsCountSync<
@@ -46664,20 +46323,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectTypes: readonly {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
-    let count = 0;
-    for (const _ of this.$objectUnionIdentifiersSync<
-      ObjectT,
-      ObjectIdentifierT
-    >(objectTypes, query)) {
-      count++;
-    }
-
-    return purify.Either.of(count);
+    return this.$objectUnionIdentifiersSync<ObjectT, ObjectIdentifierT>(
+      objectTypes,
+      query,
+    ).map((objects) => objects.length);
   }
 }
 
@@ -46710,7 +46364,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.actions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async actionIdentifiers(
@@ -46724,7 +46378,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async actions(
     query?: $SparqlObjectSet.Query<ActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Action>[]> {
+  ): Promise<purify.Either<Error, readonly Action[]>> {
     return this.$objects<Action, ActionStatic.$Identifier>(ActionStatic, query);
   }
 
@@ -46741,7 +46395,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.actionStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async actionStubIdentifiers(
@@ -46755,7 +46409,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async actionStubs(
     query?: $SparqlObjectSet.Query<ActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly ActionStub[]>> {
     return this.$objects<ActionStub, ActionStubStatic.$Identifier>(
       ActionStubStatic,
       query,
@@ -46778,7 +46432,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.articles({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async articleIdentifiers(
@@ -46792,7 +46446,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async articles(
     query?: $SparqlObjectSet.Query<ArticleStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Article>[]> {
+  ): Promise<purify.Either<Error, readonly Article[]>> {
     return this.$objects<Article, ArticleStatic.$Identifier>(
       ArticleStatic,
       query,
@@ -46812,7 +46466,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.articleStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async articleStubIdentifiers(
@@ -46826,7 +46480,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async articleStubs(
     query?: $SparqlObjectSet.Query<ArticleStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ArticleStub>[]> {
+  ): Promise<purify.Either<Error, readonly ArticleStub[]>> {
     return this.$objects<ArticleStub, ArticleStubStatic.$Identifier>(
       ArticleStubStatic,
       query,
@@ -46852,7 +46506,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.assessActions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async assessActionIdentifiers(
@@ -46866,7 +46520,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async assessActions(
     query?: $SparqlObjectSet.Query<AssessActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AssessAction>[]> {
+  ): Promise<purify.Either<Error, readonly AssessAction[]>> {
     return this.$objects<AssessAction, AssessActionStatic.$Identifier>(
       AssessActionStatic,
       query,
@@ -46892,7 +46546,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.assessActionStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async assessActionStubIdentifiers(
@@ -46908,7 +46562,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async assessActionStubs(
     query?: $SparqlObjectSet.Query<AssessActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AssessActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly AssessActionStub[]>> {
     return this.$objects<AssessActionStub, AssessActionStubStatic.$Identifier>(
       AssessActionStubStatic,
       query,
@@ -46934,7 +46588,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.broadcastEvents({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async broadcastEventIdentifiers(
@@ -46948,7 +46602,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async broadcastEvents(
     query?: $SparqlObjectSet.Query<BroadcastEvent.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastEvent>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastEvent[]>> {
     return this.$objects<BroadcastEvent, BroadcastEvent.$Identifier>(
       BroadcastEvent,
       query,
@@ -46971,7 +46625,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.broadcastEventStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async broadcastEventStubIdentifiers(
@@ -46985,7 +46639,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async broadcastEventStubs(
     query?: $SparqlObjectSet.Query<BroadcastEventStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastEventStub>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastEventStub[]>> {
     return this.$objects<BroadcastEventStub, BroadcastEventStub.$Identifier>(
       BroadcastEventStub,
       query,
@@ -47011,7 +46665,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.broadcastServices({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async broadcastServiceIdentifiers(
@@ -47027,7 +46681,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async broadcastServices(
     query?: $SparqlObjectSet.Query<BroadcastServiceStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastService>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastService[]>> {
     return this.$objects<BroadcastService, BroadcastServiceStatic.$Identifier>(
       BroadcastServiceStatic,
       query,
@@ -47053,7 +46707,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.broadcastServiceStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async broadcastServiceStubIdentifiers(
@@ -47069,7 +46723,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async broadcastServiceStubs(
     query?: $SparqlObjectSet.Query<BroadcastServiceStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, BroadcastServiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly BroadcastServiceStub[]>> {
     return this.$objects<
       BroadcastServiceStub,
       BroadcastServiceStubStatic.$Identifier
@@ -47095,7 +46749,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.chooseActions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async chooseActionIdentifiers(
@@ -47109,7 +46763,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async chooseActions(
     query?: $SparqlObjectSet.Query<ChooseActionStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ChooseAction>[]> {
+  ): Promise<purify.Either<Error, readonly ChooseAction[]>> {
     return this.$objects<ChooseAction, ChooseActionStatic.$Identifier>(
       ChooseActionStatic,
       query,
@@ -47135,7 +46789,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.chooseActionStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async chooseActionStubIdentifiers(
@@ -47151,7 +46805,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async chooseActionStubs(
     query?: $SparqlObjectSet.Query<ChooseActionStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ChooseActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly ChooseActionStub[]>> {
     return this.$objects<ChooseActionStub, ChooseActionStubStatic.$Identifier>(
       ChooseActionStubStatic,
       query,
@@ -47177,7 +46831,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.creativeWorks({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async creativeWorkIdentifiers(
@@ -47191,7 +46845,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async creativeWorks(
     query?: $SparqlObjectSet.Query<CreativeWorkStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWork>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWork[]>> {
     return this.$objects<CreativeWork, CreativeWorkStatic.$Identifier>(
       CreativeWorkStatic,
       query,
@@ -47217,7 +46871,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.creativeWorkSeriess({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async creativeWorkSeriesIdentifiers(
@@ -47233,7 +46887,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async creativeWorkSeriess(
     query?: $SparqlObjectSet.Query<CreativeWorkSeriesStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkSeries>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWorkSeries[]>> {
     return this.$objects<
       CreativeWorkSeries,
       CreativeWorkSeriesStatic.$Identifier
@@ -47259,7 +46913,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.creativeWorkSeriesStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async creativeWorkSeriesStubIdentifiers(
@@ -47275,7 +46929,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async creativeWorkSeriesStubs(
     query?: $SparqlObjectSet.Query<CreativeWorkSeriesStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkSeriesStub>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWorkSeriesStub[]>> {
     return this.$objects<
       CreativeWorkSeriesStub,
       CreativeWorkSeriesStubStatic.$Identifier
@@ -47301,7 +46955,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.creativeWorkStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async creativeWorkStubIdentifiers(
@@ -47317,7 +46971,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async creativeWorkStubs(
     query?: $SparqlObjectSet.Query<CreativeWorkStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, CreativeWorkStub>[]> {
+  ): Promise<purify.Either<Error, readonly CreativeWorkStub[]>> {
     return this.$objects<CreativeWorkStub, CreativeWorkStubStatic.$Identifier>(
       CreativeWorkStubStatic,
       query,
@@ -47343,7 +46997,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.enumerations({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async enumerationIdentifiers(
@@ -47357,7 +47011,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async enumerations(
     query?: $SparqlObjectSet.Query<EnumerationStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Enumeration>[]> {
+  ): Promise<purify.Either<Error, readonly Enumeration[]>> {
     return this.$objects<Enumeration, EnumerationStatic.$Identifier>(
       EnumerationStatic,
       query,
@@ -47383,7 +47037,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.episodes({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async episodeIdentifiers(
@@ -47397,7 +47051,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async episodes(
     query?: $SparqlObjectSet.Query<EpisodeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Episode>[]> {
+  ): Promise<purify.Either<Error, readonly Episode[]>> {
     return this.$objects<Episode, EpisodeStatic.$Identifier>(
       EpisodeStatic,
       query,
@@ -47417,7 +47071,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.episodeStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async episodeStubIdentifiers(
@@ -47431,7 +47085,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async episodeStubs(
     query?: $SparqlObjectSet.Query<EpisodeStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, EpisodeStub>[]> {
+  ): Promise<purify.Either<Error, readonly EpisodeStub[]>> {
     return this.$objects<EpisodeStub, EpisodeStubStatic.$Identifier>(
       EpisodeStubStatic,
       query,
@@ -47457,7 +47111,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.events({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async eventIdentifiers(
@@ -47468,7 +47122,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async events(
     query?: $SparqlObjectSet.Query<EventStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Event>[]> {
+  ): Promise<purify.Either<Error, readonly Event[]>> {
     return this.$objects<Event, EventStatic.$Identifier>(EventStatic, query);
   }
 
@@ -47485,7 +47139,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.eventStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async eventStubIdentifiers(
@@ -47499,7 +47153,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async eventStubs(
     query?: $SparqlObjectSet.Query<EventStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, EventStub>[]> {
+  ): Promise<purify.Either<Error, readonly EventStub[]>> {
     return this.$objects<EventStub, EventStubStatic.$Identifier>(
       EventStubStatic,
       query,
@@ -47522,7 +47176,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.genderTypes({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async genderTypeIdentifiers(
@@ -47533,7 +47187,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async genderTypes(
     query?: $SparqlObjectSet.Query<GenderType.$Identifier>,
-  ): Promise<readonly purify.Either<Error, GenderType>[]> {
+  ): Promise<purify.Either<Error, readonly GenderType[]>> {
     return this.$objects<GenderType, GenderType.$Identifier>(GenderType, query);
   }
 
@@ -47550,7 +47204,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.imageObjects({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async imageObjectIdentifiers(
@@ -47561,7 +47215,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async imageObjects(
     query?: $SparqlObjectSet.Query<ImageObject.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ImageObject>[]> {
+  ): Promise<purify.Either<Error, readonly ImageObject[]>> {
     return this.$objects<ImageObject, ImageObject.$Identifier>(
       ImageObject,
       query,
@@ -47581,7 +47235,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.imageObjectStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async imageObjectStubIdentifiers(
@@ -47595,7 +47249,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async imageObjectStubs(
     query?: $SparqlObjectSet.Query<ImageObjectStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ImageObjectStub>[]> {
+  ): Promise<purify.Either<Error, readonly ImageObjectStub[]>> {
     return this.$objects<ImageObjectStub, ImageObjectStub.$Identifier>(
       ImageObjectStub,
       query,
@@ -47618,7 +47272,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.intangibles({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async intangibleIdentifiers(
@@ -47632,7 +47286,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async intangibles(
     query?: $SparqlObjectSet.Query<IntangibleStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Intangible>[]> {
+  ): Promise<purify.Either<Error, readonly Intangible[]>> {
     return this.$objects<Intangible, IntangibleStatic.$Identifier>(
       IntangibleStatic,
       query,
@@ -47655,7 +47309,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.intangibleStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async intangibleStubIdentifiers(
@@ -47671,7 +47325,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async intangibleStubs(
     query?: $SparqlObjectSet.Query<IntangibleStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, IntangibleStub>[]> {
+  ): Promise<purify.Either<Error, readonly IntangibleStub[]>> {
     return this.$objects<IntangibleStub, IntangibleStubStatic.$Identifier>(
       IntangibleStubStatic,
       query,
@@ -47697,7 +47351,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.invoices({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async invoiceIdentifiers(
@@ -47708,7 +47362,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async invoices(
     query?: $SparqlObjectSet.Query<Invoice.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Invoice>[]> {
+  ): Promise<purify.Either<Error, readonly Invoice[]>> {
     return this.$objects<Invoice, Invoice.$Identifier>(Invoice, query);
   }
 
@@ -47725,7 +47379,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.invoiceStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async invoiceStubIdentifiers(
@@ -47736,7 +47390,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async invoiceStubs(
     query?: $SparqlObjectSet.Query<InvoiceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, InvoiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly InvoiceStub[]>> {
     return this.$objects<InvoiceStub, InvoiceStub.$Identifier>(
       InvoiceStub,
       query,
@@ -47756,7 +47410,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.itemLists({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async itemListIdentifiers(
@@ -47767,7 +47421,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async itemLists(
     query?: $SparqlObjectSet.Query<ItemList.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ItemList>[]> {
+  ): Promise<purify.Either<Error, readonly ItemList[]>> {
     return this.$objects<ItemList, ItemList.$Identifier>(ItemList, query);
   }
 
@@ -47784,7 +47438,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.itemListStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async itemListStubIdentifiers(
@@ -47798,7 +47452,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async itemListStubs(
     query?: $SparqlObjectSet.Query<ItemListStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ItemListStub>[]> {
+  ): Promise<purify.Either<Error, readonly ItemListStub[]>> {
     return this.$objects<ItemListStub, ItemListStub.$Identifier>(
       ItemListStub,
       query,
@@ -47818,7 +47472,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.listItems({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async listItemIdentifiers(
@@ -47829,7 +47483,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async listItems(
     query?: $SparqlObjectSet.Query<ListItem.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ListItem>[]> {
+  ): Promise<purify.Either<Error, readonly ListItem[]>> {
     return this.$objects<ListItem, ListItem.$Identifier>(ListItem, query);
   }
 
@@ -47846,7 +47500,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.listItemStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async listItemStubIdentifiers(
@@ -47860,7 +47514,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async listItemStubs(
     query?: $SparqlObjectSet.Query<ListItemStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ListItemStub>[]> {
+  ): Promise<purify.Either<Error, readonly ListItemStub[]>> {
     return this.$objects<ListItemStub, ListItemStub.$Identifier>(
       ListItemStub,
       query,
@@ -47880,7 +47534,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.mediaObjects({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async mediaObjectIdentifiers(
@@ -47894,7 +47548,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async mediaObjects(
     query?: $SparqlObjectSet.Query<MediaObjectStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MediaObject>[]> {
+  ): Promise<purify.Either<Error, readonly MediaObject[]>> {
     return this.$objects<MediaObject, MediaObjectStatic.$Identifier>(
       MediaObjectStatic,
       query,
@@ -47920,7 +47574,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.mediaObjectStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async mediaObjectStubIdentifiers(
@@ -47936,7 +47590,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async mediaObjectStubs(
     query?: $SparqlObjectSet.Query<MediaObjectStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MediaObjectStub>[]> {
+  ): Promise<purify.Either<Error, readonly MediaObjectStub[]>> {
     return this.$objects<MediaObjectStub, MediaObjectStubStatic.$Identifier>(
       MediaObjectStubStatic,
       query,
@@ -47962,7 +47616,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.messages({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async messageIdentifiers(
@@ -47973,7 +47627,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async messages(
     query?: $SparqlObjectSet.Query<Message.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Message>[]> {
+  ): Promise<purify.Either<Error, readonly Message[]>> {
     return this.$objects<Message, Message.$Identifier>(Message, query);
   }
 
@@ -47990,7 +47644,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.messageStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async messageStubIdentifiers(
@@ -48001,7 +47655,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async messageStubs(
     query?: $SparqlObjectSet.Query<MessageStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MessageStub>[]> {
+  ): Promise<purify.Either<Error, readonly MessageStub[]>> {
     return this.$objects<MessageStub, MessageStub.$Identifier>(
       MessageStub,
       query,
@@ -48021,7 +47675,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.monetaryAmounts({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async monetaryAmountIdentifiers(
@@ -48035,7 +47689,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async monetaryAmounts(
     query?: $SparqlObjectSet.Query<MonetaryAmount.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MonetaryAmount>[]> {
+  ): Promise<purify.Either<Error, readonly MonetaryAmount[]>> {
     return this.$objects<MonetaryAmount, MonetaryAmount.$Identifier>(
       MonetaryAmount,
       query,
@@ -48058,7 +47712,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.monetaryAmountStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async monetaryAmountStubIdentifiers(
@@ -48072,7 +47726,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async monetaryAmountStubs(
     query?: $SparqlObjectSet.Query<MonetaryAmountStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MonetaryAmountStub>[]> {
+  ): Promise<purify.Either<Error, readonly MonetaryAmountStub[]>> {
     return this.$objects<MonetaryAmountStub, MonetaryAmountStub.$Identifier>(
       MonetaryAmountStub,
       query,
@@ -48098,7 +47752,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicAlbums({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicAlbumIdentifiers(
@@ -48109,7 +47763,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicAlbums(
     query?: $SparqlObjectSet.Query<MusicAlbum.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicAlbum>[]> {
+  ): Promise<purify.Either<Error, readonly MusicAlbum[]>> {
     return this.$objects<MusicAlbum, MusicAlbum.$Identifier>(MusicAlbum, query);
   }
 
@@ -48126,7 +47780,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicAlbumStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicAlbumStubIdentifiers(
@@ -48140,7 +47794,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicAlbumStubs(
     query?: $SparqlObjectSet.Query<MusicAlbumStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicAlbumStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicAlbumStub[]>> {
     return this.$objects<MusicAlbumStub, MusicAlbumStub.$Identifier>(
       MusicAlbumStub,
       query,
@@ -48163,7 +47817,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicArtistRoleStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicArtistRoleStubIdentifiers(
@@ -48177,7 +47831,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicArtistRoleStubs(
     query?: $SparqlObjectSet.Query<MusicArtistRoleStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicArtistRoleStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicArtistRoleStub[]>> {
     return this.$objects<MusicArtistRoleStub, MusicArtistRoleStub.$Identifier>(
       MusicArtistRoleStub,
       query,
@@ -48203,7 +47857,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicCompositions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicCompositionIdentifiers(
@@ -48217,7 +47871,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicCompositions(
     query?: $SparqlObjectSet.Query<MusicComposition.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicComposition>[]> {
+  ): Promise<purify.Either<Error, readonly MusicComposition[]>> {
     return this.$objects<MusicComposition, MusicComposition.$Identifier>(
       MusicComposition,
       query,
@@ -48240,7 +47894,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicCompositionStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicCompositionStubIdentifiers(
@@ -48256,7 +47910,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicCompositionStubs(
     query?: $SparqlObjectSet.Query<MusicCompositionStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicCompositionStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicCompositionStub[]>> {
     return this.$objects<
       MusicCompositionStub,
       MusicCompositionStub.$Identifier
@@ -48282,7 +47936,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicGroups({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicGroupIdentifiers(
@@ -48293,7 +47947,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicGroups(
     query?: $SparqlObjectSet.Query<MusicGroup.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicGroup>[]> {
+  ): Promise<purify.Either<Error, readonly MusicGroup[]>> {
     return this.$objects<MusicGroup, MusicGroup.$Identifier>(MusicGroup, query);
   }
 
@@ -48310,7 +47964,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicGroupStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicGroupStubIdentifiers(
@@ -48324,7 +47978,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicGroupStubs(
     query?: $SparqlObjectSet.Query<MusicGroupStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicGroupStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicGroupStub[]>> {
     return this.$objects<MusicGroupStub, MusicGroupStub.$Identifier>(
       MusicGroupStub,
       query,
@@ -48347,7 +48001,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicPlaylists({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicPlaylistIdentifiers(
@@ -48361,7 +48015,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicPlaylists(
     query?: $SparqlObjectSet.Query<MusicPlaylist.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicPlaylist>[]> {
+  ): Promise<purify.Either<Error, readonly MusicPlaylist[]>> {
     return this.$objects<MusicPlaylist, MusicPlaylist.$Identifier>(
       MusicPlaylist,
       query,
@@ -48381,7 +48035,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicPlaylistStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicPlaylistStubIdentifiers(
@@ -48395,7 +48049,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicPlaylistStubs(
     query?: $SparqlObjectSet.Query<MusicPlaylistStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicPlaylistStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicPlaylistStub[]>> {
     return this.$objects<MusicPlaylistStub, MusicPlaylistStub.$Identifier>(
       MusicPlaylistStub,
       query,
@@ -48421,7 +48075,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicRecordings({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicRecordingIdentifiers(
@@ -48435,7 +48089,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicRecordings(
     query?: $SparqlObjectSet.Query<MusicRecording.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicRecording>[]> {
+  ): Promise<purify.Either<Error, readonly MusicRecording[]>> {
     return this.$objects<MusicRecording, MusicRecording.$Identifier>(
       MusicRecording,
       query,
@@ -48458,7 +48112,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicRecordingStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicRecordingStubIdentifiers(
@@ -48472,7 +48126,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicRecordingStubs(
     query?: $SparqlObjectSet.Query<MusicRecordingStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicRecordingStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicRecordingStub[]>> {
     return this.$objects<MusicRecordingStub, MusicRecordingStub.$Identifier>(
       MusicRecordingStub,
       query,
@@ -48498,7 +48152,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.occupationStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async occupationStubIdentifiers(
@@ -48512,7 +48166,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async occupationStubs(
     query?: $SparqlObjectSet.Query<OccupationStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OccupationStub>[]> {
+  ): Promise<purify.Either<Error, readonly OccupationStub[]>> {
     return this.$objects<OccupationStub, OccupationStub.$Identifier>(
       OccupationStub,
       query,
@@ -48535,7 +48189,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.orders({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async orderIdentifiers(
@@ -48546,7 +48200,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async orders(
     query?: $SparqlObjectSet.Query<Order.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Order>[]> {
+  ): Promise<purify.Either<Error, readonly Order[]>> {
     return this.$objects<Order, Order.$Identifier>(Order, query);
   }
 
@@ -48563,7 +48217,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.orderStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async orderStubIdentifiers(
@@ -48574,7 +48228,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async orderStubs(
     query?: $SparqlObjectSet.Query<OrderStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OrderStub>[]> {
+  ): Promise<purify.Either<Error, readonly OrderStub[]>> {
     return this.$objects<OrderStub, OrderStub.$Identifier>(OrderStub, query);
   }
 
@@ -48591,7 +48245,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.organizations({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async organizationIdentifiers(
@@ -48605,7 +48259,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async organizations(
     query?: $SparqlObjectSet.Query<OrganizationStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Organization>[]> {
+  ): Promise<purify.Either<Error, readonly Organization[]>> {
     return this.$objects<Organization, OrganizationStatic.$Identifier>(
       OrganizationStatic,
       query,
@@ -48631,7 +48285,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.organizationStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async organizationStubIdentifiers(
@@ -48647,7 +48301,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async organizationStubs(
     query?: $SparqlObjectSet.Query<OrganizationStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OrganizationStub>[]> {
+  ): Promise<purify.Either<Error, readonly OrganizationStub[]>> {
     return this.$objects<OrganizationStub, OrganizationStubStatic.$Identifier>(
       OrganizationStubStatic,
       query,
@@ -48673,7 +48327,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.performingGroups({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async performingGroupIdentifiers(
@@ -48689,7 +48343,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async performingGroups(
     query?: $SparqlObjectSet.Query<PerformingGroupStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PerformingGroup>[]> {
+  ): Promise<purify.Either<Error, readonly PerformingGroup[]>> {
     return this.$objects<PerformingGroup, PerformingGroupStatic.$Identifier>(
       PerformingGroupStatic,
       query,
@@ -48715,7 +48369,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.performingGroupStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async performingGroupStubIdentifiers(
@@ -48731,7 +48385,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async performingGroupStubs(
     query?: $SparqlObjectSet.Query<PerformingGroupStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PerformingGroupStub>[]> {
+  ): Promise<purify.Either<Error, readonly PerformingGroupStub[]>> {
     return this.$objects<
       PerformingGroupStub,
       PerformingGroupStubStatic.$Identifier
@@ -48757,7 +48411,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.people({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async personIdentifiers(
@@ -48768,7 +48422,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async people(
     query?: $SparqlObjectSet.Query<Person.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Person>[]> {
+  ): Promise<purify.Either<Error, readonly Person[]>> {
     return this.$objects<Person, Person.$Identifier>(Person, query);
   }
 
@@ -48785,7 +48439,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.personStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async personStubIdentifiers(
@@ -48796,7 +48450,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async personStubs(
     query?: $SparqlObjectSet.Query<PersonStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PersonStub>[]> {
+  ): Promise<purify.Either<Error, readonly PersonStub[]>> {
     return this.$objects<PersonStub, PersonStub.$Identifier>(PersonStub, query);
   }
 
@@ -48813,7 +48467,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.places({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async placeIdentifiers(
@@ -48824,7 +48478,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async places(
     query?: $SparqlObjectSet.Query<Place.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Place>[]> {
+  ): Promise<purify.Either<Error, readonly Place[]>> {
     return this.$objects<Place, Place.$Identifier>(Place, query);
   }
 
@@ -48841,7 +48495,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.placeStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async placeStubIdentifiers(
@@ -48852,7 +48506,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async placeStubs(
     query?: $SparqlObjectSet.Query<PlaceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PlaceStub>[]> {
+  ): Promise<purify.Either<Error, readonly PlaceStub[]>> {
     return this.$objects<PlaceStub, PlaceStub.$Identifier>(PlaceStub, query);
   }
 
@@ -48869,7 +48523,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.publicationEvents({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async publicationEventIdentifiers(
@@ -48885,7 +48539,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async publicationEvents(
     query?: $SparqlObjectSet.Query<PublicationEventStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PublicationEvent>[]> {
+  ): Promise<purify.Either<Error, readonly PublicationEvent[]>> {
     return this.$objects<PublicationEvent, PublicationEventStatic.$Identifier>(
       PublicationEventStatic,
       query,
@@ -48911,7 +48565,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.publicationEventStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async publicationEventStubIdentifiers(
@@ -48927,7 +48581,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async publicationEventStubs(
     query?: $SparqlObjectSet.Query<PublicationEventStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, PublicationEventStub>[]> {
+  ): Promise<purify.Either<Error, readonly PublicationEventStub[]>> {
     return this.$objects<
       PublicationEventStub,
       PublicationEventStubStatic.$Identifier
@@ -48953,7 +48607,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.quantitativeValues({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async quantitativeValueIdentifiers(
@@ -48967,7 +48621,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async quantitativeValues(
     query?: $SparqlObjectSet.Query<QuantitativeValue.$Identifier>,
-  ): Promise<readonly purify.Either<Error, QuantitativeValue>[]> {
+  ): Promise<purify.Either<Error, readonly QuantitativeValue[]>> {
     return this.$objects<QuantitativeValue, QuantitativeValue.$Identifier>(
       QuantitativeValue,
       query,
@@ -48993,7 +48647,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.quantitativeValueStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async quantitativeValueStubIdentifiers(
@@ -49009,7 +48663,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async quantitativeValueStubs(
     query?: $SparqlObjectSet.Query<QuantitativeValueStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, QuantitativeValueStub>[]> {
+  ): Promise<purify.Either<Error, readonly QuantitativeValueStub[]>> {
     return this.$objects<
       QuantitativeValueStub,
       QuantitativeValueStub.$Identifier
@@ -49035,7 +48689,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.radioBroadcastServices({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async radioBroadcastServiceIdentifiers(
@@ -49051,7 +48705,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioBroadcastServices(
     query?: $SparqlObjectSet.Query<RadioBroadcastService.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioBroadcastService>[]> {
+  ): Promise<purify.Either<Error, readonly RadioBroadcastService[]>> {
     return this.$objects<
       RadioBroadcastService,
       RadioBroadcastService.$Identifier
@@ -49077,7 +48731,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.radioBroadcastServiceStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async radioBroadcastServiceStubIdentifiers(
@@ -49093,7 +48747,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioBroadcastServiceStubs(
     query?: $SparqlObjectSet.Query<RadioBroadcastServiceStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioBroadcastServiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly RadioBroadcastServiceStub[]>> {
     return this.$objects<
       RadioBroadcastServiceStub,
       RadioBroadcastServiceStub.$Identifier
@@ -49119,7 +48773,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.radioEpisodes({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async radioEpisodeIdentifiers(
@@ -49133,7 +48787,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioEpisodes(
     query?: $SparqlObjectSet.Query<RadioEpisode.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioEpisode>[]> {
+  ): Promise<purify.Either<Error, readonly RadioEpisode[]>> {
     return this.$objects<RadioEpisode, RadioEpisode.$Identifier>(
       RadioEpisode,
       query,
@@ -49153,7 +48807,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.radioEpisodeStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async radioEpisodeStubIdentifiers(
@@ -49167,7 +48821,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioEpisodeStubs(
     query?: $SparqlObjectSet.Query<RadioEpisodeStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioEpisodeStub>[]> {
+  ): Promise<purify.Either<Error, readonly RadioEpisodeStub[]>> {
     return this.$objects<RadioEpisodeStub, RadioEpisodeStub.$Identifier>(
       RadioEpisodeStub,
       query,
@@ -49190,7 +48844,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.radioSeriess({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async radioSeriesIdentifiers(
@@ -49201,7 +48855,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioSeriess(
     query?: $SparqlObjectSet.Query<RadioSeries.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioSeries>[]> {
+  ): Promise<purify.Either<Error, readonly RadioSeries[]>> {
     return this.$objects<RadioSeries, RadioSeries.$Identifier>(
       RadioSeries,
       query,
@@ -49221,7 +48875,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.radioSeriesStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async radioSeriesStubIdentifiers(
@@ -49235,7 +48889,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async radioSeriesStubs(
     query?: $SparqlObjectSet.Query<RadioSeriesStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RadioSeriesStub>[]> {
+  ): Promise<purify.Either<Error, readonly RadioSeriesStub[]>> {
     return this.$objects<RadioSeriesStub, RadioSeriesStub.$Identifier>(
       RadioSeriesStub,
       query,
@@ -49258,7 +48912,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.reports({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async reportIdentifiers(
@@ -49269,7 +48923,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async reports(
     query?: $SparqlObjectSet.Query<Report.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Report>[]> {
+  ): Promise<purify.Either<Error, readonly Report[]>> {
     return this.$objects<Report, Report.$Identifier>(Report, query);
   }
 
@@ -49286,7 +48940,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.reportStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async reportStubIdentifiers(
@@ -49297,7 +48951,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async reportStubs(
     query?: $SparqlObjectSet.Query<ReportStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ReportStub>[]> {
+  ): Promise<purify.Either<Error, readonly ReportStub[]>> {
     return this.$objects<ReportStub, ReportStub.$Identifier>(ReportStub, query);
   }
 
@@ -49314,7 +48968,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.roleStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async roleStubIdentifiers(
@@ -49325,7 +48979,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async roleStubs(
     query?: $SparqlObjectSet.Query<RoleStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, RoleStub>[]> {
+  ): Promise<purify.Either<Error, readonly RoleStub[]>> {
     return this.$objects<RoleStub, RoleStub.$Identifier>(RoleStub, query);
   }
 
@@ -49342,7 +48996,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.services({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async serviceIdentifiers(
@@ -49356,7 +49010,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async services(
     query?: $SparqlObjectSet.Query<ServiceStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Service>[]> {
+  ): Promise<purify.Either<Error, readonly Service[]>> {
     return this.$objects<Service, ServiceStatic.$Identifier>(
       ServiceStatic,
       query,
@@ -49376,7 +49030,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.serviceStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async serviceStubIdentifiers(
@@ -49390,7 +49044,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async serviceStubs(
     query?: $SparqlObjectSet.Query<ServiceStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ServiceStub>[]> {
+  ): Promise<purify.Either<Error, readonly ServiceStub[]>> {
     return this.$objects<ServiceStub, ServiceStubStatic.$Identifier>(
       ServiceStubStatic,
       query,
@@ -49416,7 +49070,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.structuredValues({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async structuredValueIdentifiers(
@@ -49432,7 +49086,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async structuredValues(
     query?: $SparqlObjectSet.Query<StructuredValueStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, StructuredValue>[]> {
+  ): Promise<purify.Either<Error, readonly StructuredValue[]>> {
     return this.$objects<StructuredValue, StructuredValueStatic.$Identifier>(
       StructuredValueStatic,
       query,
@@ -49458,7 +49112,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.structuredValueStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async structuredValueStubIdentifiers(
@@ -49474,7 +49128,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async structuredValueStubs(
     query?: $SparqlObjectSet.Query<StructuredValueStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, StructuredValueStub>[]> {
+  ): Promise<purify.Either<Error, readonly StructuredValueStub[]>> {
     return this.$objects<
       StructuredValueStub,
       StructuredValueStubStatic.$Identifier
@@ -49500,7 +49154,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.textObjects({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async textObjectIdentifiers(
@@ -49511,7 +49165,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async textObjects(
     query?: $SparqlObjectSet.Query<TextObject.$Identifier>,
-  ): Promise<readonly purify.Either<Error, TextObject>[]> {
+  ): Promise<purify.Either<Error, readonly TextObject[]>> {
     return this.$objects<TextObject, TextObject.$Identifier>(TextObject, query);
   }
 
@@ -49528,7 +49182,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.textObjectStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async textObjectStubIdentifiers(
@@ -49542,7 +49196,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async textObjectStubs(
     query?: $SparqlObjectSet.Query<TextObjectStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, TextObjectStub>[]> {
+  ): Promise<purify.Either<Error, readonly TextObjectStub[]>> {
     return this.$objects<TextObjectStub, TextObjectStub.$Identifier>(
       TextObjectStub,
       query,
@@ -49565,7 +49219,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.things({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async thingIdentifiers(
@@ -49576,7 +49230,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async things(
     query?: $SparqlObjectSet.Query<ThingStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, Thing>[]> {
+  ): Promise<purify.Either<Error, readonly Thing[]>> {
     return this.$objects<Thing, ThingStatic.$Identifier>(ThingStatic, query);
   }
 
@@ -49593,7 +49247,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.thingStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async thingStubIdentifiers(
@@ -49607,7 +49261,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async thingStubs(
     query?: $SparqlObjectSet.Query<ThingStubStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ThingStub>[]> {
+  ): Promise<purify.Either<Error, readonly ThingStub[]>> {
     return this.$objects<ThingStub, ThingStubStatic.$Identifier>(
       ThingStubStatic,
       query,
@@ -49630,7 +49284,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.voteActions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async voteActionIdentifiers(
@@ -49641,7 +49295,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async voteActions(
     query?: $SparqlObjectSet.Query<VoteAction.$Identifier>,
-  ): Promise<readonly purify.Either<Error, VoteAction>[]> {
+  ): Promise<purify.Either<Error, readonly VoteAction[]>> {
     return this.$objects<VoteAction, VoteAction.$Identifier>(VoteAction, query);
   }
 
@@ -49658,7 +49312,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.voteActionStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async voteActionStubIdentifiers(
@@ -49672,7 +49326,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async voteActionStubs(
     query?: $SparqlObjectSet.Query<VoteActionStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, VoteActionStub>[]> {
+  ): Promise<purify.Either<Error, readonly VoteActionStub[]>> {
     return this.$objects<VoteActionStub, VoteActionStub.$Identifier>(
       VoteActionStub,
       query,
@@ -49695,7 +49349,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.agentStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async agentStubIdentifiers(
@@ -49706,7 +49360,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async agentStubs(
     query?: $SparqlObjectSet.Query<AgentStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, AgentStub>[]> {
+  ): Promise<purify.Either<Error, readonly AgentStub[]>> {
     return this.$objects<AgentStub, AgentStub.$Identifier>(AgentStub, query);
   }
 
@@ -49723,7 +49377,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.musicArtistStubs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async musicArtistStubIdentifiers(
@@ -49737,7 +49391,7 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async musicArtistStubs(
     query?: $SparqlObjectSet.Query<MusicArtistStub.$Identifier>,
-  ): Promise<readonly purify.Either<Error, MusicArtistStub>[]> {
+  ): Promise<purify.Either<Error, readonly MusicArtistStub[]>> {
     return this.$objects<MusicArtistStub, MusicArtistStub.$Identifier>(
       MusicArtistStub,
       query,
@@ -49859,7 +49513,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $sparqlConstructQueryString: (
         parameters?: { subject?: sparqljs.Triple["subject"] } & Omit<
           sparqljs.ConstructQuery,
@@ -49872,17 +49526,17 @@ export class $SparqlObjectSet implements $ObjectSet {
       }) => readonly sparqljs.Pattern[];
     },
     query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
-  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+  ): Promise<purify.Either<Error, readonly ObjectT[]>> {
     const identifiersEither = await this.$objectIdentifiers<ObjectIdentifierT>(
       objectType,
       query,
     );
     if (identifiersEither.isLeft()) {
-      return [identifiersEither];
+      return identifiersEither;
     }
     const identifiers = identifiersEither.unsafeCoerce();
     if (identifiers.length === 0) {
-      return [];
+      return purify.Either.of([]);
     }
 
     const constructQueryString = objectType.$sparqlConstructQueryString({
@@ -49903,20 +49557,24 @@ export class $SparqlObjectSet implements $ObjectSet {
     try {
       quads = await this.$sparqlClient.queryQuads(constructQueryString);
     } catch (e) {
-      const left = purify.Left<Error, ObjectT>(e as Error);
-      return identifiers.map(() => left);
+      return purify.Left(e as Error);
     }
 
     const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      objectType.$fromRdf({
+    const objects: ObjectT[] = [];
+    for (const identifier of identifiers) {
+      const objectEither = objectType.$fromRdf({
         resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
           dataset,
           identifier: identifier as rdfjs.NamedNode,
         }),
-      }),
-    );
+      });
+      if (objectEither.isLeft()) {
+        return objectEither;
+      }
+      objects.push(objectEither.unsafeCoerce());
+    }
+    return purify.Either.of(objects);
   }
 
   protected async $objectsCount<
@@ -49981,21 +49639,45 @@ export class $SparqlObjectSet implements $ObjectSet {
     // Patterns should be most to least specific.
 
     if (where) {
+      // Assign a separate variable so the compiler catches any missing cases
+      let wherePatterns: readonly sparqljs.Pattern[];
       switch (where.type) {
-        case "identifiers":
-          patterns.push({
-            type: "values" as const,
-            values: where.identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          });
+        case "identifiers": {
+          const valuePatternRowKey = `?${this.$objectVariable.value}`;
+          wherePatterns = [
+            {
+              type: "values" as const,
+              values: where.identifiers.map((identifier) => {
+                const valuePatternRow: sparqljs.ValuePatternRow = {};
+                valuePatternRow[valuePatternRowKey] =
+                  identifier as rdfjs.NamedNode;
+                return valuePatternRow;
+              }),
+            },
+          ];
           break;
-        case "patterns":
-          patterns.push(...where.patterns(this.$objectVariable));
+        }
+        case "sparql-patterns": {
+          wherePatterns = where.sparqlPatterns(this.$objectVariable);
           break;
+        }
+        case "triple-objects": {
+          wherePatterns = [
+            {
+              triples: [
+                {
+                  subject: where.subject,
+                  predicate: where.predicate,
+                  object: this.$objectVariable,
+                },
+              ],
+              type: "bgp",
+            },
+          ];
+          break;
+        }
       }
+      patterns.push(...wherePatterns);
     }
 
     patterns.push(
@@ -50020,9 +49702,9 @@ export namespace $SparqlObjectSet {
   > =
     | $ObjectSet.Where<ObjectIdentifierT>
     | {
-        readonly patterns: (
+        readonly sparqlPatterns: (
           objectVariable: rdfjs.Variable,
         ) => readonly sparqljs.Pattern[];
-        readonly type: "patterns";
+        readonly type: "sparql-patterns";
       };
 }
