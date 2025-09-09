@@ -6,6 +6,8 @@ env:
   NODE_OPTIONS: "--max-old-space-size=4096"
 jobs:
   build-test:
+    env:
+      DO_NOT_TRACK: 1
     name: Build and test
     runs-on: ubuntu-latest
     steps:
