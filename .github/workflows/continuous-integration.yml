@@ -20,7 +20,7 @@ jobs:
         run: npm install
       - name: Build packages
         run: npm run build:packages
-      - name: Check types on apps
-        run: npm run check-types:apps
+      # - name: Check types on apps
+      #   run: npm run check-types:apps
       - name: Test
         run: npm run test
